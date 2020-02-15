@@ -1,3 +1,8 @@
+""" Using the specified search space and fitness function
+ defined in 'Segmentors' this runs the genetic algorithm over
+ that space. Best individuals are stored in the hall of fame (hof).
+"""
+
 import random
 import copy
 
@@ -13,10 +18,11 @@ import inspect
 
 from see import Segmentors
 
-''' prints usable code to run segmentation algorithm based on an individuals
-genetic representation vector
-'''
+
 def printBestAlgorithmCode(individual):
+    """Prints usable code to run segmentation algorithm based on an individuals
+    genetic representation vector.
+    """
     ind_algo = Segmentors.algoFromParams(individual)
     original_function = inspect.getsource(ind_algo.evaluate)
     function_contents = original_function[original_function.find('        '):original_function.find('return')]
@@ -30,8 +36,9 @@ def printBestAlgorithmCode(individual):
     function_contents = function_contents.replace('        ', '')
     print(function_contents)
 
-'''Executes a crossover between two numpy arrays of the same length '''
 def twoPointCopy(np1, np2):
+    """Executes a crossover between two numpy arrays of the same length.
+    """
     assert(len(np1) == len(np2))
     size = len(np1)
     point1 = random.randint(1, size)
@@ -44,11 +51,10 @@ def twoPointCopy(np1, np2):
     ), np1[point1:point2].copy()
     return np1, np2
 
-
-'''Executes a crossover between two arrays (np1 and np2) picking a
-random amount of indexes to change between the two.
-'''
 def skimageCrossRandom(np1, np2):
+    """Executes a crossover between two arrays (np1 and np2) picking a
+    random amount of indexes to change between the two.
+    """
     # TODO: Only change values associated with algorithm
     assert(len(np1) == len(np2))
     # The number of places that we'll cross
@@ -63,19 +69,20 @@ def skimageCrossRandom(np1, np2):
     return np1, np2
 
 
-''' Changes a few of the parameters of the weighting a random
-    number against the flipProb.
-    Variables:
-    copyChild is the individual to mutate
-    posVals is a list of lists where each list are the possible
-        values for that particular parameter
-    flipProb is how likely, it is that we will mutate each value.
-        It is computed seperately for each value.
-'''
-
-
 def mutate(copyChild, posVals, flipProb=0.5):
+    """Changes a few of the parameters of the weighting a random
+    number against the flipProb.
 
+    Keyword arguments:
+    copyChild -- the individual to mutate.
+    posVals -- list of lists where each list are the possible
+                values for that particular parameter.
+    flipProb -- how likely it is that we will mutate each value.
+                It is computed seperately for each value.
+
+    Outputs:
+    child -- New, possibly mutated, individual.
+    """
     # Just because we chose to mutate a value doesn't mean we mutate
     # Every aspect of the value
     child = copy.deepcopy(copyChild)
@@ -108,7 +115,12 @@ def mutate(copyChild, posVals, flipProb=0.5):
 # TODO Make a toolbox from a list of individuals
 # TODO Save a population as a list of indivudals (with fitness functions?)
 def makeToolbox(pop_size):
+    """ Makes a genetic algorithm toolbox using DEAP. The toolbox uses 
+    premade functions for crossover, mutation, evaluation and fitness. 
 
+    Keyword arguments:
+    pop_size -- The size of our population, or how many individuals we have
+    """
     # Minimizing fitness function
     creator.create("FitnessMin", base.Fitness, weights=(-0.000001,))
     creator.create("Individual", list, fitness=creator.FitnessMin)
@@ -147,17 +159,34 @@ def makeToolbox(pop_size):
 
 
 def initIndividual(icls, content):
+    """ Creates a new individual.
+    """
     logging.getLogger().info(f"In initIndividual={content}")
     return icls(content)
 
 
 def initPopulation(pcls, ind_init, filename):
+    """Creates a population by initializing our specified number of individuals.
+    """
     with open(filename, "r") as pop_file:
         contents = json.load(pop_file)
     return pcls(ind_init(c) for c in contents)
 
 
 class Evolver(object):
+    """ Performs the genetic algorithm by initializing a population
+    and evolving it over a specified number of generations to find the 
+    optimal algorithm and parameters for our problem.
+
+    Functions:
+    newpopulation -- Initialize a new population.
+    writepop -- Records our population in the file "filename".
+    readpop -- Reads in existing population from "filename".
+    popfitness -- Calculates the fitness values for our population.
+    mutate -- Performs mutation and crossover on population.
+    nextgen -- Generates the next generation of our population.
+    run -- Runs the genetic algorithm.
+    """
 
     AllVals = []
     p = Segmentors.parameters()
@@ -165,6 +194,14 @@ class Evolver(object):
         AllVals.append(eval(p.ranges[key]))
 
     def __init__(self, img, mask, pop_size=10):
+        """ Sets default values for our variables.
+
+        Keyword arguments:
+        img -- The original training image
+        mask -- The ground truth segmentation mask for the img
+        pop_size -- Integer value denoting size of our population, 
+            or how many individuals there are (default 10)
+        """
         # Build Population based on size
         self.img = img
         self.mask = mask
@@ -175,14 +212,25 @@ class Evolver(object):
         self.cxpb, self.mutpb, self.flipProb = 0.9, 0.9, 0.9
 
     def newpopulation(self):
+        """ Initialize a new population.
+        """
         return self.tool.population()
 
     def writepop(self, tpop, filename='test.json'):
+        """ Record our population in the file "filename".
+
+        Keyword arguments:
+        tpop -- The population to be recorded.
+        filename -- string denoting file in which to record 
+            the population. (default 'test.json')
+        """
         logging.getLogger().info(f"Writting population to {filename}")
         with open(filename, 'w') as outfile:
             json.dump(tpop, outfile)
 
     def readpop(self, filename='test.json'):
+        """ Read in existing population from "filename".
+        """
         logging.getLogger().info(f"Reading population from {filename}")
         self.tool.register("population_read", initPopulation,
                            list, creator.Individual, filename)
@@ -195,6 +243,17 @@ class Evolver(object):
         return self.tool.population_read()
 
     def popfitness(self, tpop):
+        """ Calculates the fitness values for our population, and 
+        logs general statistics about these values.
+        Uses hall of fame (hof) to keep track of top 10 individuals.
+
+        Keyword arguments:
+        tpop -- current population
+
+        Outputs:
+        extractFits -- Fitness values for our population
+        tpop -- current population
+        """
         NewImage = [self.img for i in range(0, len(tpop))]
         NewVal = [self.mask for i in range(0, len(tpop))]
         fitnesses = map(self.tool.evaluate, NewImage, NewVal, tpop)
@@ -233,6 +292,15 @@ class Evolver(object):
         return extractFits, tpop
 
     def mutate(self, tpop):
+        """ Returns new population with mutated individuals. Performs 
+        both mutation and crossover.
+
+        Keyword arguments:
+        tpop -- current population
+
+        Output:
+        final -- new population with mutated individuals.
+        """
         # Calculate next population
 
         sz = len(tpop)
@@ -268,10 +336,26 @@ class Evolver(object):
         return final
 
     def nextgen(self, tpop):
+        """ Generates the next generation of our population.
+
+        Keyword arguments:
+        tpop -- current population
+        """
         fitness, tpop = self.popfitness(tpop)
         return self.mutate(tpop)
 
     def run(self, ngen=10, startfile=None, checkpoint=None):
+        """ Runs the genetic algorithm, updating the population over
+        ngen number of generations. 
+
+        Keywork arguments:
+        ngen -- number of generations to run the genetic algorithm.
+        startfile -- File containing existing population (default None)
+        checkpoint -- File containing existing checkpoint (default None)
+
+        Output:
+        population -- Resulting population after ngen generations.
+        """
         if startfile:
             population = self.readpop(startfile)
         else:
