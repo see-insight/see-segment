@@ -1,9 +1,4 @@
-""" This produces a GUI that allows users to switch between segmentation algorithms
-and alter the parameters manually using a slider. It shows two images, one 
-with the original image with the resulting mask and one with the original 
-image with the negative of the resulting mask. 
-"""
-
+"""This produces a GUI that allows users to switch between segmentation algorithms and alter the parameters manually using a slider. It shows two images, one with the original image with the resulting mask and one with the original image with the negative of the resulting mask."""
 import matplotlib.pylab as plt
 from ipywidgets import interact
 import ipywidgets as widgets
@@ -11,8 +6,7 @@ import ipywidgets as widgets
 from see import Segmentors
 
 def showtwo(img, img2):
-    """ Shows two images side by side.
-    """
+    """Show two images side by side."""
     fig = plt.figure(figsize=(20,20))
     ax = fig.add_subplot(1,2,1)
     ax.imshow(img)
@@ -20,8 +14,7 @@ def showtwo(img, img2):
     ax.imshow(img2)
     
 def showthree(im, img, img2):
-    """ Shows three images side by side.
-    """
+    """Show three images side by side."""
     fig = plt.figure(figsize=(20,20))
     ax = fig.add_subplot(1,3,1)
     ax.imshow(im)
@@ -31,11 +24,12 @@ def showthree(im, img, img2):
     ax.imshow(img2)
     
 def showSegment(im, mask):
-    """ Shows both options for segmenting using the current mask.
+    """Show both options for segmenting using the current mask.
 
     Keyword arguments:
     im -- original image
     mask -- resulting mask from segmentor
+
     """
     im1 = im.copy()
     im2 = im.copy()
@@ -45,13 +39,13 @@ def showSegment(im, mask):
 
 
 def segmentwidget(params, img, gmask):
-    """ Generates GUI. Produces slider for each parameter for the current segmentor.
-    Shows both options for the masked image.
+    """Generate GUI. Produce slider for each parameter for the current segmentor. Show both options for the masked image.
 
     Keyword arguments:
     params -- list of parameter options
     img -- original image
     gmask -- ground truth segmentation mask for the image
+
     """
     seg = Segmentors.algoFromParams(params)
     widg = dict()
@@ -72,8 +66,7 @@ def segmentwidget(params, img, gmask):
         widg[p] = thiswidg
 
     def f(im =img, mask=gmask, **kwargs):
-        """ Finds mask and fitness for current algorithm. Shows masked image.
-        """
+        """Find mask and fitness for current algorithm. Show masked image."""
         print(seg.params["algorithm"])
         for k in kwargs:
             seg.params[k] = kwargs[k]
