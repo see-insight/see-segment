@@ -1,0 +1,1176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.7.2" />
+<title>see.GeneticSearch API documentation</title>
+<meta name="description" content="Using the specified search space and fitness function defined in &#39;Segmentors&#39; this runs the genetic algorithm over that space. Best individuals are …" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>see.GeneticSearch</code></h1>
+</header>
+<section id="section-intro">
+<p>Using the specified search space and fitness function defined in 'Segmentors' this runs the genetic algorithm over that space. Best individuals are stored in the hall of fame (hof).</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;Using the specified search space and fitness function defined in &#39;Segmentors&#39; this runs the genetic algorithm over that space. Best individuals are stored in the hall of fame (hof).&#34;&#34;&#34;
+
+import random
+import copy
+
+import json
+
+import deap
+from deap import base
+from deap import tools
+from deap import creator
+from scoop import futures
+import logging
+import inspect
+
+from see import Segmentors
+
+def printBestAlgorithmCode(individual):
+    &#34;&#34;&#34;Print usable code to run segmentation algorithm based on an individual&#39;s genetic representation vector.&#34;&#34;&#34;
+    ind_algo = Segmentors.algoFromParams(individual)
+    original_function = inspect.getsource(ind_algo.evaluate)
+    function_contents = original_function[original_function.find(&#39;        &#39;):original_function.find(&#39;return&#39;)]
+    while function_contents.find(&#39;self.params&#39;) != -1:
+        print(function_contents[function_contents.find(&#39;self.params&#39;) + 
+            13:function_contents.find(&#39;]&#39;)-1])
+        function_contents = function_contents.replace(
+            function_contents[function_contents.find(&#39;self.params&#39;):function_contents.find(&#39;]&#39;)+1], 
+            str(ind_algo.params[function_contents[function_contents.find(&#39;self.params&#39;) + 
+            13:function_contents.find(&#39;]&#39;)-1]]))
+    function_contents = function_contents.replace(&#39;        &#39;, &#39;&#39;)
+    print(function_contents)
+
+def twoPointCopy(np1, np2):
+    &#34;&#34;&#34;Execute a crossover between two numpy arrays of the same length.&#34;&#34;&#34;
+    assert(len(np1) == len(np2))
+    size = len(np1)
+    point1 = random.randint(1, size)
+    point2 = random.randint(1, size-1)
+    if (point2 &gt;= point1):
+        point2 += 1
+    else:  # Swap the two points
+        point1, point2 = point2, point1
+    np1[point1:point2], np2[point1:point2] = np2[point1:point2].copy(
+    ), np1[point1:point2].copy()
+    return np1, np2
+
+def skimageCrossRandom(np1, np2):
+    &#34;&#34;&#34;Execute a crossover between two arrays (np1 and np2) picking a random amount of indexes to change between the two.&#34;&#34;&#34;
+    # TODO: Only change values associated with algorithm
+    assert(len(np1) == len(np2))
+    # The number of places that we&#39;ll cross
+    crosses = random.randrange(len(np1))
+    # We pick that many crossing points
+    indexes = random.sample(range(0, len(np1)), crosses)
+    # And at those crossing points, we switch the parameters
+
+    for i in indexes:
+        np1[i], np2[i] = np2[i], np1[i]
+
+    return np1, np2
+
+
+def mutate(copyChild, posVals, flipProb=0.5):
+    &#34;&#34;&#34;Change a few of the parameters of the weighting a random number against the flipProb.
+
+    Keyword arguments:
+    copyChild -- the individual to mutate.
+    posVals -- list of lists where each list are the possible
+                values for that particular parameter.
+    flipProb -- how likely it is that we will mutate each value.
+                It is computed seperately for each value.
+
+    Outputs:
+    child -- New, possibly mutated, individual.
+
+    &#34;&#34;&#34;
+    # Just because we chose to mutate a value doesn&#39;t mean we mutate
+    # Every aspect of the value
+    child = copy.deepcopy(copyChild)
+
+    # Not every algorithm is associated with every value
+    # Let&#39;s first see if we change the algorithm
+    randVal = random.random()
+    if randVal &lt; flipProb:
+        # Let&#39;s mutate
+        child[0] = random.choice(posVals[0])
+    # Now let&#39;s get the indexes (parameters) related to that value
+    #switcher = AlgoHelp().algoIndexes()
+    #indexes = switcher.get(child[0])
+
+    for index in range(len(posVals)):
+        randVal = random.random()
+        if randVal &lt; flipProb:
+            # Then we mutate said value
+            if index == 22:
+                # Do some special
+                X = random.choice(posVals[22])
+                Y = random.choice(posVals[23])
+                Z = random.choice(posVals[24])
+                child[index] = (X, Y, Z)
+                continue
+            child[index] = random.choice(posVals[index])
+    return child
+
+
+# TODO Make a toolbox from a list of individuals
+# TODO Save a population as a list of indivudals (with fitness functions?)
+def makeToolbox(pop_size):
+    &#34;&#34;&#34;Make a genetic algorithm toolbox using DEAP. The toolbox uses premade functions for crossover, mutation, evaluation and fitness.
+
+    Keyword arguments:
+    pop_size -- The size of our population, or how many individuals we have
+
+    &#34;&#34;&#34;
+    # Minimizing fitness function
+    creator.create(&#34;FitnessMin&#34;, base.Fitness, weights=(-0.000001,))
+    creator.create(&#34;Individual&#34;, list, fitness=creator.FitnessMin)
+
+    # The functions that the GA knows
+    toolbox = base.Toolbox()
+
+    # Genetic functions
+    toolbox.register(&#34;mate&#34;, skimageCrossRandom)  # crossover
+    toolbox.register(&#34;mutate&#34;, mutate)  # Mutation
+    toolbox.register(&#34;evaluate&#34;, Segmentors.runAlgo)  # Fitness
+    toolbox.register(&#34;select&#34;, tools.selTournament, tournsize=5)  # Selection
+    toolbox.register(&#34;map&#34;, futures.map)  # So that we can use scoop
+
+    # TODO: May want to later do a different selection process
+
+    # We choose the parameters, for the most part, random
+    params = Segmentors.parameters()
+
+    for key in params.pkeys:
+        toolbox.register(key, random.choice, eval(params.ranges[key]))
+
+    func_seq = []
+    for key in params.pkeys:
+        func_seq.append(getattr(toolbox, key))
+
+    # Here we populate our individual with all of the parameters
+    toolbox.register(&#34;individual&#34;, tools.initCycle,
+                     creator.Individual, func_seq, n=1)
+
+    # And we make our population
+    toolbox.register(&#34;population&#34;, tools.initRepeat,
+                     list, toolbox.individual, n=pop_size)
+
+    return toolbox
+
+
+def initIndividual(icls, content):
+    &#34;&#34;&#34;Create a new individual.&#34;&#34;&#34;
+    logging.getLogger().info(f&#34;In initIndividual={content}&#34;)
+    return icls(content)
+
+
+def initPopulation(pcls, ind_init, filename):
+    &#34;&#34;&#34;Create a population by initializing our specified number of individuals.&#34;&#34;&#34;
+    with open(filename, &#34;r&#34;) as pop_file:
+        contents = json.load(pop_file)
+    return pcls(ind_init(c) for c in contents)
+
+
+class Evolver(object):
+    &#34;&#34;&#34;Perform the genetic algorithm by initializing a population and evolving it over a specified number of generations to find the optimal algorithm and parameters for the problem.
+
+    Functions:
+    newpopulation -- Initialize a new population.
+    writepop -- Records our population in the file &#34;filename&#34;.
+    readpop -- Reads in existing population from &#34;filename&#34;.
+    popfitness -- Calculates the fitness values for our population.
+    mutate -- Performs mutation and crossover on population.
+    nextgen -- Generates the next generation of our population.
+    run -- Runs the genetic algorithm.
+
+    &#34;&#34;&#34;
+
+    AllVals = []
+    p = Segmentors.parameters()
+    for key in p.pkeys:
+        AllVals.append(eval(p.ranges[key]))
+
+    def __init__(self, img, mask, pop_size=10):
+        &#34;&#34;&#34;Set default values for the variables.
+
+        Keyword arguments:
+        img -- The original training image
+        mask -- The ground truth segmentation mask for the img
+        pop_size -- Integer value denoting size of our population, 
+            or how many individuals there are (default 10)
+
+        &#34;&#34;&#34;
+        # Build Population based on size
+        self.img = img
+        self.mask = mask
+        self.tool = makeToolbox(pop_size)
+        self.hof = deap.tools.HallOfFame(10)
+        self.BestAvgs = []
+        self.gen = 0
+        self.cxpb, self.mutpb, self.flipProb = 0.9, 0.9, 0.9
+
+    def newpopulation(self):
+        &#34;&#34;&#34;Initialize a new population.&#34;&#34;&#34;
+        return self.tool.population()
+
+    def writepop(self, tpop, filename=&#39;test.json&#39;):
+        &#34;&#34;&#34;Record the population in the file &#34;filename&#34;.
+
+        Keyword arguments:
+        tpop -- The population to be recorded.
+        filename -- string denoting file in which to record 
+            the population. (default &#39;test.json&#39;)
+
+        &#34;&#34;&#34;
+        logging.getLogger().info(f&#34;Writting population to {filename}&#34;)
+        with open(filename, &#39;w&#39;) as outfile:
+            json.dump(tpop, outfile)
+
+    def readpop(self, filename=&#39;test.json&#39;):
+        &#34;&#34;&#34;Read in existing population from &#34;filename&#34;.&#34;&#34;&#34;
+        logging.getLogger().info(f&#34;Reading population from {filename}&#34;)
+        self.tool.register(&#34;population_read&#34;, initPopulation,
+                           list, creator.Individual, filename)
+
+        self.tool.register(&#34;individual_guess&#34;,
+                           initIndividual, creator.Individual)
+        self.tool.register(&#34;population_guess&#34;, initPopulation,
+                           list, self.tool.individual_guess, &#34;my_guess.json&#34;)
+
+        return self.tool.population_read()
+
+    def popfitness(self, tpop):
+        &#34;&#34;&#34;Calculate the fitness values for the population, and log general statistics about these values. Uses hall of fame (hof) to keep track of top 10 individuals.
+
+        Keyword arguments:
+        tpop -- current population
+
+        Outputs:
+        extractFits -- Fitness values for our population
+        tpop -- current population
+
+        &#34;&#34;&#34;
+        NewImage = [self.img for i in range(0, len(tpop))]
+        NewVal = [self.mask for i in range(0, len(tpop))]
+        fitnesses = map(self.tool.evaluate, NewImage, NewVal, tpop)
+
+        # TODO: Dirk is not sure exactly why we need these
+        for ind, fit in zip(tpop, fitnesses):
+            ind.fitness.values = fit
+        extractFits = [ind.fitness.values[0] for ind in tpop]
+
+        self.hof.update(tpop)
+
+        #Algo = AlgorithmSpace(AlgoParams)
+
+        # Evaluating the new population
+        leng = len(tpop)
+        mean = sum(extractFits) / leng
+        self.BestAvgs.append(mean)
+        sum1 = sum(i*i for i in extractFits)
+        stdev = abs(sum1 / leng - mean ** 2) ** 0.5
+        logging.getLogger().info(f&#34;Generation: {self.gen}&#34;)
+        logging.getLogger().info(f&#34; Min: {min(extractFits)}&#34;)
+        logging.getLogger().info(f&#34; Max: {max(extractFits)}&#34;)
+        logging.getLogger().info(f&#34; Avg: {mean}&#34;)
+        logging.getLogger().info(f&#34; Std: {stdev}&#34;)
+        logging.getLogger().info(f&#34; Size: {leng}&#34;)
+        #logging.info(&#34; Time: &#34;, time.time() - initTime)
+        logging.getLogger().info(f&#34;Best Fitness: {self.hof[0].fitness.values}&#34;)
+        logging.getLogger().info(f&#34;{self.hof[0]}&#34;)
+        # Did we improve the population?
+        pastPop = tpop
+        pastMin = min(extractFits)
+        pastMean = mean
+
+        self.gen += self.gen
+
+        return extractFits, tpop
+
+    def mutate(self, tpop):
+        &#34;&#34;&#34;Return new population with mutated individuals. Perform both mutation and crossover.
+
+        Keyword arguments:
+        tpop -- current population
+
+        Output:
+        final -- new population with mutated individuals.
+
+        &#34;&#34;&#34;
+        # Calculate next population
+
+        sz = len(tpop)
+        top = 0  # round(0.1 * sz)
+        var = round(0.4 * sz)
+        ran = sz - top - var
+
+        offspring = self.tool.select(tpop, var)
+        offspring = list(map(self.tool.clone, offspring))  # original code
+
+        # crossover
+        for child1, child2 in zip(offspring[::2], offspring[1::2]):
+            # Do we crossover?
+            if random.random() &lt; self.cxpb:
+                self.tool.mate(child1, child2)
+                # The parents may be okay values so we should keep them
+                # in the set
+                del child1.fitness.values
+                del child2.fitness.values
+
+        # mutation
+        for mutant in offspring:
+            if random.random() &lt; self.mutpb:
+                self.tool.mutate(mutant, self.AllVals, self.flipProb)
+                del mutant.fitness.values
+
+        # new
+        pop = self.tool.population()
+
+        final = offspring + pop[0:ran]
+
+        # Replacing the old population
+        return final
+
+    def nextgen(self, tpop):
+        &#34;&#34;&#34;Generate the next generation of the population.
+
+        Keyword arguments:
+        tpop -- current population
+
+        &#34;&#34;&#34;
+        fitness, tpop = self.popfitness(tpop)
+        return self.mutate(tpop)
+
+    def run(self, ngen=10, startfile=None, checkpoint=None):
+        &#34;&#34;&#34;Run the genetic algorithm, updating the population over ngen number of generations.
+
+        Keywork arguments:
+        ngen -- number of generations to run the genetic algorithm.
+        startfile -- File containing existing population (default None)
+        checkpoint -- File containing existing checkpoint (default None)
+
+        Output:
+        population -- Resulting population after ngen generations.
+        
+        &#34;&#34;&#34;
+        if startfile:
+            population = self.readpop(startfile)
+        else:
+            population = self.newpopulation()
+            if checkpoint:
+                self.writepop(population, filename=f&#34;0_{checkpoint}&#34;)
+        for g in range(1, ngen+1):
+            population = self.nextgen(population)
+            if checkpoint:
+                self.writepop(population, filename=f&#34;{g}_{checkpoint}&#34;)
+                for p in range(len(population)):
+                    logging.getLogger().info(population[p])
+        return population</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="see.GeneticSearch.initIndividual"><code class="name flex">
+<span>def <span class="ident">initIndividual</span></span>(<span>icls, content)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Create a new individual.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def initIndividual(icls, content):
+    &#34;&#34;&#34;Create a new individual.&#34;&#34;&#34;
+    logging.getLogger().info(f&#34;In initIndividual={content}&#34;)
+    return icls(content)</code></pre>
+</details>
+</dd>
+<dt id="see.GeneticSearch.initPopulation"><code class="name flex">
+<span>def <span class="ident">initPopulation</span></span>(<span>pcls, ind_init, filename)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Create a population by initializing our specified number of individuals.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def initPopulation(pcls, ind_init, filename):
+    &#34;&#34;&#34;Create a population by initializing our specified number of individuals.&#34;&#34;&#34;
+    with open(filename, &#34;r&#34;) as pop_file:
+        contents = json.load(pop_file)
+    return pcls(ind_init(c) for c in contents)</code></pre>
+</details>
+</dd>
+<dt id="see.GeneticSearch.makeToolbox"><code class="name flex">
+<span>def <span class="ident">makeToolbox</span></span>(<span>pop_size)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Make a genetic algorithm toolbox using DEAP. The toolbox uses premade functions for crossover, mutation, evaluation and fitness.</p>
+<p>Keyword arguments:
+pop_size &ndash; The size of our population, or how many individuals we have</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def makeToolbox(pop_size):
+    &#34;&#34;&#34;Make a genetic algorithm toolbox using DEAP. The toolbox uses premade functions for crossover, mutation, evaluation and fitness.
+
+    Keyword arguments:
+    pop_size -- The size of our population, or how many individuals we have
+
+    &#34;&#34;&#34;
+    # Minimizing fitness function
+    creator.create(&#34;FitnessMin&#34;, base.Fitness, weights=(-0.000001,))
+    creator.create(&#34;Individual&#34;, list, fitness=creator.FitnessMin)
+
+    # The functions that the GA knows
+    toolbox = base.Toolbox()
+
+    # Genetic functions
+    toolbox.register(&#34;mate&#34;, skimageCrossRandom)  # crossover
+    toolbox.register(&#34;mutate&#34;, mutate)  # Mutation
+    toolbox.register(&#34;evaluate&#34;, Segmentors.runAlgo)  # Fitness
+    toolbox.register(&#34;select&#34;, tools.selTournament, tournsize=5)  # Selection
+    toolbox.register(&#34;map&#34;, futures.map)  # So that we can use scoop
+
+    # TODO: May want to later do a different selection process
+
+    # We choose the parameters, for the most part, random
+    params = Segmentors.parameters()
+
+    for key in params.pkeys:
+        toolbox.register(key, random.choice, eval(params.ranges[key]))
+
+    func_seq = []
+    for key in params.pkeys:
+        func_seq.append(getattr(toolbox, key))
+
+    # Here we populate our individual with all of the parameters
+    toolbox.register(&#34;individual&#34;, tools.initCycle,
+                     creator.Individual, func_seq, n=1)
+
+    # And we make our population
+    toolbox.register(&#34;population&#34;, tools.initRepeat,
+                     list, toolbox.individual, n=pop_size)
+
+    return toolbox</code></pre>
+</details>
+</dd>
+<dt id="see.GeneticSearch.mutate"><code class="name flex">
+<span>def <span class="ident">mutate</span></span>(<span>copyChild, posVals, flipProb=0.5)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Change a few of the parameters of the weighting a random number against the flipProb.</p>
+<p>Keyword arguments:
+copyChild &ndash; the individual to mutate.
+posVals &ndash; list of lists where each list are the possible
+values for that particular parameter.
+flipProb &ndash; how likely it is that we will mutate each value.
+It is computed seperately for each value.</p>
+<p>Outputs:
+child &ndash; New, possibly mutated, individual.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mutate(copyChild, posVals, flipProb=0.5):
+    &#34;&#34;&#34;Change a few of the parameters of the weighting a random number against the flipProb.
+
+    Keyword arguments:
+    copyChild -- the individual to mutate.
+    posVals -- list of lists where each list are the possible
+                values for that particular parameter.
+    flipProb -- how likely it is that we will mutate each value.
+                It is computed seperately for each value.
+
+    Outputs:
+    child -- New, possibly mutated, individual.
+
+    &#34;&#34;&#34;
+    # Just because we chose to mutate a value doesn&#39;t mean we mutate
+    # Every aspect of the value
+    child = copy.deepcopy(copyChild)
+
+    # Not every algorithm is associated with every value
+    # Let&#39;s first see if we change the algorithm
+    randVal = random.random()
+    if randVal &lt; flipProb:
+        # Let&#39;s mutate
+        child[0] = random.choice(posVals[0])
+    # Now let&#39;s get the indexes (parameters) related to that value
+    #switcher = AlgoHelp().algoIndexes()
+    #indexes = switcher.get(child[0])
+
+    for index in range(len(posVals)):
+        randVal = random.random()
+        if randVal &lt; flipProb:
+            # Then we mutate said value
+            if index == 22:
+                # Do some special
+                X = random.choice(posVals[22])
+                Y = random.choice(posVals[23])
+                Z = random.choice(posVals[24])
+                child[index] = (X, Y, Z)
+                continue
+            child[index] = random.choice(posVals[index])
+    return child</code></pre>
+</details>
+</dd>
+<dt id="see.GeneticSearch.printBestAlgorithmCode"><code class="name flex">
+<span>def <span class="ident">printBestAlgorithmCode</span></span>(<span>individual)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Print usable code to run segmentation algorithm based on an individual's genetic representation vector.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def printBestAlgorithmCode(individual):
+    &#34;&#34;&#34;Print usable code to run segmentation algorithm based on an individual&#39;s genetic representation vector.&#34;&#34;&#34;
+    ind_algo = Segmentors.algoFromParams(individual)
+    original_function = inspect.getsource(ind_algo.evaluate)
+    function_contents = original_function[original_function.find(&#39;        &#39;):original_function.find(&#39;return&#39;)]
+    while function_contents.find(&#39;self.params&#39;) != -1:
+        print(function_contents[function_contents.find(&#39;self.params&#39;) + 
+            13:function_contents.find(&#39;]&#39;)-1])
+        function_contents = function_contents.replace(
+            function_contents[function_contents.find(&#39;self.params&#39;):function_contents.find(&#39;]&#39;)+1], 
+            str(ind_algo.params[function_contents[function_contents.find(&#39;self.params&#39;) + 
+            13:function_contents.find(&#39;]&#39;)-1]]))
+    function_contents = function_contents.replace(&#39;        &#39;, &#39;&#39;)
+    print(function_contents)</code></pre>
+</details>
+</dd>
+<dt id="see.GeneticSearch.skimageCrossRandom"><code class="name flex">
+<span>def <span class="ident">skimageCrossRandom</span></span>(<span>np1, np2)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Execute a crossover between two arrays (np1 and np2) picking a random amount of indexes to change between the two.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def skimageCrossRandom(np1, np2):
+    &#34;&#34;&#34;Execute a crossover between two arrays (np1 and np2) picking a random amount of indexes to change between the two.&#34;&#34;&#34;
+    # TODO: Only change values associated with algorithm
+    assert(len(np1) == len(np2))
+    # The number of places that we&#39;ll cross
+    crosses = random.randrange(len(np1))
+    # We pick that many crossing points
+    indexes = random.sample(range(0, len(np1)), crosses)
+    # And at those crossing points, we switch the parameters
+
+    for i in indexes:
+        np1[i], np2[i] = np2[i], np1[i]
+
+    return np1, np2</code></pre>
+</details>
+</dd>
+<dt id="see.GeneticSearch.twoPointCopy"><code class="name flex">
+<span>def <span class="ident">twoPointCopy</span></span>(<span>np1, np2)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Execute a crossover between two numpy arrays of the same length.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def twoPointCopy(np1, np2):
+    &#34;&#34;&#34;Execute a crossover between two numpy arrays of the same length.&#34;&#34;&#34;
+    assert(len(np1) == len(np2))
+    size = len(np1)
+    point1 = random.randint(1, size)
+    point2 = random.randint(1, size-1)
+    if (point2 &gt;= point1):
+        point2 += 1
+    else:  # Swap the two points
+        point1, point2 = point2, point1
+    np1[point1:point2], np2[point1:point2] = np2[point1:point2].copy(
+    ), np1[point1:point2].copy()
+    return np1, np2</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="see.GeneticSearch.Evolver"><code class="flex name class">
+<span>class <span class="ident">Evolver</span></span>
+<span>(</span><span>img, mask, pop_size=10)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Perform the genetic algorithm by initializing a population and evolving it over a specified number of generations to find the optimal algorithm and parameters for the problem.</p>
+<p>Functions:
+newpopulation &ndash; Initialize a new population.
+writepop &ndash; Records our population in the file "filename".
+readpop &ndash; Reads in existing population from "filename".
+popfitness &ndash; Calculates the fitness values for our population.
+mutate &ndash; Performs mutation and crossover on population.
+nextgen &ndash; Generates the next generation of our population.
+run &ndash; Runs the genetic algorithm.</p>
+<p>Set default values for the variables.</p>
+<p>Keyword arguments:
+img &ndash; The original training image
+mask &ndash; The ground truth segmentation mask for the img
+pop_size &ndash; Integer value denoting size of our population,
+or how many individuals there are (default 10)</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Evolver(object):
+    &#34;&#34;&#34;Perform the genetic algorithm by initializing a population and evolving it over a specified number of generations to find the optimal algorithm and parameters for the problem.
+
+    Functions:
+    newpopulation -- Initialize a new population.
+    writepop -- Records our population in the file &#34;filename&#34;.
+    readpop -- Reads in existing population from &#34;filename&#34;.
+    popfitness -- Calculates the fitness values for our population.
+    mutate -- Performs mutation and crossover on population.
+    nextgen -- Generates the next generation of our population.
+    run -- Runs the genetic algorithm.
+
+    &#34;&#34;&#34;
+
+    AllVals = []
+    p = Segmentors.parameters()
+    for key in p.pkeys:
+        AllVals.append(eval(p.ranges[key]))
+
+    def __init__(self, img, mask, pop_size=10):
+        &#34;&#34;&#34;Set default values for the variables.
+
+        Keyword arguments:
+        img -- The original training image
+        mask -- The ground truth segmentation mask for the img
+        pop_size -- Integer value denoting size of our population, 
+            or how many individuals there are (default 10)
+
+        &#34;&#34;&#34;
+        # Build Population based on size
+        self.img = img
+        self.mask = mask
+        self.tool = makeToolbox(pop_size)
+        self.hof = deap.tools.HallOfFame(10)
+        self.BestAvgs = []
+        self.gen = 0
+        self.cxpb, self.mutpb, self.flipProb = 0.9, 0.9, 0.9
+
+    def newpopulation(self):
+        &#34;&#34;&#34;Initialize a new population.&#34;&#34;&#34;
+        return self.tool.population()
+
+    def writepop(self, tpop, filename=&#39;test.json&#39;):
+        &#34;&#34;&#34;Record the population in the file &#34;filename&#34;.
+
+        Keyword arguments:
+        tpop -- The population to be recorded.
+        filename -- string denoting file in which to record 
+            the population. (default &#39;test.json&#39;)
+
+        &#34;&#34;&#34;
+        logging.getLogger().info(f&#34;Writting population to {filename}&#34;)
+        with open(filename, &#39;w&#39;) as outfile:
+            json.dump(tpop, outfile)
+
+    def readpop(self, filename=&#39;test.json&#39;):
+        &#34;&#34;&#34;Read in existing population from &#34;filename&#34;.&#34;&#34;&#34;
+        logging.getLogger().info(f&#34;Reading population from {filename}&#34;)
+        self.tool.register(&#34;population_read&#34;, initPopulation,
+                           list, creator.Individual, filename)
+
+        self.tool.register(&#34;individual_guess&#34;,
+                           initIndividual, creator.Individual)
+        self.tool.register(&#34;population_guess&#34;, initPopulation,
+                           list, self.tool.individual_guess, &#34;my_guess.json&#34;)
+
+        return self.tool.population_read()
+
+    def popfitness(self, tpop):
+        &#34;&#34;&#34;Calculate the fitness values for the population, and log general statistics about these values. Uses hall of fame (hof) to keep track of top 10 individuals.
+
+        Keyword arguments:
+        tpop -- current population
+
+        Outputs:
+        extractFits -- Fitness values for our population
+        tpop -- current population
+
+        &#34;&#34;&#34;
+        NewImage = [self.img for i in range(0, len(tpop))]
+        NewVal = [self.mask for i in range(0, len(tpop))]
+        fitnesses = map(self.tool.evaluate, NewImage, NewVal, tpop)
+
+        # TODO: Dirk is not sure exactly why we need these
+        for ind, fit in zip(tpop, fitnesses):
+            ind.fitness.values = fit
+        extractFits = [ind.fitness.values[0] for ind in tpop]
+
+        self.hof.update(tpop)
+
+        #Algo = AlgorithmSpace(AlgoParams)
+
+        # Evaluating the new population
+        leng = len(tpop)
+        mean = sum(extractFits) / leng
+        self.BestAvgs.append(mean)
+        sum1 = sum(i*i for i in extractFits)
+        stdev = abs(sum1 / leng - mean ** 2) ** 0.5
+        logging.getLogger().info(f&#34;Generation: {self.gen}&#34;)
+        logging.getLogger().info(f&#34; Min: {min(extractFits)}&#34;)
+        logging.getLogger().info(f&#34; Max: {max(extractFits)}&#34;)
+        logging.getLogger().info(f&#34; Avg: {mean}&#34;)
+        logging.getLogger().info(f&#34; Std: {stdev}&#34;)
+        logging.getLogger().info(f&#34; Size: {leng}&#34;)
+        #logging.info(&#34; Time: &#34;, time.time() - initTime)
+        logging.getLogger().info(f&#34;Best Fitness: {self.hof[0].fitness.values}&#34;)
+        logging.getLogger().info(f&#34;{self.hof[0]}&#34;)
+        # Did we improve the population?
+        pastPop = tpop
+        pastMin = min(extractFits)
+        pastMean = mean
+
+        self.gen += self.gen
+
+        return extractFits, tpop
+
+    def mutate(self, tpop):
+        &#34;&#34;&#34;Return new population with mutated individuals. Perform both mutation and crossover.
+
+        Keyword arguments:
+        tpop -- current population
+
+        Output:
+        final -- new population with mutated individuals.
+
+        &#34;&#34;&#34;
+        # Calculate next population
+
+        sz = len(tpop)
+        top = 0  # round(0.1 * sz)
+        var = round(0.4 * sz)
+        ran = sz - top - var
+
+        offspring = self.tool.select(tpop, var)
+        offspring = list(map(self.tool.clone, offspring))  # original code
+
+        # crossover
+        for child1, child2 in zip(offspring[::2], offspring[1::2]):
+            # Do we crossover?
+            if random.random() &lt; self.cxpb:
+                self.tool.mate(child1, child2)
+                # The parents may be okay values so we should keep them
+                # in the set
+                del child1.fitness.values
+                del child2.fitness.values
+
+        # mutation
+        for mutant in offspring:
+            if random.random() &lt; self.mutpb:
+                self.tool.mutate(mutant, self.AllVals, self.flipProb)
+                del mutant.fitness.values
+
+        # new
+        pop = self.tool.population()
+
+        final = offspring + pop[0:ran]
+
+        # Replacing the old population
+        return final
+
+    def nextgen(self, tpop):
+        &#34;&#34;&#34;Generate the next generation of the population.
+
+        Keyword arguments:
+        tpop -- current population
+
+        &#34;&#34;&#34;
+        fitness, tpop = self.popfitness(tpop)
+        return self.mutate(tpop)
+
+    def run(self, ngen=10, startfile=None, checkpoint=None):
+        &#34;&#34;&#34;Run the genetic algorithm, updating the population over ngen number of generations.
+
+        Keywork arguments:
+        ngen -- number of generations to run the genetic algorithm.
+        startfile -- File containing existing population (default None)
+        checkpoint -- File containing existing checkpoint (default None)
+
+        Output:
+        population -- Resulting population after ngen generations.
+        
+        &#34;&#34;&#34;
+        if startfile:
+            population = self.readpop(startfile)
+        else:
+            population = self.newpopulation()
+            if checkpoint:
+                self.writepop(population, filename=f&#34;0_{checkpoint}&#34;)
+        for g in range(1, ngen+1):
+            population = self.nextgen(population)
+            if checkpoint:
+                self.writepop(population, filename=f&#34;{g}_{checkpoint}&#34;)
+                for p in range(len(population)):
+                    logging.getLogger().info(population[p])
+        return population</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="see.GeneticSearch.Evolver.AllVals"><code class="name">var <span class="ident">AllVals</span></code></dt>
+<dd>
+<section class="desc"><p>Built-in mutable sequence.</p>
+<p>If no argument is given, the constructor creates a new empty list.
+The argument must be an iterable if specified.</p></section>
+</dd>
+<dt id="see.GeneticSearch.Evolver.key"><code class="name">var <span class="ident">key</span></code></dt>
+<dd>
+<section class="desc"><p>str(object='') -&gt; str
+str(bytes_or_buffer[, encoding[, errors]]) -&gt; str</p>
+<p>Create a new string object from the given object. If encoding or
+errors is specified, then the object must expose a data buffer
+that will be decoded using the given encoding and error handler.
+Otherwise, returns the result of object.<strong>str</strong>() (if defined)
+or repr(object).
+encoding defaults to sys.getdefaultencoding().
+errors defaults to 'strict'.</p></section>
+</dd>
+<dt id="see.GeneticSearch.Evolver.p"><code class="name">var <span class="ident">p</span></code></dt>
+<dd>
+<section class="desc"><p>Construct an ordered dictionary that represents the search space.</p>
+<p>Functions:
+printparam &ndash; returns description for each parameter
+tolist &ndash; converts dictionary of params into list
+fromlist &ndash; converts individual into dictionary of params</p></section>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="see.GeneticSearch.Evolver.mutate"><code class="name flex">
+<span>def <span class="ident">mutate</span></span>(<span>self, tpop)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Return new population with mutated individuals. Perform both mutation and crossover.</p>
+<p>Keyword arguments:
+tpop &ndash; current population</p>
+<p>Output:
+final &ndash; new population with mutated individuals.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mutate(self, tpop):
+    &#34;&#34;&#34;Return new population with mutated individuals. Perform both mutation and crossover.
+
+    Keyword arguments:
+    tpop -- current population
+
+    Output:
+    final -- new population with mutated individuals.
+
+    &#34;&#34;&#34;
+    # Calculate next population
+
+    sz = len(tpop)
+    top = 0  # round(0.1 * sz)
+    var = round(0.4 * sz)
+    ran = sz - top - var
+
+    offspring = self.tool.select(tpop, var)
+    offspring = list(map(self.tool.clone, offspring))  # original code
+
+    # crossover
+    for child1, child2 in zip(offspring[::2], offspring[1::2]):
+        # Do we crossover?
+        if random.random() &lt; self.cxpb:
+            self.tool.mate(child1, child2)
+            # The parents may be okay values so we should keep them
+            # in the set
+            del child1.fitness.values
+            del child2.fitness.values
+
+    # mutation
+    for mutant in offspring:
+        if random.random() &lt; self.mutpb:
+            self.tool.mutate(mutant, self.AllVals, self.flipProb)
+            del mutant.fitness.values
+
+    # new
+    pop = self.tool.population()
+
+    final = offspring + pop[0:ran]
+
+    # Replacing the old population
+    return final</code></pre>
+</details>
+</dd>
+<dt id="see.GeneticSearch.Evolver.newpopulation"><code class="name flex">
+<span>def <span class="ident">newpopulation</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Initialize a new population.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def newpopulation(self):
+    &#34;&#34;&#34;Initialize a new population.&#34;&#34;&#34;
+    return self.tool.population()</code></pre>
+</details>
+</dd>
+<dt id="see.GeneticSearch.Evolver.nextgen"><code class="name flex">
+<span>def <span class="ident">nextgen</span></span>(<span>self, tpop)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Generate the next generation of the population.</p>
+<p>Keyword arguments:
+tpop &ndash; current population</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nextgen(self, tpop):
+    &#34;&#34;&#34;Generate the next generation of the population.
+
+    Keyword arguments:
+    tpop -- current population
+
+    &#34;&#34;&#34;
+    fitness, tpop = self.popfitness(tpop)
+    return self.mutate(tpop)</code></pre>
+</details>
+</dd>
+<dt id="see.GeneticSearch.Evolver.popfitness"><code class="name flex">
+<span>def <span class="ident">popfitness</span></span>(<span>self, tpop)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Calculate the fitness values for the population, and log general statistics about these values. Uses hall of fame (hof) to keep track of top 10 individuals.</p>
+<p>Keyword arguments:
+tpop &ndash; current population</p>
+<p>Outputs:
+extractFits &ndash; Fitness values for our population
+tpop &ndash; current population</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def popfitness(self, tpop):
+    &#34;&#34;&#34;Calculate the fitness values for the population, and log general statistics about these values. Uses hall of fame (hof) to keep track of top 10 individuals.
+
+    Keyword arguments:
+    tpop -- current population
+
+    Outputs:
+    extractFits -- Fitness values for our population
+    tpop -- current population
+
+    &#34;&#34;&#34;
+    NewImage = [self.img for i in range(0, len(tpop))]
+    NewVal = [self.mask for i in range(0, len(tpop))]
+    fitnesses = map(self.tool.evaluate, NewImage, NewVal, tpop)
+
+    # TODO: Dirk is not sure exactly why we need these
+    for ind, fit in zip(tpop, fitnesses):
+        ind.fitness.values = fit
+    extractFits = [ind.fitness.values[0] for ind in tpop]
+
+    self.hof.update(tpop)
+
+    #Algo = AlgorithmSpace(AlgoParams)
+
+    # Evaluating the new population
+    leng = len(tpop)
+    mean = sum(extractFits) / leng
+    self.BestAvgs.append(mean)
+    sum1 = sum(i*i for i in extractFits)
+    stdev = abs(sum1 / leng - mean ** 2) ** 0.5
+    logging.getLogger().info(f&#34;Generation: {self.gen}&#34;)
+    logging.getLogger().info(f&#34; Min: {min(extractFits)}&#34;)
+    logging.getLogger().info(f&#34; Max: {max(extractFits)}&#34;)
+    logging.getLogger().info(f&#34; Avg: {mean}&#34;)
+    logging.getLogger().info(f&#34; Std: {stdev}&#34;)
+    logging.getLogger().info(f&#34; Size: {leng}&#34;)
+    #logging.info(&#34; Time: &#34;, time.time() - initTime)
+    logging.getLogger().info(f&#34;Best Fitness: {self.hof[0].fitness.values}&#34;)
+    logging.getLogger().info(f&#34;{self.hof[0]}&#34;)
+    # Did we improve the population?
+    pastPop = tpop
+    pastMin = min(extractFits)
+    pastMean = mean
+
+    self.gen += self.gen
+
+    return extractFits, tpop</code></pre>
+</details>
+</dd>
+<dt id="see.GeneticSearch.Evolver.readpop"><code class="name flex">
+<span>def <span class="ident">readpop</span></span>(<span>self, filename='test.json')</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Read in existing population from "filename".</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def readpop(self, filename=&#39;test.json&#39;):
+    &#34;&#34;&#34;Read in existing population from &#34;filename&#34;.&#34;&#34;&#34;
+    logging.getLogger().info(f&#34;Reading population from {filename}&#34;)
+    self.tool.register(&#34;population_read&#34;, initPopulation,
+                       list, creator.Individual, filename)
+
+    self.tool.register(&#34;individual_guess&#34;,
+                       initIndividual, creator.Individual)
+    self.tool.register(&#34;population_guess&#34;, initPopulation,
+                       list, self.tool.individual_guess, &#34;my_guess.json&#34;)
+
+    return self.tool.population_read()</code></pre>
+</details>
+</dd>
+<dt id="see.GeneticSearch.Evolver.run"><code class="name flex">
+<span>def <span class="ident">run</span></span>(<span>self, ngen=10, startfile=None, checkpoint=None)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Run the genetic algorithm, updating the population over ngen number of generations.</p>
+<p>Keywork arguments:
+ngen &ndash; number of generations to run the genetic algorithm.
+startfile &ndash; File containing existing population (default None)
+checkpoint &ndash; File containing existing checkpoint (default None)</p>
+<p>Output:
+population &ndash; Resulting population after ngen generations.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def run(self, ngen=10, startfile=None, checkpoint=None):
+    &#34;&#34;&#34;Run the genetic algorithm, updating the population over ngen number of generations.
+
+    Keywork arguments:
+    ngen -- number of generations to run the genetic algorithm.
+    startfile -- File containing existing population (default None)
+    checkpoint -- File containing existing checkpoint (default None)
+
+    Output:
+    population -- Resulting population after ngen generations.
+    
+    &#34;&#34;&#34;
+    if startfile:
+        population = self.readpop(startfile)
+    else:
+        population = self.newpopulation()
+        if checkpoint:
+            self.writepop(population, filename=f&#34;0_{checkpoint}&#34;)
+    for g in range(1, ngen+1):
+        population = self.nextgen(population)
+        if checkpoint:
+            self.writepop(population, filename=f&#34;{g}_{checkpoint}&#34;)
+            for p in range(len(population)):
+                logging.getLogger().info(population[p])
+    return population</code></pre>
+</details>
+</dd>
+<dt id="see.GeneticSearch.Evolver.writepop"><code class="name flex">
+<span>def <span class="ident">writepop</span></span>(<span>self, tpop, filename='test.json')</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Record the population in the file "filename".</p>
+<p>Keyword arguments:
+tpop &ndash; The population to be recorded.
+filename &ndash; string denoting file in which to record
+the population. (default 'test.json')</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def writepop(self, tpop, filename=&#39;test.json&#39;):
+    &#34;&#34;&#34;Record the population in the file &#34;filename&#34;.
+
+    Keyword arguments:
+    tpop -- The population to be recorded.
+    filename -- string denoting file in which to record 
+        the population. (default &#39;test.json&#39;)
+
+    &#34;&#34;&#34;
+    logging.getLogger().info(f&#34;Writting population to {filename}&#34;)
+    with open(filename, &#39;w&#39;) as outfile:
+        json.dump(tpop, outfile)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="see" href="index.html">see</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="see.GeneticSearch.initIndividual" href="#see.GeneticSearch.initIndividual">initIndividual</a></code></li>
+<li><code><a title="see.GeneticSearch.initPopulation" href="#see.GeneticSearch.initPopulation">initPopulation</a></code></li>
+<li><code><a title="see.GeneticSearch.makeToolbox" href="#see.GeneticSearch.makeToolbox">makeToolbox</a></code></li>
+<li><code><a title="see.GeneticSearch.mutate" href="#see.GeneticSearch.mutate">mutate</a></code></li>
+<li><code><a title="see.GeneticSearch.printBestAlgorithmCode" href="#see.GeneticSearch.printBestAlgorithmCode">printBestAlgorithmCode</a></code></li>
+<li><code><a title="see.GeneticSearch.skimageCrossRandom" href="#see.GeneticSearch.skimageCrossRandom">skimageCrossRandom</a></code></li>
+<li><code><a title="see.GeneticSearch.twoPointCopy" href="#see.GeneticSearch.twoPointCopy">twoPointCopy</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="see.GeneticSearch.Evolver" href="#see.GeneticSearch.Evolver">Evolver</a></code></h4>
+<ul class="two-column">
+<li><code><a title="see.GeneticSearch.Evolver.AllVals" href="#see.GeneticSearch.Evolver.AllVals">AllVals</a></code></li>
+<li><code><a title="see.GeneticSearch.Evolver.key" href="#see.GeneticSearch.Evolver.key">key</a></code></li>
+<li><code><a title="see.GeneticSearch.Evolver.mutate" href="#see.GeneticSearch.Evolver.mutate">mutate</a></code></li>
+<li><code><a title="see.GeneticSearch.Evolver.newpopulation" href="#see.GeneticSearch.Evolver.newpopulation">newpopulation</a></code></li>
+<li><code><a title="see.GeneticSearch.Evolver.nextgen" href="#see.GeneticSearch.Evolver.nextgen">nextgen</a></code></li>
+<li><code><a title="see.GeneticSearch.Evolver.p" href="#see.GeneticSearch.Evolver.p">p</a></code></li>
+<li><code><a title="see.GeneticSearch.Evolver.popfitness" href="#see.GeneticSearch.Evolver.popfitness">popfitness</a></code></li>
+<li><code><a title="see.GeneticSearch.Evolver.readpop" href="#see.GeneticSearch.Evolver.readpop">readpop</a></code></li>
+<li><code><a title="see.GeneticSearch.Evolver.run" href="#see.GeneticSearch.Evolver.run">run</a></code></li>
+<li><code><a title="see.GeneticSearch.Evolver.writepop" href="#see.GeneticSearch.Evolver.writepop">writepop</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.2</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>
