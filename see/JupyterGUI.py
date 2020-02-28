@@ -12,6 +12,7 @@ def showtwo(img, img2):
     ax.imshow(img)
     ax = fig.add_subplot(1,2,2)
     ax.imshow(img2)
+    return fig
     
 def showthree(im, img, img2):
     """Show three images side by side."""
@@ -22,6 +23,7 @@ def showthree(im, img, img2):
     ax.imshow(img)
     ax = fig.add_subplot(1,3,3)
     ax.imshow(img2)
+    return fig
     
 def showSegment(im, mask):
     """Show both options for segmenting using the current mask.
@@ -35,7 +37,8 @@ def showSegment(im, mask):
     im2 = im.copy()
     im1[mask>0,:] = 0
     im2[mask==0,:] = 0
-    showtwo(im1,im2)
+    fig = showtwo(im1,im2)
+    return fig
 
 
 def segmentwidget(params, img, gmask):
@@ -72,7 +75,7 @@ def segmentwidget(params, img, gmask):
             seg.params[k] = kwargs[k]
         mask = seg.evaluate(img)
         fit = Segmentors.FitnessFunction(mask,gmask)
-        showSegment(img,mask)
+        fig = showSegment(img,mask)
         plt.title(fit)
         
 

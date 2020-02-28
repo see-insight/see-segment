@@ -334,7 +334,7 @@ class Felzenszwalb(segmentor):
             self.params["scale"],
             self.params["sigma"],
             self.params["min_size"],
-            multichannel=True,
+            multichannel=multichannel,
         )
         return output
 
@@ -424,7 +424,8 @@ class QuickShift(segmentor):
             self.params["max_dist"] = 60
             self.params["sigma"] = 5
             self.params["seed"] = 1
-        self.paramindexes = ["kernel_size", "max_dist", "sigma", "seed"]
+            self.params["ratio"] = 2
+        self.paramindexes = ["kernel_size", "max_dist", "sigma", "seed", "ratio"]
 
     def evaluate(self, img):
         """Evaluate segmentation algorithm on training image.
@@ -437,7 +438,7 @@ class QuickShift(segmentor):
         
         """
         output = skimage.segmentation.quickshift(
-            img,
+            color.gray2rgb(img),
             ratio=self.params["ratio"],
             kernel_size=self.params["kernel_size"],
             max_dist=self.params["max_dist"],
@@ -521,6 +522,7 @@ class Chan_Vese(segmentor):
             self.params["lambda"] = (10, 20)
             self.params["iterations"] = 10
             self.params["dt"] = 0.10
+            self.params["tolerance"] = 0.001
             self.params["init_level_set_chan"] = "small disk"
         self.paramindexes = ["mu", "lambda", "iterations", "dt", "init_level_set_chan"]
 
@@ -665,7 +667,7 @@ class MorphGeodesicActiveContour(segmentor):
         """
         # We run the inverse_gaussian_gradient to get the image to use
         gimage = skimage.segmentation.inverse_gaussian_gradient(
-            img, self.params["alpha"], self.params["sigma"]
+            color.rgb2gray(img), self.params["alpha"], self.params["sigma"]
         )
         zeros = 0
         output = skimage.segmentation.morphological_geodesic_active_contour(
@@ -784,11 +786,11 @@ def FitnessFunction(inferred, groundTruth):
     
     error = (p + 2) ** np.log(abs(m - n) + 2)  # / (L >= n)
     # error = (repeat_count + 2)**(abs(m - n)+1)
-    print(f"TESTING - L={L} < n={n} p={p} m={m} error = {error} ")
+    # print(f"TESTING - L={L} < n={n} p={p} m={m} error = {error} ")
     if (L < n) or error <= 0 or error == np.inf or error == np.nan:
         logging.warning(
             f"WARNING: Fitness bounds exceeded, using Maxsize - {L} < {n} or {error} <= 0 or {error} == np.inf or {error} == np.nan:"
         )
         error = sys.maxsize
         # print(error)
-    return [error, best]
+    return [error, ]

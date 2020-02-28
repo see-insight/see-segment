@@ -14,6 +14,7 @@ import logging
 import inspect
 
 from see import Segmentors
+# import Segmentors
 
 def printBestAlgorithmCode(individual):
     """Print usable code to run segmentation algorithm based on an individual's genetic representation vector."""
@@ -21,17 +22,21 @@ def printBestAlgorithmCode(individual):
     original_function = inspect.getsource(ind_algo.evaluate)
     function_contents = original_function[original_function.find('        '):original_function.find('return')]
     while function_contents.find('self.params') != -1:
-        print(function_contents[function_contents.find('self.params') + 
-            13:function_contents.find(']')-1])
+        # print(function_contents[function_contents.find('self.params') + 
+        #     13:function_contents.find(']')-1])
         function_contents = function_contents.replace(
             function_contents[function_contents.find('self.params'):function_contents.find(']')+1], 
             str(ind_algo.params[function_contents[function_contents.find('self.params') + 
             13:function_contents.find(']')-1]]))
     function_contents = function_contents.replace('        ', '')
+    function_contents = function_contents[function_contents.find('\n\"\"\"')+5:]
     print(function_contents)
+    return function_contents
 
-def twoPointCopy(np1, np2):
+def twoPointCopy(np1, np2, seed = False):
     """Execute a crossover between two numpy arrays of the same length."""
+    if seed == True:
+        random.seed(2)
     assert(len(np1) == len(np2))
     size = len(np1)
     point1 = random.randint(1, size)
@@ -44,8 +49,10 @@ def twoPointCopy(np1, np2):
     ), np1[point1:point2].copy()
     return np1, np2
 
-def skimageCrossRandom(np1, np2):
+def skimageCrossRandom(np1, np2, seed = False):
     """Execute a crossover between two arrays (np1 and np2) picking a random amount of indexes to change between the two."""
+    if seed == True:
+        random.seed(2)
     # TODO: Only change values associated with algorithm
     assert(len(np1) == len(np2))
     # The number of places that we'll cross
@@ -60,7 +67,7 @@ def skimageCrossRandom(np1, np2):
     return np1, np2
 
 
-def mutate(copyChild, posVals, flipProb=0.5):
+def mutate(copyChild, posVals, flipProb=0.5, seed = False):
     """Change a few of the parameters of the weighting a random number against the flipProb.
 
     Keyword arguments:
@@ -74,6 +81,8 @@ def mutate(copyChild, posVals, flipProb=0.5):
     child -- New, possibly mutated, individual.
 
     """
+    if seed == True:
+        random.seed(2)
     # Just because we chose to mutate a value doesn't mean we mutate
     # Every aspect of the value
     child = copy.deepcopy(copyChild)
