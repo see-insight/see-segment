@@ -1,34 +1,33 @@
-"""Segmentor library designed to learn how to segment images using GAs. This libary actually does not incode the GA itself, instead it just defines the search parameters the evaluation funtions and the fitness function (comming soon)."""
-# TODO: Research project-clean up the parameters class to reduce the search space
-# TODO: Change the seed from a number to a fraction 0-1 which is scaled to image rows and columns
-# TODO: Enumerate teh word based measures.
+"""Segmentor library designed to learn how to segment images using GAs.
+ This libary actually does not incode the GA itself, instead it just defines
+  the search parameters the evaluation funtions and the fitness function (comming soon)."""
+# DO: Research project-clean up the parameters class to reduce the search space
+# DO: Change the seed from a number to a fraction 0-1 which is scaled to image rows and columns
+# DO: Enumerate teh word based measures.
 
 from collections import OrderedDict
 import sys
-
+import logging
 import numpy as np
 import skimage
-from skimage import segmentation
 from skimage import color
-from PIL import Image
-import pandas as pd  # used in fitness? Can it be removed?
-import logging
 
 # List of all algorithms
 algorithmspace = dict()
 
-def runAlgo(img, groundImg, individual, returnMask=False):
+def runAlgo(img, ground_img, individual, return_mask=False):
     """Run and evaluate the performance of an individual.
 
     Keyword arguments:
     img -- training image
-    groundImg -- the ground truth for the image mask
+    ground_img -- the ground truth for the image mask
     individual -- the list representing an individual in our population
-    returnMask -- Boolean value indicating whether to return resulting mask for the individual or not (default False)
+    return_mask -- Boolean value indicating whether to return resulting
+     mask for the individual or not (default False)
 
     Output:
     fitness -- resulting fitness value for the individual
-    mask -- resulting image mask associated with the individual (if returnMask=True)
+    mask -- resulting image mask associated with the individual (if return_mask=True)
 
     """
     logging.getLogger().info(f"Running Algorithm {individual[0]}")
@@ -36,15 +35,16 @@ def runAlgo(img, groundImg, individual, returnMask=False):
     seg = algoFromParams(individual)
     mask = seg.evaluate(img)
     logging.getLogger().info("Calculating Fitness")
-    fitness = FitnessFunction(mask, groundImg)
-    if returnMask:
+    fitness = FitnessFunction(mask, ground_img)
+    if return_mask:
         return [fitness, mask]
     else:
         return fitness
 
 
 def algoFromParams(individual):
-    """Convert an individual's param list to an algorithm. Assumes order defined in the parameters class.
+    """Convert an individual's param list to an algorithm. Assumes order
+     defined in the parameters class.
 
     Keyword arguments:
     individual -- the list representing an individual in our population
@@ -62,7 +62,7 @@ def algoFromParams(individual):
 
 class parameters(OrderedDict):
     """Construct an ordered dictionary that represents the search space.
-    
+
     Functions:
     printparam -- returns description for each parameter
     tolist -- converts dictionary of params into list
@@ -224,9 +224,9 @@ class segmentor(object):
         if paramlist:
             self.params.fromlist(paramlist)
 
-    def evaluate(self, im):
+    def evaluate(self, img):
         """Run segmentation algorithm to get inferred mask."""
-        return np.zeros(im.shape[0:1])
+        return np.zeros(img.shape[0:1])
 
     def __str__(self):
         """Return params for algorithm."""
@@ -237,16 +237,18 @@ class segmentor(object):
 
 
 class ColorThreshold(segmentor):
-    """Peform Color Thresholding segmentation algorithm. Segments parts of the image based on the numerical values for the respective channel.
+    """Peform Color Thresholding segmentation algorithm. Segments parts of the image
+     based on the numerical values for the respective channel.
 
     Parameters:
-    mx -- maximum thresholding value
-    mn -- minimum thresholding value
+    my_mx -- maximum thresholding value
+    my_mn -- minimum thresholding value
 
     """
 
     def __init__(self, paramlist=None):
-        """Get parameters from parameter list that are used in segmentation algorithm. Assign default values to these parameters."""
+        """Get parameters from parameter list that are used in segmentation algorithm.
+         Assign default values to these parameters."""
         super(ColorThreshold, self).__init__(paramlist)
         if not paramlist:
             self.params["algorithm"] = "CT"
@@ -264,7 +266,7 @@ class ColorThreshold(segmentor):
         output -- resulting segmentation mask from algorithm.
 
         """
-        channel_num = 1  # TODO: Need to make this a searchable parameter.
+        channel_num = 1  # DO: Need to make this a searchable parameter.
         if len(img.shape) > 2:
             if channel_num < img.shape[2]:
                 channel = img[:, :, channel_num]
@@ -273,16 +275,16 @@ class ColorThreshold(segmentor):
         else:
             channel = img
         pscale = np.max(channel)
-        mx = self.params["sigma"] * pscale
-        mn = self.params["mu"] * pscale
-        if mx < mn:
-            temp = mx
-            mx = mn
-            mn = temp
+        my_mx = self.params["sigma"] * pscale
+        my_mn = self.params["mu"] * pscale
+        if my_mx < my_mn:
+            temp = my_mx
+            my_mx = my_mn
+            my_mn = temp
 
         output = np.ones(channel.shape)
-        output[channel < mn] = 0
-        output[channel > mx] = 0
+        output[channel < my_mn] = 0
+        output[channel > my_mx] = 0
 
         return output
 
@@ -290,7 +292,9 @@ class ColorThreshold(segmentor):
 algorithmspace["CT"] = ColorThreshold
 
 class Felzenszwalb(segmentor):
-    """Perform Felzenszwalb segmentation algorithm. ONLY WORKS FOR RGB. The felzenszwalb algorithms computes a graph based on the segmentation. Produces an oversegmentation of the multichannel using min-span tree. Returns an integer mask indicating the segment labels.
+    """Perform Felzenszwalb segmentation algorithm. ONLY WORKS FOR RGB. The felzenszwalb
+     algorithms computes a graph based on the segmentation. Produces an oversegmentation
+     of the multichannel using min-span tree. Returns an integer mask indicating the segment labels.
 
     Parameters:
     scale -- float, higher meanse larger clusters
@@ -307,7 +311,8 @@ class Felzenszwalb(segmentor):
         return myhelp
 
     def __init__(self, paramlist=None):
-        """Get parameters from parameter list that are used in segmentation algorithm. Assign default values to these parameters."""
+        """Get parameters from parameter list that are used in segmentation algorithm.
+         Assign default values to these parameters."""
         super(Felzenszwalb, self).__init__(paramlist)
         if not paramlist:
             self.params["algorithm"] = "FB"
@@ -324,7 +329,7 @@ class Felzenszwalb(segmentor):
 
         Output:
         output -- resulting segmentation mask from algorithm.
-        
+
         """
         multichannel = False
         if len(img.shape) > 2:
@@ -342,14 +347,15 @@ class Felzenszwalb(segmentor):
 algorithmspace["FB"] = Felzenszwalb
 
 class Slic(segmentor):
-    """Perform the Slic segmentation algorithm. Segments k-means clustering in Color space (x, y, z). Returns a 2D or 3D array of labels.
+    """Perform the Slic segmentation algorithm. Segments k-means clustering in Color space
+     (x, y, z). Returns a 2D or 3D array of labels.
 
     Parameters:
     image -- ndarray, input image
-    n_segments -- int, approximate number of labels in segmented output image 
+    n_segments -- int, approximate number of labels in segmented output image
     compactness -- float, Balances color proximity and space proximity.
         Higher values mean more weight to space proximity (superpixels
-        become more square/cubic) Recommended log scale values (0.01, 
+        become more square/cubic) Recommended log scale values (0.01,
         0.1, 1, 10, 100, etc)
     max_iter -- int, max number of iterations of k-means
     sigma -- float or (3,) shape array of floats, width of Guassian
@@ -362,7 +368,8 @@ class Slic(segmentor):
     """
 
     def __init__(self, paramlist=None):
-        """Get parameters from parameter list that are used in segmentation algorithm. Assign default values to these parameters."""
+        """Get parameters from parameter list that are used in segmentation algorithm.
+         Assign default values to these parameters."""
         super(Slic, self).__init__(paramlist)
         if not paramlist:
             self.params["algorithm"] = "SC"
@@ -380,7 +387,7 @@ class Slic(segmentor):
 
         Output:
         output -- resulting segmentation mask from algorithm.
-        
+
         """
         multichannel = False
         if len(img.shape) > 2:
@@ -400,13 +407,14 @@ class Slic(segmentor):
 algorithmspace["SC"] = Slic
 
 class QuickShift(segmentor):
-    """Perform the Quick Shift segmentation algorithm. Segments images with quickshift clustering in Color (x,y) space. Returns ndarray segmentation mask of the labels.
+    """Perform the Quick Shift segmentation algorithm. Segments images with quickshift
+     clustering in Color (x,y) space. Returns ndarray segmentation mask of the labels.
 
     Parameters:
     image -- ndarray, input image
-    ratio -- float, balances color-space proximity & image-space 
+    ratio -- float, balances color-space proximity & image-space
         proximity. Higher vals give more weight to color-space
-    kernel_size: float, Width of Guassian kernel using smoothing. 
+    kernel_size: float, Width of Guassian kernel using smoothing.
         Higher means fewer clusters
     max_dist -- float, Cut-off point for data distances. Higher means fewer clusters
     sigma -- float, Width of Guassian smoothing as preprocessing.
@@ -416,7 +424,8 @@ class QuickShift(segmentor):
     """
 
     def __init__(self, paramlist=None):
-        """Get parameters from parameter list that are used in segmentation algorithm. Assign default values to these parameters."""
+        """Get parameters from parameter list that are used in segmentation algorithm.
+         Assign default values to these parameters."""
         super(QuickShift, self).__init__(paramlist)
         if not paramlist:
             self.params["algorithm"] = "QS"
@@ -435,7 +444,7 @@ class QuickShift(segmentor):
 
         Output:
         output -- resulting segmentation mask from algorithm.
-        
+
         """
         output = skimage.segmentation.quickshift(
             color.gray2rgb(img),
@@ -451,11 +460,13 @@ class QuickShift(segmentor):
 algorithmspace["QS"] = QuickShift
 
 class Watershed(segmentor):
-    """Perform the Watershed segmentation algorithm. Uses user-markers. treats markers as basins and 'floods' them. Especially good if overlapping objects. Returns a labeled image ndarray.
+    """Perform the Watershed segmentation algorithm. Uses user-markers.
+     treats markers as basins and 'floods' them. Especially good if overlapping objects.
+      Returns a labeled image ndarray.
 
     Parameters:
     image -- ndarray, input array
-    compactness -- float, compactness of the basins. Higher values 
+    compactness -- float, compactness of the basins. Higher values
         make more regularly-shaped basin.
 
     """
@@ -465,7 +476,8 @@ class Watershed(segmentor):
     # abbreviation for algorithm = WS
 
     def __init__(self, paramlist=None):
-        """Get parameters from parameter list that are used in segmentation algorithm. Assign default values to these parameters."""
+        """Get parameters from parameter list that are used in segmentation algorithm.
+         Assign default values to these parameters."""
         super(Watershed, self).__init__(paramlist)
         if not paramlist:
             self.params["algorithm"] = "WS"
@@ -480,7 +492,7 @@ class Watershed(segmentor):
 
         Output:
         output -- resulting segmentation mask from algorithm.
-        
+
         """
         output = skimage.segmentation.watershed(
             img, markers=None, compactness=self.params["compactness"]
@@ -491,20 +503,21 @@ class Watershed(segmentor):
 algorithmspace["WS"] = Watershed
 
 class Chan_Vese(segmentor):
-    """Peform Chan Vese segmentation algorithm. ONLY GRAYSCALE. Segments objects without clear boundaries. Returns segmentation array of algorithm.
-    
+    """Peform Chan Vese segmentation algorithm. ONLY GRAYSCALE. Segments objects
+     without clear boundaries. Returns segmentation array of algorithm.
+
     Parameters:
     image -- ndarray grayscale image to be segmented
-    mu -- float, 'edge length' weight parameter. Higher mu vals make a 
+    mu -- float, 'edge length' weight parameter. Higher mu vals make a
         'round edge' closer to zero will detect smaller objects. Typical
         values are from 0 - 1.
-    lambda1 -- float 'diff from average' weight param to determine if 
-        output region is True. If lower than lambda1, the region has a 
+    lambda1 -- float 'diff from average' weight param to determine if
+        output region is True. If lower than lambda1, the region has a
         larger range of values than the other
-    lambda2 -- float 'diff from average' weight param to determine if 
-        output region is False. If lower than lambda1, the region will 
+    lambda2 -- float 'diff from average' weight param to determine if
+        output region is False. If lower than lambda1, the region will
         have a larger range of values
-    tol -- positive float, typically (0-1), very low level set variation 
+    tol -- positive float, typically (0-1), very low level set variation
         tolerance between iterations.
     max_iter -- uint,  max number of iterations before algorithms stops
     dt -- float, Multiplication factor applied at the calculations step
@@ -514,7 +527,8 @@ class Chan_Vese(segmentor):
     # Abbreviation for Algorithm = CV
 
     def __init__(self, paramlist=None):
-        """Get parameters from parameter list that are used in segmentation algorithm. Assign default values to these parameters."""
+        """Get parameters from parameter list that are used in segmentation algorithm.
+         Assign default values to these parameters."""
         super(Chan_Vese, self).__init__(paramlist)
         if not paramlist:
             self.params["algorithm"] = "CV"
@@ -534,7 +548,7 @@ class Chan_Vese(segmentor):
 
         Output:
         output -- resulting segmentation mask from algorithm.
-        
+
         """
         if len(img.shape) == 3:
             img = skimage.color.rgb2gray(img)
@@ -553,21 +567,24 @@ class Chan_Vese(segmentor):
 algorithmspace["CV"] = Chan_Vese
 
 class Morphological_Chan_Vese(segmentor):
-    """Peform Morphological Chan Vese segmentation algorithm. ONLY WORKS ON GRAYSCALE. Active contours without edges. Can be used to segment images/volumes without good borders. Required that the inside of the object looks different than outside (color, shade, darker).
-    
+    """Peform Morphological Chan Vese segmentation algorithm.
+     ONLY WORKS ON GRAYSCALE. Active contours without edges. Can be used to
+      segment images/volumes without good borders. Required that the inside of
+       the object looks different than outside (color, shade, darker).
+
     Parameters:
     image -- ndarray of grayscale image
     iterations -- uint, number of iterations to run
     init_level_set -- str, or array same shape as image. Accepted string
         values are:
         'checkerboard': Uses checkerboard_level_set. Returns a binary level set of a checkerboard
-        'circle': Uses circle_level_set. Creates a binary level set of a circle, given a radius and a
+        'circle': Uses circle_level_set. Creates a binary level set of a circle, given radius and a
             center
     smoothing -- uint, number of times the smoothing operator is applied
         per iteration. Usually around 1-4. Larger values make it smoother
-    lambda1 -- Weight param for outer region. If larger than lambda2, 
+    lambda1 -- Weight param for outer region. If larger than lambda2,
         outer region will give larger range of values than inner value.
-    lambda2 -- Weight param for inner region. If larger thant lambda1, 
+    lambda2 -- Weight param for inner region. If larger thant lambda1,
         inner region will have a larger range of values than outer region.
 
     """
@@ -575,7 +592,8 @@ class Morphological_Chan_Vese(segmentor):
     # Abbreviation for algorithm = MCV
 
     def __init__(self, paramlist=None):
-        """Get parameters from parameter list that are used in segmentation algorithm. Assign default values to these parameters."""
+        """Get parameters from parameter list that are used in segmentation algorithm.
+         Assign default values to these parameters."""
         super(Morphological_Chan_Vese, self).__init__(paramlist)
         if not paramlist:
             self.params["algorithm"] = "MCV"
@@ -598,7 +616,7 @@ class Morphological_Chan_Vese(segmentor):
 
         Output:
         output -- resulting segmentation mask from algorithm.
-        
+
         """
         if len(img.shape) == 3:
             img = skimage.color.rgb2gray(img)
@@ -616,17 +634,21 @@ class Morphological_Chan_Vese(segmentor):
 algorithmspace["MCV"] = Morphological_Chan_Vese
 
 class MorphGeodesicActiveContour(segmentor):
-    """Peform Morphological Geodesic Active Contour segmentation algorithm. Uses an image from inverse_gaussian_gradient in order to segment object with visible, but noisy/broken borders. inverse_gaussian_gradient computes the magnitude of the gradients in an image. Returns a preprocessed image suitable for above function. Returns ndarray of segmented image.
+    """Peform Morphological Geodesic Active Contour segmentation algorithm. Uses
+     an image from inverse_gaussian_gradient in order to segment object with visible,
+      but noisy/broken borders. inverse_gaussian_gradient computes the magnitude of
+       the gradients in an image. Returns a preprocessed image suitable for above function.
+        Returns ndarray of segmented image.
 
-    Parameters: 
+    Parameters:
     gimage -- array, preprocessed image to be segmented.
     iterations -- uint, number of iterations to run.
     init_level_set -- str, array same shape as gimage. If string, possible
         values are:
         'checkerboard': Uses checkerboard_level_set. Returns a binary level set of a checkerboard
-        'circle': Uses circle_level_set. Creates a binary level set of a circle, given a radius and a 
+        'circle': Uses circle_level_set. Creates a binary level set of a circle, given radius and a
             center
-    smoothing -- uint, number of times the smoothing operator is applied 
+    smoothing -- uint, number of times the smoothing operator is applied
         per iteration. Usually 1-4, larger values have smoother segmentation.
     threshold -- Areas of image with a smaller value than the threshold are borders.
     balloon -- float, guides contour of low-information parts of image.
@@ -636,7 +658,8 @@ class MorphGeodesicActiveContour(segmentor):
     # Abbrevieation for algorithm = AC
 
     def __init__(self, paramlist=None):
-        """Get parameters from parameter list that are used in segmentation algorithm. Assign default values to these parameters."""
+        """Get parameters from parameter list that are used in segmentation algorithm.
+         Assign default values to these parameters."""
         super(MorphGeodesicActiveContour, self).__init__(paramlist)
         if not paramlist:
             self.params["algorithm"] = "AC"
@@ -663,13 +686,13 @@ class MorphGeodesicActiveContour(segmentor):
 
         Output:
         output -- resulting segmentation mask from algorithm.
-        
+
         """
         # We run the inverse_gaussian_gradient to get the image to use
         gimage = skimage.segmentation.inverse_gaussian_gradient(
             color.rgb2gray(img), self.params["alpha"], self.params["sigma"]
         )
-        zeros = 0
+        # zeros = 0
         output = skimage.segmentation.morphological_geodesic_active_contour(
             gimage,
             self.params["iterations"],
@@ -682,29 +705,31 @@ class MorphGeodesicActiveContour(segmentor):
 
 algorithmspace["AC"] = MorphGeodesicActiveContour
 
-def countMatches(inferred, groundTruth):
-    """Map the segments in the inferred segmentation mask to the ground truth segmentation mask, and record the number of pixels in each of these mappings as well as the number of segments in both masks.
-    
+def countMatches(inferred, ground_truth):
+    """Map the segments in the inferred segmentation mask to the ground truth segmentation
+     mask, and record the number of pixels in each of these mappings as well as the number
+      of segments in both masks.
+
     Keyword arguments:
     inferred -- Resulting segmentation mask from individual.
-    groundTruth -- Ground truth segmentation mask for training image.
+    ground_truth -- Ground truth segmentation mask for training image.
 
     Outputs:
-    setcounts -- Dictionary of dictionaries containing the number of pixels in 
+    setcounts -- Dictionary of dictionaries containing the number of pixels in
         each segment mapping.
     len(m) -- Number of segments in inferred segmentation mask.
     len(n) -- Number of segments in ground truth segmentation mask.
 
     """
-    assert (inferred.shape == groundTruth.shape)    
+    assert inferred.shape == ground_truth.shape
     m = set()
     n = set()
     setcounts = dict()
     for r in range(inferred.shape[0]):
         for c in range(inferred.shape[1]):
-            i_key = inferred[r,c]
+            i_key = inferred[r, c]
             m.add(i_key)
-            g_key = groundTruth[r,c]
+            g_key = ground_truth[r, c]
             n.add(g_key)
             if i_key in setcounts:
                 if g_key in setcounts[i_key]:
@@ -717,13 +742,18 @@ def countMatches(inferred, groundTruth):
     return setcounts, len(m), len(n)
 
 def countsets(setcounts):
-    """For each inferred set, find the ground truth set which it maps the most pixels to. So we start from the inferred image, and map towards the ground truth image. For each i_key, the g_key that it maps the most pixels to is considered True. In order to see what ground truth sets have a corresponding set(s) in the inferred image, we record these "true" g_keys. This number of true g_keys is the value for L in our fitness function.
+    """For each inferred set, find the ground truth set which it maps the most pixels
+     to. So we start from the inferred image, and map towards the ground truth image.
+      For each i_key, the g_key that it maps the most pixels to is considered True.
+       In order to see what ground truth sets have a corresponding set(s) in the inferred
+        image, we record these "true" g_keys. This number of true g_keys is the value for
+         L in our fitness function.
 
-    Keyword arguments: 
-    setcounts -- Dictionary of dictionaries containing the number of pixels in 
+    Keyword arguments:
+    setcounts -- Dictionary of dictionaries containing the number of pixels in
         each segment mapping.
 
-    Outputs: 
+    Outputs:
     (total - p) -- Pixel error.
     L -- Number of ground truth segments that have a mapping in the inferred mask
     best -- True mapping as dictionary.
@@ -731,35 +761,38 @@ def countsets(setcounts):
     """
     p = 0
     #L = len(setcounts)
-    
+
     total = 0
-    Lsets = set()
-    
+    L_sets = set()
+
     best = dict()
-    
-    for i_key in setcounts: 
-        mx = 0
+
+    for i_key in setcounts:
+        my_mx = 0
         mx_key = ''
         for g_key in setcounts[i_key]:
             total += setcounts[i_key][g_key] # add to total pixel count
-            if setcounts[i_key][g_key] > mx:
-                mx = setcounts[i_key][g_key]
+            if setcounts[i_key][g_key] > my_mx:
+                my_mx = setcounts[i_key][g_key]
                 # mx_key = i_key
                 mx_key = g_key # record mapping with greatest pixel count
-        p += mx
-        # Lsets.add(g_key)
-        Lsets.add(mx_key) # add the g_key we consider to be correct
+        p += my_mx
+        # L_sets.add(g_key)
+        L_sets.add(mx_key) # add the g_key we consider to be correct
         # best[i_key] = g_key
         best[i_key] = mx_key # record "true" mapping
-    L = len(Lsets)
-    return total-p,L, best
+    L = len(L_sets)
+    return total-p, L, best
 
-def FitnessFunction(inferred, groundTruth):
-    """Compute the fitness for an individual. Takes in two images and compares them according to the equation (p + 2)^log(|m - n| + 2), where p is the pixel error, m is the number of segments in the inferred mask, and n is the number of segments in the ground truth mask.
+def FitnessFunction(inferred, ground_truth):
+    """Compute the fitness for an individual. Takes in two images and compares
+     them according to the equation (p + 2)^log(|m - n| + 2), where p is the pixel
+      error, m is the number of segments in the inferred mask, and n is the number
+       of segments in the ground truth mask.
 
     Keyword arguments:
     inferred -- Resulting segmentation mask from individual.
-    groundTruth -- Ground truth segmentation mask for training image.
+    ground_truth -- Ground truth segmentation mask for training image.
 
     Outputs:
     error -- fitness value as float
@@ -770,20 +803,20 @@ def FitnessFunction(inferred, groundTruth):
     if len(inferred.shape) > 2:
         logging.getLogger().info("inferred not in grayscale")
         inferred = color.rgb2gray(inferred)
-    if len(groundTruth.shape) > 2:  # comment out
+    if len(ground_truth.shape) > 2:  # comment out
         logging.getLogger().info("img2 not in grayscale")
-        groundTruth = color.rgb2gray(groundTruth)  # comment out
-    
+        ground_truth = color.rgb2gray(ground_truth)  # comment out
+
     # Replace with function to output p an L
     # p - number of pixels not correcly mapped
     # L - Number of correctly mapped sets
-    setcounts, m, n = countMatches(inferred, groundTruth)
-    
+    setcounts, m, n = countMatches(inferred, ground_truth)
+
     #print(setcounts)
-    p, L, best = countsets(setcounts)
-    
+    p, L, _ = countsets(setcounts)
+
     logging.getLogger().info(f"p={p}, m={m}, n={n}, L={L}")
-    
+
     error = (p + 2) ** np.log(abs(m - n) + 2)  # / (L >= n)
     # error = (repeat_count + 2)**(abs(m - n)+1)
     # print(f"TESTING - L={L} < n={n} p={p} m={m} error = {error} ")
