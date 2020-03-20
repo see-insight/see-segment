@@ -97,7 +97,7 @@ def mutate(copy_child, pos_vals, flip_prob=0.5, seed=False):
     #switcher = AlgoHelp().algoIndexes()
     #indexes = switcher.get(child[0])
 
-    for index in enumerate(pos_vals):
+    for index in range(len(pos_vals)):
         rand_val = random.random()
         if rand_val < flip_prob:
             # Then we mutate said value
@@ -374,6 +374,6 @@ class Evolver(object):
             if checkpoint:
                 print(f"Writing Checkpoint file - {checkpoint}")
                 self.writepop(population, filename=f"{checkpoint}_{cur_g}")
-                for cur_p in enumerate(population):
+                for cur_p in range(len(population)):
                     logging.getLogger().info(population[cur_p])
         return population
