@@ -1,0 +1,77 @@
+Algorithms:
+random_walker -- Don't use as labels is an array, complicates searchspace
+active_contour -- Useless
+felzenszwalb
+slic
+quickshift
+find_boundaries -- Useless
+mark_boundaries -- Useless
+clear_border -- Useless
+join_segmentations -- Useless
+relabel_from_one -- Useless
+watershed
+chan_vese
+morphological_geodesic_active_contour -- Can be good
+morphological_chan_vese
+inverse_gaussian_gradient -- Passes into Morphological_geodesic_active_contour
+circle_level_set -- Useless
+checkerboard_level_set --Useless
+flood
+flood_fill
+
+Useful Algorithms
+random_walker
+	Variables: labels, beta, tolerance, multichannel, spacing
+felzenszwalb
+	Variables: scale, sigma, min_size, multichannel
+slic
+	Variables: n_segments, compactness, max_iter, sigma, spacing, multichanel
+quickshift
+	Variables: ratio, kernel_size, max_dist, sigma, random_seed
+watershed
+	Variables: markers(labels), connectivity, offset, mask, compactness
+chan_vese
+	Variables: mu, lambda1, lambda2, tol, max_iter, dt, init_level_set
+morphological_chan_vese
+	Variables: Iterations, inti_level_set, smoothing, lambda1, lambda2
+morphological_geodesic_active_contour
+	This uses inverse_gaussian_gradient
+		Variables of gaussian: alpha, sigma
+		Variables of geodesic: iterations, init_level_set, smoothing, threshold, balloon
+flood
+	Variables: seed_point, selem, connectivity, tolerance
+flood_fill
+	Variables: seed_point, new_value, selem, connectivity, tolerance
+
+Encoded variables: 
+Note: Most of these can also be none
+labels/marker (ndarray of same shape as image) [Used in random_walker, watershed] optional in watershed
+beta (float from 0-infinity) [Used in random_walker]
+tolerance (float, 0-1) [Used in random_walker, flood, flood_fill] optional
+spacing (iterable float ?) [Used in random_walker, slic] optional
+scale (float, 0-infinity) [Used in felzenszwalb] mandatory
+sigma (float, 0-infinity, if > 0, smoothing with Guassian kernel first) [Used in felzenszwalb, inverse_gaussian_gradient, slic, quickshift] mandatory for felzenszwalb
+min_size (int, 0-infinity) [Used in felzenszwalb] mandatory
+n_segments (int, 2-infinity) [Used in slic] optional
+compactness (float, try logs {e.g. 0.01, 0.1, 1, 10, etc}, 0-infinity) [Used in slic, watershed] optional
+iterations (int, 1-infinity) [Used in both Morphologicals] optional
+ratio (float, 0-1) [Used in quickshift] optional
+kernel_size(float, 1-infinity) [Used in quickshift] optional
+max_dist (float, 1-infinity) [Used in quickshift] optional
+random_seed (int, 0-infinity) [Used in quickshift] optional
+connectivity in watershed == selem in flood, flood_fill(ndarray, same shape as image using 1s and zeros) [Used in watershed, flood, flood_fill] optional in watershed, mandatory in floods
+connectivity in flood/floodfill (int, 1-infinity) optional
+offset probably isn't important
+compactness (float, try log scale {0.01, 0.1, 1, 10, etc}) [Used in slic, watershed] optional
+mu (float, 0-1 usually, may be higher if contour is ill-defined) [Used in chan_vese] optional
+lambda1 (float either the same of different than lamda2. 0-infinity. Usually both are 1) [Used in chan_vese, morphological_chan_vese, ] optional
+lambda2 : read lambda1
+dt (float, 0-infinity, can be 0-1 (multiplication factor)) [Used in chan_vese] optional
+init_level_set (string, but different values depending on function) [Used in chan_vese, morphological, geodesic_active_contour, morphological_chan_vese] optional
+smoothing (uint, around 1-4, can be 1-infinity) [geodesic, morphological_chan_vese] optional
+alpha (float 0-infinity) [used in inverse_gaussian_gradient] optional
+balloon (float, -infinity to +infinity {Usually -1, 0, 1}) [Used in geodesic] optional
+seed_point (tuple, x,y,z coord of image) [Used in flood, flood_fill] mandatory
+new_value (image type) [Used in flood_fill] mandatory
+
+

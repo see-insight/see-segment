@@ -16,6 +16,8 @@ from scoop import futures
 
 from see import Segmentors
 # import Segmentors
+# from see import Segmentors_MinParams as Segmentors
+# from see import Segmentors_OrgAndReducedParams as Segmentors
 
 def print_best_algorithm_code(individual):
     """Print usable code to run segmentation algorithm based on an
@@ -36,10 +38,8 @@ def print_best_algorithm_code(individual):
     print(function_contents)
     return function_contents
 
-def twoPointCopy(np1, np2, seed=False):
+def twoPointCopy(np1, np2):
     """Execute a crossover between two numpy arrays of the same length."""
-    if seed:
-        random.seed(2)
     assert len(np1) == len(np2)
     size = len(np1)
     point1 = random.randint(1, size)
@@ -55,8 +55,6 @@ def twoPointCopy(np1, np2, seed=False):
 def skimageCrossRandom(np1, np2, seed=False):
     """Execute a crossover between two arrays (np1 and np2) picking a random
      amount of indexes to change between the two."""
-    if seed:
-        random.seed(2)
     # DO: Only change values associated with algorithm
     assert len(np1) == len(np2)
     # The number of places that we'll cross
@@ -85,8 +83,6 @@ def mutate(copy_child, pos_vals, flip_prob=0.5, seed=False):
     child -- New, possibly mutated, individual.
 
     """
-    if seed:
-        random.seed(2)
     # Just because we chose to mutate a value doesn't mean we mutate
     # Every aspect of the value
     child = copy.deepcopy(copy_child)
@@ -367,9 +363,17 @@ class Evolver(object):
             if checkpoint:
                 self.writepop(population, filename=f"0_{checkpoint}")
         for cur_g in range(1, ngen+1):
+            print(f"generation {cur_g} of population size {len(population)}")
             population = self.nextgen(population)
+
+            seg = Segmentors.algoFromParams(self.hof[0])
+            mask = seg.evaluate(self.img)
+            fitness, _ = Segmentors.FitnessFunction(self.mask, mask)
+            print(f"#BEST - {fitness} - {self.hof[0]}")
+
             if checkpoint:
-                self.writepop(population, filename=f"{cur_g}_{checkpoint}")
+                print(f"Writing Checkpoint file - {checkpoint}")
+                self.writepop(population, filename=f"{checkpoint}_{cur_g}")
                 for cur_p in enumerate(population):
                     logging.getLogger().info(population[cur_p])
         return population

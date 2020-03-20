@@ -79,8 +79,9 @@ def segmentwidget(params, img, gmask):
             seg.params[k] = kwargs[k]
         mask = seg.evaluate(img)
         fit = Segmentors.FitnessFunction(mask, gmask)
-        fig = show_segment(img, mask)
-        plt.title(fit)
+        # fig = show_segment(img, mask)
+        fig = showtwo(img, mask)
+        plt.title(fit[0])
 
 
     layout = widgets.Layout(grid_template_columns='1fr 1fr 1fr')

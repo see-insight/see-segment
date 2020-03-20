@@ -1,0 +1,39 @@
+#!/bin/bash --login
+#SBATCH --time=03:30:00 #Total runtime 
+#SBATCH -n 20 
+#SBATCH -c 1 
+#SBATCH --mem-per-cpu=5G
+#SBATCH --job-name BinImgSeg
+
+env #Make a list of environment varables (for debugging)
+
+#Not sure what these commands do
+conda config --add channels defaults
+conda config --add channels bioconda
+conda config --add channels conda-forge
+
+conda activate opencv35
+
+#wget https://www.openfabrics.org/downloads/libsdp/libsdp-1.1.108-0.17.ga6958ef.tar.gz #Downloads scoop
+#tar xfvz libsdp-1.1.108-0.17.ga6958ef.tar.gz 
+#cd libsdp-1.1.108
+#./configure --prefix=$HOME && make && make install #Installs scoop
+
+export LD_LIBRARY_PATH=/mnt/home/f0008668/lib/libsdp.so:$LD_LIBRARY_PATH #Adding scoop to library path
+
+export PATH=/mnt/home/f0008668/anaconda3/bin/:$PATH #Making sure that we are running the correct version of pythonvi  
+
+#cd ..
+cd Binary-Image-Segmentation/ #Going to the library of the code
+
+
+HOSTFILE=$SLURM_JOB_ID.hostfile
+srun hostname -s > $HOSTFILE
+srun python -m scoop --hostfile $HOSTFILE -n 20 main.py
+
+# Print out some job stats when the job is done.
+module load powertools
+js $SLURM_JOB_ID
+
+
+

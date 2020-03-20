@@ -266,12 +266,14 @@ class ColorThreshold(segmentor):
         output -- resulting segmentation mask from algorithm.
 
         """
-        channel_num = 1  # DO: Need to make this a searchable parameter.
+        channel_num = self.params["seed"]
         if len(img.shape) > 2:
-            if channel_num < img.shape[2]:
+            num_channels = img.shape[2]
+            if channel_num < num_channels:
                 channel = img[:, :, channel_num]
             else:
-                channel = img[:, :, 0]
+                hsv = skimage.color.rgb2hsv(img)
+                channel = hsv[:, :, channel_num - num_channels]
         else:
             channel = img
         pscale = np.max(channel)
@@ -290,6 +292,41 @@ class ColorThreshold(segmentor):
 
 
 algorithmspace["CT"] = ColorThreshold
+
+class TripleA (segmentor):
+    def __init__(self, paramlist=None):
+        super(TripleA, self).__init__(paramlist)
+        if not paramlist:
+            self.params["algorithm"] = "AAA"
+            self.params["mu"] = 0.4
+            self.params["sigma"] = 0.6
+        self.paramindexes = ["sigma", "mu"]
+
+    def evaluate(self, img): #XX
+        channel_num = 1  # Do: Need to make this a searchable parameter.
+        if len(img.shape) > 2:
+            if channel_num < img.shape[2]:
+                channel = img[:, :, channel_num]
+            else:
+                channel = img[:, :, 0]
+        else:
+            channel = img
+        pscale = np.max(channel)
+        my_mx = self.params["sigma"] * pscale
+        my_mn = self.params["mu"] * pscale
+        if my_mx < my_mn:
+            temp = my_mx
+            my_mx = my_mn
+            my_mn = temp
+
+        output = np.ones(channel.shape)
+        output[channel < mn] = 0
+        output[channel > mx] = 0
+
+        return output
+
+
+algorithmspace["AAA"] = TripleA
 
 class Felzenszwalb(segmentor):
     """Perform Felzenszwalb segmentation algorithm. ONLY WORKS FOR RGB. The felzenszwalb
@@ -459,6 +496,8 @@ class QuickShift(segmentor):
 
 algorithmspace["QS"] = QuickShift
 
+#DO: This algorithm seems to need a channel input. We should fix that.
+
 class Watershed(segmentor):
     """Perform the Watershed segmentation algorithm. Uses user-markers.
      treats markers as basins and 'floods' them. Especially good if overlapping objects.
@@ -494,8 +533,10 @@ class Watershed(segmentor):
         output -- resulting segmentation mask from algorithm.
 
         """
+        channel = 0
+        channel_img = img[:, :, channel]
         output = skimage.segmentation.watershed(
-            img, markers=None, compactness=self.params["compactness"]
+            channel_img, markers=None, compactness=self.params["compactness"]
         )
         return output
 

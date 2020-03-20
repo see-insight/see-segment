@@ -1,0 +1,6 @@
+#!/bin/bash
+echo "Makeing Output Directory"
+mkdir -p Coco_output 
+
+echo "Running Job Array"
+sbatch Coco.sb
