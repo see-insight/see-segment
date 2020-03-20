@@ -1,47 +1,50 @@
-"""Using the specified search space and fitness function defined in 'Segmentors' this runs the genetic algorithm over that space. Best individuals are stored in the hall of fame (hof)."""
+"""Using the specified search space and fitness function defined in 'Segmentors' this runs
+ the genetic algorithm over that space. Best individuals are stored in the hall of fame (hof)."""
 
 import random
 import copy
 
 import json
+import inspect
+import logging
 
 import deap
 from deap import base
 from deap import tools
 from deap import creator
 from scoop import futures
-import logging
-import inspect
 
 from see import Segmentors
 # import Segmentors
 
-def printBestAlgorithmCode(individual):
-    """Print usable code to run segmentation algorithm based on an individual's genetic representation vector."""
+def print_best_algorithm_code(individual):
+    """Print usable code to run segmentation algorithm based on an
+     individual's genetic representation vector."""
     ind_algo = Segmentors.algoFromParams(individual)
     original_function = inspect.getsource(ind_algo.evaluate)
-    function_contents = original_function[original_function.find('        '):original_function.find('return')]
+    function_contents = original_function[original_function.find('        '):\
+                            original_function.find('return')]
     while function_contents.find('self.params') != -1:
-        # print(function_contents[function_contents.find('self.params') + 
+        # print(function_contents[function_contents.find('self.params') +
         #     13:function_contents.find(']')-1])
         function_contents = function_contents.replace(
-            function_contents[function_contents.find('self.params'):function_contents.find(']')+1], 
-            str(ind_algo.params[function_contents[function_contents.find('self.params') + 
-            13:function_contents.find(']')-1]]))
+            function_contents[function_contents.find('self.params'):function_contents.find(']')+1],\
+            str(ind_algo.params[function_contents[function_contents.find('self.params') + 13:\
+            function_contents.find(']')-1]]))
     function_contents = function_contents.replace('        ', '')
     function_contents = function_contents[function_contents.find('\n\"\"\"')+5:]
     print(function_contents)
     return function_contents
 
-def twoPointCopy(np1, np2, seed = False):
+def twoPointCopy(np1, np2, seed=False):
     """Execute a crossover between two numpy arrays of the same length."""
-    if seed == True:
+    if seed:
         random.seed(2)
-    assert(len(np1) == len(np2))
+    assert len(np1) == len(np2)
     size = len(np1)
     point1 = random.randint(1, size)
-    point2 = random.randint(1, size-1)
-    if (point2 >= point1):
+    point2 = random.randint(1, size - 1)
+    if point2 >= point1:
         point2 += 1
     else:  # Swap the two points
         point1, point2 = point2, point1
@@ -49,12 +52,13 @@ def twoPointCopy(np1, np2, seed = False):
     ), np1[point1:point2].copy()
     return np1, np2
 
-def skimageCrossRandom(np1, np2, seed = False):
-    """Execute a crossover between two arrays (np1 and np2) picking a random amount of indexes to change between the two."""
-    if seed == True:
+def skimageCrossRandom(np1, np2, seed=False):
+    """Execute a crossover between two arrays (np1 and np2) picking a random
+     amount of indexes to change between the two."""
+    if seed:
         random.seed(2)
-    # TODO: Only change values associated with algorithm
-    assert(len(np1) == len(np2))
+    # DO: Only change values associated with algorithm
+    assert len(np1) == len(np2)
     # The number of places that we'll cross
     crosses = random.randrange(len(np1))
     # We pick that many crossing points
@@ -67,55 +71,56 @@ def skimageCrossRandom(np1, np2, seed = False):
     return np1, np2
 
 
-def mutate(copyChild, posVals, flipProb=0.5, seed = False):
-    """Change a few of the parameters of the weighting a random number against the flipProb.
+def mutate(copy_child, pos_vals, flip_prob=0.5, seed=False):
+    """Change a few of the parameters of the weighting a random number against the flip_prob.
 
     Keyword arguments:
-    copyChild -- the individual to mutate.
-    posVals -- list of lists where each list are the possible
+    copy_child -- the individual to mutate.
+    pos_vals -- list of lists where each list are the possible
                 values for that particular parameter.
-    flipProb -- how likely it is that we will mutate each value.
+    flip_prob -- how likely it is that we will mutate each value.
                 It is computed seperately for each value.
 
     Outputs:
     child -- New, possibly mutated, individual.
 
     """
-    if seed == True:
+    if seed:
         random.seed(2)
     # Just because we chose to mutate a value doesn't mean we mutate
     # Every aspect of the value
-    child = copy.deepcopy(copyChild)
+    child = copy.deepcopy(copy_child)
 
     # Not every algorithm is associated with every value
     # Let's first see if we change the algorithm
-    randVal = random.random()
-    if randVal < flipProb:
+    rand_val = random.random()
+    if rand_val < flip_prob:
         # Let's mutate
-        child[0] = random.choice(posVals[0])
+        child[0] = random.choice(pos_vals[0])
     # Now let's get the indexes (parameters) related to that value
     #switcher = AlgoHelp().algoIndexes()
     #indexes = switcher.get(child[0])
 
-    for index in range(len(posVals)):
-        randVal = random.random()
-        if randVal < flipProb:
+    for index in enumerate(pos_vals):
+        rand_val = random.random()
+        if rand_val < flip_prob:
             # Then we mutate said value
             if index == 22:
                 # Do some special
-                X = random.choice(posVals[22])
-                Y = random.choice(posVals[23])
-                Z = random.choice(posVals[24])
-                child[index] = (X, Y, Z)
+                my_x = random.choice(pos_vals[22])
+                my_y = random.choice(pos_vals[23])
+                my_z = random.choice(pos_vals[24])
+                child[index] = (my_x, my_y, my_z)
                 continue
-            child[index] = random.choice(posVals[index])
+            child[index] = random.choice(pos_vals[index])
     return child
 
 
-# TODO Make a toolbox from a list of individuals
-# TODO Save a population as a list of indivudals (with fitness functions?)
+# DO: Make a toolbox from a list of individuals
+# DO: Save a population as a list of indivudals (with fitness functions?)
 def makeToolbox(pop_size):
-    """Make a genetic algorithm toolbox using DEAP. The toolbox uses premade functions for crossover, mutation, evaluation and fitness.
+    """Make a genetic algorithm toolbox using DEAP. The toolbox uses premade functions
+     for crossover, mutation, evaluation and fitness.
 
     Keyword arguments:
     pop_size -- The size of our population, or how many individuals we have
@@ -135,7 +140,7 @@ def makeToolbox(pop_size):
     toolbox.register("select", tools.selTournament, tournsize=5)  # Selection
     toolbox.register("map", futures.map)  # So that we can use scoop
 
-    # TODO: May want to later do a different selection process
+    # DO: May want to later do a different selection process
 
     # We choose the parameters, for the most part, random
     params = Segmentors.parameters()
@@ -172,7 +177,8 @@ def initPopulation(pcls, ind_init, filename):
 
 
 class Evolver(object):
-    """Perform the genetic algorithm by initializing a population and evolving it over a specified number of generations to find the optimal algorithm and parameters for the problem.
+    """Perform the genetic algorithm by initializing a population and evolving it over a
+     specified number of generations to find the optimal algorithm and parameters for the problem.
 
     Functions:
     newpopulation -- Initialize a new population.
@@ -186,9 +192,9 @@ class Evolver(object):
     """
 
     AllVals = []
-    p = Segmentors.parameters()
-    for key in p.pkeys:
-        AllVals.append(eval(p.ranges[key]))
+    my_p = Segmentors.parameters()
+    for key in my_p.pkeys:
+        AllVals.append(eval(my_p.ranges[key]))
 
     def __init__(self, img, mask, pop_size=10):
         """Set default values for the variables.
@@ -196,7 +202,7 @@ class Evolver(object):
         Keyword arguments:
         img -- The original training image
         mask -- The ground truth segmentation mask for the img
-        pop_size -- Integer value denoting size of our population, 
+        pop_size -- Integer value denoting size of our population,
             or how many individuals there are (default 10)
 
         """
@@ -205,9 +211,9 @@ class Evolver(object):
         self.mask = mask
         self.tool = makeToolbox(pop_size)
         self.hof = deap.tools.HallOfFame(10)
-        self.BestAvgs = []
+        self.best_avgs = []
         self.gen = 0
-        self.cxpb, self.mutpb, self.flipProb = 0.9, 0.9, 0.9
+        self.cxpb, self.mutpb, self.flip_prob = 0.9, 0.9, 0.9
 
     def newpopulation(self):
         """Initialize a new population."""
@@ -218,7 +224,7 @@ class Evolver(object):
 
         Keyword arguments:
         tpop -- The population to be recorded.
-        filename -- string denoting file in which to record 
+        filename -- string denoting file in which to record
             the population. (default 'test.json')
 
         """
@@ -240,24 +246,25 @@ class Evolver(object):
         return self.tool.population_read()
 
     def popfitness(self, tpop):
-        """Calculate the fitness values for the population, and log general statistics about these values. Uses hall of fame (hof) to keep track of top 10 individuals.
+        """Calculate the fitness values for the population, and log general statistics about these
+         values. Uses hall of fame (hof) to keep track of top 10 individuals.
 
         Keyword arguments:
         tpop -- current population
 
         Outputs:
-        extractFits -- Fitness values for our population
+        extract_fits -- Fitness values for our population
         tpop -- current population
 
         """
-        NewImage = [self.img for i in range(0, len(tpop))]
-        NewVal = [self.mask for i in range(0, len(tpop))]
-        fitnesses = map(self.tool.evaluate, NewImage, NewVal, tpop)
+        new_image = [self.img for i in range(0, len(tpop))]
+        new_val = [self.mask for i in range(0, len(tpop))]
+        fitnesses = map(self.tool.evaluate, new_image, new_val, tpop)
 
-        # TODO: Dirk is not sure exactly why we need these
+        # DO: Dirk is not sure exactly why we need these
         for ind, fit in zip(tpop, fitnesses):
             ind.fitness.values = fit
-        extractFits = [ind.fitness.values[0] for ind in tpop]
+        extract_fits = [ind.fitness.values[0] for ind in tpop]
 
         self.hof.update(tpop)
 
@@ -265,13 +272,13 @@ class Evolver(object):
 
         # Evaluating the new population
         leng = len(tpop)
-        mean = sum(extractFits) / leng
-        self.BestAvgs.append(mean)
-        sum1 = sum(i*i for i in extractFits)
+        mean = sum(extract_fits) / leng
+        self.best_avgs.append(mean)
+        sum1 = sum(i*i for i in extract_fits)
         stdev = abs(sum1 / leng - mean ** 2) ** 0.5
         logging.getLogger().info(f"Generation: {self.gen}")
-        logging.getLogger().info(f" Min: {min(extractFits)}")
-        logging.getLogger().info(f" Max: {max(extractFits)}")
+        logging.getLogger().info(f" Min: {min(extract_fits)}")
+        logging.getLogger().info(f" Max: {max(extract_fits)}")
         logging.getLogger().info(f" Avg: {mean}")
         logging.getLogger().info(f" Std: {stdev}")
         logging.getLogger().info(f" Size: {leng}")
@@ -279,13 +286,13 @@ class Evolver(object):
         logging.getLogger().info(f"Best Fitness: {self.hof[0].fitness.values}")
         logging.getLogger().info(f"{self.hof[0]}")
         # Did we improve the population?
-        pastPop = tpop
-        pastMin = min(extractFits)
-        pastMean = mean
+        # past_pop = tpop
+        # past_min = min(extract_fits)
+        # past_mean = mean
 
         self.gen += self.gen
 
-        return extractFits, tpop
+        return extract_fits, tpop
 
     def mutate(self, tpop):
         """Return new population with mutated individuals. Perform both mutation and crossover.
@@ -299,10 +306,10 @@ class Evolver(object):
         """
         # Calculate next population
 
-        sz = len(tpop)
-        top = 0  # round(0.1 * sz)
-        var = round(0.4 * sz)
-        ran = sz - top - var
+        my_sz = len(tpop)
+        top = 0  # round(0.1 * my_sz)
+        var = round(0.4 * my_sz)
+        ran = my_sz - top - var
 
         offspring = self.tool.select(tpop, var)
         offspring = list(map(self.tool.clone, offspring))  # original code
@@ -320,7 +327,7 @@ class Evolver(object):
         # mutation
         for mutant in offspring:
             if random.random() < self.mutpb:
-                self.tool.mutate(mutant, self.AllVals, self.flipProb)
+                self.tool.mutate(mutant, self.AllVals, self.flip_prob)
                 del mutant.fitness.values
 
         # new
@@ -338,7 +345,7 @@ class Evolver(object):
         tpop -- current population
 
         """
-        fitness, tpop = self.popfitness(tpop)
+        _, tpop = self.popfitness(tpop)
         return self.mutate(tpop)
 
     def run(self, ngen=10, startfile=None, checkpoint=None):
@@ -351,7 +358,7 @@ class Evolver(object):
 
         Output:
         population -- Resulting population after ngen generations.
-        
+
         """
         if startfile:
             population = self.readpop(startfile)
@@ -359,11 +366,10 @@ class Evolver(object):
             population = self.newpopulation()
             if checkpoint:
                 self.writepop(population, filename=f"0_{checkpoint}")
-        for g in range(1, ngen+1):
+        for cur_g in range(1, ngen+1):
             population = self.nextgen(population)
             if checkpoint:
-                self.writepop(population, filename=f"{g}_{checkpoint}")
-                for p in range(len(population)):
-                    logging.getLogger().info(population[p])
+                self.writepop(population, filename=f"{cur_g}_{checkpoint}")
+                for cur_p in enumerate(population):
+                    logging.getLogger().info(population[cur_p])
         return population
-
