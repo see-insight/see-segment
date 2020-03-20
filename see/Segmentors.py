@@ -10,6 +10,7 @@ import sys
 import logging
 import numpy as np
 import skimage
+from skimage import segmentation
 from skimage import color
 
 # List of all algorithms
@@ -273,7 +274,7 @@ class ColorThreshold(segmentor):
                 channel = img[:, :, channel_num]
             else:
                 hsv = skimage.color.rgb2hsv(img)
-                channel = hsv[:, :, channel_num - num_channels]
+                channel = hsv[:, :, 1]
         else:
             channel = img
         pscale = np.max(channel)
@@ -306,7 +307,7 @@ class TripleA (segmentor):
         channel_num = 1  # Do: Need to make this a searchable parameter.
         if len(img.shape) > 2:
             if channel_num < img.shape[2]:
-                channel = img[:, :, channel_num]
+                channel = img[:, :, 1]
             else:
                 channel = img[:, :, 0]
         else:
