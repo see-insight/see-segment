@@ -1,4 +1,4 @@
-#Full HPC Sky Run
+#Full HPC Coco Run
 import argparse
 import random
 import logging
@@ -10,88 +10,18 @@ from pathlib import Path
 from skimage import color
 import imageio
 
-
+import see
+from see import GeneticSearch
+from see import Segmentors
 import pathlib
 
-import numpy as np
-import matplotlib.pyplot as plt
+import DataDownload as dd
 
-
-def readpgm(name):
-    """The ground truth data is in ascii P2 pgm binary files.  OpenCV can read these files in but it would be much easier to just convert them to more common pgm binary format (P5)."""
-    with open(name, encoding="utf8", errors='ignore') as f:
-        lines = f.readlines()
-
-    # Ignores commented lines
-    for l in list(lines):
-        if l[0] == '#':
-            lines.remove(l)
-
-    # Makes sure it is ASCII format (P2)
-    filetype = lines[0].strip()
-    print(f"Filetype is {filetype}")
-    if filetype == 'P2':
-        print('Trying to read as P2 PGM file')
-        # Converts data to a list of integers
-        data = []
-        for line in lines[1:]:
-            data.extend([int(c) for c in line.split()])
-        img = np.reshape(np.array(data[3:]),(data[1],data[0]))
-    else:
-        print('Trying to read as P5 PGM file')
-        img = imageio.imread(name)
-    return img
-
-def downloadSkyData(filename = 'sky.zip', 
-                    folder = '.', 
-                    url = 'https://www.ime.usp.br/~eduardob/datasets/sky/sky.zip',
-                    force=True):
-    from urllib.request import urlretrieve
-    import zipfile
-
-    zfile = Path(folder+filename)
-    if not zfile.is_file() or force:
-        print(f"Downloading {filename} from {url}")
-        urlretrieve(url,folder+filename)
-
-    print(f"Unzipping {filename}")
-    with zipfile.ZipFile(folder+filename, 'r') as zip_ref:
-        zip_ref.extractall(folder)
-    
-    print(f"Converting files in {folder}")
-    images, masks, outputs = getSkyFolderLists()
-    for i in masks:
-        print(f"{i}")
-        img = readpgm(i)
-        img.astype(np.uint8)
-        imageio.imsave(i,img)
-        
-    print(f"Download and Convert Complete")
-
-def getSkyFolderLists(outputfolder=''):
-    '''The Sky data has some odd filenames. This figures it out and creates
-    Three lists for image, mask and output data.'''
-    pth = pathlib.Path(__file__).parent.absolute()
-    imagefolder = str(pth)+"/../Image_data/sky/data/"
-    maskfolder = str(pth)+"/../Image_data/sky/groundtruth"
-
-    imagenames = glob.glob(f'{imagefolder}/*.jpg')
-    imagenames.sort()
-    masknames = []
-    outputnames = []
-    for index, name in enumerate(imagenames):
-        imagename = os.path.basename(name)
-        image_id = imagename[:-4]
-        label = f"{image_id}_gt.pgm"
-        masknames.append(f"{maskfolder}/{label}")
-        outputnames.append(f"{outputfolder}{label}")
-    return imagenames, masknames, outputnames
 
 if __name__ == "__main__":
-    import see
-    from see import GeneticSearch
-    from see import Segmentors
     parser = argparse.ArgumentParser(description='Run the see-Semgent algorithm')
+    parser.add_argument('-S', '--Sky', action='store_false', help="Use Sky Data")
+    parser.add_argument('-C', '--Coco', action='store_false', help="Use Coco Data")
     parser.add_argument("-c", "--checkpoint", 
                         help="Starting Population", 
                         type=str, default="")
@@ -99,6 +29,7 @@ if __name__ == "__main__":
                         help="Number of Generations to run in search", 
                         type=int, default=2)
     parser.add_argument("-s", "--seed", 
+                        help="Random Seed", 
                         type=int, default=0)
     parser.add_argument("-p", "--pop", 
                         help="Population (file or number)", 
@@ -109,7 +40,7 @@ if __name__ == "__main__":
                         default=0)
     parser.add_argument("-o", "--outputfolder", 
                         help="Output Folder", 
-                        type=str, default="./output/")
+                        type=str, default="./Output/")
 
     #Parsing Inputs
     args = parser.parse_args()
@@ -122,10 +53,26 @@ if __name__ == "__main__":
     #Create output folder if dosn't exist
     Path(args.outputfolder).mkdir(parents=True, exist_ok=True)
 
+    imagefiles, maskfiles, outputfiles = [], [], []
     
     #Make List of all files
-    imagefiles, maskfiles, outputfiles = getSkyFolderLists(outputfolder=args.outputfolder)
+    if(args.Coco):
+        files = dd.getCocoFolderLists(outputfolder=args.outputfolder)
+        imagefiles += files[0]
+        maskfiles += files[1]
+        outputfiles += files[2]
+        
+    if(args.Sky):
+        files = dd.getSkyFolderLists(outputfolder=args.outputfolder)     
+        imagefiles += files[0]
+        maskfiles += files[1]
+        outputfiles += files[2]
 
+    if imagefiles == []:
+        print("Error: No dataset specified")
+    
+    print(f"processing: {len(imagefiles)} files")
+                    
     population = ''
     #Create Segmentor
     #startfile = f"{args.outputfolder}Population_checkpoint.txt"
@@ -155,6 +102,7 @@ if __name__ == "__main__":
         maskfile = maskfiles[index]
 
         # Load this image and mask
+        print(imagefile)
         img = imageio.imread(imagefile)
         gmask = imageio.imread(maskfile)
 
@@ -187,11 +135,12 @@ if __name__ == "__main__":
         print(f"writing {outputname}")
         imageio.imwrite(outputname, mask)
 
-        fitness,_ = Segmentors.FitnessFunction(mask,gmask)
-        file.write(f"{fitness} {maskname}\n")
-        print(f"evaluating {imagename} --> {fitness}")
+        fitness = Segmentors.FitnessFunction(mask,gmask)
+        file.write(f"{fitness[0]} {maskname}\n")
+        print(f"evaluating {imagename} --> {fitness[0]}")
 
     file.close() 
+
 
 
 
