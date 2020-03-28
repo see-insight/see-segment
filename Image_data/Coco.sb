@@ -12,9 +12,17 @@ cat $0
 
 echo "Job running on ${HOSTNAME}"
 
+if [[ -d ./envs ]]
+then
+	conda activate ./envs
+fi
+
+which python
+
 export PYTHONPATH=${PYTHONPATH}:${SLURM_SUBMIT_DIR}:${SLURM_SUBMIT_DIR}/../
 
 out_folder=${TMPDIR}/${SLURM_ARRAY_TASK_ID}/
+#out_folder=./${SLURM_ARRAY_TASK_ID}/
 echo Output sent to $out_folder 
 mkdir -p $out_folder 
 

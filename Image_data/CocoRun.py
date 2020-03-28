@@ -133,9 +133,9 @@ if __name__ == "__main__":
         print(f"writing {outputname}")
         imageio.imwrite(outputname, mask)
 
-        fitness,_ = Segmentors.FitnessFunction(mask,gmask)
-        file.write(f"{fitness} {maskname}\n")
-        print(f"evaluating {imagename} --> {fitness}")
+        fitness = Segmentors.FitnessFunction(mask,gmask)
+        file.write(f"{fitness[0]} {maskname}\n")
+        print(f"evaluating {imagename} --> {fitness[0]}")
 
     file.close() 
 

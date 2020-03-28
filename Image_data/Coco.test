@@ -1,0 +1,19 @@
+#!/bin/bash --login
+
+
+root=`pwd`
+export PYTHONPATH=${PYTHONPATH}:${root}:${root}/../
+
+out_folder=./Testout/
+echo Output sent to $out_folder 
+mkdir -p $out_folder 
+
+python CocoRun.py -o $out_folder -g 10 -p 50 > ${out_folder}/search.out 
+
+cp CocoReport.ipynb ${out_folder}
+
+cd ${out_folder}
+jupyter nbconvert --no-input --allow-errors --execute --to html CocoReport.ipynb
+
+
+##########################
