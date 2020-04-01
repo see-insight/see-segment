@@ -369,7 +369,7 @@ class Evolver(object):
             seg = Segmentors.algoFromParams(self.hof[0])
             mask = seg.evaluate(self.img)
             fitness = Segmentors.FitnessFunction(self.mask, mask)
-            print(f"#BEST - {fitness} - {self.hof[0]}")
+            print(f"#BEST - {fitness[0]} - {self.hof[0]}")
 
             if checkpoint:
                 print(f"Writing Checkpoint file - {checkpoint}")

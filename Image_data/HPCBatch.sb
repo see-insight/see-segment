@@ -4,13 +4,20 @@
 #SBATCH --time=4:00:00
 #SBATCH --mem=2gb
 #SBATCH --mail-type=END
-#SBATCH --array 0-59
-#SBATCH --output "./Sky_output/%a_%A_slurm.output"
+#SBATCH --array 0-359
+#SBATCH --output "./Output/%a_%A_slurm.output"
 
 #Log a copy of this script in the output file
 cat $0
 
 echo "Job running on ${HOSTNAME}"
+
+if [[ -d ./envs ]]
+then
+	conda activate ./envs
+fi
+
+which python
 
 export PYTHONPATH=${PYTHONPATH}:${SLURM_SUBMIT_DIR}:${SLURM_SUBMIT_DIR}/../
 
@@ -29,18 +36,11 @@ then
 	
 fi
 
-srun --unbuffered python SkyRun.py -o $out_folder -i ${SLURM_ARRAY_TASK_ID} -g 100 -p 500 -s ${SLURM_ARRAY_TASK_ID} > ${out_folder}/search.out 
-
-cp CocoReport.ipynb ${out_folder}
-
-cd ${out_folder}
-srun time jupyter nbconvert --no-input --allow-errors --execute --to html CocoReport.ipynb
-
-cp CocoReport.html ${SLURM_SUBMIT_DIR}/Sky_output/${SLURM_ARRAY_TASK_ID}_Report.html 
+srun --unbuffered python BatchRun.py -o $out_folder -i ${SLURM_ARRAY_TASK_ID} -g 100 -p 500 -s ${SLURM_ARRAY_TASK_ID} > ${out_folder}/search.out 
 
 #zip up this folder
 cd ${TMPDIR}
-tar -czvf ${SLURM_SUBMIT_DIR}/Sky_output/${tarfile} ./${SLURM_ARRAY_TASK_ID}/ 
+tar -czvf ${SLURM_SUBMIT_DIR}/Output/${tarfile} ./${SLURM_ARRAY_TASK_ID}/ 
 
 #House Cleaning
 cd ${SLURM_SUBMIT_DIR} 
