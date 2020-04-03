@@ -44,16 +44,24 @@ def show_segment(img, mask):
     return fig
 
 
-def segmentwidget(params, img, gmask):
+def segmentwidget(img, gmask, params=None, alg=None):
     """Generate GUI. Produce slider for each parameter for the current segmentor.
      Show both options for the masked image.
 
     Keyword arguments:
-    params -- list of parameter options
     img -- original image
     gmask -- ground truth segmentation mask for the image
+    params -- list of parameter options
+    alg -- algorithm to search parameters over
 
     """
+    if params==None and alg == None:
+        alg = 'FB'
+        params = [alg, 0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, (1, 1), 0, 'checkerboard', 'checkerboard', 0, 0, 0, 0, 0, 0]
+    elif params == None and alg != None:
+        params = [alg, 0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, (1, 1), 0, 'checkerboard', 'checkerboard', 0, 0, 0, 0, 0, 0]
+    elif params != None and alg != None:
+        params[0] = alg
     seg = Segmentors.algoFromParams(params)
     widg = dict()
     widglist = []
@@ -81,7 +89,7 @@ def segmentwidget(params, img, gmask):
         fit = Segmentors.FitnessFunction(mask, gmask)
         # fig = show_segment(img, mask)
         fig = showtwo(img, mask)
-        plt.title(fit[0])
+        plt.title('Fitness Value: ' + str(fit[0]))
 
 
     layout = widgets.Layout(grid_template_columns='1fr 1fr 1fr')

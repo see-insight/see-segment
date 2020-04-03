@@ -271,7 +271,7 @@ class ColorThreshold(segmentor):
         if len(img.shape) > 2:
             num_channels = img.shape[2]
             if channel_num < num_channels:
-                channel = img[:, :, channel_num]
+                channel = img[:, :, int(channel_num)]
             else:
                 hsv = skimage.color.rgb2hsv(img)
                 channel = hsv[:, :, 1]
@@ -321,8 +321,8 @@ class TripleA (segmentor):
             my_mn = temp
 
         output = np.ones(channel.shape)
-        output[channel < mn] = 0
-        output[channel > mx] = 0
+        output[channel < my_mn] = 0
+        output[channel > my_mx] = 0
 
         return output
 
