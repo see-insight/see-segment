@@ -44,8 +44,6 @@ def test_Watershed():
     WS1 = Segmentors.Watershed()
     assert WS1.evaluate(test_im_color).all() == segmentation.watershed(\
                 test_im_color, markers=None, compactness=2.0).all()
-    assert WS1.evaluate(test_im_gray).all() == segmentation.watershed(\
-                test_im_gray, markers=None, compactness=2.0).all()
 
 def test_Chan_Vese():
     CV1 = Segmentors.Chan_Vese()

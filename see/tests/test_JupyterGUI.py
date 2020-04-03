@@ -13,10 +13,10 @@ def test_showthree():
     img3 = np.zeros((20, 20))
     assert len(JupyterGUI.showthree(img1, img2, img3).axes) == 3
     
-def test_showSegment():
+def test_show_segment():
     img1 = np.ones((20, 20, 3))
     img2 = np.ones((20, 20))
-    assert len(JupyterGUI.showSegment(img1, img2).axes) == 2
+    assert len(JupyterGUI.show_segment(img1, img2).axes) == 2
 
 
 

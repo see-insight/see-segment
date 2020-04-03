@@ -15,7 +15,7 @@ from deap import creator
 from scoop import futures
 
 from see import Segmentors
-# import Segmentors
+#import Segmentors
 # from see import Segmentors_MinParams as Segmentors
 # from see import Segmentors_OrgAndReducedParams as Segmentors
 
@@ -38,8 +38,10 @@ def print_best_algorithm_code(individual):
     print(function_contents)
     return function_contents
 
-def twoPointCopy(np1, np2):
+def twoPointCopy(np1, np2, seed=False):
     """Execute a crossover between two numpy arrays of the same length."""
+    if seed == True:
+        random.seed(0)
     assert len(np1) == len(np2)
     size = len(np1)
     point1 = random.randint(1, size)
@@ -55,6 +57,8 @@ def twoPointCopy(np1, np2):
 def skimageCrossRandom(np1, np2, seed=False):
     """Execute a crossover between two arrays (np1 and np2) picking a random
      amount of indexes to change between the two."""
+    if seed == True:
+        random.seed(0)
     # DO: Only change values associated with algorithm
     assert len(np1) == len(np2)
     # The number of places that we'll cross

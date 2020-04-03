@@ -3,7 +3,7 @@ from see import GeneticSearch
 import pytest
 import numpy as np
 
-def test_printBestAlgorithmCode():
+def test_print_best_algorithm_code():
     individual = ['FB', 0, 0, 984, 0.09, 92, 0, 0, 0, 0, 0, 0, 0, 0, 0, (1, 2), 0, "checkerboard", "checkerboard", 0, 0, 0, 0, 0, 0]
     print_statement ="multichannel = False\n\
 if len(img.shape) > 2:\n\
@@ -15,21 +15,21 @@ output = skimage.segmentation.felzenszwalb(\n\
     92,\n\
     multichannel=multichannel,\n\
 )\n"
-    assert GeneticSearch.printBestAlgorithmCode(individual) == print_statement
+    assert GeneticSearch.print_best_algorithm_code(individual) == print_statement
 
 def test_twoPointCopy():
     np1 = ['FB', 0, 0, 984, 0.09, 92, 0, 0, 0, 0, 0, 0, 0, 0, 0, (1, 2), 0, "checkerboard", "checkerboard", 0, 0, 0, 0, 0, 0]
     np2 = ['CT', 0, 0, 0, 0, 0, 0, 0, 8, 10, 12, 0, 0, 0, 0, (1, 2), 0, "checkerboard", "checkerboard", 0, 0, 0, 0, 0, 0]
     new_np1, new_np2 = GeneticSearch.twoPointCopy(np1, np2, True)
-    assert new_np1 == ['FB', 0, 0, 0, 0.09, 92, 0, 0, 0, 0, 0, 0, 0, 0, 0, (1, 2), 0, 'checkerboard', 'checkerboard', 0, 0, 0, 0, 0, 0]
-    assert new_np2 == ['CT', 0, 0, 984, 0, 0, 0, 0, 8, 10, 12, 0, 0, 0, 0, (1, 2), 0, 'checkerboard', 'checkerboard', 0, 0, 0, 0, 0, 0]
+    assert new_np1 == ['FB', 0, 0, 984, 0.09, 92, 0, 0, 0, 0, 0, 0, 0, 0, 0, (1, 2), 0, 'checkerboard', 'checkerboard', 0, 0, 0, 0, 0, 0]
+    assert new_np2 == ['CT', 0, 0, 0, 0, 0, 0, 0, 8, 10, 12, 0, 0, 0, 0, (1, 2), 0, 'checkerboard', 'checkerboard', 0, 0, 0, 0, 0, 0]
 
 def test_skimageCrossRandom():
     np1 = ['FB', 0, 0, 984, 0.09, 92, 0, 0, 0, 0, 0, 0, 0, 0, 0, (1, 2), 0, "checkerboard", "checkerboard", 0, 0, 0, 0, 0, 0]
     np2 = ['CT', 0, 0, 0, 0, 0, 0, 0, 8, 10, 12, 0, 0, 0, 0, (1, 2), 0, "checkerboard", "checkerboard", 0, 0, 0, 0, 0, 0]
     new_np1, new_np2 = GeneticSearch.skimageCrossRandom(np1, np2)
-    assert new_np1 == ['FB', 0, 0, 984, 0.09, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, (1, 2), 0, 'checkerboard', 'checkerboard', 0, 0, 0, 0, 0, 0]
-    assert new_np2 == ['CT', 0, 0, 0, 0, 92, 0, 0, 8, 10, 12, 0, 0, 0, 0, (1, 2), 0, 'checkerboard', 'checkerboard', 0, 0, 0, 0, 0, 0]
+    assert new_np1 == ['FB', 0, 0, 984, 0.09, 92, 0, 0, 8, 0, 0, 0, 0, 0, 0, (1, 2), 0, 'checkerboard', 'checkerboard', 0, 0, 0, 0, 0, 0]
+    assert new_np2 == ['CT', 0, 0, 0, 0, 0, 0, 0, 0, 10, 12, 0, 0, 0, 0, (1, 2), 0, 'checkerboard', 'checkerboard', 0, 0, 0, 0, 0, 0]
 
 def test_mutate():
     copyChild = ['FB', 0, 0, 984, 0.09, 92, 0, 0, 0, 0, 0, 0, 0, 0, 0, (1, 2), 0, "checkerboard", "checkerboard", 0, 0, 0, 0, 0, 0]
