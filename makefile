@@ -22,12 +22,12 @@ init:
 	conda env create --prefix ./envs --file environment.yml
 
 doc:
-	pdoc --force --html --output-dir ./docs $ see
+	pdoc --force --html --output-dir ./docs $(MODULENAME)
 
 lint:
-	pylint $ see
+	pylint $(MODULENAME) 
 
 test:
-	py.test ./see
+	pytest -v $(MODULENAME) 
 
 .PHONY: init doc lint test 

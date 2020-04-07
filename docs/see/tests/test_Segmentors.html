@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.7.2" />
+<title>see.tests.test_Segmentors API documentation</title>
+<meta name="description" content="" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>see.tests.test_Segmentors</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from see import Segmentors
+import pytest
+import numpy as np
+import sys
+from skimage import segmentation, color
+
+# Define toy rgb and grayscale images used for testing below
+test_im_color = np.zeros((20, 20, 3))
+test_im_color[4:10, 4:10, :] = 1
+test_im_gray = test_im_color[:, :, 0]
+
+def test_runAlgo():
+    individual = [&#39;FB&#39;, 0, 0, 984, 0.09, 92, 0, 0, 0, 0, 0, 0, 0, 0, 0, (1, 2), 0, &#34;checkerboard&#34;, &#34;checkerboard&#34;, 0, 0, 0, 0, 0, 0]
+    assert Segmentors.runAlgo(test_im_color, test_im_color[:, :, 0], individual) == [sys.maxsize]
+
+def test_parameters():
+    param = Segmentors.parameters()
+    assert param.printparam(&#39;min_size&#39;) == &#34;min_size=0.0\n\tparameter for felzenszwalb\n\t[i for i in range(0,10000)]\n&#34;
+
+def test_Felzenszwalb():
+    FB1 = Segmentors.Felzenszwalb()
+    assert FB1.evaluate(test_im_color).all() == segmentation.felzenszwalb(\
+            test_im_color, 984, 0.09, 92, multichannel=True).all()
+    assert FB1.evaluate(test_im_gray).all() == segmentation.felzenszwalb(\
+            test_im_gray, 984, 0.09, 92, multichannel=False).all()
+
+def test_Slic():
+    SC1 = Segmentors.Slic()
+    assert SC1.evaluate(test_im_color).all() == segmentation.slic(\
+                test_im_color, n_segments=5, compactness=5, max_iter=3, \
+                sigma=5, convert2lab=True, multichannel=True).all()
+    assert SC1.evaluate(test_im_gray).all() == segmentation.slic(\
+                test_im_gray, n_segments=5, compactness=5, max_iter=3, \
+                sigma=5, convert2lab=True, multichannel=False).all()
+
+def test_QuickShift():
+    QS1 = Segmentors.QuickShift()
+    assert QS1.evaluate(test_im_color).all() == segmentation.quickshift(\
+                test_im_color, ratio=2, kernel_size=5, max_dist=60, sigma=5, random_seed=1).all()
+    assert QS1.evaluate(test_im_gray).all() == segmentation.quickshift(\
+                color.gray2rgb(test_im_gray), ratio=2, kernel_size=5, max_dist=60, sigma=5, random_seed=1).all()
+
+def test_Watershed():
+    WS1 = Segmentors.Watershed()
+    assert WS1.evaluate(test_im_color).all() == segmentation.watershed(\
+                test_im_color, markers=None, compactness=2.0).all()
+
+def test_Chan_Vese():
+    CV1 = Segmentors.Chan_Vese()
+    assert CV1.evaluate(test_im_color).all() == segmentation.chan_vese(\
+                color.rgb2gray(test_im_color), mu=2.0, lambda1=10, \
+                lambda2=20, tol=0.001, max_iter=10, dt=0.10).all()
+    assert CV1.evaluate(test_im_gray).all() == segmentation.chan_vese(\
+                test_im_gray, mu=2.0, lambda1=10, \
+                lambda2=20, tol=0.001, max_iter=10, dt=0.10).all()
+
+
+def test_Morphological_Chan_Vese():
+    MCV1 = Segmentors.Morphological_Chan_Vese()
+    assert MCV1.evaluate(test_im_color).all() == segmentation.morphological_chan_vese(\
+                color.rgb2gray(test_im_color), iterations=10, init_level_set=&#34;checkerboard&#34;, \
+                smoothing=10, lambda1=10, lambda2=20).all()
+    assert MCV1.evaluate(test_im_gray).all() == segmentation.morphological_chan_vese(\
+                test_im_gray, iterations=10, init_level_set=&#34;checkerboard&#34;, \
+                smoothing=10, lambda1=10, lambda2=20).all()
+
+def test_MorphGeodesicActiveContour():
+    AC1 = Segmentors.MorphGeodesicActiveContour()
+    assert AC1.evaluate(test_im_color).all() == segmentation.morphological_geodesic_active_contour(\
+                segmentation.inverse_gaussian_gradient(color.rgb2gray(test_im_color), 0.2, 0.3), \
+                iterations=10, init_level_set=&#39;checkerboard&#39;, smoothing=5, threshold=&#39;auto&#39;, balloon=10).all()
+    assert AC1.evaluate(test_im_gray).all() == segmentation.morphological_geodesic_active_contour(\
+                segmentation.inverse_gaussian_gradient(test_im_gray, 0.2, 0.3), \
+                iterations=10, init_level_set=&#39;checkerboard&#39;, smoothing=5, threshold=&#39;auto&#39;, balloon=10).all()
+
+def test_countMatches():
+    # create test image
+    groundTruth = np.zeros((20, 20))
+    groundTruth[4:10, 4:10] = 1
+    inferred = np.zeros((20, 20))
+    inferred[4:10, 4:6] = 1
+    inferred[4:10, 6:10] = 2
+    assert Segmentors.countMatches(inferred, groundTruth) == ({0.0: {0.0: 364}, 1.0: {1.0: 12}, 2.0: {1.0: 24}}, 3, 2)
+
+    inferred = np.zeros((20, 20))
+    inferred[4:10, 3:6] = 1
+    inferred[4:10, 6:10] = 2
+    assert Segmentors.countMatches(inferred, groundTruth) == ({0.0: {0.0: 358}, 1.0: {0.0: 6, 1.0: 12}, 2.0: {1.0: 24}}, 3, 2)
+
+    inferred = np.zeros((20, 20))
+    inferred[4:10, 3:6] = 1
+    inferred[4:10, 6:10] = 2
+    inferred[3:5, 3:6] = 3
+    assert Segmentors.countMatches(inferred, groundTruth) == ({0.0: {0.0: 355}, 3.0: {0.0: 4, 1.0: 2}, 2.0: {1.0: 24}, 1.0: {0.0: 5, 1.0: 10}}, 4, 2)
+
+    inferred = np.zeros((20, 20))
+    assert Segmentors.countMatches(inferred, groundTruth) == ({0.0: {0.0: 364, 1.0: 36}}, 1, 2)
+
+    inferred = np.zeros((20, 20))
+    inferred[1:19, 1:19] = 1
+    assert Segmentors.countMatches(inferred, groundTruth) == ({0.0: {0.0: 76}, 1.0: {0.0: 288, 1.0: 36}}, 2, 2)
+
+
+def test_countsets():
+    assert Segmentors.countsets({0.0: {0.0: 364}, 1.0: {1.0: 12}, 2.0: {1.0: 24}}) == (0, 2, {0.0: 0.0, 1.0: 1.0, 2.0: 1.0})
+    assert Segmentors.countsets({0.0: {0.0: 358}, 1.0: {0.0: 6, 1.0: 12}, 2.0: {1.0: 24}}) == (6, 2, {0.0: 0.0, 1.0: 1.0, 2.0: 1.0})
+    assert Segmentors.countsets({0.0: {0.0: 355}, 3.0: {0.0: 4, 1.0: 2}, 2.0: {1.0: 24}, 1.0: {0.0: 5, 1.0: 10}}) == (7, 2, {0.0: 0.0, 3.0: 0.0, 2.0: 1.0, 1.0: 1.0})
+    assert Segmentors.countsets({0.0: {0.0: 364, 1.0: 36}}) == (36, 1, {0.0: 0.0})
+    assert Segmentors.countsets({0.0: {0.0: 76}, 1.0: {0.0: 288, 1.0: 36}}) == (36, 1, {0.0: 0.0, 1.0: 0.0})
+
+
+def test_FitnessFunction():
+    # create test image
+    groundTruth = np.zeros((20, 20))
+    groundTruth[4:10, 4:10] = 1
+    inferred = np.zeros((20, 20))
+    inferred[4:10, 4:6] = 1
+    inferred[4:10, 6:10] = 2
+    assert Segmentors.FitnessFunction(inferred, groundTruth) == [2 ** np.log(3),]
+
+    inferred = np.zeros((20, 20))
+    inferred[4:10, 3:6] = 1
+    inferred[4:10, 6:10] = 2
+    assert Segmentors.FitnessFunction(inferred, groundTruth) == [8 ** np.log(3),]
+
+    inferred = np.zeros((20, 20))
+    inferred[4:10, 3:6] = 1
+    inferred[4:10, 6:10] = 2
+    inferred[3:5, 3:6] = 3
+    assert Segmentors.FitnessFunction(inferred, groundTruth) == [9 ** np.log(4),]
+
+    inferred = np.zeros((20, 20))
+    assert Segmentors.FitnessFunction(inferred, groundTruth) == [sys.maxsize,]
+
+    inferred = np.arange(400).reshape(groundTruth.shape)
+    assert Segmentors.FitnessFunction(inferred, groundTruth) == [2 ** np.log(400),]
+
+    inferred = np.zeros((20, 20))
+    inferred[1:19, 1:19] = 1
+    assert Segmentors.FitnessFunction(inferred, groundTruth) == [sys.maxsize,]
+    </code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="see.tests.test_Segmentors.test_Chan_Vese"><code class="name flex">
+<span>def <span class="ident">test_Chan_Vese</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_Chan_Vese():
+    CV1 = Segmentors.Chan_Vese()
+    assert CV1.evaluate(test_im_color).all() == segmentation.chan_vese(\
+                color.rgb2gray(test_im_color), mu=2.0, lambda1=10, \
+                lambda2=20, tol=0.001, max_iter=10, dt=0.10).all()
+    assert CV1.evaluate(test_im_gray).all() == segmentation.chan_vese(\
+                test_im_gray, mu=2.0, lambda1=10, \
+                lambda2=20, tol=0.001, max_iter=10, dt=0.10).all()</code></pre>
+</details>
+</dd>
+<dt id="see.tests.test_Segmentors.test_Felzenszwalb"><code class="name flex">
+<span>def <span class="ident">test_Felzenszwalb</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_Felzenszwalb():
+    FB1 = Segmentors.Felzenszwalb()
+    assert FB1.evaluate(test_im_color).all() == segmentation.felzenszwalb(\
+            test_im_color, 984, 0.09, 92, multichannel=True).all()
+    assert FB1.evaluate(test_im_gray).all() == segmentation.felzenszwalb(\
+            test_im_gray, 984, 0.09, 92, multichannel=False).all()</code></pre>
+</details>
+</dd>
+<dt id="see.tests.test_Segmentors.test_FitnessFunction"><code class="name flex">
+<span>def <span class="ident">test_FitnessFunction</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_FitnessFunction():
+    # create test image
+    groundTruth = np.zeros((20, 20))
+    groundTruth[4:10, 4:10] = 1
+    inferred = np.zeros((20, 20))
+    inferred[4:10, 4:6] = 1
+    inferred[4:10, 6:10] = 2
+    assert Segmentors.FitnessFunction(inferred, groundTruth) == [2 ** np.log(3),]
+
+    inferred = np.zeros((20, 20))
+    inferred[4:10, 3:6] = 1
+    inferred[4:10, 6:10] = 2
+    assert Segmentors.FitnessFunction(inferred, groundTruth) == [8 ** np.log(3),]
+
+    inferred = np.zeros((20, 20))
+    inferred[4:10, 3:6] = 1
+    inferred[4:10, 6:10] = 2
+    inferred[3:5, 3:6] = 3
+    assert Segmentors.FitnessFunction(inferred, groundTruth) == [9 ** np.log(4),]
+
+    inferred = np.zeros((20, 20))
+    assert Segmentors.FitnessFunction(inferred, groundTruth) == [sys.maxsize,]
+
+    inferred = np.arange(400).reshape(groundTruth.shape)
+    assert Segmentors.FitnessFunction(inferred, groundTruth) == [2 ** np.log(400),]
+
+    inferred = np.zeros((20, 20))
+    inferred[1:19, 1:19] = 1
+    assert Segmentors.FitnessFunction(inferred, groundTruth) == [sys.maxsize,]</code></pre>
+</details>
+</dd>
+<dt id="see.tests.test_Segmentors.test_MorphGeodesicActiveContour"><code class="name flex">
+<span>def <span class="ident">test_MorphGeodesicActiveContour</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_MorphGeodesicActiveContour():
+    AC1 = Segmentors.MorphGeodesicActiveContour()
+    assert AC1.evaluate(test_im_color).all() == segmentation.morphological_geodesic_active_contour(\
+                segmentation.inverse_gaussian_gradient(color.rgb2gray(test_im_color), 0.2, 0.3), \
+                iterations=10, init_level_set=&#39;checkerboard&#39;, smoothing=5, threshold=&#39;auto&#39;, balloon=10).all()
+    assert AC1.evaluate(test_im_gray).all() == segmentation.morphological_geodesic_active_contour(\
+                segmentation.inverse_gaussian_gradient(test_im_gray, 0.2, 0.3), \
+                iterations=10, init_level_set=&#39;checkerboard&#39;, smoothing=5, threshold=&#39;auto&#39;, balloon=10).all()</code></pre>
+</details>
+</dd>
+<dt id="see.tests.test_Segmentors.test_Morphological_Chan_Vese"><code class="name flex">
+<span>def <span class="ident">test_Morphological_Chan_Vese</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_Morphological_Chan_Vese():
+    MCV1 = Segmentors.Morphological_Chan_Vese()
+    assert MCV1.evaluate(test_im_color).all() == segmentation.morphological_chan_vese(\
+                color.rgb2gray(test_im_color), iterations=10, init_level_set=&#34;checkerboard&#34;, \
+                smoothing=10, lambda1=10, lambda2=20).all()
+    assert MCV1.evaluate(test_im_gray).all() == segmentation.morphological_chan_vese(\
+                test_im_gray, iterations=10, init_level_set=&#34;checkerboard&#34;, \
+                smoothing=10, lambda1=10, lambda2=20).all()</code></pre>
+</details>
+</dd>
+<dt id="see.tests.test_Segmentors.test_QuickShift"><code class="name flex">
+<span>def <span class="ident">test_QuickShift</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_QuickShift():
+    QS1 = Segmentors.QuickShift()
+    assert QS1.evaluate(test_im_color).all() == segmentation.quickshift(\
+                test_im_color, ratio=2, kernel_size=5, max_dist=60, sigma=5, random_seed=1).all()
+    assert QS1.evaluate(test_im_gray).all() == segmentation.quickshift(\
+                color.gray2rgb(test_im_gray), ratio=2, kernel_size=5, max_dist=60, sigma=5, random_seed=1).all()</code></pre>
+</details>
+</dd>
+<dt id="see.tests.test_Segmentors.test_Slic"><code class="name flex">
+<span>def <span class="ident">test_Slic</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_Slic():
+    SC1 = Segmentors.Slic()
+    assert SC1.evaluate(test_im_color).all() == segmentation.slic(\
+                test_im_color, n_segments=5, compactness=5, max_iter=3, \
+                sigma=5, convert2lab=True, multichannel=True).all()
+    assert SC1.evaluate(test_im_gray).all() == segmentation.slic(\
+                test_im_gray, n_segments=5, compactness=5, max_iter=3, \
+                sigma=5, convert2lab=True, multichannel=False).all()</code></pre>
+</details>
+</dd>
+<dt id="see.tests.test_Segmentors.test_Watershed"><code class="name flex">
+<span>def <span class="ident">test_Watershed</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_Watershed():
+    WS1 = Segmentors.Watershed()
+    assert WS1.evaluate(test_im_color).all() == segmentation.watershed(\
+                test_im_color, markers=None, compactness=2.0).all()</code></pre>
+</details>
+</dd>
+<dt id="see.tests.test_Segmentors.test_countMatches"><code class="name flex">
+<span>def <span class="ident">test_countMatches</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_countMatches():
+    # create test image
+    groundTruth = np.zeros((20, 20))
+    groundTruth[4:10, 4:10] = 1
+    inferred = np.zeros((20, 20))
+    inferred[4:10, 4:6] = 1
+    inferred[4:10, 6:10] = 2
+    assert Segmentors.countMatches(inferred, groundTruth) == ({0.0: {0.0: 364}, 1.0: {1.0: 12}, 2.0: {1.0: 24}}, 3, 2)
+
+    inferred = np.zeros((20, 20))
+    inferred[4:10, 3:6] = 1
+    inferred[4:10, 6:10] = 2
+    assert Segmentors.countMatches(inferred, groundTruth) == ({0.0: {0.0: 358}, 1.0: {0.0: 6, 1.0: 12}, 2.0: {1.0: 24}}, 3, 2)
+
+    inferred = np.zeros((20, 20))
+    inferred[4:10, 3:6] = 1
+    inferred[4:10, 6:10] = 2
+    inferred[3:5, 3:6] = 3
+    assert Segmentors.countMatches(inferred, groundTruth) == ({0.0: {0.0: 355}, 3.0: {0.0: 4, 1.0: 2}, 2.0: {1.0: 24}, 1.0: {0.0: 5, 1.0: 10}}, 4, 2)
+
+    inferred = np.zeros((20, 20))
+    assert Segmentors.countMatches(inferred, groundTruth) == ({0.0: {0.0: 364, 1.0: 36}}, 1, 2)
+
+    inferred = np.zeros((20, 20))
+    inferred[1:19, 1:19] = 1
+    assert Segmentors.countMatches(inferred, groundTruth) == ({0.0: {0.0: 76}, 1.0: {0.0: 288, 1.0: 36}}, 2, 2)</code></pre>
+</details>
+</dd>
+<dt id="see.tests.test_Segmentors.test_countsets"><code class="name flex">
+<span>def <span class="ident">test_countsets</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_countsets():
+    assert Segmentors.countsets({0.0: {0.0: 364}, 1.0: {1.0: 12}, 2.0: {1.0: 24}}) == (0, 2, {0.0: 0.0, 1.0: 1.0, 2.0: 1.0})
+    assert Segmentors.countsets({0.0: {0.0: 358}, 1.0: {0.0: 6, 1.0: 12}, 2.0: {1.0: 24}}) == (6, 2, {0.0: 0.0, 1.0: 1.0, 2.0: 1.0})
+    assert Segmentors.countsets({0.0: {0.0: 355}, 3.0: {0.0: 4, 1.0: 2}, 2.0: {1.0: 24}, 1.0: {0.0: 5, 1.0: 10}}) == (7, 2, {0.0: 0.0, 3.0: 0.0, 2.0: 1.0, 1.0: 1.0})
+    assert Segmentors.countsets({0.0: {0.0: 364, 1.0: 36}}) == (36, 1, {0.0: 0.0})
+    assert Segmentors.countsets({0.0: {0.0: 76}, 1.0: {0.0: 288, 1.0: 36}}) == (36, 1, {0.0: 0.0, 1.0: 0.0})</code></pre>
+</details>
+</dd>
+<dt id="see.tests.test_Segmentors.test_parameters"><code class="name flex">
+<span>def <span class="ident">test_parameters</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_parameters():
+    param = Segmentors.parameters()
+    assert param.printparam(&#39;min_size&#39;) == &#34;min_size=0.0\n\tparameter for felzenszwalb\n\t[i for i in range(0,10000)]\n&#34;</code></pre>
+</details>
+</dd>
+<dt id="see.tests.test_Segmentors.test_runAlgo"><code class="name flex">
+<span>def <span class="ident">test_runAlgo</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_runAlgo():
+    individual = [&#39;FB&#39;, 0, 0, 984, 0.09, 92, 0, 0, 0, 0, 0, 0, 0, 0, 0, (1, 2), 0, &#34;checkerboard&#34;, &#34;checkerboard&#34;, 0, 0, 0, 0, 0, 0]
+    assert Segmentors.runAlgo(test_im_color, test_im_color[:, :, 0], individual) == [sys.maxsize]</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="see.tests" href="index.html">see.tests</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="see.tests.test_Segmentors.test_Chan_Vese" href="#see.tests.test_Segmentors.test_Chan_Vese">test_Chan_Vese</a></code></li>
+<li><code><a title="see.tests.test_Segmentors.test_Felzenszwalb" href="#see.tests.test_Segmentors.test_Felzenszwalb">test_Felzenszwalb</a></code></li>
+<li><code><a title="see.tests.test_Segmentors.test_FitnessFunction" href="#see.tests.test_Segmentors.test_FitnessFunction">test_FitnessFunction</a></code></li>
+<li><code><a title="see.tests.test_Segmentors.test_MorphGeodesicActiveContour" href="#see.tests.test_Segmentors.test_MorphGeodesicActiveContour">test_MorphGeodesicActiveContour</a></code></li>
+<li><code><a title="see.tests.test_Segmentors.test_Morphological_Chan_Vese" href="#see.tests.test_Segmentors.test_Morphological_Chan_Vese">test_Morphological_Chan_Vese</a></code></li>
+<li><code><a title="see.tests.test_Segmentors.test_QuickShift" href="#see.tests.test_Segmentors.test_QuickShift">test_QuickShift</a></code></li>
+<li><code><a title="see.tests.test_Segmentors.test_Slic" href="#see.tests.test_Segmentors.test_Slic">test_Slic</a></code></li>
+<li><code><a title="see.tests.test_Segmentors.test_Watershed" href="#see.tests.test_Segmentors.test_Watershed">test_Watershed</a></code></li>
+<li><code><a title="see.tests.test_Segmentors.test_countMatches" href="#see.tests.test_Segmentors.test_countMatches">test_countMatches</a></code></li>
+<li><code><a title="see.tests.test_Segmentors.test_countsets" href="#see.tests.test_Segmentors.test_countsets">test_countsets</a></code></li>
+<li><code><a title="see.tests.test_Segmentors.test_parameters" href="#see.tests.test_Segmentors.test_parameters">test_parameters</a></code></li>
+<li><code><a title="see.tests.test_Segmentors.test_runAlgo" href="#see.tests.test_Segmentors.test_runAlgo">test_runAlgo</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.2</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>
