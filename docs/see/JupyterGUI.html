@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.2" />
 <title>see.JupyterGUI API documentation</title>
-<meta name="description" content="This produces a GUI that allows users to switch between segmentation algorithms and alter the parameters manually using a slider. It shows two images, …" />
+<meta name="description" content="This produces a GUI that allows users to switch between segmentation
+algorithms and alter the parameters manually using a slider. It shows two
+…" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -20,67 +22,85 @@
 <h1 class="title">Module <code>see.JupyterGUI</code></h1>
 </header>
 <section id="section-intro">
-<p>This produces a GUI that allows users to switch between segmentation algorithms and alter the parameters manually using a slider. It shows two images, one with the original image with the resulting mask and one with the original image with the negative of the resulting mask.</p>
+<p>This produces a GUI that allows users to switch between segmentation
+algorithms and alter the parameters manually using a slider. It shows two images,
+one with the original image with the resulting mask and one with the original image
+with the negative of the resulting mask.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34;This produces a GUI that allows users to switch between segmentation algorithms and alter the parameters manually using a slider. It shows two images, one with the original image with the resulting mask and one with the original image with the negative of the resulting mask.&#34;&#34;&#34;
+<pre><code class="python">&#34;&#34;&#34;This produces a GUI that allows users to switch between segmentation
+ algorithms and alter the parameters manually using a slider. It shows two images,
+  one with the original image with the resulting mask and one with the original image
+   with the negative of the resulting mask.&#34;&#34;&#34;
 import matplotlib.pylab as plt
-from ipywidgets import interact
+# from ipywidgets import interact
 import ipywidgets as widgets
 
 from see import Segmentors
 
 def showtwo(img, img2):
     &#34;&#34;&#34;Show two images side by side.&#34;&#34;&#34;
-    fig = plt.figure(figsize=(20,20))
-    ax = fig.add_subplot(1,2,1)
-    ax.imshow(img)
-    ax = fig.add_subplot(1,2,2)
-    ax.imshow(img2)
-    
-def showthree(im, img, img2):
+    fig = plt.figure(figsize=(20, 20))
+    my_ax = fig.add_subplot(1, 2, 1)
+    my_ax.imshow(img)
+    my_ax = fig.add_subplot(1, 2, 2)
+    my_ax.imshow(img2)
+    return fig
+
+def showthree(img, img1, img2):
     &#34;&#34;&#34;Show three images side by side.&#34;&#34;&#34;
-    fig = plt.figure(figsize=(20,20))
-    ax = fig.add_subplot(1,3,1)
-    ax.imshow(im)
-    ax = fig.add_subplot(1,3,2)
-    ax.imshow(img)
-    ax = fig.add_subplot(1,3,3)
-    ax.imshow(img2)
-    
-def showSegment(im, mask):
+    fig = plt.figure(figsize=(20, 20))
+    my_ax = fig.add_subplot(1, 3, 1)
+    my_ax.imshow(img)
+    my_ax = fig.add_subplot(1, 3, 2)
+    my_ax.imshow(img1)
+    my_ax = fig.add_subplot(1, 3, 3)
+    my_ax.imshow(img2)
+    return fig
+
+def show_segment(img, mask):
     &#34;&#34;&#34;Show both options for segmenting using the current mask.
 
     Keyword arguments:
-    im -- original image
+    img -- original image
     mask -- resulting mask from segmentor
 
     &#34;&#34;&#34;
-    im1 = im.copy()
-    im2 = im.copy()
-    im1[mask&gt;0,:] = 0
-    im2[mask==0,:] = 0
-    showtwo(im1,im2)
+    im1 = img.copy()
+    im2 = img.copy()
+    im1[mask &gt; 0, :] = 0
+    im2[mask == 0, :] = 0
+    fig = showtwo(im1, im2)
+    return fig
 
 
-def segmentwidget(params, img, gmask):
-    &#34;&#34;&#34;Generate GUI. Produce slider for each parameter for the current segmentor. Show both options for the masked image.
+def segmentwidget(img, gmask, params=None, alg=None):
+    &#34;&#34;&#34;Generate GUI. Produce slider for each parameter for the current segmentor.
+     Show both options for the masked image.
 
     Keyword arguments:
-    params -- list of parameter options
     img -- original image
     gmask -- ground truth segmentation mask for the image
+    params -- list of parameter options
+    alg -- algorithm to search parameters over
 
     &#34;&#34;&#34;
+    if params==None and alg == None:
+        alg = &#39;FB&#39;
+        params = [alg, 0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, (1, 1), 0, &#39;checkerboard&#39;, &#39;checkerboard&#39;, 0, 0, 0, 0, 0, 0]
+    elif params == None and alg != None:
+        params = [alg, 0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, (1, 1), 0, &#39;checkerboard&#39;, &#39;checkerboard&#39;, 0, 0, 0, 0, 0, 0]
+    elif params != None and alg != None:
+        params[0] = alg
     seg = Segmentors.algoFromParams(params)
     widg = dict()
     widglist = []
 
     for p in seg.paramindexes:
         thislist = eval(seg.params.ranges[p])
-        disabled = True
+        # disabled = True
         thiswidg = widgets.SelectionSlider(options=tuple(thislist),
                                            disabled=False,
                                            description=p,
@@ -92,25 +112,23 @@ def segmentwidget(params, img, gmask):
         widglist.append(thiswidg)
         widg[p] = thiswidg
 
-    def f(im =img, mask=gmask, **kwargs):
+    def func(img=img, mask=gmask, **kwargs):
         &#34;&#34;&#34;Find mask and fitness for current algorithm. Show masked image.&#34;&#34;&#34;
         print(seg.params[&#34;algorithm&#34;])
         for k in kwargs:
             seg.params[k] = kwargs[k]
         mask = seg.evaluate(img)
-        fit = Segmentors.FitnessFunction(mask,gmask)
-        showSegment(img,mask)
-        plt.title(fit)
-        
+        fit = Segmentors.FitnessFunction(mask, gmask)
+        # fig = show_segment(img, mask)
+        fig = showtwo(img, mask)
+        plt.title(&#39;Fitness Value: &#39; + str(fit[0]))
+
 
     layout = widgets.Layout(grid_template_columns=&#39;1fr 1fr 1fr&#39;)
-    ui = widgets.GridBox(widglist, layout=layout)
+    u_i = widgets.GridBox(widglist, layout=layout)
 
-    out = widgets.interactive_output(f, widg)
-    display(ui, out)
-
-    
-    </code></pre>
+    out = widgets.interactive_output(func, widg)
+    display(u_i, out)</code></pre>
 </details>
 </section>
 <section>
@@ -121,34 +139,45 @@ def segmentwidget(params, img, gmask):
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="see.JupyterGUI.segmentwidget"><code class="name flex">
-<span>def <span class="ident">segmentwidget</span></span>(<span>params, img, gmask)</span>
+<span>def <span class="ident">segmentwidget</span></span>(<span>img, gmask, params=None, alg=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Generate GUI. Produce slider for each parameter for the current segmentor. Show both options for the masked image.</p>
+<section class="desc"><p>Generate GUI. Produce slider for each parameter for the current segmentor.
+Show both options for the masked image.</p>
 <p>Keyword arguments:
-params &ndash; list of parameter options
 img &ndash; original image
-gmask &ndash; ground truth segmentation mask for the image</p></section>
+gmask &ndash; ground truth segmentation mask for the image
+params &ndash; list of parameter options
+alg &ndash; algorithm to search parameters over</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def segmentwidget(params, img, gmask):
-    &#34;&#34;&#34;Generate GUI. Produce slider for each parameter for the current segmentor. Show both options for the masked image.
+<pre><code class="python">def segmentwidget(img, gmask, params=None, alg=None):
+    &#34;&#34;&#34;Generate GUI. Produce slider for each parameter for the current segmentor.
+     Show both options for the masked image.
 
     Keyword arguments:
-    params -- list of parameter options
     img -- original image
     gmask -- ground truth segmentation mask for the image
+    params -- list of parameter options
+    alg -- algorithm to search parameters over
 
     &#34;&#34;&#34;
+    if params==None and alg == None:
+        alg = &#39;FB&#39;
+        params = [alg, 0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, (1, 1), 0, &#39;checkerboard&#39;, &#39;checkerboard&#39;, 0, 0, 0, 0, 0, 0]
+    elif params == None and alg != None:
+        params = [alg, 0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, (1, 1), 0, &#39;checkerboard&#39;, &#39;checkerboard&#39;, 0, 0, 0, 0, 0, 0]
+    elif params != None and alg != None:
+        params[0] = alg
     seg = Segmentors.algoFromParams(params)
     widg = dict()
     widglist = []
 
     for p in seg.paramindexes:
         thislist = eval(seg.params.ranges[p])
-        disabled = True
+        # disabled = True
         thiswidg = widgets.SelectionSlider(options=tuple(thislist),
                                            disabled=False,
                                            description=p,
@@ -160,53 +189,55 @@ gmask &ndash; ground truth segmentation mask for the image</p></section>
         widglist.append(thiswidg)
         widg[p] = thiswidg
 
-    def f(im =img, mask=gmask, **kwargs):
+    def func(img=img, mask=gmask, **kwargs):
         &#34;&#34;&#34;Find mask and fitness for current algorithm. Show masked image.&#34;&#34;&#34;
         print(seg.params[&#34;algorithm&#34;])
         for k in kwargs:
             seg.params[k] = kwargs[k]
         mask = seg.evaluate(img)
-        fit = Segmentors.FitnessFunction(mask,gmask)
-        showSegment(img,mask)
-        plt.title(fit)
-        
+        fit = Segmentors.FitnessFunction(mask, gmask)
+        # fig = show_segment(img, mask)
+        fig = showtwo(img, mask)
+        plt.title(&#39;Fitness Value: &#39; + str(fit[0]))
+
 
     layout = widgets.Layout(grid_template_columns=&#39;1fr 1fr 1fr&#39;)
-    ui = widgets.GridBox(widglist, layout=layout)
+    u_i = widgets.GridBox(widglist, layout=layout)
 
-    out = widgets.interactive_output(f, widg)
-    display(ui, out)</code></pre>
+    out = widgets.interactive_output(func, widg)
+    display(u_i, out)</code></pre>
 </details>
 </dd>
-<dt id="see.JupyterGUI.showSegment"><code class="name flex">
-<span>def <span class="ident">showSegment</span></span>(<span>im, mask)</span>
+<dt id="see.JupyterGUI.show_segment"><code class="name flex">
+<span>def <span class="ident">show_segment</span></span>(<span>img, mask)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Show both options for segmenting using the current mask.</p>
 <p>Keyword arguments:
-im &ndash; original image
+img &ndash; original image
 mask &ndash; resulting mask from segmentor</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def showSegment(im, mask):
+<pre><code class="python">def show_segment(img, mask):
     &#34;&#34;&#34;Show both options for segmenting using the current mask.
 
     Keyword arguments:
-    im -- original image
+    img -- original image
     mask -- resulting mask from segmentor
 
     &#34;&#34;&#34;
-    im1 = im.copy()
-    im2 = im.copy()
-    im1[mask&gt;0,:] = 0
-    im2[mask==0,:] = 0
-    showtwo(im1,im2)</code></pre>
+    im1 = img.copy()
+    im2 = img.copy()
+    im1[mask &gt; 0, :] = 0
+    im2[mask == 0, :] = 0
+    fig = showtwo(im1, im2)
+    return fig</code></pre>
 </details>
 </dd>
 <dt id="see.JupyterGUI.showthree"><code class="name flex">
-<span>def <span class="ident">showthree</span></span>(<span>im, img, img2)</span>
+<span>def <span class="ident">showthree</span></span>(<span>img, img1, img2)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Show three images side by side.</p></section>
@@ -214,15 +245,16 @@ mask &ndash; resulting mask from segmentor</p></section>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def showthree(im, img, img2):
+<pre><code class="python">def showthree(img, img1, img2):
     &#34;&#34;&#34;Show three images side by side.&#34;&#34;&#34;
-    fig = plt.figure(figsize=(20,20))
-    ax = fig.add_subplot(1,3,1)
-    ax.imshow(im)
-    ax = fig.add_subplot(1,3,2)
-    ax.imshow(img)
-    ax = fig.add_subplot(1,3,3)
-    ax.imshow(img2)</code></pre>
+    fig = plt.figure(figsize=(20, 20))
+    my_ax = fig.add_subplot(1, 3, 1)
+    my_ax.imshow(img)
+    my_ax = fig.add_subplot(1, 3, 2)
+    my_ax.imshow(img1)
+    my_ax = fig.add_subplot(1, 3, 3)
+    my_ax.imshow(img2)
+    return fig</code></pre>
 </details>
 </dd>
 <dt id="see.JupyterGUI.showtwo"><code class="name flex">
@@ -236,11 +268,12 @@ mask &ndash; resulting mask from segmentor</p></section>
 </summary>
 <pre><code class="python">def showtwo(img, img2):
     &#34;&#34;&#34;Show two images side by side.&#34;&#34;&#34;
-    fig = plt.figure(figsize=(20,20))
-    ax = fig.add_subplot(1,2,1)
-    ax.imshow(img)
-    ax = fig.add_subplot(1,2,2)
-    ax.imshow(img2)</code></pre>
+    fig = plt.figure(figsize=(20, 20))
+    my_ax = fig.add_subplot(1, 2, 1)
+    my_ax.imshow(img)
+    my_ax = fig.add_subplot(1, 2, 2)
+    my_ax.imshow(img2)
+    return fig</code></pre>
 </details>
 </dd>
 </dl>
@@ -262,7 +295,7 @@ mask &ndash; resulting mask from segmentor</p></section>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="see.JupyterGUI.segmentwidget" href="#see.JupyterGUI.segmentwidget">segmentwidget</a></code></li>
-<li><code><a title="see.JupyterGUI.showSegment" href="#see.JupyterGUI.showSegment">showSegment</a></code></li>
+<li><code><a title="see.JupyterGUI.show_segment" href="#see.JupyterGUI.show_segment">show_segment</a></code></li>
 <li><code><a title="see.JupyterGUI.showthree" href="#see.JupyterGUI.showthree">showthree</a></code></li>
 <li><code><a title="see.JupyterGUI.showtwo" href="#see.JupyterGUI.showtwo">showtwo</a></code></li>
 </ul>
