@@ -25,7 +25,7 @@ doc:
 	pdoc --force --html --output-dir ./docs $(MODULENAME)
 
 lint:
-	pylint $(MODULENAAME) 
+	pylint $(MODULENAME) 
 
 test:
 	pytest -v $(MODULENAME) 
