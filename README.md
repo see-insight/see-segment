@@ -16,24 +16,24 @@ I also hope to clean up the overall code, and package it in a way that makes it 
 ---
 
 ### Dependencies
-* python 3.7.6 
-  * [conda 4.8.3](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html)
-  * [jupyter 4.6.1](https://jupyter.readthedocs.io/en/latest/install.html)
-* [numpy 1.18.1](https://anaconda.org/anaconda/numpy)
-* [matplotlib 3.1.3](https://matplotlib.org/users/installing.html)
-* [scikit-image 0.16.2](https://scikit-image.org/docs/dev/install.html)
+* python 3.7
+  * [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html)
+  * [jupyter](https://jupyter.readthedocs.io/en/latest/install.html)
+* [numpy](https://anaconda.org/anaconda/numpy)
+* [matplotlib](https://matplotlib.org/users/installing.html)
+* [scikit-image](https://scikit-image.org/docs/dev/install.html)
   * skimage.segmentation
-* [deap 1.3](https://anaconda.org/conda-forge/deap)
-* [scoop 0.7](https://scoop.readthedocs.io/en/0.7/install.html)
-* [cv2 4.2](https://docs.opencv.org/master/da/df6/tutorial_py_table_of_contents_setup.html)
+* [deap](https://anaconda.org/conda-forge/deap)
+* [scoop](https://scoop.readthedocs.io/en/0.7/install.html)
+* [cv2](https://docs.opencv.org/master/da/df6/tutorial_py_table_of_contents_setup.html)
 
 Dependencies can be installed manually, or by creating a conda environment using the command below:  
 
-**Windows:**  
+**With makefile:**  
 
-	conda env create --prefix ./envs --file environment_Windows.yml
+	make init
 
-**MacOS and Linux:**  
+**Manually:**  
 
 	conda env create --prefix ./envs --file environment.yml
 
