@@ -37,4 +37,6 @@ Dependencies can be installed manually, or by creating a conda environment using
 
 	conda env create --prefix ./envs --file environment.yml
 
+### An Intro to SEE  
 
+Watch an introductory video to what SEE is, and how to use [here](https://mediaspace.msu.edu/media/t/1_60yjrdjs)
