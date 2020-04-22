@@ -1,0 +1,10 @@
+TODO: Reconstruct search space
+
+Original Search Space: Segmentors.py
+Took all hyperparamters used in the segmentation algorithms and generated a search space so that each hyperparameter got its own search space element. This gave good results and ran relatively quickly. 
+
+Minimum Search Space: Segmentors_MinParams.py
+The hyperparamters in the segmentation algorithms were combined in such a way that the search space could contain as few elements as possible. After running several tests comparing the results from this to the original search space, we found that while this search space required about 25% less computation time, it converged to a solution less often. 
+
+Curated Search Space: Segmentors_Curated.py
+For this space, the elements were combined in a systematic way. Hyperparamters that were related were combined, and unique hyperparamters were left alone. After running several tests, this search space performed the worst. It took longer than the original large search space, and converged to a solution about as often as the minimum search space. 
