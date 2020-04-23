@@ -10,7 +10,6 @@ import sys
 import logging
 import numpy as np
 import skimage
-from skimage import segmentation
 from skimage import color
 
 # List of all algorithms
@@ -232,8 +231,8 @@ class segmentor(object):
     def __str__(self):
         """Return params for algorithm."""
         mystring = f"{self.params['algorithm']} -- \n"
-        for p in self.paramindexes:
-            mystring += f"\t{p} = {self.params[p]}\n"
+        for ppp in self.paramindexes:
+            mystring += f"\t{ppp} = {self.params[ppp]}\n"
         return mystring
 
 
@@ -294,7 +293,7 @@ class ColorThreshold(segmentor):
 
 algorithmspace["CT"] = ColorThreshold
 
-class TripleA (segmentor):
+class TripleA(segmentor):
     def __init__(self, paramlist=None):
         super(TripleA, self).__init__(paramlist)
         if not paramlist:

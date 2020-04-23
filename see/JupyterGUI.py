@@ -3,7 +3,6 @@
   one with the original image with the resulting mask and one with the original image
    with the negative of the resulting mask."""
 import matplotlib.pylab as plt
-# from ipywidgets import interact
 import ipywidgets as widgets
 
 from see import Segmentors
@@ -55,30 +54,31 @@ def segmentwidget(img, gmask, params=None, alg=None):
     alg -- algorithm to search parameters over
 
     """
-    if params==None and alg == None:
+    if params is None and alg is None:
         alg = 'FB'
-        params = [alg, 0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, (1, 1), 0, 'checkerboard', 'checkerboard', 0, 0, 0, 0, 0, 0]
-    elif params == None and alg != None:
-        params = [alg, 0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, (1, 1), 0, 'checkerboard', 'checkerboard', 0, 0, 0, 0, 0, 0]
-    elif params != None and alg != None:
+        params = [alg, 0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,\
+         (1, 1), 0, 'checkerboard', 'checkerboard', 0, 0, 0, 0, 0, 0]
+    elif params is None and alg is not None:
+        params = [alg, 0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,\
+         (1, 1), 0, 'checkerboard', 'checkerboard', 0, 0, 0, 0, 0, 0]
+    elif params is not None and alg is not None:
         params[0] = alg
     seg = Segmentors.algoFromParams(params)
     widg = dict()
     widglist = []
 
-    for p in seg.paramindexes:
-        thislist = eval(seg.params.ranges[p])
-        # disabled = True
+    for ppp in seg.paramindexes:
+        thislist = eval(seg.params.ranges[ppp])
         thiswidg = widgets.SelectionSlider(options=tuple(thislist),
                                            disabled=False,
-                                           description=p,
-                                           value=seg.params[p],
+                                           description=ppp,
+                                           value=seg.params[ppp],
                                            continuous_update=False,
                                            orientation='horizontal',
                                            readout=True
                                           )
         widglist.append(thiswidg)
-        widg[p] = thiswidg
+        widg[ppp] = thiswidg
 
     def func(img=img, mask=gmask, **kwargs):
         """Find mask and fitness for current algorithm. Show masked image."""
@@ -87,7 +87,6 @@ def segmentwidget(img, gmask, params=None, alg=None):
             seg.params[k] = kwargs[k]
         mask = seg.evaluate(img)
         fit = Segmentors.FitnessFunction(mask, gmask)
-        # fig = show_segment(img, mask)
         fig = showtwo(img, mask)
         plt.title('Fitness Value: ' + str(fit[0]))
 

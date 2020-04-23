@@ -15,9 +15,6 @@ from deap import creator
 from scoop import futures
 
 from see import Segmentors
-#import Segmentors
-# from see import Segmentors_MinParams as Segmentors
-# from see import Segmentors_OrgAndReducedParams as Segmentors
 
 def print_best_algorithm_code(individual):
     """Print usable code to run segmentation algorithm based on an
@@ -27,8 +24,6 @@ def print_best_algorithm_code(individual):
     function_contents = original_function[original_function.find('        '):\
                             original_function.find('return')]
     while function_contents.find('self.params') != -1:
-        # print(function_contents[function_contents.find('self.params') +
-        #     13:function_contents.find(']')-1])
         function_contents = function_contents.replace(
             function_contents[function_contents.find('self.params'):function_contents.find(']')+1],\
             str(ind_algo.params[function_contents[function_contents.find('self.params') + 13:\
@@ -40,7 +35,7 @@ def print_best_algorithm_code(individual):
 
 def twoPointCopy(np1, np2, seed=False):
     """Execute a crossover between two numpy arrays of the same length."""
-    if seed == True:
+    if seed:
         random.seed(0)
     assert len(np1) == len(np2)
     size = len(np1)
@@ -57,7 +52,7 @@ def twoPointCopy(np1, np2, seed=False):
 def skimageCrossRandom(np1, np2, seed=False):
     """Execute a crossover between two arrays (np1 and np2) picking a random
      amount of indexes to change between the two."""
-    if seed == True:
+    if seed:
         random.seed(0)
     # DO: Only change values associated with algorithm
     assert len(np1) == len(np2)
@@ -285,10 +280,6 @@ class Evolver(object):
         #logging.info(" Time: ", time.time() - initTime)
         logging.getLogger().info(f"Best Fitness: {self.hof[0].fitness.values}")
         logging.getLogger().info(f"{self.hof[0]}")
-        # Did we improve the population?
-        # past_pop = tpop
-        # past_min = min(extract_fits)
-        # past_mean = mean
 
         self.gen += self.gen
 
