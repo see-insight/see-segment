@@ -10,6 +10,7 @@ import sys
 import logging
 import numpy as np
 import skimage
+from skimage import segmentation
 from skimage import color
 
 # List of all algorithms
