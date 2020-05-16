@@ -1,3 +1,6 @@
+"""Download common and publicly avaliable segmentation datasets along with mask images."""
+
+
 import argparse
 import random
 import logging
@@ -14,6 +17,8 @@ import pathlib
 
 import numpy as np
 import matplotlib.pyplot as plt
+
+DefaultFolder='Image_Data/'
 
 def readpgm(name):
     """The ground truth data is in ascii P2 pgm binary files.  
@@ -42,29 +47,45 @@ def readpgm(name):
         img = imageio.imread(name)
     return img
 
-def downloadKOMATSUNA(filenames= ['multi_label.zip', 'multi_plant.zip'],
-                      folder = 'KOMATSUNA/',
-                      urls = ['http://limu.ait.kyushu-u.ac.jp/~agri/komatsuna/multi_plant.zip',
-                              'http://limu.ait.kyushu-u.ac.jp/~agri/komatsuna/multi_label.zip'],
+def downloadKOMATSUNA(filenames= ['rgbd_plant.zip', 'rgbd_label.zip'],
+                      folder = f'{DefaultFolder}KOMATSUNA/',
+                      urls = ['http://limu.ait.kyushu-u.ac.jp/~agri/komatsuna/rgbd_plant.zip',
+                              'http://limu.ait.kyushu-u.ac.jp/~agri/komatsuna/rgbd_label.zip'],
+                      datafolder=DefaultFolder,
                       force=True):
-
-    ##TODO## Make folder
+    """The KOMATSUNA plant dataset is a multisegmentation dataset avaliable at http://limu.ait.kyushu-u.ac.jp/~agri/komatsuna/"""
+    
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+        print("Directory " , folder ,  " Created ")
+    else:    
+        print("Directory " , folder ,  " already exists")    
+    
     for filename,url in zip(filenames, urls):
         zfile = Path(folder+filename)
         if not zfile.is_file() or force:
             print(f"Downloading {filename} from {url}")
             urlretrieve(url,folder+filename)
+        else:
+            print(f"File {filename} already exists")
 
         print(f"Unzipping {filename}")
         with zipfile.ZipFile(folder+filename, 'r') as zip_ref:
             zip_ref.extractall(folder)
 
-        print(f"Download and Convert Complete")
+        print(f"Download and Convert of {filename} Complete")
 
 def downloadSkyData(filename = 'sky.zip', 
-                    folder = '.', 
+                    folder = DefaultFolder, 
                     url = 'https://www.ime.usp.br/~eduardob/datasets/sky/sky.zip',
                     force=True):
+    """The sky dataset is a binary dataset avaliable at https://www.ime.usp.br/~eduardob/datasets/sky/"""
+    
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+        print("Directory " , folder ,  " Created ")
+    else:    
+        print("Directory " , folder ,  " already exists")    
     
     zfile = Path(folder+filename)
     if not zfile.is_file() or force:
@@ -77,6 +98,8 @@ def downloadSkyData(filename = 'sky.zip',
     
     print(f"Converting files in {folder}")
     images, masks, outputs = getSkyFolderLists()
+    
+    print(images)
     for i in masks:
         print(f"{i}")
         img = readpgm(i)
@@ -85,13 +108,13 @@ def downloadSkyData(filename = 'sky.zip',
         
     print(f"Download and Convert Complete")
 
-def getSkyFolderLists(outputfolder=''):
+def getSkyFolderLists(outputfolder='', folder=DefaultFolder):
     '''The Sky data has some odd filenames. This figures it out and creates
     Three lists for image, mask and output data.'''
-    pth = pathlib.Path(__file__).parent.absolute()
-    imagefolder = str(pth)+"../Image_data/sky/data/"
-    maskfolder = str(pth)+"../Image_data/sky/groundtruth/"
+    imagefolder = f"{folder}/sky/data/"
+    maskfolder = f"{folder}/sky/groundtruth/"
 
+    print(f"{imagefolder} {maskfolder}")
     imagenames = glob.glob(f'{imagefolder}/*.jpg')
     imagenames.sort()
     masknames = []
@@ -104,12 +127,11 @@ def getSkyFolderLists(outputfolder=''):
         outputnames.append(f"{outputfolder}{label}")
     return imagenames, masknames, outputnames
 
-def getKomatsunaFolderLists(outputfolder=''):
-    '''The Coco data has some odd filenames. This figures it out and creates
-    Three lists for image, mask and output data.'''
-    pth = pathlib.Path(__file__).parent.absolute()
-    imagefolder = str(pth)+"../Image_data/KOMATSUNA/multi_plant/"
-    maskfolder = str(pth)+"../Image_data/KOMATSUNA/multi_label/"
+def getKomatsunaFolderLists(outputfolder='', folder=DefaultFolder):
+    '''This downloads the KOMATSUNA dataset.'''
+
+    imagefolder = f"{folder}/KOMATSUNA/multi_plant/"
+    maskfolder = f"{folder}/KOMATSUNA/multi_label/"
 
     imagenames = glob.glob(f'{imagefolder}*.png')
     imagenames.sort()
@@ -125,19 +147,20 @@ def getKomatsunaFolderLists(outputfolder=''):
 
 if __name__ == "__main__":
     
-    parser = argparse.ArgumentParser(description='Download Sky Data')
-    parser.add_argument('-S', '--Sky', action='store_false', help="Use Sky Data")
-    
-    parser = argparse.ArgumentParser(description='Download |Plant Data')
+    parser = argparse.ArgumentParser(description='Download Image Data')
+    parser.add_argument('-f', '--folder', default='./Image_Data', help="Image data folder name")
     parser.add_argument('-P', '--Plant', action='store_false', help="Use Sky Data")
-
+    parser.add_argument('-S', '--Sky', action='store_false', help="Use Sky Data")
+   
     #Parsing Inputs
     args = parser.parse_args()
     print(args)
+    
+    DefaultFolder = args.folder
+    
+    if args.Plant:
+        downloadKOMATSUNA(force=False)
 
     if args.Sky:
         downloadSkyData(force=False)
-        
-    if args.Plant
-        downloadKOMATSUNA(force=False)
     
