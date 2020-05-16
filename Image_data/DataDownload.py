@@ -5,6 +5,8 @@ import sys
 import glob
 import os
 from pathlib import Path
+from urllib.request import urlretrieve
+import zipfile
 
 from skimage import color
 import imageio
@@ -40,13 +42,30 @@ def readpgm(name):
         img = imageio.imread(name)
     return img
 
+def downloadKOMATSUNA(filenames= ['multi_label.zip', 'multi_plant.zip'],
+                      folder = 'KOMATSUNA/',
+                      urls = ['http://limu.ait.kyushu-u.ac.jp/~agri/komatsuna/multi_plant.zip',
+                              'http://limu.ait.kyushu-u.ac.jp/~agri/komatsuna/multi_label.zip'],
+                      force=True):
+
+    ##TODO## Make folder
+    for filename,url in zip(filenames, urls):
+        zfile = Path(folder+filename)
+        if not zfile.is_file() or force:
+            print(f"Downloading {filename} from {url}")
+            urlretrieve(url,folder+filename)
+
+        print(f"Unzipping {filename}")
+        with zipfile.ZipFile(folder+filename, 'r') as zip_ref:
+            zip_ref.extractall(folder)
+
+        print(f"Download and Convert Complete")
+
 def downloadSkyData(filename = 'sky.zip', 
                     folder = '.', 
                     url = 'https://www.ime.usp.br/~eduardob/datasets/sky/sky.zip',
                     force=True):
-    from urllib.request import urlretrieve
-    import zipfile
-
+    
     zfile = Path(folder+filename)
     if not zfile.is_file() or force:
         print(f"Downloading {filename} from {url}")
@@ -70,8 +89,8 @@ def getSkyFolderLists(outputfolder=''):
     '''The Sky data has some odd filenames. This figures it out and creates
     Three lists for image, mask and output data.'''
     pth = pathlib.Path(__file__).parent.absolute()
-    imagefolder = str(pth)+"/../Image_data/sky/data/"
-    maskfolder = str(pth)+"/../Image_data/sky/groundtruth"
+    imagefolder = str(pth)+"../Image_data/sky/data/"
+    maskfolder = str(pth)+"../Image_data/sky/groundtruth/"
 
     imagenames = glob.glob(f'{imagefolder}/*.jpg')
     imagenames.sort()
@@ -85,34 +104,40 @@ def getSkyFolderLists(outputfolder=''):
         outputnames.append(f"{outputfolder}{label}")
     return imagenames, masknames, outputnames
 
-def getCocoFolderLists(outputfolder=''):
+def getKomatsunaFolderLists(outputfolder=''):
     '''The Coco data has some odd filenames. This figures it out and creates
     Three lists for image, mask and output data.'''
     pth = pathlib.Path(__file__).parent.absolute()
-    imagefolder = str(pth)+"/../Image_data/Coco_2017_unlabeled/rgbd_plant/"
-    maskfolder = str(pth)+"/../Image_data/Coco_2017_unlabeled/rgbd_new_label"
+    imagefolder = str(pth)+"../Image_data/KOMATSUNA/multi_plant/"
+    maskfolder = str(pth)+"../Image_data/KOMATSUNA/multi_label/"
 
-    imagenames = glob.glob(f'{imagefolder}/rgb*.png')
+    imagenames = glob.glob(f'{imagefolder}*.png')
     imagenames.sort()
     masknames = []
     outputnames = []
     for index, name in enumerate(imagenames):
         imagename = os.path.basename(name)
         image_id = imagename[4:-4]
-        label = f"label_{image_id}{index}.png"
-        masknames.append(f"{maskfolder}/{label}")
+        label = f"label_{image_id}.png"
+        masknames.append(f"{maskfolder}{label}")
         outputnames.append(f"{outputfolder}{label}")
     return imagenames, masknames, outputnames
 
 if __name__ == "__main__":
     
-    parser = argparse.ArgumentParser(description='Download Data')
+    parser = argparse.ArgumentParser(description='Download Sky Data')
     parser.add_argument('-S', '--Sky', action='store_false', help="Use Sky Data")
     
+    parser = argparse.ArgumentParser(description='Download |Plant Data')
+    parser.add_argument('-P', '--Plant', action='store_false', help="Use Sky Data")
+
     #Parsing Inputs
     args = parser.parse_args()
     print(args)
 
     if args.Sky:
         downloadSkyData(force=False)
+        
+    if args.Plant
+        downloadKOMATSUNA(force=False)
     
