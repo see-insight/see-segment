@@ -1,5 +1,8 @@
 """Download common and publicly avaliable segmentation datasets along with mask images."""
 
+##TODO remove import os in favor of pathlib
+##TODO Path.mkdir(mode=0o777, parents=False, exist_ok=False
+
 
 import argparse
 import random
@@ -75,7 +78,7 @@ def downloadKOMATSUNA(filenames= ['rgbd_plant.zip', 'rgbd_label.zip'],
 
         print(f"Download and Convert of {filename} Complete")
 
-def downloadSkyData(filename = 'sky.zip', 
+def downloadSky(filename = 'sky.zip', 
                     folder = DefaultFolder, 
                     url = 'https://www.ime.usp.br/~eduardob/datasets/sky/sky.zip',
                     force=True):
@@ -108,6 +111,29 @@ def downloadSkyData(filename = 'sky.zip',
         
     print(f"Download and Convert Complete")
 
+def downloadCOSKEL(filename= 'SKEL_v1.1.zip',
+                   folder = f'{DefaultFolder}',
+                   url = 'https://github.com/jkoteswarrao/Object-Co-skeletonization-with-Co-segmentation/raw/master/CO-SKEL_v1.1.zip',
+                   datafolder=DefaultFolder,
+                   force=True):
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+        print("Directory " , folder ,  " Created ")
+    else:
+        print("Directory " , folder ,  " already exists")
+
+    zfile = Path(folder+filename)
+    if not zfile.is_file() or force:
+        print(f"Downloading {filename} from {url}")
+        urlretrieve(url,folder+filename)
+
+    print(f"Unzipping {filename}")
+    with zipfile.ZipFile(folder+filename, 'r') as zip_ref:
+        zip_ref.extractall(folder)
+
+    print(f"Download and Convert Complete")
+    
+    
 def getSkyFolderLists(outputfolder='', folder=DefaultFolder):
     '''The Sky data has some odd filenames. This figures it out and creates
     Three lists for image, mask and output data.'''
@@ -145,12 +171,34 @@ def getKomatsunaFolderLists(outputfolder='', folder=DefaultFolder):
         outputnames.append(f"{outputfolder}{label}")
     return imagenames, masknames, outputnames
 
+def getCOSKELFolderlists(outputfolder='output/', folder=DefaultFolder):
+    '''The Sky data has some odd filenames. This figures it out and creates
+    Three lists for image, mask and output data.'''
+    imagefolder = Path(f"{folder}/CO-SKEL_v1.1/images/")
+    maskfolder = Path(f"{folder}/CO-SKEL_v1.1/GT_masks/")
+
+    imagePATHnames = list(Path(f'{imagefolder}').rglob('*.jpg'));
+    imagenames = []
+    masknames = []
+    outputnames = []
+    for index, file in enumerate(imagePATHnames):
+        imagenames.append(str(file))
+        print(str(file))
+        print(imagefolder)
+        filename = str(file).replace(str(imagefolder), '')
+        masknames.append(f"{maskfolder}{filename}")
+        outputnames.append(f"{outputfolder}{filename}")
+
+    return imagenames, masknames, outputnames
+    
+
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser(description='Download Image Data')
     parser.add_argument('-f', '--folder', default='./Image_Data', help="Image data folder name")
     parser.add_argument('-P', '--Plant', action='store_false', help="Use Sky Data")
     parser.add_argument('-S', '--Sky', action='store_false', help="Use Sky Data")
+    parser.add_argument('-C', '--COSKEL', action='store_false', help="Use COSKEL Data")
    
     #Parsing Inputs
     args = parser.parse_args()
@@ -162,5 +210,7 @@ if __name__ == "__main__":
         downloadKOMATSUNA(force=False)
 
     if args.Sky:
-        downloadSkyData(force=False)
+        downloadSky(force=False)
     
+    if args.COSKEL:
+        downloadCOSKEL(force=False)
