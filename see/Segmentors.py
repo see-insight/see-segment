@@ -13,7 +13,8 @@ import skimage
 from skimage import segmentation
 from skimage import color
 
-from see.Segment_Similarity_Measure import *
+from see.Segment_Similarity_Measure import FF_ML2DHD_V2
+
 def FitnessFunction(inferred, ground_truth):
     return FF_ML2DHD_V2(inferred, ground_truth)
 
