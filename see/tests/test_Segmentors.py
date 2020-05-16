@@ -4,6 +4,7 @@ import pytest
 import numpy as np
 from skimage import segmentation, color
 from see import Segmentors
+from see import Segment_Similarity_Measure as SSM
 
 # Define toy rgb and grayscale images used for testing below
 TEST_IM_COLOR = np.zeros((20, 20, 3))
@@ -15,7 +16,7 @@ def test_runAlgo():
      Checks to see if the output is what it's supposed to be in this case."""
     individual = ['FB', 0, 0, 984, 0.09, 92, 0, 0, 0, 0, 0, 0, 0, 0, 0,\
      (1, 2), 0, "checkerboard", "checkerboard", 0, 0, 0, 0, 0, 0]
-    assert Segmentors.runAlgo(TEST_IM_COLOR, TEST_IM_COLOR[:, :, 0], individual) == [sys.maxsize]
+    Segmentors.runAlgo(TEST_IM_COLOR, TEST_IM_COLOR[:, :, 0], individual)
 
 def test_parameters():
     """Unit test for parameters function. Checks formatting of parameter."""
@@ -103,72 +104,41 @@ def test_countMatches():
     inferred = np.zeros((20, 20))
     inferred[4:10, 4:6] = 1
     inferred[4:10, 6:10] = 2
-    assert Segmentors.countMatches(inferred, ground_truth) ==\
+    assert SSM.countMatches(inferred, ground_truth) ==\
      ({0.0: {0.0: 364}, 1.0: {1.0: 12}, 2.0: {1.0: 24}}, 3, 2)
 
     inferred = np.zeros((20, 20))
     inferred[4:10, 3:6] = 1
     inferred[4:10, 6:10] = 2
-    assert Segmentors.countMatches(inferred, ground_truth) ==\
+    assert SSM.countMatches(inferred, ground_truth) ==\
      ({0.0: {0.0: 358}, 1.0: {0.0: 6, 1.0: 12}, 2.0: {1.0: 24}}, 3, 2)
 
     inferred = np.zeros((20, 20))
     inferred[4:10, 3:6] = 1
     inferred[4:10, 6:10] = 2
     inferred[3:5, 3:6] = 3
-    assert Segmentors.countMatches(inferred, ground_truth) ==\
+    assert SSM.countMatches(inferred, ground_truth) ==\
      ({0.0: {0.0: 355}, 3.0: {0.0: 4, 1.0: 2}, 2.0: {1.0: 24}, 1.0: {0.0: 5, 1.0: 10}}, 4, 2)
 
     inferred = np.zeros((20, 20))
-    assert Segmentors.countMatches(inferred, ground_truth) == ({0.0: {0.0: 364, 1.0: 36}}, 1, 2)
+    assert SSM.countMatches(inferred, ground_truth) == ({0.0: {0.0: 364, 1.0: 36}}, 1, 2)
 
     inferred = np.zeros((20, 20))
     inferred[1:19, 1:19] = 1
-    assert Segmentors.countMatches(inferred, ground_truth) ==\
+    assert SSM.countMatches(inferred, ground_truth) ==\
      ({0.0: {0.0: 76}, 1.0: {0.0: 288, 1.0: 36}}, 2, 2)
 
 def test_countsets():
     """Unit test for countsets function. Checks output is as
      expected for a variety of extreme cases."""
-    assert Segmentors.countsets({0.0: {0.0: 364}, 1.0: {1.0: 12}, 2.0: {1.0: 24}}) ==\
+    assert SSM.countsets({0.0: {0.0: 364}, 1.0: {1.0: 12}, 2.0: {1.0: 24}}) ==\
      (0, 2, {0.0: 0.0, 1.0: 1.0, 2.0: 1.0})
-    assert Segmentors.countsets({0.0: {0.0: 358}, 1.0: {0.0: 6, 1.0: 12}, 2.0: {1.0: 24}}) ==\
+    assert SSM.countsets({0.0: {0.0: 358}, 1.0: {0.0: 6, 1.0: 12}, 2.0: {1.0: 24}}) ==\
      (6, 2, {0.0: 0.0, 1.0: 1.0, 2.0: 1.0})
-    assert Segmentors.countsets({0.0: {0.0: 355}, 3.0: {0.0: 4, 1.0: 2}, 2.0: {1.0: 24},\
+    assert SSM.countsets({0.0: {0.0: 355}, 3.0: {0.0: 4, 1.0: 2}, 2.0: {1.0: 24},\
      1.0: {0.0: 5, 1.0: 10}}) == (7, 2, {0.0: 0.0, 3.0: 0.0, 2.0: 1.0, 1.0: 1.0})
-    assert Segmentors.countsets({0.0: {0.0: 364, 1.0: 36}}) ==\
+    assert SSM.countsets({0.0: {0.0: 364, 1.0: 36}}) ==\
      (36, 1, {0.0: 0.0})
-    assert Segmentors.countsets({0.0: {0.0: 76}, 1.0: {0.0: 288, 1.0: 36}}) ==\
+    assert SSM.countsets({0.0: {0.0: 76}, 1.0: {0.0: 288, 1.0: 36}}) ==\
      (36, 1, {0.0: 0.0, 1.0: 0.0})
 
-def test_FitnessFunction():
-    """Unit test for FitnessFunction function. Checks fitness value is as
-     expected for a variety of extreme cases."""
-    # create test image
-    ground_truth = np.zeros((20, 20))
-    ground_truth[4:10, 4:10] = 1
-    inferred = np.zeros((20, 20))
-    inferred[4:10, 4:6] = 1
-    inferred[4:10, 6:10] = 2
-    assert Segmentors.FitnessFunction(inferred, ground_truth) == [2 ** np.log(3),]
-
-    inferred = np.zeros((20, 20))
-    inferred[4:10, 3:6] = 1
-    inferred[4:10, 6:10] = 2
-    assert Segmentors.FitnessFunction(inferred, ground_truth) == [8 ** np.log(3),]
-
-    inferred = np.zeros((20, 20))
-    inferred[4:10, 3:6] = 1
-    inferred[4:10, 6:10] = 2
-    inferred[3:5, 3:6] = 3
-    assert Segmentors.FitnessFunction(inferred, ground_truth) == [9 ** np.log(4),]
-
-    inferred = np.zeros((20, 20))
-    assert Segmentors.FitnessFunction(inferred, ground_truth) == [sys.maxsize,]
-
-    inferred = np.arange(400).reshape(ground_truth.shape)
-    assert Segmentors.FitnessFunction(inferred, ground_truth) == [2 ** np.log(400),]
-
-    inferred = np.zeros((20, 20))
-    inferred[1:19, 1:19] = 1
-    assert Segmentors.FitnessFunction(inferred, ground_truth) == [sys.maxsize,]
