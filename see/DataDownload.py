@@ -21,7 +21,7 @@ import pathlib
 import numpy as np
 import matplotlib.pyplot as plt
 
-DefaultFolder='Image_Data/'
+DefaultFolder='Image_data/'
 
 def readpgm(name):
     """The ground truth data is in ascii P2 pgm binary files.  
@@ -195,7 +195,7 @@ def getCOSKELFolderlists(outputfolder='output/', folder=DefaultFolder):
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser(description='Download Image Data')
-    parser.add_argument('-f', '--folder', default='./Image_Data', help="Image data folder name")
+    parser.add_argument('-f', '--folder', default='./Image_data', help="Image data folder name")
     parser.add_argument('-P', '--Plant', action='store_false', help="Use Sky Data")
     parser.add_argument('-S', '--Sky', action='store_false', help="Use Sky Data")
     parser.add_argument('-C', '--COSKEL', action='store_false', help="Use COSKEL Data")
