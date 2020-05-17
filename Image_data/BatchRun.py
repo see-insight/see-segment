@@ -15,7 +15,7 @@ from see import GeneticSearch
 from see import Segmentors
 import pathlib
 
-import DataDownload as dd
+from see import DataDownload as dd
 
 
 if __name__ == "__main__":
