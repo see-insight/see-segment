@@ -191,6 +191,29 @@ def getCOSKELFolderlists(outputfolder='output/', folder=DefaultFolder):
 
     return imagenames, masknames, outputnames
     
+def getBMCVFolderLists(outputfolder=''):
+    pth = pathlib.Path(__file__).parent.absolute()
+    imagefolder = str(pth)+"/../Image_data/BMCV/"
+    maskfolder = str(pth)+"/../Image_data/BMCV/"
+
+    imagenames = []
+    masknames = []
+    outputnames = []
+
+    imagenames.append(f'{imagefolder}/rgb_04_009_05.png')
+    masknames.append(f'{imagefolder}/label_04_009_05.png')
+    outputnames.append(f'{outputfolder}/label_04_009_05.png')
+
+    imagenames.append(f'{imagefolder}/rgb_04_009_05.png')
+    masknames.append(f'{imagefolder}/label_04_009_05299.png')
+    outputnames.append(f'{outputfolder}/label_04_009_05299.png')
+
+    imagenames.append(f'{imagefolder}/0020.jpg')
+    masknames.append(f'{imagefolder}/0020_gt.pgm')
+    outputnames.append(f'{outputfolder}/0020_gt.pgm')
+
+    return imagenames, masknames, outputnames
+
 
 if __name__ == "__main__":
     

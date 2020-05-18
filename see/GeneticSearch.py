@@ -7,6 +7,7 @@ import copy
 import json
 import inspect
 import logging
+from shutil import copyfile
 
 import deap
 from deap import base
@@ -15,15 +16,21 @@ from deap import creator
 from scoop import futures
 
 from see import Segmentors
+#import Segmentors
+# from see import Segmentors_MinParams as Segmentors
+# from see import Segmentors_OrgAndReducedParams as Segmentors
 
 def print_best_algorithm_code(individual):
     """Print usable code to run segmentation algorithm based on an
      individual's genetic representation vector."""
     ind_algo = Segmentors.algoFromParams(individual)
     original_function = inspect.getsource(ind_algo.evaluate)
+    print(original_function)
     function_contents = original_function[original_function.find('        '):\
                             original_function.find('return')]
     while function_contents.find('self.params') != -1:
+        # print(function_contents[function_contents.find('self.params') +
+        #     13:function_contents.find(']')-1])
         function_contents = function_contents.replace(
             function_contents[function_contents.find('self.params'):function_contents.find(']')+1],\
             str(ind_algo.params[function_contents[function_contents.find('self.params') + 13:\
@@ -35,7 +42,7 @@ def print_best_algorithm_code(individual):
 
 def twoPointCopy(np1, np2, seed=False):
     """Execute a crossover between two numpy arrays of the same length."""
-    if seed:
+    if seed == True:
         random.seed(0)
     assert len(np1) == len(np2)
     size = len(np1)
@@ -52,7 +59,7 @@ def twoPointCopy(np1, np2, seed=False):
 def skimageCrossRandom(np1, np2, seed=False):
     """Execute a crossover between two arrays (np1 and np2) picking a random
      amount of indexes to change between the two."""
-    if seed:
+    if seed == True:
         random.seed(0)
     # DO: Only change values associated with algorithm
     assert len(np1) == len(np2)
@@ -229,6 +236,7 @@ class Evolver(object):
 
     def readpop(self, filename='test.json'):
         """Read in existing population from "filename"."""
+
         logging.getLogger().info(f"Reading population from {filename}")
         self.tool.register("population_read", initPopulation,
                            list, creator.Individual, filename)
@@ -280,6 +288,10 @@ class Evolver(object):
         #logging.info(" Time: ", time.time() - initTime)
         logging.getLogger().info(f"Best Fitness: {self.hof[0].fitness.values}")
         logging.getLogger().info(f"{self.hof[0]}")
+        # Did we improve the population?
+        # past_pop = tpop
+        # past_min = min(extract_fits)
+        # past_mean = mean
 
         self.gen += self.gen
 
@@ -294,17 +306,24 @@ class Evolver(object):
         Output:
         final -- new population with mutated individuals.
 
-        """
+       """
         # Calculate next population
 
-        my_sz = len(tpop)
-        top = 0  # round(0.1 * my_sz)
-        var = round(0.4 * my_sz)
+    
+        #TODO: There is an error here. We need to make sure the best hof is included?
+        
+        my_sz = len(tpop) #Length of current population
+        top = min(10,max(1,round(0.1 * my_sz)))
+        var = max(1,round(0.4 * my_sz))
         ran = my_sz - top - var
 
-        offspring = self.tool.select(tpop, var)
-        offspring = list(map(self.tool.clone, offspring))  # original code
+        print(f"pop[0:{top}:{top+var}:{my_sz}]")
+        
+#         offspring = self.tool.select(tpop, var)
+#         offspring = list(map(self.tool.clone, offspring))  # original code
 
+        offspring = copy.deepcopy(list(self.hof))
+        
         # crossover
         for child1, child2 in zip(offspring[::2], offspring[1::2]):
             # Do we crossover?
@@ -322,9 +341,12 @@ class Evolver(object):
                 del mutant.fitness.values
 
         # new
+        #population = self.newpopulation()
         pop = self.tool.population()
 
-        final = offspring + pop[0:ran]
+        final = self.hof[0:top]+offspring[0:var] + pop[0:ran]
+        
+        print(f"pop size should be {len(final)}")
 
         # Replacing the old population
         return final
@@ -338,8 +360,8 @@ class Evolver(object):
         """
         _, tpop = self.popfitness(tpop)
         return self.mutate(tpop)
-
-    def run(self, ngen=10, startfile=None, checkpoint=None):
+        
+    def run(self, ngen=10, population=None,startfile=None, checkpoint=None, cp_freq=1):
         """Run the genetic algorithm, updating the population over ngen number of generations.
 
         Keywork arguments:
@@ -351,24 +373,46 @@ class Evolver(object):
         population -- Resulting population after ngen generations.
 
         """
+        
         if startfile:
-            population = self.readpop(startfile)
-        else:
+            try:
+                print(f"Reading in {startfile}")
+                population = self.readpop(startfile)
+            except FileNotFoundError:
+                print("WARNING: Start file not found")
+            except:
+                raise
+        
+        if not population:
+            print(f"Inicializing new randome population")
             population = self.newpopulation()
             if checkpoint:
-                self.writepop(population, filename=f"0_{checkpoint}")
-        for cur_g in range(1, ngen+1):
+                self.writepop(population, filename=f"{checkpoint}")
+        
+
+        for cur_g in range(0, ngen+1):
             print(f"generation {cur_g} of population size {len(population)}")
-            population = self.nextgen(population)
-
-            seg = Segmentors.algoFromParams(self.hof[0])
+            _, population = self.popfitness(population)
+            
+            bestsofar = self.hof[0]
+            seg = Segmentors.algoFromParams(bestsofar)
             mask = seg.evaluate(self.img)
-            fitness = Segmentors.FitnessFunction(self.mask, mask)
-            print(f"#BEST - {fitness[0]} - {self.hof[0]}")
+            fitness = Segmentors.FitnessFunction(mask, self.mask)
+            print(f"#BEST - {fitness} - {bestsofar}")
 
-            if checkpoint:
+            if checkpoint and cur_g%cp_freq == 0:
                 print(f"Writing Checkpoint file - {checkpoint}")
-                self.writepop(population, filename=f"{checkpoint}_{cur_g}")
+                copyfile(f"{checkpoint}", f"{checkpoint}.prev")
+                self.writepop(population, filename=f"{checkpoint}")
                 for cur_p in range(len(population)):
                     logging.getLogger().info(population[cur_p])
+            if cur_g < ngen+1:
+                population = self.mutate(population)
+            
+        if checkpoint:
+            print(f"Writing Checkpoint file - {checkpoint}")
+            copyfile(f"{checkpoint}", f"{checkpoint}.prev")
+            self.writepop(population, filename=f"{checkpoint}")
+            for cur_p in range(len(population)):
+                logging.getLogger().info(population[cur_p])
         return population
