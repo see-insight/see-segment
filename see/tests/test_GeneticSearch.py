@@ -106,7 +106,7 @@ def test_nextgen():
     img = np.zeros((20, 20, 3))
     img[4:10, 4:10, :] = 1
     mask = img[:, :, 0]
-    evolv = GeneticSearch.Evolver(img, mask)
+    evolv = GeneticSearch.Evolver(img, mask, pop_size=10)
     pop = evolv.tool.population()
     tpop = evolv.mutate(pop)
     assert isinstance(tpop, list)
@@ -119,7 +119,7 @@ def test_run():
     img = np.zeros((20, 20, 3))
     img[4:10, 4:10, :] = 1
     mask = img[:, :, 0]
-    evolv = GeneticSearch.Evolver(img, mask)
+    evolv = GeneticSearch.Evolver(img, mask, pop_size=10)
     start_pop = evolv.tool.population()
     final_pop = evolv.run()
     assert isinstance(final_pop, list)

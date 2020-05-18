@@ -314,9 +314,12 @@ class Evolver(object):
         
         my_sz = len(tpop) #Length of current population
         top = min(10,max(1,round(0.1 * my_sz)))
+        top = min(top, len(self.hof))
         var = max(1,round(0.4 * my_sz))
+        var = min(var, len(self.hof))
         ran = my_sz - top - var
 
+        print(f"pop[0:{top}:{var}:{ran}]")
         print(f"pop[0:{top}:{top+var}:{my_sz}]")
         
 #         offspring = self.tool.select(tpop, var)
@@ -344,8 +347,14 @@ class Evolver(object):
         #population = self.newpopulation()
         pop = self.tool.population()
 
-        final = self.hof[0:top]+offspring[0:var] + pop[0:ran]
+        final = pop[0:ran]
+        print(f"pop size should be {len(final)}")
+        final += self.hof[0:top] 
+        print(f"pop size should be {len(final)}")
+        final += offspring[0:var] 
+        print(f"pop size should be {len(final)}")
         
+        print(f"pop[0:{top}:{var}:{ran}]")
         print(f"pop size should be {len(final)}")
 
         # Replacing the old population
