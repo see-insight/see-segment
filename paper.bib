@@ -1,5 +1,136 @@
 
-@phdthesis{alexandre_ift-slic_2017,
+@article{felzenszwalb,
+	title = {Efficient {Graph}-{Based} {Image} {Segmentation}},
+	volume = {59},
+	issn = {1573-1405},
+	url = {https://doi.org/10.1023/B:VISI.0000022288.19776.77},
+	doi = {10.1023/B:VISI.0000022288.19776.77},
+	abstract = {This paper addresses the problem of segmenting an image into regions. We define a predicate for measuring the evidence for a boundary between two regions using a graph-based representation of the image. We then develop an efficient segmentation algorithm based on this predicate, and show that although this algorithm makes greedy decisions it produces segmentations that satisfy global properties. We apply the algorithm to image segmentation using two different kinds of local neighborhoods in constructing the graph, and illustrate the results with both real and synthetic images. The algorithm runs in time nearly linear in the number of graph edges and is also fast in practice. An important characteristic of the method is its ability to preserve detail in low-variability image regions while ignoring detail in high-variability regions.},
+	language = {en},
+	number = {2},
+	urldate = {2020-04-23},
+	journal = {International Journal of Computer Vision},
+	author = {Felzenszwalb, Pedro F. and Huttenlocher, Daniel P.},
+	month = sep,
+	year = {2004},
+	pages = {167--181}
+}
+
+@inproceedings{vedaldi,
+	address = {Berlin, Heidelberg},
+	series = {Lecture {Notes} in {Computer} {Science}},
+	title = {Quick {Shift} and {Kernel} {Methods} for {Mode} {Seeking}},
+	isbn = {978-3-540-88693-8},
+	doi = {10.1007/978-3-540-88693-8_52},
+	abstract = {We show that the complexity of the recently introduced medoid-shift algorithm in clustering N points is O(N 2), with a small constant, if the underlying distance is Euclidean. This makes medoid shift considerably faster than mean shift, contrarily to what previously believed. We then exploit kernel methods to extend both mean shift and the improved medoid shift to a large family of distances, with complexity bounded by the effective rank of the resulting kernel matrix, and with explicit regularization constraints. Finally, we show that, under certain conditions, medoid shift fails to cluster data points belonging to the same mode, resulting in over-fragmentation. We propose remedies for this problem, by introducing a novel, simple and extremely efficient clustering algorithm, called quick shift, that explicitly trades off under- and over-fragmentation. Like medoid shift, quick shift operates in non-Euclidean spaces in a straightforward manner. We also show that the accelerated medoid shift can be used to initialize mean shift for increased efficiency. We illustrate our algorithms to clustering data on manifolds, image segmentation, and the automatic discovery of visual categories.},
+	language = {en},
+	booktitle = {Computer {Vision} – {ECCV} 2008},
+	publisher = {Springer},
+	author = {Vedaldi, Andrea and Soatto, Stefano},
+	editor = {Forsyth, David and Torr, Philip and Zisserman, Andrew},
+	year = {2008},
+	keywords = {Gaussian Window, Image Segmentation, Kernel Matrix, Kernel Method, Kernel Space},
+	pages = {705--718}
+}
+
+@article{neubert,
+	title = {Compact {Watershed} and {Preemptive} {SLIC}: {On} {Improving} {Trade}-offs of {Superpixel} {Segmentation} {Algorithms}},
+	shorttitle = {Compact {Watershed} and {Preemptive} {SLIC}},
+	doi = {10.1109/ICPR.2014.181},
+	abstract = {A major insight from our previous work on extensive comparison of super pixel segmentation algorithms is the existence of several trade-offs for such algorithms. The most intuitive is the trade-off between segmentation quality and runtime. However, there exist many more between these two and a multitude of other performance measures. In this work, we present two new super pixel segmentation algorithms, based on existing algorithms, that provide better balanced trade-offs. Better balanced means, that we increase one performance measure by a large amount at the cost of slightly decreasing another. The proposed new algorithms are expected to be more appropriate for many real time computer vision tasks. The first proposed algorithm, Preemptive SLIC, is a faster version of SLIC, running at frame-rate (30 Hz for image size 481x321) on a standard desktop CPU. The speed-up comes at the cost of slightly worse segmentation quality. The second proposed algorithm is Compact Watershed. It is based on Seeded Watershed segmentation, but creates uniformly shaped super pixels similar to SLIC in about 10 ms per image. We extensively evaluate the influence of the proposed algorithmic changes on the trade-offs between various performance measures.},
+	journal = {2014 22nd International Conference on Pattern Recognition},
+	author = {Neubert, Peer and Protzel, Peter},
+	year = {2014}
+}
+
+@article{getreuer,
+	title = {Chan-{Vese} {Segmentation}},
+	volume = {2},
+	issn = {2105-1232},
+	url = {http://www.ipol.im/pub/art/2012/g-cv/},
+	doi = {10.5201/ipol.2012.g-cv},
+	abstract = {While many segmentation methods rely heavily in some way on edge detection, the "Active Contours Without Edges" method by Chan and Vese ignores edges completely. Instead, the method optimally fits a two-phase piecewise constant model to the given image. The segmentation boundary is represented implicitly with a level set function, which allows the segmentation to handle topological changes more easily than explicit snake methods. This article describes the level set formulation of the Chan–Vese model and its numerical solution using a semi-implicit gradient descent. We also discuss the Chan–Sandberg–Vese method, a straightforward extension of Chan–Vese for vector-valued images.},
+	language = {en},
+	urldate = {2020-04-23},
+	journal = {Image Processing On Line},
+	author = {Getreuer, Pascal},
+	month = aug,
+	year = {2012},
+	pages = {214--224}
+}
+
+@article{marquez-neila,
+	title = {A {Morphological} {Approach} to {Curvature}-{Based} {Evolution} of {Curves} and {Surfaces}},
+	volume = {36},
+	issn = {0162-8828, 2160-9292},
+	url = {http://ieeexplore.ieee.org/document/6529072/},
+	doi = {10.1109/TPAMI.2013.106},
+	number = {1},
+	urldate = {2020-04-23},
+	journal = {IEEE Transactions on Pattern Analysis and Machine Intelligence},
+	author = {Marquez-Neila, Pablo and Baumela, Luis and Alvarez, Luis},
+	month = jan,
+	year = {2014},
+	pages = {2--17}
+}
+
+@article{achanta,
+	title = {{SLIC} {Superpixels} {Compared} to {State}-of-the-{Art} {Superpixel} {Methods}},
+	volume = {34},
+	issn = {0162-8828, 2160-9292},
+	url = {http://ieeexplore.ieee.org/document/6205760/},
+	doi = {10.1109/TPAMI.2012.120},
+	number = {11},
+	urldate = {2020-04-23},
+	journal = {IEEE Transactions on Pattern Analysis and Machine Intelligence},
+	author = {Achanta, R. and Shaji, A. and Smith, K. and Lucchi, A. and Fua, P. and Süsstrunk, Sabine},
+	month = nov,
+	year = {2012},
+	pages = {2274--2282}
+}
+
+@inproceedings{meyer,
+	title = {Color image segmentation},
+	booktitle = {1992 {International} {Conference} on {Image} {Processing} and its {Applications}},
+	publisher = {IET},
+	author = {Meyer, Fernand},
+	year = {1992},
+	pages = {303--306}
+}
+
+@article{fortin,
+	title = {{DEAP}: evolutionary algorithms made easy},
+	volume = {13},
+	issn = {1532-4435},
+	shorttitle = {{DEAP}},
+	abstract = {DEAP is a novel evolutionary computation framework for rapid prototyping and testing of ideas. Its design departs from most other existing frameworks in that it seeks to make algorithms explicit and data structures transparent, as opposed to the more common black-box frameworks. Freely available with extensive documentation at http://deap.gel.ulaval.ca, DEAP is an open source project under an LGPL license.},
+	number = {1},
+	journal = {The Journal of Machine Learning Research},
+	author = {Fortin, Félix-Antoine and De Rainville, François-Michel and Gardner, Marc-André Gardner and Parizeau, Marc and Gagné, Christian},
+	month = jul,
+	year = {2012},
+	keywords = {distributed evolutionary algorithms, software tools},
+	pages = {2171--2175}
+}
+
+@article{van_der_walt,
+	title = {scikit-image: image processing in {Python}},
+	volume = {2},
+	issn = {2167-8359},
+	shorttitle = {scikit-image},
+	url = {https://peerj.com/articles/453},
+	doi = {10.7717/peerj.453},
+	language = {en},
+	urldate = {2020-04-23},
+	journal = {PeerJ},
+	author = {van der Walt, Stéfan and Schönberger, Johannes L. and Nunez-Iglesias, Juan and Boulogne, François and Warner, Joshua D. and Yager, Neil and Gouillart, Emmanuelle and Yu, Tony},
+	month = jun,
+	year = {2014},
+	pages = {e453},
+	annote = {Publisher: PeerJ Inc.}
+}
+
+@phdthesis{alexandre,
 	address = {São Paulo},
 	type = {Mestrado em {Ciência} da {Computação}},
 	title = {{IFT}-{SLIC}: geração de superpixels com base em agrupamento iterativo linear simples e transformada imagem-floresta},
@@ -12,42 +143,4 @@
 	month = oct,
 	year = {2017},
 	doi = {10.11606/D.45.2017.tde-24092017-235915}
-}
-
-@article{walt_scikit-image_2014,
-	title = {scikit-image: image processing in {Python}},
-	volume = {2},
-	issn = {2167-8359},
-	shorttitle = {scikit-image},
-	url = {https://peerj.com/articles/453},
-	doi = {10.7717/peerj.453},
-	abstract = {scikit-image is an image processing library that implements algorithms and utilities for use in research, education and industry applications. It is released under the liberal Modified BSD open source license, provides a well-documented API in the Python programming language, and is developed by an active, international team of collaborators. In this paper we highlight the advantages of open source to achieve the goals of the scikit-image library, and we showcase several real-world image processing applications that use scikit-image. More information can be found on the project homepage, http://scikit-image.org.},
-	language = {en},
-	urldate = {2020-05-18},
-	journal = {PeerJ},
-	author = {Walt, Stéfan van der and Schönberger, Johannes L. and Nunez-Iglesias, Juan and Boulogne, François and Warner, Joshua D. and Yager, Neil and Gouillart, Emmanuelle and Yu, Tony},
-	month = jun,
-	year = {2014},
-	note = {Publisher: PeerJ Inc.},
-	pages = {e453},
-	file = {Full Text PDF:C\:\\Users\\K4T44\\Zotero\\storage\\Q5PX8ECZ\\Walt et al. - 2014 - scikit-image image processing in Python.pdf:application/pdf;Snapshot:C\:\\Users\\K4T44\\Zotero\\storage\\9VMLHDGY\\453.html:text/html}
-}
-
-@inproceedings{lin_microsoft_2014,
-	address = {Cham},
-	series = {Lecture {Notes} in {Computer} {Science}},
-	title = {Microsoft {COCO}: {Common} {Objects} in {Context}},
-	isbn = {978-3-319-10602-1},
-	shorttitle = {Microsoft {COCO}},
-	doi = {10.1007/978-3-319-10602-1_48},
-	abstract = {We present a new dataset with the goal of advancing the state-of-the-art in object recognition by placing the question of object recognition in the context of the broader question of scene understanding. This is achieved by gathering images of complex everyday scenes containing common objects in their natural context. Objects are labeled using per-instance segmentations to aid in precise object localization. Our dataset contains photos of 91 objects types that would be easily recognizable by a 4 year old. With a total of 2.5 million labeled instances in 328k images, the creation of our dataset drew upon extensive crowd worker involvement via novel user interfaces for category detection, instance spotting and instance segmentation. We present a detailed statistical analysis of the dataset in comparison to PASCAL, ImageNet, and SUN. Finally, we provide baseline performance analysis for bounding box and segmentation detection results using a Deformable Parts Model.},
-	language = {en},
-	booktitle = {Computer {Vision} – {ECCV} 2014},
-	publisher = {Springer International Publishing},
-	author = {Lin, Tsung-Yi and Maire, Michael and Belongie, Serge and Hays, James and Perona, Pietro and Ramanan, Deva and Dollár, Piotr and Zitnick, C. Lawrence},
-	editor = {Fleet, David and Pajdla, Tomas and Schiele, Bernt and Tuytelaars, Tinne},
-	year = {2014},
-	keywords = {Common Object, Object Category, Object Detection, Object Instance, Scene Understanding},
-	pages = {740--755},
-	file = {Springer Full Text PDF:C\:\\Users\\K4T44\\Zotero\\storage\\QILSJVR8\\Lin et al. - 2014 - Microsoft COCO Common Objects in Context.pdf:application/pdf}
 }
