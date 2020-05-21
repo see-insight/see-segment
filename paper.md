@@ -67,7 +67,7 @@ The second key element required to build the SEE-Segment tool is a fitness funct
 
 
 ## Search Algorithm
-Although there are may optimization and search algorithms that could be adapted to work; the SEE-Segment tool currently utilizes Genetic Algorithms (GA) to search the image segmentation "algorithm space". GAs have some great engineering strengths including:
+Although there are many optimization and search algorithms that could be adapted to work; the SEE-Segment tool currently utilizes Genetic Algorithms (GA) to search the image segmentation "algorithm space". GAs have some great engineering strengths including:
 
 * Simple to implement
 * Highly scalable
