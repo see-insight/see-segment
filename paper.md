@@ -11,7 +11,6 @@ authors:
     affiliation: 2
   - name: Cameron Hurley
     affiliation: 3
-
 affiliations:
  - name: Department of Computational Mathematics, Science and Engineering, Michigan State University
    index: 1
@@ -19,7 +18,6 @@ affiliations:
    index: 2
  - name: Department of Computer Science and Engineering, Michigan State University
    index: 3
-
 date: 14 May 2020
 bibliography: paper.bib
 ---
