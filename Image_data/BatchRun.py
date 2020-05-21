@@ -23,6 +23,9 @@ if __name__ == "__main__":
     parser.add_argument('-B', '--BMCV', action='store_false', help="Use BMCV Data")
     parser.add_argument('-S', '--Sky', action='store_true', help="Use Sky Data")
     parser.add_argument('-C', '--Coco', action='store_true', help="Use Coco Data")
+    parser.add_argument('-I', '--input', help="Inputfile", type=str, default="")
+    parser.add_argument('-M', '--mask', help="Maskfile", type=str, default="")
+
     parser.add_argument("-c", "--checkpoint", 
                         help="Starting Population", 
                         type=str, default="")
@@ -78,6 +81,12 @@ if __name__ == "__main__":
         imagefiles += files[0]
         maskfiles += files[1]
         outputfiles += files[2]
+
+    if(args.input):
+        print(f"Adding {args.input}")
+        imagefiles = [ args.input ]
+        maskfiles = [ args.mask ]
+        outputfiles = [ args.outputfolder+"outputmask.png" ]
 
     if imagefiles == []:
         print("Error: No dataset specified")
