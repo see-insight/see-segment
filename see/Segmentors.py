@@ -114,8 +114,8 @@ class parameters(OrderedDict):
     descriptions["max_dist"] = "A parameter for quickshift"
     ranges["max_dist"] = "[i for i in range(0,10000)]"
 
-    descriptions["seed"] = "A parameter for quickshift, and perhaps other random stuff"
-    ranges["seed"] = "[0,1,2,3,4,5]"
+    descriptions["Channel"] = "A parameter for Picking the Channel R,G,B,H,S,V"
+    ranges["Channel"] = "[0,1,2,3,4,5]"
 
     descriptions["connectivity"] = "A parameter for flood and floodfill"
     ranges["connectivity"] = "[i for i in range(0, 9)]"
@@ -174,7 +174,7 @@ class parameters(OrderedDict):
         self["ratio"] = 0.0
         self["kernel_size"] = 0.0
         self["max_dist"] = 0.0
-        self["seed"] = 0.0
+        self["Channel"] = 0.0
         self["connectivity"] = 0.0
         self["compactness"] = 0.0
         self["mu"] = 0.0
@@ -241,6 +241,7 @@ class segmentor(object):
         for p in self.paramindexes:
             mystring += f"\t{p} = {self.params[p]}\n"
         return mystring
+        
 
 
 class ColorThreshold(segmentor):
@@ -259,9 +260,10 @@ class ColorThreshold(segmentor):
         super(ColorThreshold, self).__init__(paramlist)
         if not paramlist:
             self.params["algorithm"] = "CT"
+            self.params["Channel"] = 5
             self.params["mu"] = 0.4
             self.params["sigma"] = 0.6
-        self.paramindexes = ["sigma", "mu"]
+        self.paramindexes = ["Channel", "sigma", "mu"]
 
     def evaluate(self, img): #XX
         """Evaluate segmentation algorithm on training image.
@@ -273,14 +275,14 @@ class ColorThreshold(segmentor):
         output -- resulting segmentation mask from algorithm.
 
         """
-        channel_num = self.params["seed"]
+        channel_num = self.params["Channel"]
         if len(img.shape) > 2:
             num_channels = img.shape[2]
             if channel_num < num_channels:
                 channel = img[:, :, int(channel_num)]
             else:
                 hsv = skimage.color.rgb2hsv(img)
-                channel = hsv[:, :, 1]
+                channel = hsv[:, :, int(channel_num)-3]
         else:
             channel = img
         pscale = np.max(channel)
@@ -298,7 +300,7 @@ class ColorThreshold(segmentor):
         return output
 
 
-algorithmspace["CT"] = ColorThreshold
+algorithmspace['CT'] = ColorThreshold
 
 class TripleA (segmentor):
     def __init__(self, paramlist=None):
@@ -476,9 +478,9 @@ class QuickShift(segmentor):
             self.params["kernel_size"] = 5
             self.params["max_dist"] = 60
             self.params["sigma"] = 5
-            self.params["seed"] = 1
+            self.params["Channel"] = 1
             self.params["ratio"] = 2
-        self.paramindexes = ["kernel_size", "max_dist", "sigma", "seed", "ratio"]
+        self.paramindexes = ["kernel_size", "max_dist", "sigma", "Channel", "ratio"]
 
     def evaluate(self, img):
         """Evaluate segmentation algorithm on training image.
@@ -496,7 +498,7 @@ class QuickShift(segmentor):
             kernel_size=self.params["kernel_size"],
             max_dist=self.params["max_dist"],
             sigma=self.params["sigma"],
-            random_seed=self.params["seed"],
+            random_seed=self.params["Channel"],
         )
         return output
 
