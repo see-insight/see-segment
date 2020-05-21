@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.2" />
 <title>see.tests.test_JupyterGUI API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="This runs unit tests for functions that can be found in JupyterGUI.py." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -20,26 +20,31 @@
 <h1 class="title">Module <code>see.tests.test_JupyterGUI</code></h1>
 </header>
 <section id="section-intro">
+<p>This runs unit tests for functions that can be found in JupyterGUI.py.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from see import JupyterGUI
+<pre><code class="python">&#34;&#34;&#34;This runs unit tests for functions that can be found in JupyterGUI.py.&#34;&#34;&#34;
 import pytest
 import numpy as np
+from see import JupyterGUI
 
 def test_showtwo():
+    &#34;&#34;&#34;Unit test for showtwo function. Tests for figure shape.&#34;&#34;&#34;
     img1 = np.ones((20, 20, 3))
     img2 = np.ones((20, 20))
     assert len(JupyterGUI.showtwo(img1, img2).axes) == 2
-    
+
 def test_showthree():
+    &#34;&#34;&#34;Unit test for showthree function. Tests for figure shape.&#34;&#34;&#34;
     img1 = np.ones((20, 20, 3))
     img2 = np.ones((20, 20))
     img3 = np.zeros((20, 20))
     assert len(JupyterGUI.showthree(img1, img2, img3).axes) == 3
-    
+
 def test_show_segment():
+    &#34;&#34;&#34;Unit test for show_segment function. Tests for figure shape.&#34;&#34;&#34;
     img1 = np.ones((20, 20, 3))
     img2 = np.ones((20, 20))
     assert len(JupyterGUI.show_segment(img1, img2).axes) == 2</code></pre>
@@ -56,12 +61,13 @@ def test_show_segment():
 <span>def <span class="ident">test_show_segment</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Unit test for show_segment function. Tests for figure shape.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_show_segment():
+    &#34;&#34;&#34;Unit test for show_segment function. Tests for figure shape.&#34;&#34;&#34;
     img1 = np.ones((20, 20, 3))
     img2 = np.ones((20, 20))
     assert len(JupyterGUI.show_segment(img1, img2).axes) == 2</code></pre>
@@ -71,12 +77,13 @@ def test_show_segment():
 <span>def <span class="ident">test_showthree</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Unit test for showthree function. Tests for figure shape.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_showthree():
+    &#34;&#34;&#34;Unit test for showthree function. Tests for figure shape.&#34;&#34;&#34;
     img1 = np.ones((20, 20, 3))
     img2 = np.ones((20, 20))
     img3 = np.zeros((20, 20))
@@ -87,12 +94,13 @@ def test_show_segment():
 <span>def <span class="ident">test_showtwo</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Unit test for showtwo function. Tests for figure shape.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_showtwo():
+    &#34;&#34;&#34;Unit test for showtwo function. Tests for figure shape.&#34;&#34;&#34;
     img1 = np.ones((20, 20, 3))
     img2 = np.ones((20, 20))
     assert len(JupyterGUI.showtwo(img1, img2).axes) == 2</code></pre>

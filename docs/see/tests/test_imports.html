@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.2" />
 <title>see.tests.test_imports API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="This tests to see if the main dependencies for see can be successfully imported." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -20,11 +20,14 @@
 <h1 class="title">Module <code>see.tests.test_imports</code></h1>
 </header>
 <section id="section-intro">
+<p>This tests to see if the main dependencies for see can be successfully imported.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def test_imports():
+<pre><code class="python">&#34;&#34;&#34;This tests to see if the main dependencies for see can be successfully imported.&#34;&#34;&#34;
+def test_imports():
+    &#34;&#34;&#34;Import packages. Test will fail if packages cannot import successfully.&#34;&#34;&#34;
     import deap
     import scoop
     import skimage
@@ -43,12 +46,13 @@
 <span>def <span class="ident">test_imports</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Import packages. Test will fail if packages cannot import successfully.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_imports():
+    &#34;&#34;&#34;Import packages. Test will fail if packages cannot import successfully.&#34;&#34;&#34;
     import deap
     import scoop
     import skimage
