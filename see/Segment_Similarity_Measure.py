@@ -184,7 +184,7 @@ def FF_Option2b(inferred, ground_truth):
     return [error, ]
 
 
-def FitnessFunction(inferred, ground_truth):
+def FitnessFunction_old(inferred, ground_truth):
     """Compute the fitness for an individual. Takes in two images and compares
      them according to the equation (p + 2)^log(|m - n| + 2), where p is the pixel
       error, m is the number of segments in the inferred mask, and n is the number
@@ -446,9 +446,19 @@ def FF_ML2DHD_V2(inferred, ground_truth):
     setcounts, m, n = countMatches(inferred, ground_truth)
 
     #print(setcounts)
-    p, L, _ = countsets(setcounts)
-
-    error = (p/TP+np.abs(n-m)/(n+m))**(1-np.abs(n-m)/(n+m))
+    p, L, best = countsets(setcounts)
+    
+    test = set()
+    for key in best:
+        test.add(best[key])
+        
+    if len(test) == 1:
+        #Trivial Solution
+        #print("trivial solution")
+        error = 1;
+    else:
+        error = (p/TP+np.abs(n-m)/(n+m))**(1-np.abs(n-m)/(n+m))
+        
     return [ error, n,m]
 
 
