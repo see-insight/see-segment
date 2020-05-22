@@ -103,7 +103,7 @@ class parameters(OrderedDict):
     ranges["scale"] = "[i for i in range(0,10000)]"
 
     descriptions["sigma"] = "sigma value. A parameter for felzenswalb, inverse_guassian_gradient, slic, and quickshift"
-    ranges["sigma"] = "[float(i)/100 for i in range(0,10,1)]"
+    ranges["sigma"] = "[float(i)/100 for i in range(0,100)]"
 
     descriptions["min_size"] = "parameter for felzenszwalb"
     ranges["min_size"] = "[i for i in range(0,10000)]"
@@ -291,20 +291,24 @@ class ColorThreshold(segmentor):
                 channel = img[:, :, int(channel_num)]
             else:
                 hsv = skimage.color.rgb2hsv(img)
+                print(f"working with hsv channel {channel_num-3}")
                 channel = hsv[:, :, int(channel_num)-3]
         else:
             channel = img
         pscale = np.max(channel)
         my_mx = self.params["sigma"] * pscale
         my_mn = self.params["mu"] * pscale
-        if my_mx < my_mn:
-            temp = my_mx
-            my_mx = my_mn
-            my_mn = temp
 
-        output = np.ones(channel.shape)
-        output[channel < my_mn] = 0
-        output[channel > my_mx] = 0
+        output = None
+        
+        if my_mn < my_mx:
+            output = np.ones(channel.shape)
+            output[channel < my_mn] = 0
+            output[channel > my_mx] = 0
+        else:
+            output = np.zeros(channel.shape)
+            output[channel > my_mn] = 1
+            output[channel < my_mx] = 1
 
         return output
 
