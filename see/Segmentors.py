@@ -66,7 +66,16 @@ def algoFromParams(individual):
     else:
         raise ValueError("Algorithm not avaliable")
 
-
+def popCounts(pop):
+    """Count the number of each algorihtm in a population"""
+    algorithms = eval(parameters.ranges["algorithm"])
+    counts = {a:0 for a in algorithms}
+    for p in pop:
+        print(p[0])
+        counts[p[0]] += 1
+    return counts
+        
+        
 class parameters(OrderedDict):
     """Construct an ordered dictionary that represents the search space.
 
