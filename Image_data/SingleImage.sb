@@ -3,7 +3,7 @@
 #SBATCH -n 1
 #SBATCH --time=4:00:00
 #SBATCH --mem=2gb
-#SBATCH --array 0-100
+#SBATCH --array 0-2
 #SBATCH --output "./Output/%a_%A_slurm.output"
 ##SBATCH --mail-type=END
 
@@ -22,8 +22,50 @@ which python
 
 export PYTHONPATH=${PYTHONPATH}:${SLURM_SUBMIT_DIR}:${SLURM_SUBMIT_DIR}/../
 
+out_folder=${TMPDIR}/${SLURM_ARRAY_TASK_ID}/
+echo Output sent to $out_folder 
+mkdir -p $out_folder 
+
+tarfile=${SLURM_ARRAY_TASK_ID}_jobfiles.tgz
+pastdata=${SLURM_SUBMIT_DIR}/Output/${tarfile}  
+if [ -f ${pastdata} ]
+then
+	echo "Loading Checkpoint"
+	cp ${pastdata} ${TMPDIR}
+	cd ${TMPDIR}
+	tar -xzvf $tarfile
+	cd ${SLURM_SUBMIT_DIR}
+	
+fi
+echo Running from $PWD
+
 out_folder=./Output/
 
-srun --unbuffered python BatchRun.py --input ./Examples/Chameleon.jpg --mask ./Examples/Chameleon_GT.png -o $out_folder -i 0 -g 100 -p 500 -s ${SLURM_ARRAY_TASK_ID}  
+srun --unbuffered python BatchRun.py --input ./Examples/Chameleon.jpg --mask ./Examples/Chameleon_GT.png -o $out_folder -i 0 --checkpoint=${out_folder}/${SLURM_ARRAY_TASK_ID}_checkpoint.pop -g 100 -p 500 -s ${SLURM_ARRAY_TASK_ID} >> ${out_folder}/search.out 
+
+ret=$?
+
+#zip up this folder
+cd ${TMPDIR}
+tar -czvf ${pastdata} ./${SLURM_ARRAY_TASK_ID}/ 
+
+#House Cleaning
+cd ${SLURM_SUBMIT_DIR} 
+rm -rf ${TMPDIR}/*
+
+if [ $ret -ne 0 ]
+then                                                                                                                                
+        echo "ERROR running BatchRun. Aborting Checkpoint Restart"                                                                  
+else                                                                                                                                
+	if [ ! -f STOP.STOP ]
+	then
+		sbatch --array ${SLURM_ARRAY_TASK_ID} $0
+	fi
+
+	#Job Statistics
+	module load powertools
+	js -j $SLURM_JOB_ID
+fi
+echo "Done"
 
 ##########################
