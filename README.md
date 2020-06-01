@@ -34,3 +34,5 @@ Dependencies can be installed individually or by creating a conda environment us
 ### An Intro to SEE  
 
 Watch an introductory video to what SEE is, and how to use it [here](https://mediaspace.msu.edu/media/t/1_60yjrdjs).
+
+[![Link to Video](./docs/images/Video_Screenshot.png)](https://mediaspace.msu.edu/media/t/1_60yjrdjs)
