@@ -34,6 +34,8 @@ Machine learning (ML) offers a way to "automatically" find a customized image an
 
 One of the first steps in image understanding is image segmentation, which attempts to find regions of interest within images. Many image processing algorithms have been developed to try and automatically segment an image. However, there are many different options available, and each algorithm may work best for a different image sets and research questions. Additionally, many of these algorithms have hyperparameters that need to be tuned in order to get the most accurate results. So even if a researcher already possesses knowledge in image understanding and segmentation, it can be time-consuming to run and validate a customized solution for their problem. Thus, if this process could be automated, a significant amount of researcher time could be recovered.
 
+![Example Binary Segmentation](./docs/Images/Chameleon.png)
+
 The purpose of the Simple Evolutionary Exploration for segmentation, or SEE-Segment, software package is to provide an easy-to-use tool that can search for image segmentation algorithms. The software vectorizes the algorithms and their hyperparaameters and uses Genetic Algorithms to search this space.  A Labeled Array Distance metric  has been developed to help guild the search.  The resulting solution can be viewed as documented example python code with only minimal/standard dependencies (Numpy, Pillow, scikit-image, etc.) in an effort to make the resulting solution as portable and useful as possible. 
 
 # Design
