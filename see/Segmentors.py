@@ -291,7 +291,7 @@ class ColorThreshold(segmentor):
                 channel = img[:, :, int(channel_num)]
             else:
                 hsv = skimage.color.rgb2hsv(img)
-                print(f"working with hsv channel {channel_num-3}")
+                #print(f"working with hsv channel {channel_num-3}")
                 channel = hsv[:, :, int(channel_num)-3]
         else:
             channel = img

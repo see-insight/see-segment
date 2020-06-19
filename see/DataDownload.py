@@ -21,7 +21,7 @@ import pathlib
 import numpy as np
 import matplotlib.pyplot as plt
 
-DefaultFolder='Image_data/'
+DefaultFolder='./'
 
 def readpgm(name):
     """The ground truth data is in ascii P2 pgm binary files.  
@@ -140,7 +140,7 @@ def getSkyFolderLists(outputfolder='', folder=DefaultFolder):
     imagefolder = f"{folder}/sky/data/"
     maskfolder = f"{folder}/sky/groundtruth/"
 
-    print(f"{imagefolder} {maskfolder}")
+    #print(f"{imagefolder} {maskfolder}")
     imagenames = glob.glob(f'{imagefolder}/*.jpg')
     imagenames.sort()
     masknames = []
@@ -151,6 +151,7 @@ def getSkyFolderLists(outputfolder='', folder=DefaultFolder):
         label = f"{image_id}_gt.pgm"
         masknames.append(f"{maskfolder}/{label}")
         outputnames.append(f"{outputfolder}{label}")
+        #print(f"{label}")
     return imagenames, masknames, outputnames
 
 def getKomatsunaFolderLists(outputfolder='', folder=DefaultFolder):
@@ -169,6 +170,7 @@ def getKomatsunaFolderLists(outputfolder='', folder=DefaultFolder):
         label = f"label_{image_id}.png"
         masknames.append(f"{maskfolder}{label}")
         outputnames.append(f"{outputfolder}{label}")
+        #print(f"{label}")
     return imagenames, masknames, outputnames
 
 def getCOSKELFolderlists(outputfolder='output/', folder=DefaultFolder):
@@ -183,11 +185,13 @@ def getCOSKELFolderlists(outputfolder='output/', folder=DefaultFolder):
     outputnames = []
     for index, file in enumerate(imagePATHnames):
         imagenames.append(str(file))
-        print(str(file))
-        print(imagefolder)
+        #print(str(file))
+        #print(imagefolder)
         filename = str(file).replace(str(imagefolder), '')
-        masknames.append(f"{maskfolder}{filename}")
-        outputnames.append(f"{outputfolder}{filename}")
+        name = filename[:-4]
+        masknames.append(f"{maskfolder}{name}.png")
+        outputnames.append(f"{outputfolder}{name}.png")
+        #print(f"{filename}")
 
     return imagenames, masknames, outputnames
     
