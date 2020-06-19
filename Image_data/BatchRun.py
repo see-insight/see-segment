@@ -22,7 +22,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Run the see-Semgent algorithm')
     parser.add_argument('-B', '--BMCV', action='store_false', help="Use BMCV Data")
     parser.add_argument('-S', '--Sky', action='store_true', help="Use Sky Data")
-    parser.add_argument('-C', '--Coco', action='store_true', help="Use Coco Data")
+    parser.add_argument('-C', '--COSKEL', action='store_true', help="Use COSKEL Data")
     parser.add_argument('-I', '--input', help="Inputfile", type=str, default="")
     parser.add_argument('-M', '--mask', help="Maskfile", type=str, default="")
 
@@ -68,13 +68,13 @@ if __name__ == "__main__":
         maskfiles += files[1]
         outputfiles += files[2]
 
-    if(args.Coco):
-        print("Adding Coco Data")
-        files = dd.getCocoFolderLists(outputfolder=args.outputfolder)
+    if(args.COSKEL):
+        print("Adding COSKEL Data")
+        files = dd.getCOSKELFolderlists(outputfolder=args.outputfolder)
         imagefiles += files[0]
         maskfiles += files[1]
         outputfiles += files[2]
-        
+
     if(args.Sky):
         print("Adding Sky Data")
         files = dd.getSkyFolderLists(outputfolder=args.outputfolder)     
@@ -83,6 +83,7 @@ if __name__ == "__main__":
         outputfiles += files[2]
 
     if(args.input):
+        #Ignore previous inputs
         print(f"Adding {args.input}")
         imagefiles = [ args.input ]
         maskfiles = [ args.mask ]
