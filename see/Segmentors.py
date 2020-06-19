@@ -327,6 +327,7 @@ class ColorThreshold(segmentor):
             self.params["mu"] = 0.4
             self.params["sigma"] = 0.6
         self.paramindexes = ["Channel", "sigma", "mu"]
+        self.altnames = ["Channel", "MaxThreshold", "MinThreshold"]
         self.checkparamindex()
 
     def evaluate(self, img): #XX
@@ -378,8 +379,9 @@ class TripleA (segmentor):
             self.params["mu"] = 0.4
             self.params["sigma"] = 0.6
         self.paramindexes = ["sigma", "mu"]
+        self.altnames = ["MaxThreshold", "MinThreshold"]
         self.checkparamindex()
-        
+
     def evaluate(self, img): #XX
         channel_num = 1  # Do: Need to make this a searchable parameter.
         if len(img.shape) > 2:
