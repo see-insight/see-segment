@@ -87,7 +87,7 @@ def popCounts(pop):
     algorithms = eval(parameters.ranges["algorithm"])
     counts = {a:0 for a in algorithms}
     for p in pop:
-        print(p[0])
+        #print(p[0])
         counts[p[0]] += 1
     return counts
         
