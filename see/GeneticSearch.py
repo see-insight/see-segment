@@ -402,6 +402,10 @@ class Evolver(object):
 
         for cur_g in range(0, ngen+1):
             print(f"generation {cur_g} of population size {len(population)}")
+            
+            histogram = Segmentors.popCounts(population)
+            print(f"#HIST - {histogram}")
+            
             _, population = self.popfitness(population)
             
             bestsofar = self.hof[0]
