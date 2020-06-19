@@ -4,6 +4,8 @@
 # DO: Research project-clean up the parameters class to reduce the search space
 # DO: Change the seed from a number to a fraction 0-1 which is scaled to image rows and columns
 # DO: Enumerate teh word based measures.
+import copy
+import random
 
 from collections import OrderedDict
 import sys
@@ -13,14 +15,28 @@ import skimage
 from skimage import segmentation
 from skimage import color
 
-from see.Segment_Similarity_Measure import FF_ML2DHD_V2
-
-def FitnessFunction(inferred, ground_truth):
-    return FF_ML2DHD_V2(inferred, ground_truth)
-
+from see.Segment_Similarity_Measure import FF_ML2DHD_V2 as FitnessFunction
 
 # List of all algorithms
 algorithmspace = dict()
+
+def mutateAlgo(copy_child, pos_vals, flip_prob=0.5, seed=False):
+    """Generate an offspring based on current individual."""
+
+    child = copy.deepcopy(copy_child)
+    
+    # Not every algorithm is associated with every value
+    # Let's first see if we change the algorithm
+    rand_val = random.random()
+    if rand_val < flip_prob:
+        # Let's mutate the algorithm
+        child[0] = random.choice(pos_vals[0])
+
+    #use the local search for mutation.
+    seg = algoFromParams(child)
+    child = seg.mutateself(flip_prob)
+    return child
+
 
 def runAlgo(img, ground_img, individual, return_mask=False):
     """Run and evaluate the performance of an individual.
@@ -86,82 +102,107 @@ class parameters(OrderedDict):
 
     """
 
-    descriptions = dict()
-    ranges = dict()
+    descriptions = OrderedDict()
+    ranges = OrderedDict()
     pkeys = []
 
+    #0
     ranges["algorithm"] = "['CT','FB','SC','WS','CV','MCV','AC']"
     descriptions["algorithm"] = "string code for the algorithm"
 
+    #1
     descriptions["beta"] = "A parameter for randomWalker So, I should take this out"
     ranges["beta"] = "[i for i in range(0,10000)]"
 
+    #2
     descriptions["tolerance"] = "A parameter for flood and flood_fill"
     ranges["tolerance"] = "[float(i)/1000 for i in range(0,1000,1)]"
 
+    #3
     descriptions["scale"] = "A parameter for felzenszwalb"
     ranges["scale"] = "[i for i in range(0,10000)]"
 
+    #4
     descriptions["sigma"] = "sigma value. A parameter for felzenswalb, inverse_guassian_gradient, slic, and quickshift"
     ranges["sigma"] = "[float(i)/100 for i in range(0,100)]"
 
+    #5
     descriptions["min_size"] = "parameter for felzenszwalb"
     ranges["min_size"] = "[i for i in range(0,10000)]"
 
+    #6
     descriptions["n_segments"] = "A parameter for slic"
     ranges["n_segments"] = "[i for i in range(2,10000)]"
 
+    #7
     descriptions["iterations"] = "A parameter for both morphological algorithms"
     ranges["iterations"] = "[10, 10]"
 
+    #8
     descriptions["ratio"] = "A parameter for ratio"
     ranges["ratio"] = "[float(i)/100 for i in range(0,100)]"
 
+    #9
     descriptions["kernel_size"] = "A parameter for kernel_size"
     ranges["kernel_size"] = "[i for i in range(0,10000)]"
 
+    #10
     descriptions["max_dist"] = "A parameter for quickshift"
     ranges["max_dist"] = "[i for i in range(0,10000)]"
 
+    #11
     descriptions["Channel"] = "A parameter for Picking the Channel R,G,B,H,S,V"
     ranges["Channel"] = "[0,1,2,3,4,5]"
 
+    #12
     descriptions["connectivity"] = "A parameter for flood and floodfill"
     ranges["connectivity"] = "[i for i in range(0, 9)]"
 
+    #13
     descriptions["compactness"] = "A parameter for slic and watershed"
     ranges["compactness"] = "[0.0001,0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000]"
 
+    #14
     descriptions["mu"] = "A parameter for chan_vese"
     ranges["mu"] = "[float(i)/100 for i in range(0,100)]"
 
+    #15
     descriptions["lambda"] = "A parameter for chan_vese and morphological_chan_vese"
     ranges["lambda"] = "[(1,1), (1,2), (2,1)]"
 
+    #16
     descriptions["dt"] = "#An algorithm for chan_vese May want to make seperate level sets for different functions e.g. Morph_chan_vese vs morph_geo_active_contour"
     ranges["dt"] = "[float(i)/10 for i in range(0,100)]"
 
+    #17
     descriptions["init_level_set_chan"] = "A parameter for chan_vese and morphological_chan_vese"
     ranges["init_level_set_chan"] = "['checkerboard', 'disk', 'small disk']"
 
+    #18
     descriptions["init_level_set_morph"] = "A parameter for morphological_chan_vese"
     ranges["init_level_set_morph"] = "['checkerboard', 'circle']"
 
+    #19
     descriptions["smoothing"] = "A parameter used in morphological_geodesic_active_contour"
     ranges["smoothing"] = "[i for i in range(1, 10)]"
 
+    #20
     descriptions["alpha"] = "A parameter for inverse_guassian_gradient"
     ranges["alpha"] = "[i for i in range(0,10000)]"
 
+    #21
     descriptions["balloon"] = "A parameter for morphological_geodesic_active_contour"
     ranges["balloon"] = "[i for i in range(-50,50)]"
 
+    #22
     descriptions["seed_pointX"] = "A parameter for flood and flood_fill"
     ranges["seed_pointX"] = "[0.0]"
 
+    #23
     descriptions["seed_pointY"] = "??"
     ranges["seed_pointY"] = "[0.0]"
 
+    #24
     descriptions["seed_pointZ"] = "??"
     ranges["seed_pointZ"] = "[0.0]"
 
@@ -240,6 +281,19 @@ class segmentor(object):
         if paramlist:
             self.params.fromlist(paramlist)
 
+    def checkparamindex(self):
+        """Check paramiter index to ensure values are valid"""
+        for myparams in self.paramindexes:
+            assert myparams in self.params, f"ERROR {myparams} is not in parameter list"
+             
+    def mutateself(self, flip_prob=0.5):
+        """Mutate self and return new params."""
+        for myparam in self.paramindexes:
+            rand_val = random.random()
+            if rand_val < flip_prob:
+                self.params[myparam] = random.choice(eval(self.params.ranges[myparam]))
+        return self.params
+    
     def evaluate(self, img):
         """Run segmentation algorithm to get inferred mask."""
         return np.zeros(img.shape[0:1])
@@ -273,6 +327,7 @@ class ColorThreshold(segmentor):
             self.params["mu"] = 0.4
             self.params["sigma"] = 0.6
         self.paramindexes = ["Channel", "sigma", "mu"]
+        self.checkparamindex()
 
     def evaluate(self, img): #XX
         """Evaluate segmentation algorithm on training image.
@@ -323,7 +378,8 @@ class TripleA (segmentor):
             self.params["mu"] = 0.4
             self.params["sigma"] = 0.6
         self.paramindexes = ["sigma", "mu"]
-
+        self.checkparamindex()
+        
     def evaluate(self, img): #XX
         channel_num = 1  # Do: Need to make this a searchable parameter.
         if len(img.shape) > 2:
@@ -379,7 +435,8 @@ class Felzenszwalb(segmentor):
             self.params["sigma"] = 0.09
             self.params["min_size"] = 92
         self.paramindexes = ["scale", "sigma", "min_size"]
-
+        self.checkparamindex()
+        
     def evaluate(self, img):
         """Evaluate segmentation algorithm on training image.
 
@@ -437,7 +494,8 @@ class Slic(segmentor):
             self.params["iterations"] = 3
             self.params["sigma"] = 5
         self.paramindexes = ["n_segments", "compactness", "iterations", "sigma"]
-
+        self.checkparamindex()
+        
     def evaluate(self, img):
         """Evaluate segmentation algorithm on training image.
 
@@ -494,7 +552,8 @@ class QuickShift(segmentor):
             self.params["Channel"] = 1
             self.params["ratio"] = 2
         self.paramindexes = ["kernel_size", "max_dist", "sigma", "Channel", "ratio"]
-
+        self.checkparamindex()
+        
     def evaluate(self, img):
         """Evaluate segmentation algorithm on training image.
 
@@ -544,7 +603,8 @@ class Watershed(segmentor):
             self.params["algorithm"] = "WS"
             self.params["compactness"] = 2.0
         self.paramindexes = ["compactness"]
-
+        self.checkparamindex()
+        
     def evaluate(self, img):
         """Evaluate segmentation algorithm on training image.
 
@@ -602,7 +662,8 @@ class Chan_Vese(segmentor):
             self.params["tolerance"] = 0.001
             self.params["init_level_set_chan"] = "small disk"
         self.paramindexes = ["mu", "lambda", "iterations", "dt", "init_level_set_chan"]
-
+        self.checkparamindex()
+        
     def evaluate(self, img):
         """Evaluate segmentation algorithm on training image.
 
@@ -670,7 +731,8 @@ class Morphological_Chan_Vese(segmentor):
             "smoothing",
             "lambda",
         ]
-
+        self.checkparamindex()
+        
     def evaluate(self, img):
         """Evaluate segmentation algorithm on training image.
 
@@ -740,7 +802,8 @@ class MorphGeodesicActiveContour(segmentor):
             "smoothing",
             "balloon",
         ]
-
+        self.checkparamindex()
+        
     def evaluate(self, img):
         """Evaluate segmentation algorithm on training image.
 
