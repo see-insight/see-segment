@@ -157,8 +157,8 @@ def getSkyFolderLists(outputfolder='', folder=DefaultFolder):
 def getKomatsunaFolderLists(outputfolder='', folder=DefaultFolder):
     '''This downloads the KOMATSUNA dataset.'''
 
-    imagefolder = f"{folder}/KOMATSUNA/multi_plant/"
-    maskfolder = f"{folder}/KOMATSUNA/multi_label/"
+    imagefolder = f"{folder}/KOMATSUNA/rgbd_plant/"
+    maskfolder = f"{folder}/KOMATSUNA/rgbd_label/"
 
     imagenames = glob.glob(f'{imagefolder}*.png')
     imagenames.sort()
@@ -227,7 +227,7 @@ if __name__ == "__main__":
     parser.add_argument('-P', '--Plant', action='store_false', help="Use Sky Data")
     parser.add_argument('-S', '--Sky', action='store_false', help="Use Sky Data")
     parser.add_argument('-C', '--COSKEL', action='store_false', help="Use COSKEL Data")
-   
+  
     #Parsing Inputs
     args = parser.parse_args()
     print(args)
