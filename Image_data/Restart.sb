@@ -3,7 +3,7 @@
 #SBATCH -n 1
 #SBATCH --time=4:00:00
 #SBATCH --mem=2gb
-#SBATCH --array 0-407
+#SBATCH --array 0-299
 #SBATCH --output "./Output/%a_%A_slurm.output"
 ##SBATCH --mail-type=END
 
@@ -41,7 +41,7 @@ then
 fi
 echo Running from $PWD
 
-srun --unbuffered python BatchRun.py --BMCV --Sky -C --checkpoint=${out_folder}/${SLURM_ARRAY_TASK_ID}_checkpoint.pop -o $out_folder -i ${SLURM_ARRAY_TASK_ID} -g 400 -p 500 -s ${SLURM_ARRAY_TASK_ID} &
+srun --unbuffered python BatchRun.py -K --checkpoint=${out_folder}/${SLURM_ARRAY_TASK_ID}_checkpoint.pop -o $out_folder -i ${SLURM_ARRAY_TASK_ID} -g 400 -p 500 -s ${SLURM_ARRAY_TASK_ID} &
 export PID=$!
 echo "PID=$PID"
 ( echo "Sleeping Timer ${RESTART_TIME}"; echo "PID=$PID"; sleep $RESTART_TIME; echo "Stopping python"; kill $PID)& 
