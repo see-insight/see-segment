@@ -116,7 +116,8 @@ if __name__ == "__main__":
     imagefile = imagefiles[index]
     maskfile = maskfiles[index]
     # Load this image and mask
-    print(imagefile)
+    print(f"#IMAGE - {imagefile}")
+    print(f"#MASK - {maskfile}")
     img = imageio.imread(imagefile)
     gmask = imageio.imread(maskfile)
     #Run random Search
