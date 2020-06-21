@@ -180,6 +180,7 @@ def getCOSKELFolderlists(outputfolder='output/', folder=DefaultFolder):
     maskfolder = Path(f"{folder}/CO-SKEL_v1.1/GT_masks/")
 
     imagePATHnames = list(Path(f'{imagefolder}').rglob('*.jpg'));
+    imagePATHnames.sort()
     imagenames = []
     masknames = []
     outputnames = []

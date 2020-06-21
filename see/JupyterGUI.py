@@ -96,3 +96,4 @@ def segmentwidget(img, gmask, params=None, alg=None):
 
     out = widgets.interactive_output(func, widg)
     display(u_i, out)
+    return seg.params

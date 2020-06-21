@@ -27,6 +27,9 @@ doc:
 lint:
 	pylint $(MODULENAME) 
 
+doclint:
+	pydocstyle $(MODULENAME)
+
 test:
 	pytest -v $(MODULENAME) 
 

@@ -102,18 +102,18 @@ def mutate(copy_child, pos_vals, flip_prob=0.5, seed=False):
     # Now let's get the indexes (parameters) related to that value
     #switcher = AlgoHelp().algoIndexes()
     #indexes = switcher.get(child[0])
-
+    
     for index in range(len(pos_vals)):
         rand_val = random.random()
         if rand_val < flip_prob:
-            # Then we mutate said value
-            if index == 22:
-                # Do some special
-                my_x = random.choice(pos_vals[22])
-                my_y = random.choice(pos_vals[23])
-                my_z = random.choice(pos_vals[24])
-                child[index] = (my_x, my_y, my_z)
-                continue
+#             # Then we mutate said value
+#             if index == 22:
+#                 # Do some special
+#                 my_x = random.choice(pos_vals[22])
+#                 my_y = random.choice(pos_vals[23])
+#                 my_z = random.choice(pos_vals[24])
+#                 child[index] = (my_x, my_y, my_z)
+#                 continue
             child[index] = random.choice(pos_vals[index])
     return child
 
@@ -137,7 +137,8 @@ def makeToolbox(pop_size):
 
     # Genetic functions
     toolbox.register("mate", skimageCrossRandom)  # crossover
-    toolbox.register("mutate", mutate)  # Mutation
+    #toolbox.register("mutate", mutate)  # Mutation
+    toolbox.register("mutate", Segmentors.mutateAlgo)  # Mutation
     toolbox.register("evaluate", Segmentors.runAlgo)  # Fitness
     toolbox.register("select", tools.selTournament, tournsize=5)  # Selection
     toolbox.register("map", futures.map)  # So that we can use scoop
@@ -401,6 +402,10 @@ class Evolver(object):
 
         for cur_g in range(0, ngen+1):
             print(f"generation {cur_g} of population size {len(population)}")
+            
+            histogram = Segmentors.popCounts(population)
+            print(f"#HIST - {histogram}")
+            
             _, population = self.popfitness(population)
             
             bestsofar = self.hof[0]

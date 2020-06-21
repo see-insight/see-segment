@@ -20,9 +20,10 @@ from see import DataDownload as dd
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Run the see-Semgent algorithm')
-    parser.add_argument('-B', '--BMCV', action='store_false', help="Use BMCV Data")
+    parser.add_argument('-B', '--BMCV', action='store_true', help="Use BMCV Data")
     parser.add_argument('-S', '--Sky', action='store_true', help="Use Sky Data")
     parser.add_argument('-C', '--COSKEL', action='store_true', help="Use COSKEL Data")
+    parser.add_argument('-K', '--KOMATSUNA', action='store_true', help="Use KOMATSUNA Data")
     parser.add_argument('-I', '--input', help="Inputfile", type=str, default="")
     parser.add_argument('-M', '--mask', help="Maskfile", type=str, default="")
 
@@ -75,6 +76,13 @@ if __name__ == "__main__":
         maskfiles += files[1]
         outputfiles += files[2]
 
+    if(args.KOMATSUNA):
+        print("Adding KOMAATSUNA Data")
+        files = dd.getKomatsunaFolderLists(outputfolder=args.outputfolder)
+        imagefiles += files[0]
+        maskfiles += files[1]
+        outputfiles += files[2]
+
     if(args.Sky):
         print("Adding Sky Data")
         files = dd.getSkyFolderLists(outputfolder=args.outputfolder)     
@@ -95,26 +103,15 @@ if __name__ == "__main__":
     print(f"processing: {len(imagefiles)} files")
                     
     startfile = args.checkpoint
-#    population = ''
-#    #Create Segmentor
-#    #startfile = f"{args.outputfolder}Population_checkpoint.txt"
-#    startfile = None
-#    if startfile:
-#        if os.path.exists(args.checkpoint):
-#            params = ''
-#        else:
-#            params = eval(args.checkpoint)
-#            startfile = None
-#    else:
-#        params=''
-#        startfile=None
-#    print(f"Algorithm={params}")
-
 
     #Pick out this image and mask
     index = args.index
     imagefile = imagefiles[index]
     maskfile = maskfiles[index]
+
+    print(f"#IMAGE - {imagefile}")
+    print(f"#GMASK - {maskfile}")
+
     # Load this image and mask
     print(f"#IMAGE - {imagefile}")
     print(f"#MASK - {maskfile}")
