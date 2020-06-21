@@ -157,8 +157,8 @@ def getSkyFolderLists(outputfolder='', folder=DefaultFolder):
 def getKomatsunaFolderLists(outputfolder='', folder=DefaultFolder):
     '''This downloads the KOMATSUNA dataset.'''
 
-    imagefolder = f"{folder}/KOMATSUNA/multi_plant/"
-    maskfolder = f"{folder}/KOMATSUNA/multi_label/"
+    imagefolder = f"{folder}/KOMATSUNA/rgbd_plant/"
+    maskfolder = f"{folder}/KOMATSUNA/rgbd_label/"
 
     imagenames = glob.glob(f'{imagefolder}*.png')
     imagenames.sort()
