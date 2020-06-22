@@ -2,7 +2,9 @@
 
 rm STOP.STOP
 
-export HOURS=2
+date
+
+export HOURS=9
 
 for hour in  $(seq 1 $HOURS)
 do
