@@ -11,7 +11,7 @@ class Root:
 
     @cherrypy.expose
     def index(self):
-        if not self.best_fit == -1:
+        if self.best_fit != -1:
             return "Current Best: " + \
                 "Fitness: " + str(self.best_ind["fitness"]) +  "\n" + \
                 "Params: " + str(self.best_ind["params"])
@@ -33,4 +33,4 @@ class Root:
         return result
 
 
-cherrypy.quickstart(Root(), '/', {'global': {'server.socket_host':'0.0.0.0','server.socket_port': 8181}})
+cherrypy.quickstart(Root(), '/', {'global': {'server.socket_host':'0.0.0.0','server.socket_port': 8080}})

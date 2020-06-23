@@ -3,12 +3,15 @@ if __name__ == "__main__":
     import numpy as np
     from see import GeneticSearch, Segmentors
     import os
+    import json
+    import requests
 
     # 
     POP_SIZE = 10
-    NUM_GENERATIONS = 5
+    NUM_GENERATIONS = 3
     INPUT_IMAGE = "input.jpg"
     LABEL_IMAGE = "label.png"
+    SERVER_URL = "http://server1:8080/update"  
 
     rgb_url = "https://github.com/colbrydi/see-segment/blob/master/Image_data/Examples/Chameleon.jpg"
     label_url = "https://github.com/colbrydi/see-segment/blob/master/Image_data/Examples/Chameleon_GT.png"
@@ -42,4 +45,16 @@ if __name__ == "__main__":
 
     # Calculate and print the fitness value of the segmentor
     fitness = Segmentors.FitnessFunction(mask, gmask)[0]
-    print("fitness:", fitness)
+    params = my_evolver.hof[0]
+
+    # Combine data into a single object
+    data = {}
+    data["fitness"] = fitness
+    data["params"] = params
+
+    # Convert the data to json format
+    data = json.dumps(data)
+
+    # Send data to web server
+    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    r = requests.post(SERVER_URL, data=json.dumps(data), headers=headers) 
