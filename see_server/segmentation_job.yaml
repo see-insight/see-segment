@@ -1,0 +1,15 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: seesegment
+spec:
+  parallelism: 2
+  template:
+    metadata:
+      name: seesegment
+    spec:
+      containers:
+      - name: segment
+        image: seesegment/seesegment:0.0.4
+        imagePullPolicy: Always
+      restartPolicy: Never

@@ -4,6 +4,6 @@ RUN pip install numpy scikit-image argparse deap opencv-python scoop requests
 
 WORKDIR = /usr/src/
 COPY see/ ./see
-COPY container.py ./container.py
+COPY segment_container.py ./segment_container.py
 
-ENTRYPOINT ["python", "container.py"]
+ENTRYPOINT ["python", "segment_container.py"]
