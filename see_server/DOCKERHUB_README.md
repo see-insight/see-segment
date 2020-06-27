@@ -9,12 +9,14 @@ After making and testing any code changes locally, when want to update the conta
 
 ### Build and push updated see-segment image:
 Run inside the see-segment directory
+
 `sudo docker build -t seesegment/seesegment:0.0.4`
 
 `sudo docker push seesegment/seesegment:0.0.4`
 
 ### Build and push updated server image:
 Run inside the seesegment/see_server directory
+
 `sudo docker build -t seesegment/seeserver:0.0.4`
 
 `sudo docker push seesegment/seeserver:0.0.4`
