@@ -32,13 +32,13 @@ Click review and create. You will see an error prompting you to enter missing da
 Then click review and create again to create your cluster. The cluster will take a few minutes to get up and running. 
 
 ## Step 5
-Get credentials to run kubectl.
+Get credentials to run kubectl:
 
 `az aks get-credentials --name <CLUSTER-NAME> --resource-group <RESOURCE-GROUP-NAME> --output table`
 Note: You must replace <CLUSTER-NAME> and <RESOURCE-GROUP-NAME> with the values you used in the previous step.
 
 ## Step 6
-Verify your cluster is working.
+Verify your cluster is working:
 
 `kubectl get node`
 When the cluster is ready you should see some nodes with a status of ready.
