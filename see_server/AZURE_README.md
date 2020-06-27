@@ -46,9 +46,11 @@ When the cluster is ready you should see some nodes with a status of ready.
 ## Step 7
 Once kubernetes and cluster are set up and working to start the services run
 
-`kubectl apply -f server_service.yaml
-kubectl apply -f server.yaml
-kubectl apply -f segmentation_job.yaml`
+`kubectl apply -f server_service.yaml`
+
+`kubectl apply -f server.yaml`
+
+`kubectl apply -f segmentation_job.yaml`
 
 To see running service and the external ip address of the server run:
 
