@@ -314,9 +314,9 @@ class Evolver(object):
         #TODO: There is an error here. We need to make sure the best hof is included?
         
         my_sz = len(tpop) #Length of current population
-        top = min(10,max(1,round(0.1 * my_sz)))
+        top = min(10, max(1, round(0.1 * my_sz)))
         top = min(top, len(self.hof))
-        var = max(1,round(0.4 * my_sz))
+        var = max(1, round(0.4 * my_sz))
         var = min(var, len(self.hof))
         ran = my_sz - top - var
 
@@ -394,14 +394,14 @@ class Evolver(object):
                 raise
         
         if not population:
-            print(f"Inicializing new randome population")
+            print(f"Initializing a new random population")
             population = self.newpopulation()
             if checkpoint:
                 self.writepop(population, filename=f"{checkpoint}")
         
 
         for cur_g in range(0, ngen+1):
-            print(f"generation {cur_g} of population size {len(population)}")
+            print(f"Generation {cur_g} of population size {len(population)}")
             
             histogram = Segmentors.popCounts(population)
             print(f"#HIST - {histogram}")
