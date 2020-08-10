@@ -1,5 +1,3 @@
-channels:
-  - defaults
 dependencies:
   - pip
   - autopep8
