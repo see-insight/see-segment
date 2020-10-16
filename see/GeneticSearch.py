@@ -452,7 +452,7 @@ class Evolver(object):
                     population = self.mutate(population)
                   # if the best fitness value is below this threshold,
                   # proceed as normal, mutating the current population
-                  # to get the next generation
+                  # to get the next generation 
             
         if checkpoint:
             print(f"Writing Checkpoint file - {checkpoint}")
