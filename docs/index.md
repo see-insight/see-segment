@@ -17,6 +17,6 @@
 
 ## Contributions Leading up to SEE-InSight
 - Ty Buckley
-Hattie Pimentel
-Bella Oh
-Nolan Feeny
+- Hattie Pimentel
+- Bella Oh
+- Nolan Feeny
