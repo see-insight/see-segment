@@ -1,5 +1,7 @@
 # SEE-Segment  
 
+Python tool to search for image segmentation algorithms.  Developed by the [SEE-Insight](https://see-insight.github.io) research team.
+
 ![SEE-Segment Logo](SEE-Segment_logo.png)
 
 ## Overview
