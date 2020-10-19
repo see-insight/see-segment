@@ -1,5 +1,7 @@
 # SEE-Insight Group Website
 
+![SEE-Segment Logo](SEE-Segment_logo.png)
+
 ## SEE-InSight Members
 
 - Dr. Dirk Colbry (Principle Investigator)
