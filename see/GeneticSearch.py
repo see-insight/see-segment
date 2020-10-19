@@ -316,7 +316,7 @@ class Evolver(object):
 
         return extract_fits, tpop
 
-    def mutate(self, tpop):
+    def mutate(self, tpop, keep_prob = 0.1, mutate_prob = 0.4):
         """Return new population with mutated individuals. Perform both mutation and crossover.
 
         Keyword arguments:
@@ -332,9 +332,9 @@ class Evolver(object):
         #TODO: There is an error here. We need to make sure the best hof is included?
         
         my_sz = len(tpop) #Length of current population
-        top = min(10, max(1, round(0.1 * my_sz)))
+        top = min(10, max(1, round(keep_prob * my_sz)))
         top = min(top, len(self.hof))
-        var = max(1, round(0.4 * my_sz))
+        var = max(1, round(mutate_prob * my_sz))
         var = min(var, len(self.hof))
         ran = my_sz - top - var
 
@@ -438,8 +438,21 @@ class Evolver(object):
                 self.writepop(population, filename=f"{checkpoint}")
                 for cur_p in range(len(population)):
                     logging.getLogger().info(population[cur_p])
-            if cur_g < ngen+1:
-                population = self.mutate(population)
+            if cur_g < ngen+1:          
+                if bestsofar.fitness.values >= 0.95:
+                    population = self.newpopulation()
+                  # if the best fitness value is at or above the
+                  # threshold of 0.95, discard the entire current
+                  # population and randomly select a new population
+                  # for the next generation
+                  # note: setting keep_prob = 0 and mutate_prob = 1
+                  # as mutate arguments
+                  # should have same result as self.new_population()
+                else:                
+                    population = self.mutate(population)
+                  # if the best fitness value is below this threshold,
+                  # proceed as normal, mutating the current population
+                  # to get the next generation 
             
         if checkpoint:
             print(f"Writing Checkpoint file - {checkpoint}")
