@@ -6,7 +6,10 @@ except ImportError:
 
 setup(
     name='see-segment',
-    version='1.0.0',
+    author='Dirk Colbry',
+    author_email='colbrydi@msu.edu',
+    url='http://see-segment.github.io/see-segment',
+    version='0.1.0',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     packages=[
