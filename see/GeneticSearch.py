@@ -20,44 +20,6 @@ from see import Segmentors
 # from see import Segmentors_MinParams as Segmentors
 # from see import Segmentors_OrgAndReducedParams as Segmentors
 
-def print_best_algorithm_code(individual):
-    """Print usable code to run segmentation algorithm based on an
-     individual's genetic representation vector."""
-    ind_algo = Segmentors.algoFromParams(individual)
-    original_function = inspect.getsource(ind_algo.evaluate)
-
-    # Get the body of the function
-    function_contents = original_function[original_function.find('        '):\
-                            original_function.find('return')]
-    while function_contents.find('self.params') != -1:
-
-        # Find the index of the 's' at the start of self.params
-        params_index = function_contents.find('self.params')
-
-        # Find the index of the ']' at the end of self.params["<SOME_TEXT>"]
-        end_bracket_index = function_contents.find(']', params_index)+1
-
-        # Find the first occurance of self.params["<SOME_TEXT>"] and store it
-        code_to_replace = function_contents[params_index:end_bracket_index]
-
-        # These offset will be used to access only the params_key
-        offset = len('self.params["')
-        offset2 = len('"]')
-
-        # Get the params key
-        params_key = function_contents[params_index + offset:end_bracket_index-offset2]
-
-        # Use the params_key to access the params_value
-        param_value = str(ind_algo.params[params_key])
-
-        # Replace self.params["<SOME_TEXT>"] with the value of self.params["<SOME_TEXT>"]
-        function_contents = function_contents.replace(code_to_replace, param_value)
-
-    function_contents = function_contents.replace('        ', '')
-    function_contents = function_contents[function_contents.find('\n\"\"\"')+5:]
-    print(function_contents)
-    return function_contents
-
 def twoPointCopy(np1, np2, seed=False):
     """Execute a crossover between two numpy arrays of the same length."""
     if seed == True:
