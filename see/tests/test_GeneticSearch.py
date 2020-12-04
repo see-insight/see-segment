@@ -4,23 +4,6 @@ import numpy as np
 from see import Segmentors
 from see import GeneticSearch
 
-def test_print_best_algorithm_code():
-    """Unit test for print_best_algorithm_code function.
-     Checks function output matches method contents it's printing."""
-    individual = ['FB', 0, 0, 984, 0.09, 92, 0, 0, 0, 0, 0, 0, 0, 0, 0,\
-     (1, 2), 0, "checkerboard", "checkerboard", 0, 0, 0, 0, 0, 0]
-    print_statement = "multichannel = False\n\
-if len(img.shape) > 2:\n\
-    multichannel = True\n\
-output = skimage.segmentation.felzenszwalb(\n\
-    img,\n\
-    984,\n\
-    0.09,\n\
-    92,\n\
-    multichannel=multichannel,\n\
-)\n"
-    assert GeneticSearch.print_best_algorithm_code(individual) == print_statement
-
 def test_twoPointCopy():
     """Unit test for twoPointCopy function. Checks test individuals to see
      if copy took place successfully."""
