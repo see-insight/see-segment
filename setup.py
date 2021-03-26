@@ -13,14 +13,19 @@ setup(
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     install_requires = [
-	'numpy',
-	'matplotlib',
-  	'scikit-image',
-  	'argparse',
-  	'deap',
-  	'opencv-python',
-  	'scoop',
+        'numpy',
+        'matplotlib',
+        'scikit-image',
+        'argparse',
+        'deap',
+        'opencv-python',
+        'scoop',
     ],    
+    entry_points = {
+        'console_scripts':  [
+            'seesearch=see.RunSearch:geneticsearch_commandline'
+         ],
+    },
     packages=[
         'see',
         'see.tests',
