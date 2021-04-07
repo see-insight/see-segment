@@ -227,7 +227,7 @@ class Evolver(object):
                            list, self.tool.individual_guess, "my_guess.json")
 
         return self.tool.population_read()
-
+    
     def popfitness(self, tpop):
         """Calculate the fitness values for the population, and log general statistics about these
          values. Uses hall of fame (hof) to keep track of top 10 individuals.
@@ -243,10 +243,10 @@ class Evolver(object):
         new_image = [self.img for i in range(0, len(tpop))]
         new_val = [self.mask for i in range(0, len(tpop))]
         fitnesses = map(self.tool.evaluate, new_image, new_val, tpop)
-
+        
         # DO: Dirk is not sure exactly why we need these
-        for ind, fit in zip(tpop, fitnesses):
-            ind.fitness.values = fit
+        for ind, fit in zip(tpop, fitnesses): 
+            ind.fitness.values = [ fit[0] ]
         extract_fits = [ind.fitness.values[0] for ind in tpop]
 
         self.hof.update(tpop)
@@ -328,14 +328,14 @@ class Evolver(object):
         pop = self.tool.population()
 
         final = pop[0:ran]
-        print(f"pop size should be {len(final)}")
+        #print(f"pop size should be {len(final)}")
         final += self.hof[0:top] 
-        print(f"pop size should be {len(final)}")
+        #print(f"pop size should be {len(final)}")
         final += offspring[0:var] 
-        print(f"pop size should be {len(final)}")
+        #print(f"pop size should be {len(final)}")
         
-        print(f"pop[0:{top}:{var}:{ran}]")
-        print(f"pop size should be {len(final)}")
+        #print(f"pop[0:{top}:{var}:{ran}]")
+        #print(f"pop size should be {len(final)}")
 
         # Replacing the old population
         return final
@@ -383,7 +383,7 @@ class Evolver(object):
             print(f"Generation {cur_g} of population size {len(population)}")
             
             histogram = Segmentors.popCounts(population)
-            print(f"#HIST - {histogram}")
+            print(f"#HIST {histogram}")
             
             _, population = self.popfitness(population)
             
@@ -391,7 +391,7 @@ class Evolver(object):
             seg = Segmentors.algoFromParams(bestsofar)
             mask = seg.evaluate(self.img)
             fitness = Segmentors.FitnessFunction(mask, self.mask)
-            print(f"#BEST - {fitness} - {bestsofar}")
+            print(f"#BEST [{fitness},  {bestsofar}]")
 
             if checkpoint and cur_g%cp_freq == 0:
                 print(f"Writing Checkpoint file - {checkpoint}")

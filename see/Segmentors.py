@@ -61,6 +61,7 @@ def runAlgo(img, ground_img, individual, return_mask=False):
     logging.getLogger().info("Calculating Fitness")
     fitness = FitnessFunction(mask, ground_img)
     if return_mask:
+        print("Returning mask")
         return [fitness, mask]
     else:
         return fitness
