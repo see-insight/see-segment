@@ -5,6 +5,7 @@ import imageio
 from see import GeneticSearch, Segmentors
 
 
+
 def readfpop(fpop_file):
     fid_out= open(f"{input_file}.txt","r")
     
@@ -49,8 +50,8 @@ def continuous_search(input_file,
             best_fitness = fitness
             print(f"\n\n\n\nIteration {iteration} Finess Improved to {fitness}")
             my_evolver.writepop(population, filename="checkpoint.pop")
-            imageio.imwrite(best_mask_file,mask);
-            fid_out.write(f"[{fitness}, {params}]")
+            #imageio.imwrite(best_mask_file,mask);
+            fid_out.write(f"[{iteration}, {fitness}, {params}]\n")
             fid_out.flush(); 
             ###TODO Output [fitness, seg]
         iteration += 1
@@ -71,8 +72,6 @@ def geneticsearch_commandline():
     print('\n\n')
     
     continuous_search(args.input_file, args.input_mask, args.start_pop);
-    
-
 
 #     #Multilabel Array Example
 #     img = imageio.imread(args.input_file)
