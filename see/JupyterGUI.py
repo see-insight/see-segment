@@ -4,6 +4,7 @@
    with the negative of the resulting mask."""
 import matplotlib.pylab as plt
 import ipywidgets as widgets
+from IPython.display import display, clear_output
 
 from see import Segmentors
 
@@ -49,13 +50,15 @@ def picksegment(algorithms):
         description='Choose Algorithm:',
     )
 
-#     def on_change(change):
-#         if change['type'] == 'change' and change['name'] == 'value':
-#             print("changed to %s" % change['new'])
-
-#     w.observe(on_change)
+    def on_change(change):
+        if change['type'] == 'change' and change['name'] == 'value':
+            clear_output(wait=True) # Clear output for dynamic display
+            display(w)
+            print(help(Segmentors.algorithmspace[change['new']]))
+    w.observe(on_change)
 
     display(w)
+    print(help(Segmentors.algorithmspace[w.value]))
     return w
 
 def segmentwidget(img, gmask, params=None, alg=None):
