@@ -288,7 +288,7 @@ class ColorThreshold(segmentor):
             self.params["alpha1"] = 0.4
             self.params["alpha2"] = 0.6
         self.paramindexes = ["Channel", "alpha1", "alpha2"]
-        self.altnames = ["Channel", "MaxThreshold", "MinThreshold"]
+        self.altnames = ["Channel", "MinThreshold", "MaxThreshold"]
         self.checkparamindex()
 
     def evaluate(self, img): #XX
@@ -313,8 +313,8 @@ class ColorThreshold(segmentor):
         else:
             channel = img
         pscale = np.max(channel)
-        my_mx = self.params["alpha1"] * pscale
-        my_mn = self.params["alpha2"] * pscale
+        my_mx = self.params["alpha2"] * pscale
+        my_mn = self.params["alpha1"] * pscale
 
         output = None
         
@@ -340,7 +340,7 @@ class TripleA (segmentor):
             self.params["alpha1"] = 0.4
             self.params["alpha2"] = 0.6
         self.paramindexes = ["alpha1", "alpha2"]
-        self.altnames = ["MaxThreshold", "MinThreshold"]
+        self.altnames = ["MinThreshold", "MaxThreshold"]
         self.checkparamindex()
 
     def evaluate(self, img): #XX
@@ -353,8 +353,8 @@ class TripleA (segmentor):
         else:
             channel = img
         pscale = np.max(channel)
-        my_mx = self.params["alpha1"] * pscale
-        my_mn = self.params["alpha2"] * pscale
+        my_mx = self.params["alpha2"] * pscale
+        my_mn = self.params["alpha1"] * pscale
         if my_mx < my_mn:
             temp = my_mx
             my_mx = my_mn
