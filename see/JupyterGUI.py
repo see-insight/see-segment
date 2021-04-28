@@ -42,6 +42,21 @@ def show_segment(img, mask):
     fig = showtwo(im1, im2)
     return fig
 
+def picksegment(algorithms):
+    w = widgets.Dropdown(
+        options=algorithms,
+        value=algorithms[0],
+        description='Choose Algorithm:',
+    )
+
+#     def on_change(change):
+#         if change['type'] == 'change' and change['name'] == 'value':
+#             print("changed to %s" % change['new'])
+
+#     w.observe(on_change)
+
+    display(w)
+    return w
 
 def segmentwidget(img, gmask, params=None, alg=None):
     """Generate GUI. Produce slider for each parameter for the current segmentor.
@@ -67,11 +82,16 @@ def segmentwidget(img, gmask, params=None, alg=None):
     widg = dict()
     widglist = []
 
-    for ppp in seg.paramindexes:
+    for ppp, ind in zip(seg.paramindexes, range(len(seg.paramindexes))):
         thislist = eval(seg.params.ranges[ppp])
+        if (ind < len(seg.altnames)):
+            name = seg.altnames[ind]
+        else:
+            name = ppp
+           
         thiswidg = widgets.SelectionSlider(options=tuple(thislist),
                                            disabled=False,
-                                           description=ppp,
+                                           description=name,
                                            value=seg.params[ppp],
                                            continuous_update=False,
                                            orientation='horizontal',
@@ -80,6 +100,15 @@ def segmentwidget(img, gmask, params=None, alg=None):
         widglist.append(thiswidg)
         widg[ppp] = thiswidg
 
+#     algorithms = list(Segmentors.algorithmspace.keys())
+#     w = widgets.Dropdown(
+#         options=algorithms,
+#         value=algorithms[0],
+#         description='Choose Algorithm:',
+#     )
+    
+
+    
     def func(img=img, mask=gmask, **kwargs):
         """Find mask and fitness for current algorithm. Show masked image."""
         print(seg.params["algorithm"])
@@ -88,12 +117,15 @@ def segmentwidget(img, gmask, params=None, alg=None):
         mask = seg.evaluate(img)
         fit = Segmentors.FitnessFunction(mask, gmask)
         fig = showtwo(img, mask)
-        plt.title('Fitness Value: ' + str(fit[0]))
+#         plt.title('Fitness Value: ' + str(fit[0]))
+        print(help(seg))
 
-
+#     def on_change(change):
+#         display(w, u_i, out)
+#     w.observe(on_change)
+    
     layout = widgets.Layout(grid_template_columns='1fr 1fr 1fr')
     u_i = widgets.GridBox(widglist, layout=layout)
-
     out = widgets.interactive_output(func, widg)
     display(u_i, out)
     return seg.params
