@@ -284,12 +284,21 @@ class segmentor(object):
 
 
 class ColorThreshold(segmentor):
-    """Peform Color Thresholding segmentation algorithm. Segments parts of the image
-     based on the numerical values for the respective channel.
+    """ColorThreshold
+    
+    Peform Color Thresholding segmentation algorithm. Segments parts of the image
+    based on the numerical values for the respective channel.
 
     Parameters:
-    my_mx -- maximum thresholding value
-    my_mn -- minimum thresholding value
+    channel - (channel) color chanel (0:Red, 1:Green, 2:Blue, 3:Hue, 4:Saturation, 5 value (grayscale))
+    my_mn - (alpha1) - minimum thresholding value
+    my_mx - (alpha2) - maximum thresholding value
+    
+    Typically any pixel between my_mn and my_mx are true. Other pixels are false.
+    
+    if my_mn > my_mx then the logic flips and anything above my_mn and below my_mx are true. 
+    The pixels between the valuse are false
+        
 
     """
 
@@ -303,7 +312,6 @@ class ColorThreshold(segmentor):
             self.params["alpha1"] = 0.4
             self.params["alpha2"] = 0.6
         self.paramindexes = ["channel", "alpha1", "alpha2"]
-        self.altnames = ["Color channel", "MinThreshold", "MaxThreshold"]
         self.checkparamindex()
 
     def evaluate(self, img): #XX
@@ -334,6 +342,7 @@ class ColorThreshold(segmentor):
             output[channel < my_mx] = 1
 
         return output
+    
 
 
 algorithmspace['CT'] = ColorThreshold
@@ -369,23 +378,25 @@ class TripleA (segmentor):
 algorithmspace["AAA"] = TripleA
 
 class Felzenszwalb(segmentor):
-    """Perform Felzenszwalb segmentation algorithm. ONLY WORKS FOR RGB. The felzenszwalb
-     algorithms computes a graph based on the segmentation. Produces an oversegmentation
-     of the multichannel using min-span tree. Returns an integer mask indicating the segment labels.
+    """Perform Felzenszwalb segmentation algorithm. The felzenszwalb algorithms computes a 
+    graph based on the segmentation. Produces an oversegmentation of the multichannel using 
+    min-span tree. Returns an integer mask indicating the segment labels.
+    
+    https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.felzenszwalb
 
     Parameters:
-    scale -- float, higher meanse larger clusters
-    sigma -- float, std. dev of Gaussian kernel for preprocessing
-    min_size -- int, minimum component size. For postprocessing
-    mulitchannel -- bool, Whether the image is 2D or 3D
-
+    mulitchannel - (multichannel) - bool, Whether the image is 2D or 3D
+    channel - (channel) color chanel (0:Red, 1:Green, 2:Blue, 3:Hue, 4:Saturation, 5 value (grayscale))
+    scale - (alpha2*1000) - float, higher meanse larger clusters
+    sigma - (alpha1) - float, std. dev of Gaussian kernel for preprocessing
+    min_size - int(beta1*100) - int, minimum component size (in pixels). For postprocessing
     """
 
-    def __doc__(self):
-        """Return help string for function."""
-        myhelp = "Wrapper function for the scikit-image Felzenszwalb segmentor:"
-        myhelp += f" xx {skimage.segmentation.random_walker.__doc__}"
-        return myhelp
+#     def __doc__(self):
+#         """Return help string for function."""
+#         myhelp = "Wrapper function for the scikit-image Felzenszwalb segmentor:"
+#         myhelp += f" xx {skimage.segmentation.random_walker.__doc__}"
+#         return myhelp
 
     def __init__(self, paramlist=None):
         """Get parameters from parameter list that are used in segmentation algorithm.
@@ -399,7 +410,7 @@ class Felzenszwalb(segmentor):
             self.params["alpha1"] = 0.09
             self.params["beta1"] = 0.92
         self.paramindexes = ["multichannel", "channel", "alpha1", "alpha2", "beta1"]
-        self.altnames = ["multichannel", "channel", "scale", "Stddev", "min_size"]
+        #self.altnames = ["multichannel", "channel", "scale", "Stddev", "min_size"]
         self.checkparamindex()
         
     def evaluate(self, img):
@@ -440,6 +451,34 @@ class Felzenszwalb(segmentor):
                        
         return output
 
+    def sharepython(self, img):
+        
+        multichannel = self.params['multichannel']
+        if len(img.shape) == 1:
+            multichannel = False
+        if (multichannel):            
+            mystring= f"""
+            output = skimage.segmentation.felzenszwalb(
+                img,
+                {self.params["alpha2"]*1000},
+                {self.params["alpha1"]},
+                {int(self.params["beta1"]*100)},
+                multichannel={multichannel}
+            )"""
+        else:
+            mystring= f"""
+            output = skimage.segmentation.felzenszwalb(
+                getchannel(img, {self.params["channel"]}),
+                {self.params["alpha2"]*1000},
+                {self.params["alpha1"]},
+                {int(self.params["beta1"]*100)},
+                multichannel={multichannel}
+            )"""
+        return mystring
+        
+        
+        
+        
 algorithmspace["FB"] = Felzenszwalb
 
 class Slic(segmentor):
