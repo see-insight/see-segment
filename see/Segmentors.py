@@ -21,6 +21,15 @@ from see.Segment_Similarity_Measure import FF_ML2DHD_V2 as FitnessFunction
 # List of all algorithms
 algorithmspace = dict()
 
+def getchannel(img, channel):
+    """function that returns a single channel from an image"""
+    if (len(img) == 1):
+        return img
+    if (channel < 3):
+        return img[:,:,channel]
+    hsv = color.rgb2hsv(img)
+    return img[:,:,channel-3]
+
 def mutateAlgo(copy_child, pos_vals, flip_prob=0.5, seed=False):
     """Generate an offspring based on current individual."""
 
@@ -153,12 +162,12 @@ class parameters(OrderedDict):
     descriptions["algorithm"] = "string code for the algorithm"
     
     #1
-    descriptions["Channel"] = "A parameter for Picking the Channel R,G,B,H,S,V"
-    ranges["Channel"] = "[0,1,2,3,4,5]"
+    descriptions["channel"] = "A parameter for Picking the Channel R,G,B,H,S,V"
+    ranges["channel"] = "[0,1,2,3,4,5]"
     
     #2
-    descriptions["MultiChannel"] = "True/False parameter"
-    ranges["Channel"] = "[True, False]"   
+    descriptions["multichannel"] = "True/False parameter"
+    ranges["multichannel"] = "[True, False]"   
     
     #3
     descriptions["alpha1"] = "General Purpos Lower bound threshold"
@@ -186,7 +195,7 @@ class parameters(OrderedDict):
 
     #9
     descriptions["n_segments"] = "General Purpos Upper bound threshold"
-    ranges["n_segments"] = "[i for i in (range(0,10)]"
+    ranges["n_segments"] = "[i for i in range(0,10)]"
 
     #     Try to set defaults only once.
     #     Current method may cause all kinds of weird problems.
@@ -196,13 +205,15 @@ class parameters(OrderedDict):
     def __init__(self):
         """Set default values for each param in the dictionary."""
         self["algorithm"] = "None"
-        self["Channel"] = 0
+        self["channel"] = 0
+        self["multichannel"] = False
         self["alpha1"] = 0.5
         self["alpha2"] = 0.5
         self["beta1"] = 0.5
         self["beta2"] = 0.5
         self["gamma1"] = 0.5
         self["gamma2"] = 0.5
+        self["n_segments"] = 3
         self.pkeys = list(self.keys())
 
     def printparam(self, key):
@@ -288,11 +299,11 @@ class ColorThreshold(segmentor):
         super(ColorThreshold, self).__init__(paramlist)
         if not paramlist:
             self.params["algorithm"] = "CT"
-            self.params["Channel"] = 5
+            self.params["channel"] = 5
             self.params["alpha1"] = 0.4
             self.params["alpha2"] = 0.6
-        self.paramindexes = ["Channel", "alpha1", "alpha2"]
-        self.altnames = ["Color Channel", "MinThreshold", "MaxThreshold"]
+        self.paramindexes = ["channel", "alpha1", "alpha2"]
+        self.altnames = ["Color channel", "MinThreshold", "MaxThreshold"]
         self.checkparamindex()
 
     def evaluate(self, img): #XX
@@ -305,17 +316,8 @@ class ColorThreshold(segmentor):
         output -- resulting segmentation mask from algorithm.
 
         """
-        channel_num = self.params["Channel"]
-        if len(img.shape) > 2:
-            num_channels = img.shape[2]
-            if channel_num < num_channels:
-                channel = img[:, :, int(channel_num)]
-            else:
-                hsv = skimage.color.rgb2hsv(img)
-                #print(f"working with hsv channel {channel_num-3}")
-                channel = hsv[:, :, int(channel_num)-3]
-        else:
-            channel = img
+        channel = getchannel(img, self.params["channel"])
+
         pscale = np.max(channel)
         my_mx = self.params["alpha2"] * pscale
         my_mn = self.params["alpha1"] * pscale
@@ -348,14 +350,7 @@ class TripleA (segmentor):
         self.checkparamindex()
 
     def evaluate(self, img): #XX
-        channel_num = 1  # Do: Need to make this a searchable parameter.
-        if len(img.shape) > 2:
-            if channel_num < img.shape[2]:
-                channel = img[:, :, 1]
-            else:
-                channel = img[:, :, 0]
-        else:
-            channel = img
+        channel = getchannel(img, self.params["channel"])
         pscale = np.max(channel)
         my_mx = self.params["alpha2"] * pscale
         my_mn = self.params["alpha1"] * pscale
@@ -397,12 +392,14 @@ class Felzenszwalb(segmentor):
          Assign default values to these parameters."""
         super(Felzenszwalb, self).__init__(paramlist)
         if not paramlist:
+            self.params["multichannel"]=False
+            self.params["channel"]=5
             self.params["algorithm"] = "FB"
             self.params["alpha2"] = 0.984
             self.params["alpha1"] = 0.09
             self.params["beta1"] = 0.92
-        self.paramindexes = ["alpha1", "alpha2", "beta1"]
-        self.altnames = ["scale", "Stddev", "min_size"]
+        self.paramindexes = ["multichannel", "channel", "alpha1", "alpha2", "beta1"]
+        self.altnames = ["multichannel", "channel", "scale", "Stddev", "min_size"]
         self.checkparamindex()
         
     def evaluate(self, img):
@@ -415,36 +412,33 @@ class Felzenszwalb(segmentor):
         output -- resulting segmentation mask from algorithm.
 
         """
-        multichannel = self.params['MultiChannel']
-        if multichannel:
-            if len(img.shape) == 1:
-                multichannel = False;
-                channel=img;
-        else:
-            if len(img.shape) > 2:
-                channel=img[:,:,self.params["channel"]]
-            else:
-                channel=img;
-
-        
+        multichannel = self.params['multichannel']
+        if len(img.shape) == 1:
+            multichannel = False
+            
+        scale = self.params["alpha2"]*1000
+        sigma = self.params["alpha1"]
+        min_size = int(self.params["beta1"]*100)
+                       
         if(multichannel):
             output = skimage.segmentation.felzenszwalb(
                 img,
-                self.params["alpha2"]*1000,
-                self.params["alpha1"],
-                self.params["beta1"]*100,
-                multichannel=True,
+                scale,
+                sigma,
+                min_size,
+                multichannel=True
             )
         else:
+            channel = getchannel(img, self.params["channel"])
             output = skimage.segmentation.felzenszwalb(
                 channel,
-                self.params["alpha2"]*1000,
-                self.params["alpha1"],
-                self.params["beta1"]*100,
-                multichannel=multichannel,
+                scale,
+                sigma,
+                min_size,
+                multichannel=False
             )
+                       
         return output
-
 
 algorithmspace["FB"] = Felzenszwalb
 
@@ -475,11 +469,12 @@ class Slic(segmentor):
         super(Slic, self).__init__(paramlist)
         if not paramlist:
             self.params["algorithm"] = "SC"
+            self.params["multichannel"]=True
             self.params["n_segments"] = 5
             self.params["channel"] = 5
             #self.params["iterations"]
             self.params["alpha1"] = 0.5
-        self.paramindexes = ["n_segments", "channel", "alpha1"]
+        self.paramindexes = ["multichannel", "n_segments", "channel", "alpha1"]
         self.checkparamindex()
         
     def evaluate(self, img):
@@ -492,18 +487,31 @@ class Slic(segmentor):
         output -- resulting segmentation mask from algorithm.
 
         """
-        multichannel = False
-        if len(img.shape) > 2:
-            multichannel = True
-        output = skimage.segmentation.slic(
-            img,
-            n_segments=self.params["n_segments"],
-            compactness=10**(self.params["channel"]-3),
-            max_iter=3,
-            sigma=self.params["alpha1"],
-            convert2lab=True,
-            multichannel=multichannel,
-        )
+        multichannel = self.params['multichannel']
+        if len(img.shape) == 1:
+            multichannel = False
+
+        compactness=10**(self.params["channel"]-3)
+        n_segments = self.params["n_segments"]+1
+        if(multichannel):            
+            output = skimage.segmentation.slic(
+                img,
+                n_segments=n_segments,
+                compactness=compactness,
+                max_iter=3,
+                sigma=self.params["alpha1"],
+                convert2lab=True,
+                multichannel=True,
+            )
+        else:        
+             output = skimage.segmentation.slic(
+                img,
+                n_segments=n_segments,
+                compactness=compactness,
+                max_iter=3,
+                sigma=self.params["alpha1"],
+                multichannel=False,
+            )       
         return output
 
 
@@ -535,9 +543,9 @@ class QuickShift(segmentor):
             self.params["kernel_size"] = 5
             self.params["max_dist"] = 60
             self.params["sigma"] = 5
-            self.params["Channel"] = 1
+            self.params["channel"] = 1
             self.params["ratio"] = 2
-        self.paramindexes = ["kernel_size", "max_dist", "sigma", "Channel", "ratio"]
+        self.paramindexes = ["kernel_size", "max_dist", "sigma", "channel", "ratio"]
         self.checkparamindex()
         
     def evaluate(self, img):
@@ -556,7 +564,7 @@ class QuickShift(segmentor):
             kernel_size=self.params["kernel_size"],
             max_dist=self.params["max_dist"],
             sigma=self.params["sigma"],
-            random_seed=self.params["Channel"],
+            random_seed=self.params["channel"],
         )
         return output
 
