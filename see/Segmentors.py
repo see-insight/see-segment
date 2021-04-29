@@ -147,105 +147,46 @@ class parameters(OrderedDict):
     ranges = OrderedDict()
     pkeys = []
 
+    mxrange=256;
     #0
     ranges["algorithm"] = "['CT','FB','SC','WS','CV','MCV','AC']"
     descriptions["algorithm"] = "string code for the algorithm"
-
+    
     #1
-    descriptions["beta"] = "A parameter for randomWalker So, I should take this out"
-    ranges["beta"] = "[i for i in range(0,10000)]"
-
-    #2
-    descriptions["tolerance"] = "A parameter for flood and flood_fill"
-    ranges["tolerance"] = "[float(i)/1000 for i in range(0,1000,1)]"
-
-    #3
-    descriptions["scale"] = "A parameter for felzenszwalb"
-    ranges["scale"] = "[i for i in range(0,10000)]"
-
-    #4
-    descriptions["sigma"] = "sigma value. A parameter for felzenswalb, inverse_guassian_gradient, slic, and quickshift"
-    ranges["sigma"] = "[float(i)/100 for i in range(0,100)]"
-
-    #5
-    descriptions["min_size"] = "parameter for felzenszwalb"
-    ranges["min_size"] = "[i for i in range(0,10000)]"
-
-    #6
-    descriptions["n_segments"] = "A parameter for slic"
-    ranges["n_segments"] = "[i for i in range(2,10000)]"
-
-    #7
-    descriptions["iterations"] = "A parameter for both morphological algorithms"
-    ranges["iterations"] = "[10, 10]"
-
-    #8
-    descriptions["ratio"] = "A parameter for ratio"
-    ranges["ratio"] = "[float(i)/100 for i in range(0,100)]"
-
-    #9
-    descriptions["kernel_size"] = "A parameter for kernel_size"
-    ranges["kernel_size"] = "[i for i in range(0,10000)]"
-
-    #10
-    descriptions["max_dist"] = "A parameter for quickshift"
-    ranges["max_dist"] = "[i for i in range(0,10000)]"
-
-    #11
     descriptions["Channel"] = "A parameter for Picking the Channel R,G,B,H,S,V"
     ranges["Channel"] = "[0,1,2,3,4,5]"
+    
+    #2
+    descriptions["MultiChannel"] = "True/False parameter"
+    ranges["Channel"] = "[True, False]"   
+    
+    #3
+    descriptions["alpha1"] = "General Purpos Lower bound threshold"
+    ranges["alpha1"] = "[float(i)/256 for i in range(0,256)]"
+    
+    #4
+    descriptions["alpha2"] = "General Purpos Upper bound threshold"
+    ranges["alpha2"] = "[float(i)/256 for i in range(0,256)]"
+    
+    #5
+    descriptions["beta1"] = "General Purpos Lower bound threshold"
+    ranges["beta1"] = "[float(i)/256 for i in range(0,256)]"
 
-    #12
-    descriptions["connectivity"] = "A parameter for flood and floodfill"
-    ranges["connectivity"] = "[i for i in range(0, 9)]"
+    #6
+    descriptions["beta2"] = "General Purpos Upper bound threshold"
+    ranges["beta2"] = "[float(i)/256 for i in range(0,256)]"
 
-    #13
-    descriptions["compactness"] = "A parameter for slic and watershed"
-    ranges["compactness"] = "[0.0001,0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000]"
+    #7
+    descriptions["gamma1"] = "General Purpos Lower bound threshold"
+    ranges["gamma1"] = "[float(i)/256 for i in range(0,256)]"
+    
+    #8
+    descriptions["gamma2"] = "General Purpos Upper bound threshold"
+    ranges["gamma2"] = "[float(i)/256 for i in range(0,256)]"
 
-    #14
-    descriptions["mu"] = "A parameter for chan_vese"
-    ranges["mu"] = "[float(i)/100 for i in range(0,100)]"
-
-    #15
-    descriptions["lambda"] = "A parameter for chan_vese and morphological_chan_vese"
-    ranges["lambda"] = "[(1,1), (1,2), (2,1)]"
-
-    #16
-    descriptions["dt"] = "#An algorithm for chan_vese May want to make seperate level sets for different functions e.g. Morph_chan_vese vs morph_geo_active_contour"
-    ranges["dt"] = "[float(i)/10 for i in range(0,100)]"
-
-    #17
-    descriptions["init_level_set_chan"] = "A parameter for chan_vese and morphological_chan_vese"
-    ranges["init_level_set_chan"] = "['checkerboard', 'disk', 'small disk']"
-
-    #18
-    descriptions["init_level_set_morph"] = "A parameter for morphological_chan_vese"
-    ranges["init_level_set_morph"] = "['checkerboard', 'circle']"
-
-    #19
-    descriptions["smoothing"] = "A parameter used in morphological_geodesic_active_contour"
-    ranges["smoothing"] = "[i for i in range(1, 10)]"
-
-    #20
-    descriptions["alpha"] = "A parameter for inverse_guassian_gradient"
-    ranges["alpha"] = "[i for i in range(0,10000)]"
-
-    #21
-    descriptions["balloon"] = "A parameter for morphological_geodesic_active_contour"
-    ranges["balloon"] = "[i for i in range(-50,50)]"
-
-    #22
-    descriptions["seed_pointX"] = "A parameter for flood and flood_fill"
-    ranges["seed_pointX"] = "[0.0]"
-
-    #23
-    descriptions["seed_pointY"] = "??"
-    ranges["seed_pointY"] = "[0.0]"
-
-    #24
-    descriptions["seed_pointZ"] = "??"
-    ranges["seed_pointZ"] = "[0.0]"
+    #9
+    descriptions["n_segments"] = "General Purpos Upper bound threshold"
+    ranges["n_segments"] = "[i for i in (range(0,10)]"
 
     #     Try to set defaults only once.
     #     Current method may cause all kinds of weird problems.
@@ -255,30 +196,13 @@ class parameters(OrderedDict):
     def __init__(self):
         """Set default values for each param in the dictionary."""
         self["algorithm"] = "None"
-        self["beta"] = 0.0
-        self["tolerance"] = 0.0
-        self["scale"] = 0.0
-        self["sigma"] = 0.0
-        self["min_size"] = 0.0
-        self["n_segments"] = 0.0
-        self["iterations"] = 10
-        self["ratio"] = 0.0
-        self["kernel_size"] = 0.0
-        self["max_dist"] = 0.0
-        self["Channel"] = 0.0
-        self["connectivity"] = 0.0
-        self["compactness"] = 0.0
-        self["mu"] = 0.0
-        self["lambda"] = (1, 1)
-        self["dt"] = 0.0
-        self["init_level_set_chan"] = "disk"
-        self["init_level_set_morph"] = "checkerboard"
-        self["smoothing"] = 0.0
-        self["alpha"] = 0.0
-        self["balloon"] = 0.0
-        self["seed_pointX"] = 0.0
-        self["seed_pointY"] = 0.0
-        self["seed_pointZ"] = 0.0
+        self["Channel"] = 0
+        self["alpha1"] = 0.5
+        self["alpha2"] = 0.5
+        self["beta1"] = 0.5
+        self["beta2"] = 0.5
+        self["gamma1"] = 0.5
+        self["gamma2"] = 0.5
         self.pkeys = list(self.keys())
 
     def printparam(self, key):
@@ -315,7 +239,6 @@ class segmentor(object):
     """
 
     algorithm = ""
-
     def __init__(self, paramlist=None):
         """Generate algorithm params from parameter list."""
         self.params = parameters()
@@ -366,10 +289,10 @@ class ColorThreshold(segmentor):
         if not paramlist:
             self.params["algorithm"] = "CT"
             self.params["Channel"] = 5
-            self.params["mu"] = 0.4
-            self.params["sigma"] = 0.6
-        self.paramindexes = ["Channel", "sigma", "mu"]
-        self.altnames = ["Channel", "MaxThreshold", "MinThreshold"]
+            self.params["alpha1"] = 0.4
+            self.params["alpha2"] = 0.6
+        self.paramindexes = ["Channel", "alpha1", "alpha2"]
+        self.altnames = ["Color Channel", "MinThreshold", "MaxThreshold"]
         self.checkparamindex()
 
     def evaluate(self, img): #XX
@@ -394,8 +317,8 @@ class ColorThreshold(segmentor):
         else:
             channel = img
         pscale = np.max(channel)
-        my_mx = self.params["sigma"] * pscale
-        my_mn = self.params["mu"] * pscale
+        my_mx = self.params["alpha2"] * pscale
+        my_mn = self.params["alpha1"] * pscale
 
         output = None
         
@@ -418,10 +341,10 @@ class TripleA (segmentor):
         super(TripleA, self).__init__(paramlist)
         if not paramlist:
             self.params["algorithm"] = "AAA"
-            self.params["mu"] = 0.4
-            self.params["sigma"] = 0.6
-        self.paramindexes = ["sigma", "mu"]
-        self.altnames = ["MaxThreshold", "MinThreshold"]
+            self.params["alpha1"] = 0.4
+            self.params["alpha2"] = 0.6
+        self.paramindexes = ["alpha1", "alpha2"]
+        self.altnames = ["MinThreshold", "MaxThreshold"]
         self.checkparamindex()
 
     def evaluate(self, img): #XX
@@ -434,8 +357,8 @@ class TripleA (segmentor):
         else:
             channel = img
         pscale = np.max(channel)
-        my_mx = self.params["sigma"] * pscale
-        my_mn = self.params["mu"] * pscale
+        my_mx = self.params["alpha2"] * pscale
+        my_mn = self.params["alpha1"] * pscale
         if my_mx < my_mn:
             temp = my_mx
             my_mx = my_mn
@@ -475,10 +398,11 @@ class Felzenszwalb(segmentor):
         super(Felzenszwalb, self).__init__(paramlist)
         if not paramlist:
             self.params["algorithm"] = "FB"
-            self.params["scale"] = 984
-            self.params["sigma"] = 0.09
-            self.params["min_size"] = 92
-        self.paramindexes = ["scale", "sigma", "min_size"]
+            self.params["alpha2"] = 0.984
+            self.params["alpha1"] = 0.09
+            self.params["beta1"] = 0.92
+        self.paramindexes = ["alpha1", "alpha2", "beta1"]
+        self.altnames = ["scale", "Stddev", "min_size"]
         self.checkparamindex()
         
     def evaluate(self, img):
@@ -491,16 +415,34 @@ class Felzenszwalb(segmentor):
         output -- resulting segmentation mask from algorithm.
 
         """
-        multichannel = False
-        if len(img.shape) > 2:
-            multichannel = True
-        output = skimage.segmentation.felzenszwalb(
-            img,
-            self.params["scale"],
-            self.params["sigma"],
-            self.params["min_size"],
-            multichannel=multichannel,
-        )
+        multichannel = self.params['MultiChannel']
+        if multichannel:
+            if len(img.shape) == 1:
+                multichannel = False;
+                channel=img;
+        else:
+            if len(img.shape) > 2:
+                channel=img[:,:,self.params["channel"]]
+            else:
+                channel=img;
+
+        
+        if(multichannel):
+            output = skimage.segmentation.felzenszwalb(
+                img,
+                self.params["alpha2"]*1000,
+                self.params["alpha1"],
+                self.params["beta1"]*100,
+                multichannel=True,
+            )
+        else:
+            output = skimage.segmentation.felzenszwalb(
+                channel,
+                self.params["alpha2"]*1000,
+                self.params["alpha1"],
+                self.params["beta1"]*100,
+                multichannel=multichannel,
+            )
         return output
 
 
@@ -534,10 +476,10 @@ class Slic(segmentor):
         if not paramlist:
             self.params["algorithm"] = "SC"
             self.params["n_segments"] = 5
-            self.params["compactness"] = 5
-            self.params["iterations"] = 3
-            self.params["sigma"] = 5
-        self.paramindexes = ["n_segments", "compactness", "iterations", "sigma"]
+            self.params["channel"] = 5
+            #self.params["iterations"]
+            self.params["alpha1"] = 0.5
+        self.paramindexes = ["n_segments", "channel", "alpha1"]
         self.checkparamindex()
         
     def evaluate(self, img):
@@ -556,9 +498,9 @@ class Slic(segmentor):
         output = skimage.segmentation.slic(
             img,
             n_segments=self.params["n_segments"],
-            compactness=self.params["compactness"],
-            max_iter=self.params["iterations"],
-            sigma=self.params["sigma"],
+            compactness=10**(self.params["channel"]-3),
+            max_iter=3,
+            sigma=self.params["alpha1"],
             convert2lab=True,
             multichannel=multichannel,
         )
