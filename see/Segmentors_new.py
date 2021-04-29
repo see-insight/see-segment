@@ -157,30 +157,34 @@ class parameters(OrderedDict):
     ranges["Channel"] = "[0,1,2,3,4,5]"
     
     #2
+    descriptions["MultiChannel"] = "True/False parameter"
+    ranges["Channel"] = "[True, False]"   
+    
+    #3
     descriptions["alpha1"] = "General Purpos Lower bound threshold"
     ranges["alpha1"] = "[float(i)/256 for i in range(0,256)]"
     
-    #3
+    #4
     descriptions["alpha2"] = "General Purpos Upper bound threshold"
     ranges["alpha2"] = "[float(i)/256 for i in range(0,256)]"
     
-    #4
+    #5
     descriptions["beta1"] = "General Purpos Lower bound threshold"
     ranges["beta1"] = "[float(i)/256 for i in range(0,256)]"
 
-    #4
+    #6
     descriptions["beta2"] = "General Purpos Upper bound threshold"
     ranges["beta2"] = "[float(i)/256 for i in range(0,256)]"
 
-    #5
+    #7
     descriptions["gamma1"] = "General Purpos Lower bound threshold"
     ranges["gamma1"] = "[float(i)/256 for i in range(0,256)]"
     
-    #6
+    #8
     descriptions["gamma2"] = "General Purpos Upper bound threshold"
     ranges["gamma2"] = "[float(i)/256 for i in range(0,256)]"
 
-    #7
+    #9
     descriptions["n_segments"] = "General Purpos Upper bound threshold"
     ranges["n_segments"] = "[i for i in (range(0,10)]"
 
@@ -235,10 +239,10 @@ class segmentor(object):
     """
 
     algorithm = ""
-
     def __init__(self, paramlist=None):
         """Generate algorithm params from parameter list."""
         self.params = parameters()
+        self.altnames = []
         if paramlist:
             self.params.fromlist(paramlist)
 
@@ -288,7 +292,7 @@ class ColorThreshold(segmentor):
             self.params["alpha1"] = 0.4
             self.params["alpha2"] = 0.6
         self.paramindexes = ["Channel", "alpha1", "alpha2"]
-        self.altnames = ["Channel", "MinThreshold", "MaxThreshold"]
+        self.altnames = ["Color Channel", "MinThreshold", "MaxThreshold"]
         self.checkparamindex()
 
     def evaluate(self, img): #XX
@@ -398,6 +402,7 @@ class Felzenszwalb(segmentor):
             self.params["alpha1"] = 0.09
             self.params["beta1"] = 0.92
         self.paramindexes = ["alpha1", "alpha2", "beta1"]
+        self.altnames = ["scale", "Stddev", "min_size"]
         self.checkparamindex()
         
     def evaluate(self, img):
@@ -410,16 +415,34 @@ class Felzenszwalb(segmentor):
         output -- resulting segmentation mask from algorithm.
 
         """
-        multichannel = False
-        if len(img.shape) > 2:
-            multichannel = True
-        output = skimage.segmentation.felzenszwalb(
-            img,
-            self.params["alpha2"]*1000,
-            self.params["alpha1"],
-            self.params["beta1"]*100,
-            multichannel=multichannel,
-        )
+        multichannel = self.params['MultiChannel']
+        if multichannel:
+            if len(img.shape) == 1:
+                multichannel = False;
+                channel=img;
+        else:
+            if len(img.shape) > 2:
+                channel=img[:,:,self.params["channel"]]
+            else:
+                channel=img;
+
+        
+        if(multichannel):
+            output = skimage.segmentation.felzenszwalb(
+                img,
+                self.params["alpha2"]*1000,
+                self.params["alpha1"],
+                self.params["beta1"]*100,
+                multichannel=True,
+            )
+        else:
+            output = skimage.segmentation.felzenszwalb(
+                channel,
+                self.params["alpha2"]*1000,
+                self.params["alpha1"],
+                self.params["beta1"]*100,
+                multichannel=multichannel,
+            )
         return output
 
 
