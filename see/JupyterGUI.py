@@ -54,11 +54,11 @@ def picksegment(algorithms):
         if change['type'] == 'change' and change['name'] == 'value':
             clear_output(wait=True) # Clear output for dynamic display
             display(w)
-            print(help(Segmentors.algorithmspace[change['new']]))
+            print(Segmentors.algorithmspace[change['new']].__doc__)
     w.observe(on_change)
 
     display(w)
-    print(help(Segmentors.algorithmspace[w.value]))
+    print(Segmentors.algorithmspace[w.value].__doc__)
     return w
 
 def segmentwidget(img, gmask, params=None, alg=None):
@@ -120,15 +120,14 @@ def segmentwidget(img, gmask, params=None, alg=None):
         mask = seg.evaluate(img)
         fit = Segmentors.FitnessFunction(mask, gmask)
         fig = showtwo(img, mask)
+        # I like the idea of printing the sharepython but it should be below the figures. 
+        #print(seg.sharepython(img))
 #         plt.title('Fitness Value: ' + str(fit[0]))
-#        print(help(seg))
 
-#     def on_change(change):
-#         display(w, u_i, out)
-#     w.observe(on_change)
     
     layout = widgets.Layout(grid_template_columns='1fr 1fr 1fr')
     u_i = widgets.GridBox(widglist, layout=layout)
     out = widgets.interactive_output(func, widg)
     display(u_i, out)
+    
     return seg.params
