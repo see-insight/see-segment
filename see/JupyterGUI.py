@@ -121,7 +121,7 @@ def segmentwidget(img, gmask, params=None, alg=None):
         fit = Segmentors.FitnessFunction(mask, gmask)
         fig = showtwo(img, mask)
 #         plt.title('Fitness Value: ' + str(fit[0]))
-        print(help(seg))
+#        print(help(seg))
 
 #     def on_change(change):
 #         display(w, u_i, out)

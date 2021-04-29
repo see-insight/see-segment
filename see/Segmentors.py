@@ -319,6 +319,7 @@ class segmentor(object):
     def __init__(self, paramlist=None):
         """Generate algorithm params from parameter list."""
         self.params = parameters()
+        self.altnames = []
         if paramlist:
             self.params.fromlist(paramlist)
 
