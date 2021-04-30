@@ -21,14 +21,30 @@ from see.Segment_Similarity_Measure import FF_ML2DHD_V2 as FitnessFunction
 # List of all algorithms
 algorithmspace = dict()
 
-def getchannel(img, channel):
+def getchannel(img, colorspace, channel):
     """function that returns a single channel from an image"""
+    dimention=3;
+    
+    
     if (len(img) == 1):
-        return img
-    if (channel < 3):
-        return img[:,:,channel]
-    hsv = color.rgb2hsv(img)
-    return img[:,:,channel-3]
+        c_img = img.copy();
+        img = np.zeros([c_img.shape[0], c_img.shape[1],3])
+        img[:,:,0] = c_img;
+        img[:,:,1] = c_img;
+        img[:,:,2] = c_img;
+        return [img, c_img, 1]
+    
+    if(colorspace == 0):
+        return [img, img[:,:,channel], 3]
+    
+    if(colorspace == 1):
+        hsv = color.rgb2hsv(img)
+        return [hsv, hsv[:,:,channel], 3]
+    
+    if(colorspace == 2):
+        hsv = color.rgb2lab(img)
+        return [hsv, hsv[:,:,channel], 3]
+
 
 def mutateAlgo(copy_child, pos_vals, flip_prob=0.5, seed=False):
     """Generate an offspring based on current individual."""
@@ -157,43 +173,48 @@ class parameters(OrderedDict):
     pkeys = []
 
     mxrange=256;
+    
     #0
     ranges["algorithm"] = "['CT','FB','SC','WS','CV','MCV','AC']"
     descriptions["algorithm"] = "string code for the algorithm"
-    
+
     #1
-    descriptions["channel"] = "A parameter for Picking the Channel R,G,B,H,S,V"
-    ranges["channel"] = "[0,1,2,3,4,5]"
-    
-    #2
     descriptions["multichannel"] = "True/False parameter"
     ranges["multichannel"] = "[True, False]"   
     
+    #2
+    descriptions["colorspace"] = "Pick a colorspace [ RGB, HSV, LAB, ....]"
+    ranges["colorspace"] = "[0,1,2]"
+    
     #3
+    descriptions["channel"] = "A parameter for Picking the Channel 0,1,2"
+    ranges["channel"] = "[0,1,2]"
+    
+    #4
     descriptions["alpha1"] = "General Purpos Lower bound threshold"
     ranges["alpha1"] = "[float(i)/256 for i in range(0,256)]"
     
-    #4
+    #5
     descriptions["alpha2"] = "General Purpos Upper bound threshold"
     ranges["alpha2"] = "[float(i)/256 for i in range(0,256)]"
     
-    #5
+    #6
     descriptions["beta1"] = "General Purpos Lower bound threshold"
     ranges["beta1"] = "[float(i)/256 for i in range(0,256)]"
 
-    #6
+    #7
     descriptions["beta2"] = "General Purpos Upper bound threshold"
     ranges["beta2"] = "[float(i)/256 for i in range(0,256)]"
 
-    #7
+    #8
     descriptions["gamma1"] = "General Purpos Lower bound threshold"
     ranges["gamma1"] = "[float(i)/256 for i in range(0,256)]"
     
-    #8
+    #9
     descriptions["gamma2"] = "General Purpos Upper bound threshold"
     ranges["gamma2"] = "[float(i)/256 for i in range(0,256)]"
 
-    #9
+    #10
     descriptions["n_segments"] = "General Purpos Upper bound threshold"
     ranges["n_segments"] = "[i for i in range(0,10)]"
 
@@ -205,8 +226,9 @@ class parameters(OrderedDict):
     def __init__(self):
         """Set default values for each param in the dictionary."""
         self["algorithm"] = "None"
-        self["channel"] = 0
         self["multichannel"] = False
+        self["colorspace"] = 1
+        self["channel"] = 2
         self["alpha1"] = 0.5
         self["alpha2"] = 0.5
         self["beta1"] = 0.5
@@ -253,7 +275,6 @@ class segmentor(object):
     def __init__(self, paramlist=None):
         """Generate algorithm params from parameter list."""
         self.params = parameters()
-        self.altnames = []
         if paramlist:
             self.params.fromlist(paramlist)
 
@@ -290,9 +311,12 @@ class ColorThreshold(segmentor):
     based on the numerical values for the respective channel.
 
     Parameters:
-    channel - (channel) color chanel (0:Red, 1:Green, 2:Blue, 3:Hue, 4:Saturation, 5 value (grayscale))
+    colorspace - (colorspace) Select the colorspace (0:RGB, 1:HSV, 2:LAB)
+    channel - (channel) color chanel (0:R/H/L 1:G/S/A, 2:B/V/B)
     my_mn - (alpha1) - minimum thresholding value
     my_mx - (alpha2) - maximum thresholding value
+    
+    Note: a colorspace of 1 and a channel of 2 is a grayscale image. 
     
     Typically any pixel between my_mn and my_mx are true. Other pixels are false.
     
@@ -308,13 +332,22 @@ class ColorThreshold(segmentor):
         super(ColorThreshold, self).__init__(paramlist)
         if not paramlist:
             self.params["algorithm"] = "CT"
-            self.params["channel"] = 5
+            self.params["multichannel"] = False
+            self.params["colorspace"] = 1
+            self.params["channel"] = 2
             self.params["alpha1"] = 0.4
             self.params["alpha2"] = 0.6
-        self.paramindexes = ["channel", "alpha1", "alpha2"]
+            self.params["beta1"] = 0.4
+            self.params["beta2"] = 0.6
+            self.params["gamma1"] = 0.4
+            self.params["gamma2"] = 0.6
+        self.paramindexes = ["multichannel", "colorspace", "channel", 
+                             "alpha1", "alpha2", 
+                             "beta1", "beta2", 
+                             "gamma1", "gamma2"]
         self.checkparamindex()
 
-    def evaluate(self, img): #XX
+    def evaluate(self, input_img): #XX
         """Evaluate segmentation algorithm on training image.
 
         Keyword arguments:
@@ -324,22 +357,43 @@ class ColorThreshold(segmentor):
         output -- resulting segmentation mask from algorithm.
 
         """
-        channel = getchannel(img, self.params["channel"])
+        [img, channel, dimention] = getchannel(input_img, 
+                                               self.params["colorspace"], 
+                                               self.params["channel"])
 
-        pscale = np.max(channel)
-        my_mx = self.params["alpha2"] * pscale
-        my_mn = self.params["alpha1"] * pscale
-
+        minlist = ["alpha1", "beta1", "gamma1"]
+        maxlist = ["alpha2", "beta2", "gamma2"]
+        
         output = None
         
-        if my_mn < my_mx:
-            output = np.ones(channel.shape)
-            output[channel < my_mn] = 0
-            output[channel > my_mx] = 0
+        if (self.params["multichannel"] and dimention > 1):
+            output = np.ones([img.shape[0], img.shape[1]])
+            for dimidx in range(3):
+                pscale = np.max(img[:,:,dimidx])
+                my_mn = self.params[minlist[dimidx]] * pscale  
+                my_mx = self.params[maxlist[dimidx]] * pscale
+                               
+                if my_mn < my_mx:
+                    output[img[:,:,dimidx] < my_mn] = 0
+                    output[img[:,:,dimidx] > my_mx] = 0
+                else:
+                    flag1 = img[:,:,dimidx] > my_mn
+                    flag2 = img[:,:,dimidx] < my_mx
+                    output[np.logical_and(flag1,flag2)] = 0
         else:
-            output = np.zeros(channel.shape)
-            output[channel > my_mn] = 1
-            output[channel < my_mx] = 1
+            pscale = np.max(channel)
+            chidx = self.params["channel"]
+            my_mx = self.params[maxlist[chidx]] * pscale
+            my_mn = self.params[minlist[chidx]] * pscale              
+
+            if my_mn < my_mx:
+                output = np.ones(channel.shape)
+                output[channel < my_mn] = 0
+                output[channel > my_mx] = 0
+            else:
+                output = np.zeros(channel.shape)
+                output[channel > my_mn] = 1
+                output[channel < my_mx] = 1
 
         return output
     
@@ -355,7 +409,7 @@ class TripleA (segmentor):
             self.params["alpha1"] = 0.4
             self.params["alpha2"] = 0.6
         self.paramindexes = ["alpha1", "alpha2"]
-        self.altnames = ["MinThreshold", "MaxThreshold"]
+        #self.altnames = ["MinThreshold", "MaxThreshold"]
         self.checkparamindex()
 
     def evaluate(self, img): #XX
@@ -382,11 +436,14 @@ class Felzenszwalb(segmentor):
     graph based on the segmentation. Produces an oversegmentation of the multichannel using 
     min-span tree. Returns an integer mask indicating the segment labels.
     
+    Note: a colorspace of 1 and a channel of 2 is a grayscale image. 
+    
     https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.felzenszwalb
 
     Parameters:
     mulitchannel - (multichannel) - bool, Whether the image is 2D or 3D
-    channel - (channel) color chanel (0:Red, 1:Green, 2:Blue, 3:Hue, 4:Saturation, 5 value (grayscale))
+    colorspace - (colorspace) Select the colorspace (0:RGB, 1:HSV, 2:LAB)
+    channel - (channel) color chanel (0:R/H/L 1:G/S/A, 2:B/V/B)
     scale - (alpha2*1000) - float, higher meanse larger clusters
     sigma - (alpha1) - float, std. dev of Gaussian kernel for preprocessing
     min_size - int(beta1*100) - int, minimum component size (in pixels). For postprocessing
@@ -404,16 +461,16 @@ class Felzenszwalb(segmentor):
         super(Felzenszwalb, self).__init__(paramlist)
         if not paramlist:
             self.params["multichannel"]=False
-            self.params["channel"]=5
+            self.params["colorspace"] = 1
+            self.params["channel"]=2
             self.params["algorithm"] = "FB"
             self.params["alpha2"] = 0.984
             self.params["alpha1"] = 0.09
             self.params["beta1"] = 0.92
-        self.paramindexes = ["multichannel", "channel", "alpha1", "alpha2", "beta1"]
-        #self.altnames = ["multichannel", "channel", "scale", "Stddev", "min_size"]
+        self.paramindexes = ["multichannel", "colorspace", "channel", "alpha1", "alpha2", "beta1"]
         self.checkparamindex()
         
-    def evaluate(self, img):
+    def evaluate(self, input_img):
         """Evaluate segmentation algorithm on training image.
 
         Keyword arguments:
@@ -423,15 +480,16 @@ class Felzenszwalb(segmentor):
         output -- resulting segmentation mask from algorithm.
 
         """
-        multichannel = self.params['multichannel']
-        if len(img.shape) == 1:
-            multichannel = False
+
             
         scale = self.params["alpha2"]*1000
         sigma = self.params["alpha1"]
         min_size = int(self.params["beta1"]*100)
-                       
-        if(multichannel):
+        
+        [img, channel, dimention] = getchannel(input_img, 
+                                               self.params["colorspace"], 
+                                               self.params["channel"])                      
+        if(self.params["multichannel"] and dimention > 1):
             output = skimage.segmentation.felzenszwalb(
                 img,
                 scale,
@@ -440,7 +498,6 @@ class Felzenszwalb(segmentor):
                 multichannel=True
             )
         else:
-            channel = getchannel(img, self.params["channel"])
             output = skimage.segmentation.felzenszwalb(
                 channel,
                 scale,
@@ -451,30 +508,31 @@ class Felzenszwalb(segmentor):
                        
         return output
 
-    def sharepython(self, img):
+#     def sharepython(self, img):
         
-        multichannel = self.params['multichannel']
-        if len(img.shape) == 1:
-            multichannel = False
-        if (multichannel):            
-            mystring= f"""
-            output = skimage.segmentation.felzenszwalb(
-                img,
-                {self.params["alpha2"]*1000},
-                {self.params["alpha1"]},
-                {int(self.params["beta1"]*100)},
-                multichannel={multichannel}
-            )"""
-        else:
-            mystring= f"""
-            output = skimage.segmentation.felzenszwalb(
-                getchannel(img, {self.params["channel"]}),
-                {self.params["alpha2"]*1000},
-                {self.params["alpha1"]},
-                {int(self.params["beta1"]*100)},
-                multichannel={multichannel}
-            )"""
-        return mystring
+        
+#         multichannel = self.params['multichannel']
+#         if len(img.shape) == 1:
+#             multichannel = False
+#         if (multichannel):            
+#             mystring= f"""
+#             output = skimage.segmentation.felzenszwalb(
+#                 img,
+#                 {self.params["alpha2"]*1000},
+#                 {self.params["alpha1"]},
+#                 {int(self.params["beta1"]*100)},
+#                 multichannel={multichannel}
+#             )"""
+#         else:
+#             mystring= f"""
+#             output = skimage.segmentation.felzenszwalb(
+#                 getchannel(img, {self.params["channel"]}),
+#                 {self.params["alpha2"]*1000},
+#                 {self.params["alpha1"]},
+#                 {int(self.params["beta1"]*100)},
+#                 multichannel={multichannel}
+#             )"""
+#         return mystring
         
         
         
@@ -516,7 +574,7 @@ class Slic(segmentor):
         self.paramindexes = ["multichannel", "n_segments", "channel", "alpha1"]
         self.checkparamindex()
         
-    def evaluate(self, img):
+    def evaluate(self, input_img):
         """Evaluate segmentation algorithm on training image.
 
         Keyword arguments:
@@ -526,20 +584,21 @@ class Slic(segmentor):
         output -- resulting segmentation mask from algorithm.
 
         """
-        multichannel = self.params['multichannel']
-        if len(img.shape) == 1:
-            multichannel = False
+
+        [img, channel, dimention] = getchannel(input_img, 
+                                               self.params["colorspace"], 
+                                               self.params["channel"])                      
 
         compactness=10**(self.params["channel"]-3)
         n_segments = self.params["n_segments"]+1
-        if(multichannel):            
+        if(self.params["multichannel"] and dimention > 1):            
             output = skimage.segmentation.slic(
                 img,
                 n_segments=n_segments,
                 compactness=compactness,
                 max_iter=3,
                 sigma=self.params["alpha1"],
-                convert2lab=True,
+                convert2lab=False,
                 multichannel=True,
             )
         else:        
