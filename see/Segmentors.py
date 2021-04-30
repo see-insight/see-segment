@@ -24,8 +24,6 @@ algorithmspace = dict()
 def getchannel(img, colorspace, channel):
     """function that returns a single channel from an image"""
     dimention=3;
-    
-    
     if (len(img) == 1):
         c_img = img.copy();
         img = np.zeros([c_img.shape[0], c_img.shape[1],3])
@@ -311,10 +309,15 @@ class ColorThreshold(segmentor):
     based on the numerical values for the respective channel.
 
     Parameters:
+    mulitchannel - (multichannel) - bool, Whether the image is 2D or 3D
     colorspace - (colorspace) Select the colorspace (0:RGB, 1:HSV, 2:LAB)
     channel - (channel) color chanel (0:R/H/L 1:G/S/A, 2:B/V/B)
-    my_mn - (alpha1) - minimum thresholding value
-    my_mx - (alpha2) - maximum thresholding value
+    my_mn - (alpha1) - minimum thresholding value for channel 0
+    my_mx - (alpha2) - maximum thresholding value for channel 0
+    my_mn - (beta1) - minimum thresholding value for channel 1
+    my_mx - (beta2) - maximum thresholding value for channel 1
+    my_mn - (gamma1) - minimum thresholding value for channel 2
+    my_mx - (gamma2) - maximum thresholding value for channel 2
     
     Note: a colorspace of 1 and a channel of 2 is a grayscale image. 
     
@@ -322,8 +325,6 @@ class ColorThreshold(segmentor):
     
     if my_mn > my_mx then the logic flips and anything above my_mn and below my_mx are true. 
     The pixels between the valuse are false
-        
-
     """
 
     def __init__(self, paramlist=None):
@@ -394,10 +395,7 @@ class ColorThreshold(segmentor):
                 output = np.zeros(channel.shape)
                 output[channel > my_mn] = 1
                 output[channel < my_mx] = 1
-
         return output
-    
-
 
 algorithmspace['CT'] = ColorThreshold
 
