@@ -73,12 +73,12 @@ def pickimage(folder='Image_data/Examples/'):
         if change['type'] == 'change' and change['name'] == 'value':
             clear_output(wait=True) # Clear output for dynamic display
             display(w)
-            img = imageio.imread(w.value)
+            w.img = imageio.imread(w.value)
             index = filelist.index(w.value)
-            mask = imageio.imread(masklist[index])
-            fig = showtwo(img, mask)
-            w.img = img
-            w.mask
+            w.mask = imageio.imread(masklist[index])
+            if len(w.mask.shape) > 2:
+                w.mask = w.mask[:,:,0]
+            fig = showtwo(w.img, w.mask)
 
             
     w.observe(on_change)
