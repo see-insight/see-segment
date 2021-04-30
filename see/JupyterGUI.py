@@ -77,15 +77,17 @@ def pickimage(folder='Image_data/Examples/'):
             index = filelist.index(w.value)
             mask = imageio.imread(masklist[index])
             fig = showtwo(img, mask)
+            w.img = img
+            w.mask
 
             
     w.observe(on_change)
     display(w)
-    img = imageio.imread(w.value)
+    w.img = imageio.imread(w.value)
     index = filelist.index(w.value)
-    mask = imageio.imread(masklist[index])
-    fig = showtwo(img, mask)
-    return img, mask
+    w.mask = imageio.imread(masklist[index])
+    fig = showtwo(w.img, w.mask)
+    return w
 
 
 def picksegment(algorithms):
