@@ -87,10 +87,7 @@ def segmentwidget(img, gmask, params=None, alg=None):
 
     for ppp, ind in zip(seg.paramindexes, range(len(seg.paramindexes))):
         thislist = eval(seg.params.ranges[ppp])
-        if (ind < len(seg.altnames)):
-            name = seg.altnames[ind]
-        else:
-            name = ppp
+        name = ppp
            
         thiswidg = widgets.SelectionSlider(options=tuple(thislist),
                                            disabled=False,
