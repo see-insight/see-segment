@@ -5,8 +5,10 @@
 import matplotlib.pylab as plt
 import ipywidgets as widgets
 from IPython.display import display, clear_output
-
+from pathlib import Path
 from see import Segmentors
+import imageio
+
 
 def showtwo(img, img2):
     """Show two images side by side."""
@@ -42,6 +44,49 @@ def show_segment(img, mask):
     im2[mask == 0, :] = 0
     fig = showtwo(im1, im2)
     return fig
+
+
+def pickimage(folder='Image_data/Examples/'):
+    #def pickimage(
+
+    directory = Path(folder)
+
+    allfiles = sorted(directory.glob('*'))
+
+    filelist = []
+    masklist = []
+    for file in allfiles:
+        if file.suffix ==".jpg" or file.suffix ==".jpeg" or file.suffix ==".JPEG" or file.suffix ==".png":
+            if not "_GT" in file.name:
+                filelist.append(file)
+                mask = directory.glob(f"{file.stem}_GT*")
+                for m in mask:
+                    masklist.append(m)
+    
+    w = widgets.Dropdown(
+        options=filelist,
+        value=filelist[0],
+        description='Choose image:',
+    )
+
+    def on_change(change):
+        if change['type'] == 'change' and change['name'] == 'value':
+            clear_output(wait=True) # Clear output for dynamic display
+            display(w)
+            img = imageio.imread(w.value)
+            index = filelist.index(w.value)
+            mask = imageio.imread(masklist[index])
+            fig = showtwo(img, mask)
+
+            
+    w.observe(on_change)
+    display(w)
+    img = imageio.imread(w.value)
+    index = filelist.index(w.value)
+    mask = imageio.imread(masklist[index])
+    fig = showtwo(img, mask)
+    return img, mask
+
 
 def picksegment(algorithms):
     w = widgets.Dropdown(
