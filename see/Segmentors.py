@@ -22,7 +22,9 @@ from see.Segment_Similarity_Measure import FF_ML2DHD_V2 as FitnessFunction
 algorithmspace = dict()
 
 def getchannel(img, colorspace, channel):
-    """function that returns a single channel from an image"""
+    """function that returns a single channel from an image
+    ['RGB', ‘HSV’, ‘RGB CIE’, ‘XYZ’, ‘YUV’, ‘YIQ’, ‘YPbPr’, ‘YCbCr’, ‘YDbDr’]
+    """
     dimention=3;
     if (len(img) == 1):
         c_img = img.copy();
@@ -31,17 +33,13 @@ def getchannel(img, colorspace, channel):
         img[:,:,1] = c_img;
         img[:,:,2] = c_img;
         return [img, c_img, 1]
+
     
-    if(colorspace == 0):
+    if(colorspace == 'RGB'):
         return [img, img[:,:,channel], 3]
-    
-    if(colorspace == 1):
-        hsv = color.rgb2hsv(img)
-        return [hsv, hsv[:,:,channel], 3]
-    
-    if(colorspace == 2):
-        hsv = color.rgb2lab(img)
-        return [hsv, hsv[:,:,channel], 3]
+    else:
+        space = color.convert_colorspace(img, 'RGB', colorspace)
+        return [space, space[:,:,channel], 3]
 
 
 def mutateAlgo(copy_child, pos_vals, flip_prob=0.5, seed=False):
@@ -173,7 +171,7 @@ class parameters(OrderedDict):
     mxrange=256;
     
     #0
-    ranges["algorithm"] = "['CT','FB','SC']"#,'WS','CV','MCV','AC']"
+    ranges["algorithm"] = "['CT','FB','SC', 'SO']"#,'WS','CV','MCV','AC']"
     descriptions["algorithm"] = "string code for the algorithm"
 
     #1
@@ -181,8 +179,9 @@ class parameters(OrderedDict):
     ranges["multichannel"] = "[True, False]"   
     
     #2
-    descriptions["colorspace"] = "Pick a colorspace [ RGB, HSV, LAB, ....]"
-    ranges["colorspace"] = "[0,1,2]"
+    #TODO: Change this to the actual strings to make the param space easier to read
+    descriptions["colorspace"] = "Pick a colorspace [‘RGB’, ‘HSV’, ‘RGB CIE’, ‘XYZ’, ‘YUV’, ‘YIQ’, ‘YPbPr’, ‘YCbCr’, ‘YDbDr’]"
+    ranges["colorspace"] = "['RGB', 'HSV', 'RGB CIE', 'XYZ', 'YUV', 'YIQ', 'YPbPr', 'YCbCr', 'YDbDr']"
     
     #3
     descriptions["channel"] = "A parameter for Picking the Channel 0,1,2"
@@ -225,7 +224,7 @@ class parameters(OrderedDict):
         """Set default values for each param in the dictionary."""
         self["algorithm"] = "None"
         self["multichannel"] = False
-        self["colorspace"] = 1
+        self["colorspace"] = "HSV"
         self["channel"] = 2
         self["alpha1"] = 0.5
         self["alpha2"] = 0.5
@@ -251,7 +250,7 @@ class parameters(OrderedDict):
         """Convert dictionary of params into list of parameters."""
         plist = []
         for key in self.pkeys:
-            plist.append(self.params[key])
+            plist.append(self[key])
         return plist
 
     def fromlist(self, individual):
@@ -310,7 +309,7 @@ class ColorThreshold(segmentor):
 
     Parameters:
     mulitchannel - (multichannel) - bool, Whether the image is 2D or 3D
-    colorspace - (colorspace) Select the colorspace (0:RGB, 1:HSV, 2:LAB)
+    colorspace - (colorspace) Select the colorspace [‘RGB’, ‘HSV’, ‘RGB CIE’, ‘XYZ’, ‘YUV’, ‘YIQ’, ‘YPbPr’, ‘YCbCr’, ‘YDbDr’]
     channel - (channel) color chanel (0:R/H/L 1:G/S/A, 2:B/V/B)
     my_mn - (alpha1) - minimum thresholding value for channel 0
     my_mx - (alpha2) - maximum thresholding value for channel 0
@@ -319,7 +318,7 @@ class ColorThreshold(segmentor):
     my_mn - (gamma1) - minimum thresholding value for channel 2
     my_mx - (gamma2) - maximum thresholding value for channel 2
     
-    Note: a colorspace of 1 and a channel of 2 is a grayscale image. 
+    Note: a colorspace of 'HSV' and a channel of 2 is a grayscale image. 
     
     Typically any pixel between my_mn and my_mx are true. Other pixels are false.
     
@@ -334,7 +333,7 @@ class ColorThreshold(segmentor):
         if not paramlist:
             self.params["algorithm"] = "CT"
             self.params["multichannel"] = False
-            self.params["colorspace"] = 1
+            self.params["colorspace"] = "HSV"
             self.params["channel"] = 2
             self.params["alpha1"] = 0.4
             self.params["alpha2"] = 0.6
@@ -434,7 +433,7 @@ class Felzenszwalb(segmentor):
     graph based on the segmentation. Produces an oversegmentation of the multichannel using 
     min-span tree. Returns an integer mask indicating the segment labels.
     
-    Note: a colorspace of 1 and a channel of 2 is a grayscale image. 
+    Note: a colorspace of 'HSV' and a channel of 2 is a grayscale image. 
     
     https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.felzenszwalb
 
@@ -555,6 +554,13 @@ class Slic(segmentor):
     spacing -- (3,) shape float array. Voxel spacing along each image
         dimension. Defalt is uniform spacing
     multichannel -- bool,  multichannel (True) vs grayscale (False)
+    
+    enforce_connectivity
+
+   https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.slic
+   
+   https://www.pyimagesearch.com/2014/07/28/a-slic-superpixel-tutorial-using-python/
+   
 
     """
 
@@ -565,12 +571,14 @@ class Slic(segmentor):
         if not paramlist:
             self.params["algorithm"] = "SC"
             self.params["multichannel"]=True
+            self.params["colorspace"] = 'HSV'
             self.params["n_segments"] = 5
-            self.params["channel"] = 5
+            self.params["channel"] = 2
             #self.params["iterations"]
             self.params["alpha1"] = 0.5
         self.paramindexes = ["multichannel", "n_segments", "channel", "alpha1"]
         self.checkparamindex()
+        self.slico = False
         
     def evaluate(self, input_img):
         """Evaluate segmentation algorithm on training image.
@@ -584,7 +592,7 @@ class Slic(segmentor):
         """
 
         [img, channel, dimention] = getchannel(input_img, 
-                                               self.params["colorspace"], 
+                                               self.params["colorspace"],
                                                self.params["channel"])                      
 
         compactness=10**(self.params["channel"]-3)
@@ -594,10 +602,11 @@ class Slic(segmentor):
                 img,
                 n_segments=n_segments,
                 compactness=compactness,
-                max_iter=3,
+                max_iter=10,
                 sigma=self.params["alpha1"],
                 convert2lab=False,
                 multichannel=True,
+                slic_zero=self.slico
             )
         else:        
              output = skimage.segmentation.slic(
@@ -607,12 +616,22 @@ class Slic(segmentor):
                 max_iter=3,
                 sigma=self.params["alpha1"],
                 multichannel=False,
+                slic_zero=self.slico
             )       
         return output
 
 
 algorithmspace["SC"] = Slic
 
+class SlicO(Slic):
+    def __init__(self, paramlist=None):
+        """Get parameters from parameter list that are used in segmentation algorithm.
+         Assign default values to these parameters."""
+        super(Slic, self).__init__(paramlist)
+        self.checkparamindex()
+
+algorithmspace["SO"] = SlicO
+        
 # class QuickShift(segmentor):
 #     """Perform the Quick Shift segmentation algorithm. Segments images with quickshift
 #      clustering in Color (x,y) space. Returns ndarray segmentation mask of the labels.
