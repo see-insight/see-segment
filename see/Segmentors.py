@@ -171,7 +171,7 @@ class parameters(OrderedDict):
     mxrange=256;
     
     #0
-    ranges["algorithm"] = "['CT','FB','SC', 'SO']"#,'WS','CV','MCV','AC']"
+    ranges["algorithm"] = "['ColorThreshold','Felzenszwalb','Slic', 'SlicO']"#,'WS','CV','MCV','AC']"
     descriptions["algorithm"] = "string code for the algorithm"
 
     #1
@@ -331,7 +331,7 @@ class ColorThreshold(segmentor):
          Assign default values to these parameters."""
         super(ColorThreshold, self).__init__(paramlist)
         if not paramlist:
-            self.params["algorithm"] = "CT"
+            self.params["algorithm"] = "ColorThreshold"
             self.params["multichannel"] = False
             self.params["colorspace"] = "HSV"
             self.params["channel"] = 2
@@ -396,7 +396,7 @@ class ColorThreshold(segmentor):
                 output[channel < my_mx] = 1
         return output
 
-algorithmspace['CT'] = ColorThreshold
+algorithmspace['ColorThreshold'] = ColorThreshold
 
 class TripleA (segmentor):
     def __init__(self, paramlist=None):
@@ -460,7 +460,7 @@ class Felzenszwalb(segmentor):
             self.params["multichannel"]=False
             self.params["colorspace"] = 1
             self.params["channel"]=2
-            self.params["algorithm"] = "FB"
+            self.params["algorithm"] = "Felzenszwalb"
             self.params["alpha2"] = 0.984
             self.params["alpha1"] = 0.09
             self.params["beta1"] = 0.92
@@ -534,7 +534,7 @@ class Felzenszwalb(segmentor):
         
         
         
-algorithmspace["FB"] = Felzenszwalb
+algorithmspace["Felzenszwalb"] = Felzenszwalb
 
 class Slic(segmentor):
     """Perform the Slic segmentation algorithm. Segments k-means clustering in Color space
@@ -569,7 +569,7 @@ class Slic(segmentor):
          Assign default values to these parameters."""
         super(Slic, self).__init__(paramlist)
         if not paramlist:
-            self.params["algorithm"] = "SC"
+            self.params["algorithm"] = "Slic"
             self.params["multichannel"]=True
             self.params["colorspace"] = 'HSV'
             self.params["n_segments"] = 5
@@ -621,7 +621,7 @@ class Slic(segmentor):
         return output
 
 
-algorithmspace["SC"] = Slic
+algorithmspace["Slic"] = Slic
 
 class SlicO(Slic):
     def __init__(self, paramlist=None):
@@ -630,7 +630,7 @@ class SlicO(Slic):
         super(Slic, self).__init__(paramlist)
         self.checkparamindex()
 
-algorithmspace["SO"] = SlicO
+algorithmspace["SlicO"] = SlicO
         
 # class QuickShift(segmentor):
 #     """Perform the Quick Shift segmentation algorithm. Segments images with quickshift
