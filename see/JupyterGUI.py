@@ -69,24 +69,26 @@ def pickimage(folder='Image_data/Examples/'):
         description='Choose image:',
     )
 
+    def update(w):
+        clear_output(wait=True) # Clear output for dynamic display
+        display(w)
+        w.img = imageio.imread(w.value)
+        index = filelist.index(w.value)
+        w.mask = imageio.imread(masklist[index])
+        if len(w.mask.shape) > 2:
+            w.mask = w.mask[:,:,0]
+        fig = showtwo(w.img, w.mask)
+        print(f"import imageio")
+        print(f"data.img = imageio.imread(\'{w.value}\')")
+        print(f"data.mask = imageio.imread(\'{masklist[index]}\')")
+        
     def on_change(change):
         if change['type'] == 'change' and change['name'] == 'value':
-            clear_output(wait=True) # Clear output for dynamic display
-            display(w)
-            w.img = imageio.imread(w.value)
-            index = filelist.index(w.value)
-            w.mask = imageio.imread(masklist[index])
-            if len(w.mask.shape) > 2:
-                w.mask = w.mask[:,:,0]
-            fig = showtwo(w.img, w.mask)
 
-            
+            update(w)
+
     w.observe(on_change)
-    display(w)
-    w.img = imageio.imread(w.value)
-    index = filelist.index(w.value)
-    w.mask = imageio.imread(masklist[index])
-    fig = showtwo(w.img, w.mask)
+    update(w)
     return w
 
 
@@ -102,10 +104,12 @@ def picksegment(algorithms):
             clear_output(wait=True) # Clear output for dynamic display
             display(w)
             print(Segmentors.algorithmspace[change['new']].__doc__)
+            print(f"\nsegmentor_name=\'{w.value}\'")
     w.observe(on_change)
 
     display(w)
     print(Segmentors.algorithmspace[w.value].__doc__)
+    print(f"\nalg.value=\'{w.value}\'")
     return w
 
 def segmentwidget(img, gmask, params=None, alg=None):
@@ -119,31 +123,37 @@ def segmentwidget(img, gmask, params=None, alg=None):
     alg -- algorithm to search parameters over
 
     """
-    if params is None and alg is None:
-        alg = 'FB'
-        params = [alg, 0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,\
-         (1, 1), 0, 'checkerboard', 'checkerboard', 0, 0, 0, 0, 0, 0]
-    elif params is None and alg is not None:
-        params = [alg, 0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,\
-         (1, 1), 0, 'checkerboard', 'checkerboard', 0, 0, 0, 0, 0, 0]
-    elif params is not None and alg is not None:
-        params[0] = alg
-    seg = Segmentors.algoFromParams(params)
+    if params:
+        if alg:
+            params[0] = alg;
+        seg = Segmentors.algoFromParams(params)
+    else:
+        if alg:
+            algorithm_gen = Segmentors.algorithmspace[alg]
+            seg = algorithm_gen()
+        else:
+            seg = Segmentors.segmentor()
+
     widg = dict()
     widglist = []
 
     for ppp, ind in zip(seg.paramindexes, range(len(seg.paramindexes))):
         thislist = eval(seg.params.ranges[ppp])
         name = ppp
-           
+        current_value = seg.params[ppp]
+        if not current_value in thislist:
+            #TODO: We should find the min distance between current_value and this list and use that instead.
+            current_value = thislist[0]
+            
         thiswidg = widgets.SelectionSlider(options=tuple(thislist),
                                            disabled=False,
                                            description=name,
-                                           value=seg.params[ppp],
+                                           value=current_value,
                                            continuous_update=False,
                                            orientation='horizontal',
                                            readout=True
                                           )
+
         widglist.append(thiswidg)
         widg[ppp] = thiswidg
 
