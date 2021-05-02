@@ -171,7 +171,7 @@ class parameters(OrderedDict):
     mxrange=256;
     
     #0
-    ranges["algorithm"] = "['ColorThreshold','Felzenszwalb','Slic', 'SlicO']"#,'WS','CV','MCV','AC']"
+    ranges["algorithm"] = "['ColorThreshold','Felzenszwalb','Slic', 'SlicO', 'QuickShift']"#,'WS','CV','MCV','AC']"
     descriptions["algorithm"] = "string code for the algorithm"
 
     #1
@@ -627,64 +627,64 @@ class SlicO(Slic):
     def __init__(self, paramlist=None):
         """Get parameters from parameter list that are used in segmentation algorithm.
          Assign default values to these parameters."""
-        super(Slic, self).__init__(paramlist)
-        self.checkparamindex()
+        super(SlicO, self).__init__(paramlist)
+        self.slico = True
 
 algorithmspace["SlicO"] = SlicO
         
-# class QuickShift(segmentor):
-#     """Perform the Quick Shift segmentation algorithm. Segments images with quickshift
-#      clustering in Color (x,y) space. Returns ndarray segmentation mask of the labels.
+class QuickShift(segmentor):
+    """Perform the Quick Shift segmentation algorithm. Segments images with quickshift
+     clustering in Color (x,y) space. Returns ndarray segmentation mask of the labels.
 
-#     Parameters:
-#     image -- ndarray, input image
-#     ratio -- float, balances color-space proximity & image-space
-#         proximity. Higher vals give more weight to color-space
-#     kernel_size: float, Width of Guassian kernel using smoothing.
-#         Higher means fewer clusters
-#     max_dist -- float, Cut-off point for data distances. Higher means fewer clusters
-#     sigma -- float, Width of Guassian smoothing as preprocessing.
-#         Zero means no smoothing
-#     random_seed -- int, Random seed used for breacking ties.
+    Parameters:
+    image -- ndarray, input image
+    ratio -- float, balances color-space proximity & image-space
+        proximity. Higher vals give more weight to color-space
+    kernel_size: float, Width of Guassian kernel using smoothing.
+        Higher means fewer clusters
+    max_dist -- float, Cut-off point for data distances. Higher means fewer clusters
+    sigma -- float, Width of Guassian smoothing as preprocessing.
+        Zero means no smoothing
+    random_seed -- int, Random seed used for breacking ties.
 
-#     """
+    """
 
-#     def __init__(self, paramlist=None):
-#         """Get parameters from parameter list that are used in segmentation algorithm.
-#          Assign default values to these parameters."""
-#         super(QuickShift, self).__init__(paramlist)
-#         if not paramlist:
-#             self.params["algorithm"] = "QS"
-#             self.params["kernel_size"] = 5
-#             self.params["max_dist"] = 60
-#             self.params["sigma"] = 5
-#             self.params["channel"] = 1
-#             self.params["ratio"] = 2
-#         self.paramindexes = ["kernel_size", "max_dist", "sigma", "channel", "ratio"]
-#         self.checkparamindex()
+    def __init__(self, paramlist=None):
+        """Get parameters from parameter list that are used in segmentation algorithm.
+         Assign default values to these parameters."""
+        super(QuickShift, self).__init__(paramlist)
+        if not paramlist:
+            self.params["algorithm"] = "QuickShift"
+            self.params["kernel_size"] = 5
+            self.params["max_dist"] = 60
+            self.params["sigma"] = 5
+            self.params["channel"] = 1
+            self.params["ratio"] = 2
+        self.paramindexes = ["kernel_size", "max_dist", "sigma", "channel", "ratio"]
+        self.checkparamindex()
         
-#     def evaluate(self, img):
-#         """Evaluate segmentation algorithm on training image.
+    def evaluate(self, img):
+        """Evaluate segmentation algorithm on training image.
 
-#         Keyword arguments:
-#         img -- Original training image.
+        Keyword arguments:
+        img -- Original training image.
 
-#         Output:
-#         output -- resulting segmentation mask from algorithm.
+        Output:
+        output -- resulting segmentation mask from algorithm.
 
-#         """
-#         output = skimage.segmentation.quickshift(
-#             color.gray2rgb(img),
-#             ratio=self.params["ratio"],
-#             kernel_size=self.params["kernel_size"],
-#             max_dist=self.params["max_dist"],
-#             sigma=self.params["sigma"],
-#             random_seed=self.params["channel"],
-#         )
-#         return output
+        """
+        output = skimage.segmentation.quickshift(
+            color.gray2rgb(img),
+            ratio=self.params["ratio"],
+            kernel_size=self.params["kernel_size"],
+            max_dist=self.params["max_dist"],
+            sigma=self.params["sigma"],
+            random_seed=self.params["channel"],
+        )
+        return output
 
 
-# algorithmspace["QS"] = QuickShift
+algorithmspace["QuickShift"] = QuickShift
 
 # #DO: This algorithm seems to need a channel input. We should fix that.
 
