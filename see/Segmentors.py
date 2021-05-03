@@ -26,7 +26,7 @@ def getchannel(img, colorspace, channel):
     ['RGB', ‘HSV’, ‘RGB CIE’, ‘XYZ’, ‘YUV’, ‘YIQ’, ‘YPbPr’, ‘YCbCr’, ‘YDbDr’]
     """
     dimention=3;
-    if (len(img) == 1):
+    if (len(img.shape) == 2):
         c_img = img.copy();
         img = np.zeros([c_img.shape[0], c_img.shape[1],3])
         img[:,:,0] = c_img;
@@ -457,8 +457,8 @@ class Felzenszwalb(segmentor):
          Assign default values to these parameters."""
         super(Felzenszwalb, self).__init__(paramlist)
         if not paramlist:
-            self.params["multichannel"]=False
-            self.params["colorspace"] = 1
+            self.params["multichannel"]=True
+            self.params["colorspace"] = 'RGB'
             self.params["channel"]=2
             self.params["algorithm"] = "Felzenszwalb"
             self.params["alpha2"] = 0.984
