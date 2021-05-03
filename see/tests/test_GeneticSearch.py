@@ -59,18 +59,18 @@ def test_newpopulation():
     assert isinstance(evolv.tool.population(), list)
     assert len(evolv.tool.population()) == 10
 
-def test_popfitness():
-    """Unit test for popfitness function. Checks the type and length of the fitness
-     values and population."""
-    img = np.zeros((20, 20, 3))
-    img[4:10, 4:10, :] = 1
-    mask = img[:, :, 0]
-    evolv = GeneticSearch.Evolver(img, mask)
-    fits, tpop = evolv.popfitness(evolv.tool.population())
-    assert isinstance(fits, list)
-    assert len(fits) == 10
-    assert isinstance(tpop, list)
-    assert len(tpop) == 10
+# def test_popfitness():
+#     """Unit test for popfitness function. Checks the type and length of the fitness
+#      values and population."""
+#     img = np.zeros((20, 20, 3))
+#     img[4:10, 4:10, :] = 1
+#     mask = img[:, :, 0]
+#     evolv = GeneticSearch.Evolver(img, mask)
+#     fits, tpop = evolv.popfitness(evolv.tool.population())
+#     assert isinstance(fits, list)
+#     assert len(fits) == 10
+#     assert isinstance(tpop, list)
+#     assert len(tpop) == 10
 
 def test_mutate():
     """Unit test for mutate function. Checks type and length of the
