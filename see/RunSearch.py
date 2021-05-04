@@ -29,7 +29,7 @@ def continuous_search(input_file,
 
     best_fitness=2.0
     iteration = 0
-    
+ 
     while(best_fitness > 0.0):
         print(f"running {iteration} iteration")
         if(startfile):
@@ -67,6 +67,7 @@ def geneticsearch_commandline():
     
     args = parser.parse_args()
     
+    print("HELLO WORLD DIRK")
     print('\n\n')
     print(args)
     print('\n\n')
@@ -93,5 +94,4 @@ def geneticsearch_commandline():
     
     
 if __name__ == "__main__":
-    print("hello world")
     geneticsearch_commandline()
