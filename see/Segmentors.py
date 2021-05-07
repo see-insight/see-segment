@@ -171,7 +171,8 @@ class parameters(OrderedDict):
     mxrange=256;
     
     #0
-    ranges["algorithm"] = "['ColorThreshold','Felzenszwalb','Slic', 'SlicO']"#, 'QuickShift']"#,'WS','CV','MCV','AC']"
+    ranges["algorithm"] = "['ColorThreshold','Felzenszwalb','Slic', 'SlicO', 'QuickShift', 'Watershed', 'Chan_Vese','Morphological_Chan_Vese,'MorphGeodesicActiveContour']"
+    
     descriptions["algorithm"] = "string code for the algorithm"
 
     #1
@@ -214,7 +215,12 @@ class parameters(OrderedDict):
     #10
     descriptions["n_segments"] = "General Purpos Upper bound threshold"
     ranges["n_segments"] = "[i for i in range(0,10)]"
-
+    
+    #11
+    descriptions["max_iter"] = "General Purpos Upper bound threshold"
+    ranges["max_iter"] = "[i for i in range(1,20)]"
+    
+    
     #     Try to set defaults only once.
     #     Current method may cause all kinds of weird problems.
     #     @staticmethod
@@ -233,6 +239,7 @@ class parameters(OrderedDict):
         self["gamma1"] = 0.5
         self["gamma2"] = 0.5
         self["n_segments"] = 3
+        self["max_iter"] = 10
         self.pkeys = list(self.keys())
 
     def printparam(self, key):
@@ -311,12 +318,12 @@ class ColorThreshold(segmentor):
     mulitchannel - (multichannel) - bool, Whether the image is 2D or 3D
     colorspace - (colorspace) Select the colorspace [‘RGB’, ‘HSV’, ‘RGB CIE’, ‘XYZ’, ‘YUV’, ‘YIQ’, ‘YPbPr’, ‘YCbCr’, ‘YDbDr’]
     channel - (channel) color chanel (0:R/H/L 1:G/S/A, 2:B/V/B)
-    my_mn - (alpha1) - minimum thresholding value for channel 0
-    my_mx - (alpha2) - maximum thresholding value for channel 0
-    my_mn - (beta1) - minimum thresholding value for channel 1
-    my_mx - (beta2) - maximum thresholding value for channel 1
-    my_mn - (gamma1) - minimum thresholding value for channel 2
-    my_mx - (gamma2) - maximum thresholding value for channel 2
+    ch0_mn - (alpha1) - minimum thresholding value for channel 0
+    ch0_mx - (alpha2) - maximum thresholding value for channel 0
+    ch1_mn - (beta1) - minimum thresholding value for channel 1
+    ch1_mx - (beta2) - maximum thresholding value for channel 1
+    ch2_mn - (gamma1) - minimum thresholding value for channel 2
+    ch2_mx - (gamma2) - maximum thresholding value for channel 2
     
     Note: a colorspace of 'HSV' and a channel of 2 is a grayscale image. 
     
@@ -357,9 +364,9 @@ class ColorThreshold(segmentor):
         output -- resulting segmentation mask from algorithm.
 
         """
-        [img, channel, dimention] = getchannel(input_img, 
-                                               self.params["colorspace"], 
-                                               self.params["channel"])
+        [img, channel, dimention] = getchannel(
+            input_img, self.params["colorspace"], self.params["channel"]
+        ) 
 
         minlist = ["alpha1", "beta1", "gamma1"]
         maxlist = ["alpha2", "beta2", "gamma2"]
@@ -398,35 +405,35 @@ class ColorThreshold(segmentor):
 
 algorithmspace['ColorThreshold'] = ColorThreshold
 
-class TripleA (segmentor):
-    def __init__(self, paramlist=None):
-        super(TripleA, self).__init__(paramlist)
-        if not paramlist:
-            self.params["algorithm"] = "AAA"
-            self.params["alpha1"] = 0.4
-            self.params["alpha2"] = 0.6
-        self.paramindexes = ["alpha1", "alpha2"]
-        #self.altnames = ["MinThreshold", "MaxThreshold"]
-        self.checkparamindex()
+# class TripleA (segmentor):
+#     def __init__(self, paramlist=None):
+#         super(TripleA, self).__init__(paramlist)
+#         if not paramlist:
+#             self.params["algorithm"] = "AAA"
+#             self.params["alpha1"] = 0.4
+#             self.params["alpha2"] = 0.6
+#         self.paramindexes = ["alpha1", "alpha2"]
+#         #self.altnames = ["MinThreshold", "MaxThreshold"]
+#         self.checkparamindex()
 
-    def evaluate(self, img): #XX
-        channel = getchannel(img, self.params["channel"])
-        pscale = np.max(channel)
-        my_mx = self.params["alpha2"] * pscale
-        my_mn = self.params["alpha1"] * pscale
-        if my_mx < my_mn:
-            temp = my_mx
-            my_mx = my_mn
-            my_mn = temp
+#     def evaluate(self, img): #XX
+#         channel = getchannel(img, self.params["channel"])
+#         pscale = np.max(channel)
+#         my_mx = self.params["alpha2"] * pscale
+#         my_mn = self.params["alpha1"] * pscale
+#         if my_mx < my_mn:
+#             temp = my_mx
+#             my_mx = my_mn
+#             my_mn = temp
 
-        output = np.ones(channel.shape)
-        output[channel < my_mn] = 0
-        output[channel > my_mx] = 0
+#         output = np.ones(channel.shape)
+#         output[channel < my_mn] = 0
+#         output[channel > my_mx] = 0
 
-        return output
+#         return output
 
 
-algorithmspace["AAA"] = TripleA
+# algorithmspace["AAA"] = TripleA
 
 class Felzenszwalb(segmentor):
     """Perform Felzenszwalb segmentation algorithm. The felzenszwalb algorithms computes a 
@@ -483,9 +490,10 @@ class Felzenszwalb(segmentor):
         sigma = self.params["alpha1"]
         min_size = int(self.params["beta1"]*100)
         
-        [img, channel, dimention] = getchannel(input_img, 
-                                               self.params["colorspace"], 
-                                               self.params["channel"])                      
+        [img, channel, dimention] = getchannel(
+            input_img, self.params["colorspace"], self.params["channel"]
+        ) 
+        
         if(self.params["multichannel"] and dimention > 1):
             output = skimage.segmentation.felzenszwalb(
                 img,
@@ -574,9 +582,9 @@ class Slic(segmentor):
             self.params["colorspace"] = 'HSV'
             self.params["n_segments"] = 5
             self.params["channel"] = 2
-            #self.params["iterations"]
+            self.params["max_iter"] = 10
             self.params["alpha1"] = 0.5
-        self.paramindexes = ["multichannel", "n_segments", "channel", "alpha1"]
+        self.paramindexes = ["multichannel", "colorspace", "channel", "n_segments", "alpha1", "max_iter"]
         self.checkparamindex()
         self.slico = False
         
@@ -591,19 +599,20 @@ class Slic(segmentor):
 
         """
 
-        [img, channel, dimention] = getchannel(input_img, 
-                                               self.params["colorspace"],
-                                               self.params["channel"])                      
+        [img, channel, dimention] = getchannel(
+            input_img, self.params["colorspace"], self.params["channel"]
+        )                     
 
         compactness=10**(self.params["channel"]-3)
         n_segments = self.params["n_segments"]+1
+        max_iter=self.params["max_iter"]
         if(self.params["multichannel"] and dimention > 1):            
             output = skimage.segmentation.slic(
                 img,
                 n_segments=n_segments,
                 compactness=compactness,
-                max_iter=10,
-                sigma=self.params["alpha1"],
+                max_iter=max_iter,
+                sigma=0, # Gaussian smoothing should happen as a preprocessing step.
                 convert2lab=False,
                 multichannel=True,
                 slic_zero=self.slico
@@ -613,7 +622,7 @@ class Slic(segmentor):
                 img,
                 n_segments=n_segments,
                 compactness=compactness,
-                max_iter=3,
+                max_iter=max_iter,
                 sigma=self.params["alpha1"],
                 multichannel=False,
                 slic_zero=self.slico
@@ -623,7 +632,35 @@ class Slic(segmentor):
 
 algorithmspace["Slic"] = Slic
 
+#TODO Update to remove any parameters that SLICO dosn't use. (Currently this includes the SLIP parameters)
+
 class SlicO(Slic):
+    """Perform the SlicO segmentation algorithm. Segments k-means clustering in Color space
+     (x, y, z). Returns a 2D or 3D array of labels.
+
+    Parameters:
+    image -- ndarray, input image
+    n_segments -- int, approximate number of labels in segmented output image
+    compactness -- float, Balances color proximity and space proximity.
+        Higher values mean more weight to space proximity (superpixels
+        become more square/cubic) Recommended log scale values (0.01,
+        0.1, 1, 10, 100, etc)
+    max_iter -- int, max number of iterations of k-means
+    sigma -- float or (3,) shape array of floats, width of Guassian
+        smoothing kernel. For pre-processing for each dimesion of the
+        image. Zero means no smoothing.
+    spacing -- (3,) shape float array. Voxel spacing along each image
+        dimension. Defalt is uniform spacing
+    multichannel -- bool,  multichannel (True) vs grayscale (False)
+
+    enforce_connectivity
+
+    https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.slic
+
+    https://www.pyimagesearch.com/2014/07/28/a-slic-superpixel-tutorial-using-python/
+
+
+    """
     def __init__(self, paramlist=None):
         """Get parameters from parameter list that are used in segmentation algorithm.
          Assign default values to these parameters."""
@@ -631,312 +668,390 @@ class SlicO(Slic):
         self.slico = True
 
 algorithmspace["SlicO"] = SlicO
+
+#TODO Quickshift is very slow, we need to do some benchmarks and see what are resonable running ranges.
+
+class QuickShift(segmentor):
+    """Perform the Quick Shift segmentation algorithm. Segments images with quickshift
+     clustering in Color (x,y) space. Returns ndarray segmentation mask of the labels.
+
+    Parameters:
+    image -- ndarray, input image
+    ratio -- float, balances color-space proximity & image-space
+        proximity. Higher vals give more weight to color-space
+    kernel_size: float, Width of Guassian kernel using smoothing.
+        Higher means fewer clusters
+    max_dist -- float, Cut-off point for data distances. Higher means fewer clusters
+    sigma -- float, Width of Guassian smoothing as preprocessing.
+        Zero means no smoothing
+    random_seed -- int, Random seed used for breacking ties.
+    
+    https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.quickshift
+
+    """
+
+    def __init__(self, paramlist=None):
+        """Get parameters from parameter list that are used in segmentation algorithm.
+         Assign default values to these parameters."""
+        super(QuickShift, self).__init__(paramlist)
+        if not paramlist:
+            self.params["algorithm"] = "QuickShift"
+            self.params["colorspace"]= "HSV"
+            self.params["channel"] = 2
+            self.params["alpha1"] = 0.5
+            self.params["beta1"] = 0.5
+            self.params["beta2"] = 0.5
+
+        self.paramindexes = ["colorspace", "channel", "alpha1", "beta1", "beta2" ]
+        self.checkparamindex()
         
-# class QuickShift(segmentor):
-#     """Perform the Quick Shift segmentation algorithm. Segments images with quickshift
-#      clustering in Color (x,y) space. Returns ndarray segmentation mask of the labels.
+    def evaluate(self, input_img):
+        """Evaluate segmentation algorithm on training image.
 
-#     Parameters:
-#     image -- ndarray, input image
-#     ratio -- float, balances color-space proximity & image-space
-#         proximity. Higher vals give more weight to color-space
-#     kernel_size: float, Width of Guassian kernel using smoothing.
-#         Higher means fewer clusters
-#     max_dist -- float, Cut-off point for data distances. Higher means fewer clusters
-#     sigma -- float, Width of Guassian smoothing as preprocessing.
-#         Zero means no smoothing
-#     random_seed -- int, Random seed used for breacking ties.
+        Keyword arguments:
+        img -- Original training image.
 
-#     """
+        Output:
+        output -- resulting segmentation mask from algorithm.
 
-#     def __init__(self, paramlist=None):
-#         """Get parameters from parameter list that are used in segmentation algorithm.
-#          Assign default values to these parameters."""
-#         super(QuickShift, self).__init__(paramlist)
-#         if not paramlist:
-#             self.params["algorithm"] = "QuickShift"
-#             self.params["kernel_size"] = 5
-#             self.params["max_dist"] = 60
-#             self.params["sigma"] = 5
-#             self.params["channel"] = 1
-#             self.params["ratio"] = 2
-#         self.paramindexes = ["kernel_size", "max_dist", "sigma", "channel", "ratio"]
-#         self.checkparamindex()
+        """
         
-#     def evaluate(self, img):
-#         """Evaluate segmentation algorithm on training image.
-
-#         Keyword arguments:
-#         img -- Original training image.
-
-#         Output:
-#         output -- resulting segmentation mask from algorithm.
-
-#         """
-#         output = skimage.segmentation.quickshift(
-#             color.gray2rgb(img),
-#             ratio=self.params["ratio"],
-#             kernel_size=self.params["kernel_size"],
-#             max_dist=self.params["max_dist"],
-#             sigma=self.params["sigma"],
-#             random_seed=self.params["channel"],
-#         )
-#         return output
-
-
-# algorithmspace["QuickShift"] = QuickShift
-
-# #DO: This algorithm seems to need a channel input. We should fix that.
-
-# class Watershed(segmentor):
-#     """Perform the Watershed segmentation algorithm. Uses user-markers.
-#      treats markers as basins and 'floods' them. Especially good if overlapping objects.
-#       Returns a labeled image ndarray.
-
-#     Parameters:
-#     image -- ndarray, input array
-#     compactness -- float, compactness of the basins. Higher values
-#         make more regularly-shaped basin.
-
-#     """
-
-#     # Not using connectivity, markers, or offset params as arrays would
-#     # expand the search space too much.
-#     # abbreviation for algorithm = WS
-
-#     def __init__(self, paramlist=None):
-#         """Get parameters from parameter list that are used in segmentation algorithm.
-#          Assign default values to these parameters."""
-#         super(Watershed, self).__init__(paramlist)
-#         if not paramlist:
-#             self.params["algorithm"] = "WS"
-#             self.params["compactness"] = 2.0
-#         self.paramindexes = ["compactness"]
-#         self.checkparamindex()
+        [img, channel, dimention] = getchannel(
+            input_img, self.params["colorspace"], self.params["channel"]
+        ) 
         
-#     def evaluate(self, img):
-#         """Evaluate segmentation algorithm on training image.
-
-#         Keyword arguments:
-#         img -- Original training image.
-
-#         Output:
-#         output -- resulting segmentation mask from algorithm.
-
-#         """
-#         channel = 0
-#         channel_img = img[:, :, channel]
-#         output = skimage.segmentation.watershed(
-#             channel_img, markers=None, compactness=self.params["compactness"]
-#         )
-#         return output
-
-
-# algorithmspace["WS"] = Watershed
-
-# class Chan_Vese(segmentor):
-#     """Peform Chan Vese segmentation algorithm. ONLY GRAYSCALE. Segments objects
-#      without clear boundaries. Returns segmentation array of algorithm.
-
-#     Parameters:
-#     image -- ndarray grayscale image to be segmented
-#     mu -- float, 'edge length' weight parameter. Higher mu vals make a
-#         'round edge' closer to zero will detect smaller objects. Typical
-#         values are from 0 - 1.
-#     lambda1 -- float 'diff from average' weight param to determine if
-#         output region is True. If lower than lambda1, the region has a
-#         larger range of values than the other
-#     lambda2 -- float 'diff from average' weight param to determine if
-#         output region is False. If lower than lambda1, the region will
-#         have a larger range of values
-#     tol -- positive float, typically (0-1), very low level set variation
-#         tolerance between iterations.
-#     max_iter -- uint,  max number of iterations before algorithms stops
-#     dt -- float, Multiplication factor applied at the calculations step
-
-#     """
-
-#     # Abbreviation for Algorithm = CV
-
-#     def __init__(self, paramlist=None):
-#         """Get parameters from parameter list that are used in segmentation algorithm.
-#          Assign default values to these parameters."""
-#         super(Chan_Vese, self).__init__(paramlist)
-#         if not paramlist:
-#             self.params["algorithm"] = "CV"
-#             self.params["mu"] = 2.0
-#             self.params["lambda"] = (10, 20)
-#             self.params["iterations"] = 10
-#             self.params["dt"] = 0.10
-#             self.params["tolerance"] = 0.001
-#             self.params["init_level_set_chan"] = "small disk"
-#         self.paramindexes = ["mu", "lambda", "iterations", "dt", "init_level_set_chan"]
-#         self.checkparamindex()
+        mindim = min(channel.shape)
         
-#     def evaluate(self, img):
-#         """Evaluate segmentation algorithm on training image.
-
-#         Keyword arguments:
-#         img -- Original training image.
-
-#         Output:
-#         output -- resulting segmentation mask from algorithm.
-
-#         """
-#         if len(img.shape) == 3:
-#             img = skimage.color.rgb2gray(img)
-#         output = skimage.segmentation.chan_vese(
-#             img,
-#             mu=self.params["mu"],
-#             lambda1=self.params["lambda"][0],
-#             lambda2=self.params["lambda"][1],
-#             tol=self.params["tolerance"],
-#             max_iter=self.params["iterations"],
-#             dt=self.params["dt"],
-#         )
-#         return output
+        ratio = self.params["alpha1"]
+        kernel_size = mindim/10*self.params["beta1"]
+        max_dist = mindim*self.params["beta2"]
+        output = skimage.segmentation.quickshift(
+            img,
+            ratio=ratio,
+            kernel_size=kernel_size,
+            max_dist=max_dist,
+            sigma=0, # TODO this should be handeled in the preprocessing step
+            random_seed=1,
+        )
+        return output
 
 
-# algorithmspace["CV"] = Chan_Vese
+algorithmspace["QuickShift"] = QuickShift
 
-# class Morphological_Chan_Vese(segmentor):
-#     """Peform Morphological Chan Vese segmentation algorithm.
-#      ONLY WORKS ON GRAYSCALE. Active contours without edges. Can be used to
-#       segment images/volumes without good borders. Required that the inside of
-#        the object looks different than outside (color, shade, darker).
+#TODO Watershed one seems to be broken all we get is a line at the top.
 
-#     Parameters:
-#     image -- ndarray of grayscale image
-#     iterations -- uint, number of iterations to run
-#     init_level_set -- str, or array same shape as image. Accepted string
-#         values are:
-#         'checkerboard': Uses checkerboard_level_set. Returns a binary level set of a checkerboard
-#         'circle': Uses circle_level_set. Creates a binary level set of a circle, given radius and a
-#             center
-#     smoothing -- uint, number of times the smoothing operator is applied
-#         per iteration. Usually around 1-4. Larger values make it smoother
-#     lambda1 -- Weight param for outer region. If larger than lambda2,
-#         outer region will give larger range of values than inner value.
-#     lambda2 -- Weight param for inner region. If larger thant lambda1,
-#         inner region will have a larger range of values than outer region.
+class Watershed(segmentor):
+    """Perform the Watershed segmentation algorithm. Uses user-markers.
+     treats markers as basins and 'floods' them. Especially good if overlapping objects.
+      Returns a labeled image ndarray.
 
-#     """
-
-#     # Abbreviation for algorithm = MCV
-
-#     def __init__(self, paramlist=None):
-#         """Get parameters from parameter list that are used in segmentation algorithm.
-#          Assign default values to these parameters."""
-#         super(Morphological_Chan_Vese, self).__init__(paramlist)
-#         if not paramlist:
-#             self.params["algorithm"] = "MCV"
-#             self.params["iterations"] = 10
-#             self.params["init_level_set_morph"] = "checkerboard"
-#             self.params["smoothing"] = 10
-#             self.params["lambda"] = (10, 20)
-#         self.paramindexes = [
-#             "iterations",
-#             "init_level_set_morph",
-#             "smoothing",
-#             "lambda",
-#         ]
-#         self.checkparamindex()
+    Parameters:
+    image -- ndarray, input array
+    compactness -- float, compactness of the basins. Higher values
+        make more regularly-shaped basin.
         
-#     def evaluate(self, img):
-#         """Evaluate segmentation algorithm on training image.
+    https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.watershed
 
-#         Keyword arguments:
-#         img -- Original training image.
+    """
 
-#         Output:
-#         output -- resulting segmentation mask from algorithm.
+    # Not using connectivity, markers, or offset params as arrays would
+    # expand the search space too much.
+    # abbreviation for algorithm = WS
 
-#         """
-#         if len(img.shape) == 3:
-#             img = skimage.color.rgb2gray(img)
-#         output = skimage.segmentation.morphological_chan_vese(
-#             img,
-#             iterations=self.params["iterations"],
-#             init_level_set=self.params["init_level_set_morph"],
-#             smoothing=self.params["smoothing"],
-#             lambda1=self.params["lambda"][0],
-#             lambda2=self.params["lambda"][1],
-#         )
-#         return output
-
-
-# algorithmspace["MCV"] = Morphological_Chan_Vese
-
-# class MorphGeodesicActiveContour(segmentor):
-#     """Peform Morphological Geodesic Active Contour segmentation algorithm. Uses
-#      an image from inverse_gaussian_gradient in order to segment object with visible,
-#       but noisy/broken borders. inverse_gaussian_gradient computes the magnitude of
-#        the gradients in an image. Returns a preprocessed image suitable for above function.
-#         Returns ndarray of segmented image.
-
-#     Parameters:
-#     gimage -- array, preprocessed image to be segmented.
-#     iterations -- uint, number of iterations to run.
-#     init_level_set -- str, array same shape as gimage. If string, possible
-#         values are:
-#         'checkerboard': Uses checkerboard_level_set. Returns a binary level set of a checkerboard
-#         'circle': Uses circle_level_set. Creates a binary level set of a circle, given radius and a
-#             center
-#     smoothing -- uint, number of times the smoothing operator is applied
-#         per iteration. Usually 1-4, larger values have smoother segmentation.
-#     threshold -- Areas of image with a smaller value than the threshold are borders.
-#     balloon -- float, guides contour of low-information parts of image.
-
-#     """
-
-#     # Abbrevieation for algorithm = AC
-
-#     def __init__(self, paramlist=None):
-#         """Get parameters from parameter list that are used in segmentation algorithm.
-#          Assign default values to these parameters."""
-#         super(MorphGeodesicActiveContour, self).__init__(paramlist)
-#         if not paramlist:
-#             self.params["algorithm"] = "AC"
-#             self.params["alpha"] = 0.2
-#             self.params["sigma"] = 0.3
-#             self.params["iterations"] = 10
-#             self.params["init_level_set_morph"] = "checkerboard"
-#             self.params["smoothing"] = 5
-#             self.params["balloon"] = 10
-#         self.paramindexes = [
-#             "alpha",
-#             "sigma",
-#             "iterations",
-#             "init_level_set_morph",
-#             "smoothing",
-#             "balloon",
-#         ]
-#         self.checkparamindex()
+    def __init__(self, paramlist=None):
+        """Get parameters from parameter list that are used in segmentation algorithm.
+         Assign default values to these parameters."""
+        super(Watershed, self).__init__(paramlist)
+        if not paramlist:
+            self.params["algorithm"] = "Watershed"
+            self.params["colorspace"]= "HSV"
+            self.params["channel"] = 2
+            self.params["alpha1"] = 0.66
+        self.paramindexes = ["colorspace", "channel", "alpha1"]
+        self.checkparamindex()
         
-#     def evaluate(self, img):
-#         """Evaluate segmentation algorithm on training image.
+    def evaluate(self, input_img):
+        """Evaluate segmentation algorithm on training image.
 
-#         Keyword arguments:
-#         img -- Original training image.
+        Keyword arguments:
+        img -- Original training image.
 
-#         Output:
-#         output -- resulting segmentation mask from algorithm.
+        Output:
+        output -- resulting segmentation mask from algorithm.
+        
+        
 
-#         """
-#         # We run the inverse_gaussian_gradient to get the image to use
-#         gimage = skimage.segmentation.inverse_gaussian_gradient(
-#             color.rgb2gray(img), self.params["alpha"], self.params["sigma"]
-#         )
-#         # zeros = 0
-#         output = skimage.segmentation.morphological_geodesic_active_contour(
-#             gimage,
-#             self.params["iterations"],
-#             self.params["init_level_set_morph"],
-#             smoothing=self.params["smoothing"],
-#             threshold="auto",
-#             balloon=self.params["balloon"],
-#         )
-#         return output
+        """
+        [img, channel, dimention] = getchannel(
+            input_img, self.params["colorspace"], self.params["channel"]
+        ) 
+        
+        compactness=self.params["alpha1"]*3
+        
+        output = skimage.segmentation.watershed(
+            img, markers=None, compactness=compactness
+        )
+        return output
 
-# algorithmspace["AC"] = MorphGeodesicActiveContour
+
+algorithmspace["Watershed"] = Watershed
+
+#TODO Chan_Vese one seems very broken.  All we get is a circle.
+
+class Chan_Vese(segmentor):
+    """Peform Chan Vese segmentation algorithm. ONLY GRAYSCALE. Segments objects
+     without clear boundaries. Returns segmentation array of algorithm.
+
+    Parameters:
+    image -- ndarray grayscale image to be segmented
+    mu -- float, 'edge length' weight parameter. Higher mu vals make a
+        'round edge' closer to zero will detect smaller objects. Typical
+        values are from 0 - 1.
+    lambda1 -- float 'diff from average' weight param to determine if
+        output region is True. If lower than lambda1, the region has a
+        larger range of values than the other
+    lambda2 -- float 'diff from average' weight param to determine if
+        output region is False. If lower than lambda1, the region will
+        have a larger range of values
+    tol -- positive float, typically (0-1), very low level set variation
+        tolerance between iterations.
+    max_iter -- uint,  max number of iterations before algorithms stops
+    dt -- float, Multiplication factor applied at the calculations step
+    
+    
+
+    """
+
+    # Abbreviation for Algorithm = CV
+
+    def __init__(self, paramlist=None):
+        """Get parameters from parameter list that are used in segmentation algorithm.
+         Assign default values to these parameters."""
+        super(Chan_Vese, self).__init__(paramlist)
+        if not paramlist:
+            self.params["algorithm"] = "Chan_Vese"
+            self.params["colorspace"]= "HSV"
+            self.params["channel"] = 2
+            self.params["alpha1"] = 1
+            self.params["beta1"] = 1
+            self.params["beta2"] = 1
+            self.params["max_iter"] = 10
+            self.params["alpha2"] = 0.10
+            self.params["n_segments"] = 0
+            #self.params["tolerance"] = 0.001 #TODO Removed, consider adding in later if need be.
+        self.paramindexes = ["colorspace", "channel", "alpha1", "alpha2", "beta1", "beta2", "n_segments", "max_iter"]
+        self.checkparamindex()
+        
+    def evaluate(self, input_img):
+        """Evaluate segmentation algorithm on training image.
+
+        Keyword arguments:
+        img -- Original training image.
+
+        Output:
+        output -- resulting segmentation mask from algorithm.
+
+        """
+        
+        [img, channel, dimention] = getchannel(
+            input_img, self.params["colorspace"], self.params["channel"]
+        ) 
+        
+        mu= self.params["alpha1"]*2 #TODO I think this should be between zero and one.
+        lambda1 = self.params["beta1"] #TODO Not sure about the range of these. Previous was (10,20)
+        lambda2 = self.params["beta2"]
+        max_iter = self.params["max_iter"]
+        dt = self.params["alpha2"]
+        
+        level_set_shapes= ['checkerboard', 'disk', 'small disk']
+        init_level_set = level_set_shapes[self.params['n_segments']%3]
+        
+        output = skimage.segmentation.chan_vese(
+            channel,
+            mu=mu,
+            lambda1=lambda1,
+            lambda2=lambda2,
+            max_iter=max_iter,
+            dt=dt,
+            init_level_set=init_level_set
+            
+        )
+        return output
+
+
+algorithmspace["Chan_Vese"] = Chan_Vese
+
+class Morphological_Chan_Vese(segmentor):
+    """Peform Morphological Chan Vese segmentation algorithm.
+     ONLY WORKS ON GRAYSCALE. Active contours without edges. Can be used to
+      segment images/volumes without good borders. Required that the inside of
+       the object looks different than outside (color, shade, darker).
+
+    Parameters:
+    image -- ndarray of grayscale image
+    iterations -- uint, number of iterations to run
+    init_level_set -- str, or array same shape as image. Accepted string
+        values are:
+        'checkerboard': Uses checkerboard_level_set. Returns a binary level set of a checkerboard
+        'circle': Uses circle_level_set. Creates a binary level set of a circle, given radius and a
+            center
+    smoothing -- uint, number of times the smoothing operator is applied
+        per iteration. Usually around 1-4. Larger values make it smoother
+    lambda1 -- Weight param for outer region. If larger than lambda2,
+        outer region will give larger range of values than inner value.
+    lambda2 -- Weight param for inner region. If larger thant lambda1,
+        inner region will have a larger range of values than outer region.
+
+    https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.morphological_chan_vese
+
+    """
+
+    # Abbreviation for algorithm = MCV
+
+    def __init__(self, paramlist=None):
+        """Get parameters from parameter list that are used in segmentation algorithm.
+         Assign default values to these parameters."""
+        super(Morphological_Chan_Vese, self).__init__(paramlist)
+        if not paramlist:
+            self.params["algorithm"] = "Morphological_Chan_Vese"
+            self.params["colorspace"]= "HSV"
+            self.params["channel"] = 2
+            self.params["alpha1"] = 1
+            self.params["beta1"] = 1
+            self.params["beta2"] = 1
+            self.params["max_iter"] = 10
+            self.params["n_segments"] = 0
+            #self.params["tolerance"] = 0.001 #TODO Removed, consider adding in later if need be.
+        self.paramindexes = ["colorspace", "channel", "alpha1",  "beta1", "beta2", "n_segments", "max_iter"]
+        self.checkparamindex()
+        
+    def evaluate(self, input_img):
+        """Evaluate segmentation algorithm on training image.
+
+        Keyword arguments:
+        img -- Original training image.
+
+        Output:
+        output -- resulting segmentation mask from algorithm.
+
+        """
+                
+        [img, channel, dimention] = getchannel(
+            input_img, self.params["colorspace"], self.params["channel"]
+        ) 
+        
+        smoothing= int(self.params["alpha1"]*4) #TODO We may want to move this? We need a number 1-4 smoothing iterations
+        
+        lambda1 = self.params["beta1"] #TODO Not sure about the range of these. Previous was (10,20)
+        lambda2 = self.params["beta2"]
+        max_iter = self.params["max_iter"]
+        level_set_shapes= ['checkerboard', 'circle']
+        init_level_set = level_set_shapes[self.params['n_segments']%2]
+        
+        
+        
+        
+        if len(img.shape) == 3:
+            img = skimage.color.rgb2gray(img)
+        output = skimage.segmentation.morphological_chan_vese(
+            img,
+            iterations=max_iter,
+            init_level_set=init_level_set,
+            smoothing=smoothing,
+            lambda1=lambda1,
+            lambda2=lambda2,
+        )
+        return output
+
+
+algorithmspace["Morphological_Chan_Vese"] = Morphological_Chan_Vese
+
+class MorphGeodesicActiveContour(segmentor):
+    """Peform Morphological Geodesic Active Contour segmentation algorithm. Uses
+     an image from inverse_gaussian_gradient in order to segment object with visible,
+      but noisy/broken borders. inverse_gaussian_gradient computes the magnitude of
+       the gradients in an image. Returns a preprocessed image suitable for above function.
+        Returns ndarray of segmented image.
+
+    Parameters:
+    gimage -- array, preprocessed image to be segmented.
+    iterations -- uint, number of iterations to run.
+    init_level_set -- str, array same shape as gimage. If string, possible
+        values are:
+        'checkerboard': Uses checkerboard_level_set. Returns a binary level set of a checkerboard
+        'circle': Uses circle_level_set. Creates a binary level set of a circle, given radius and a
+            center
+    smoothing -- uint, number of times the smoothing operator is applied
+        per iteration. Usually 1-4, larger values have smoother segmentation.
+    threshold -- Areas of image with a smaller value than the threshold are borders.
+    balloon -- float, guides contour of low-information parts of image.
+    
+    morphological_geodesic_active_contour
+    https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.morphological_geodesic_active_contour
+    
+    Preprocessign step:
+    https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.inverse_gaussian_gradient
+
+
+    """
+
+    # Abbrevieation for algorithm = AC
+
+    def __init__(self, paramlist=None):
+        """Get parameters from parameter list that are used in segmentation algorithm.
+         Assign default values to these parameters."""
+        super(MorphGeodesicActiveContour, self).__init__(paramlist)
+        if not paramlist:
+            self.params["algorithm"] = "MorphGeodesicActiveContour"
+            self.params["colorspace"]= "HSV"
+            self.params["channel"] = 2
+            self.params["alpha1"] = 1
+            self.params["alpha2"] = 1
+            self.params["beta1"] = 0.2
+            self.params["beta2"] = 0.3
+            self.params["beta2"] = 1
+            self.params["max_iter"] = 10
+            self.params["n_segments"] = 0
+            #self.params["tolerance"] = 0.001 #TODO Removed, consider adding in later if need be.
+        self.paramindexes = ["colorspace", "channel", "alpha1",  "alpha2", "beta1", "beta2", "n_segments", "max_iter"]
+        self.checkparamindex()
+        
+    def evaluate(self, input_img):
+        """Evaluate segmentation algorithm on training image.
+
+        Keyword arguments:
+        img -- Original training image.
+
+        Output:
+        output -- resulting segmentation mask from algorithm.
+
+        """
+        
+        [img, channel, dimention] = getchannel(
+            input_img, self.params["colorspace"], self.params["channel"]
+        ) 
+        
+        smoothing= int(self.params["alpha1"]*4) #TODO We may want to move this? We need a number 1-4 smoothing iterations
+        balloon = (self.params["alpha2"]*100)-50
+        max_iter = self.params["max_iter"]
+        level_set_shapes= ['checkerboard', 'circle']
+        init_level_set = level_set_shapes[self.params['n_segments']%2]
+
+        
+        # We run the inverse_gaussian_gradient to get the image to use
+        gimage = skimage.segmentation.inverse_gaussian_gradient(
+            color.rgb2gray(img), self.params["beta1"], self.params["beta2"]
+        )
+        # zeros = 0
+        output = skimage.segmentation.morphological_geodesic_active_contour(
+            gimage,
+            max_iter,
+            init_level_set,
+            smoothing,
+            threshold="auto",
+            balloon=balloon,
+        )
+        return output
+
+algorithmspace["MorphGeodesicActiveContour"] = MorphGeodesicActiveContour
 
