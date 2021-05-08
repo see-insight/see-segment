@@ -6,7 +6,7 @@ import matplotlib.pylab as plt
 import ipywidgets as widgets
 from IPython.display import display, clear_output
 from pathlib import Path
-from see import Segmentors
+from see.Segmentors import segmentor, param_space
 import imageio
 
 
@@ -103,16 +103,16 @@ def picksegment(algorithms):
         if change['type'] == 'change' and change['name'] == 'value':
             clear_output(wait=True) # Clear output for dynamic display
             display(w)
-            print(Segmentors.algorithmspace[change['new']].__doc__)
+            print(segmentor.algorithmspace[change['new']].__doc__)
             print(f"\nsegmentor_name=\'{w.value}\'")
     w.observe(on_change)
 
     display(w)
-    print(Segmentors.algorithmspace[w.value].__doc__)
+    print(segmentor.algorithmspace[w.value].__doc__)
     print(f"\nalg.value=\'{w.value}\'")
     return w
 
-def segmentwidget(img, gmask, params=None, alg=None):
+def segmentwidget(img, params=None, alg=None):
     """Generate GUI. Produce slider for each parameter for the current segmentor.
      Show both options for the masked image.
 
@@ -125,20 +125,20 @@ def segmentwidget(img, gmask, params=None, alg=None):
     """
     if params:
         if alg:
-            params[0] = alg;
-        seg = Segmentors.algoFromParams(params)
+            params['algorithm'] = alg;
+        seg = segmentor.algoFromParams(params)
     else:
         if alg:
-            algorithm_gen = Segmentors.algorithmspace[alg]
+            algorithm_gen = segmentor.algorithmspace[alg]
             seg = algorithm_gen()
         else:
-            seg = Segmentors.segmentor()
+            seg = segmentor()
 
     widg = dict()
     widglist = []
 
     for ppp, ind in zip(seg.paramindexes, range(len(seg.paramindexes))):
-        thislist = eval(seg.params.ranges[ppp])
+        thislist = param_space.ranges[ppp]
         name = ppp
         current_value = seg.params[ppp]
         if not current_value in thislist:
@@ -157,22 +157,14 @@ def segmentwidget(img, gmask, params=None, alg=None):
         widglist.append(thiswidg)
         widg[ppp] = thiswidg
 
-#     algorithms = list(Segmentors.algorithmspace.keys())
-#     w = widgets.Dropdown(
-#         options=algorithms,
-#         value=algorithms[0],
-#         description='Choose Algorithm:',
-#     )
     
-
-    
-    def func(img=img, mask=gmask, **kwargs):
+    def func(**kwargs):
         """Find mask and fitness for current algorithm. Show masked image."""
         print(seg.params["algorithm"])
         for k in kwargs:
             seg.params[k] = kwargs[k]
         mask = seg.evaluate(img)
-        fit = Segmentors.FitnessFunction(mask, gmask)
+        #fit = Segmentors.FitnessFunction(mask, gmask)
         fig = showtwo(img, mask)
         # I like the idea of printing the sharepython but it should be below the figures. 
         #print(seg.sharepython(img))
