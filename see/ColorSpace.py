@@ -8,10 +8,19 @@ import logging
 import numpy as np
 import skimage
 from skimage import color
-from see.base_classes import algorithm
+from see.base_classes import param_space, algorithm
 
-def __init__(slef):
-    print("making a Colorspace")
+param_space.add('colorspace', 
+                ['RGB', 'HSV', 'RGB CIE', 'XYZ', 'YUV', 'YIQ', 'YPbPr', 'YCbCr', 'YDbDr'],
+                "Pick a colorspace [‘RGB’, ‘HSV’, ‘RGB CIE’, ‘XYZ’, ‘YUV’, ‘YIQ’, ‘YPbPr’, ‘YCbCr’, ‘YDbDr’]"
+               )
+param_space.add('multichannel',
+                [True, False],
+                "True/False parameter")
+param_space.add('channel',
+                [0,1,2],
+                "A parameter for Picking the Channel 0,1,2"
+               )
 
 class colorspace(algorithm):
     
@@ -37,18 +46,9 @@ class colorspace(algorithm):
     ##TODO Update to allow paramlist to be either a list or the parameters class
     def __init__(self, paramlist=None):
         """Generate algorithm params from parameter list."""
-        self.params = parameters()
-        
-        self.params.add('colorspace', 
-                        "['RGB', 'HSV', 'RGB CIE', 'XYZ', 'YUV', 'YIQ', 'YPbPr', 'YCbCr', 'YDbDr']",
-                        "Pick a colorspace [‘RGB’, ‘HSV’, ‘RGB CIE’, ‘XYZ’, ‘YUV’, ‘YIQ’, ‘YPbPr’, ‘YCbCr’, ‘YDbDr’]"
-                       )
+        self.params = param_space()
         self.params['colorspace'] = 'RGB'
-        
-        self.params.add('channel",
-                        "[0,1,2]"
-                        "A parameter for Picking the Channel 0,1,2"
-                       )
+        self.params['multichannel'] = True
         self.params['channel'] = 2
         
         self.chache = dict()
@@ -58,34 +58,21 @@ class colorspace(algorithm):
             self.params["multichannel"] = True
             self.params["colorspace"] = "RGB"
             self.params["channel"] = 2
-        self.paramindexes = ["multichannel", "colorspace", "channel"]
+        self.paramindexes = ["colorspace", "multichannel", "channel"]
         self.checkparamindex()
-
-    def checkparamindex(self):
-        """Check paramiter index to ensure values are valid"""
-        for myparams in self.paramindexes:
-            assert myparams in self.params, f"ERROR {myparams} is not in parameter list"
-             
-    def mutateself(self, flip_prob=0.5):
-        """Mutate self and return new params."""
-        for myparam in self.paramindexes:
-            rand_val = random.random()
-            if rand_val < flip_prob:
-                self.params[myparam] = random.choice(eval(self.params.ranges[myparam]))
-        return self.params
     
     #TODO use name to build a dictionary to use as a chache
     def evaluate(self, img, name=None):
         """Run segmentation algorithm to get inferred mask."""
-        return colorspace.getchannel(img, self.params['colorspace'], self.params['channel'])       
-
-    def __str__(self):
-        """Return params for algorithm."""
-        mystring = f"{self.params['algorithm']} -- \n"
-        for p in self.paramindexes:
-            mystring += f"\t{p} = {self.params[p]}\n"
-        return mystring
-    
-    def getimag(self):
-        """Get the image and use the chache"""
-        return self.chache['RGB']  
+        
+        multichannel = self.params['multichannel']
+        
+        if len(img.shape) > 2:
+            multichannel = False
+        
+        [img, channel, dimention] = colorspace.getchannel(img, self.params['colorspace'], self.params['channel']) 
+        
+        if multichannel:
+            return img
+        else:
+            return channel
