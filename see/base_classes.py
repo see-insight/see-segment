@@ -6,42 +6,47 @@ class param_space(dict):
     printparam -- returns description for each parameter
     tolist -- converts dictionary of params into list
     fromlist -- converts individual into dictionary of params
-
     """
     
     descriptions = dict()
     ranges = dict()
     pkeys = []
-            
-    def add(key, prange, description):
-        param_space.descriptions[key] = description
-        param_space.ranges[key] = prange
-        param_space.pkeys.append(key)
+    
+    @classmethod
+    def add(cls,key, prange, description):
+        cls.descriptions[key] = description
+        cls.ranges[key] = prange
+        if not key in cls.pkeys:
+            cls.pkeys.append(key)
 
+    def addall(params):
+        for key in params:
+            self.add(key, params.ranges[key], params.descriptions[key])
+    
+                            
     def printparam(self, key):
         """Return description of parameter from param list."""
-        return f"{key}={self[key]}\n\t{param_space.descriptions[key]}\n\t{param_space.ranges[key]}\n"
+        return f"{key}={self[key]}\n\t{self.descriptions[key]}\n\t{self.ranges[key]}\n"
 
     def __str__(self):
         """Return descriptions of all parameters in param list."""
         out = ""
-        for index, k in enumerate(param_space.pkeys):
-            out += f"{index} " + param_space.printparam(k)
+        for index, k in enumerate(self.pkeys):
+            out += f"{index} " + self.printparam(k)
         return out
 
     def tolist(self):
         """Convert dictionary of params into list of parameters."""
         plist = []
-        for key in param_space.pkeys:
+        for key in self.pkeys:
             plist.append(self[key])
         return plist
 
     def fromlist(self, individual):
         """Convert individual's list into dictionary of params."""
         logging.getLogger().info(f"Parsing Parameter List for {len(individual)} parameters")
-        for index, key in enumerate(param_space.pkeys):
+        for index, key in enumerate(self.pkeys):
             self[key] = individual[index]
-
 
 class algorithm(object):
     """Base class for any image alogirthm.
@@ -69,7 +74,7 @@ class algorithm(object):
                 self.params[myparam] = random.choice(eval(self.params.ranges[myparam]))
         return self.params
     
-    def evaluate(self, data):
+    def pipe(self, data):
         """Run segmentation algorithm to get inferred mask."""
         return data
 

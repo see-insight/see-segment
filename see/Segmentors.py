@@ -20,49 +20,54 @@ from see.Segment_Similarity_Measure import FF_ML2DHD_V2 as FitnessFunction
 
 from see.base_classes import param_space, algorithm
 
-param_space.add('algorithm',
-                [ ], 
-                "string code for the algorithm")
+class seg_params(param_space):
+    descriptions = dict()
+    ranges = dict()
+    pkeys = []
 
-param_space.add('alpha1',
-                [float(i)/256 for i in range(0,256)],
-                "General Purpos Lower bound threshold"
-               )
+seg_params.add('algorithm',
+               [ ], 
+               "string code for the algorithm")
 
-param_space.add('alpha2',
-                [float(i)/256 for i in range(0,256)],
-                "General Purpos Upper bound threshold"
-               )
+seg_params.add('alpha1',
+               [float(i)/256 for i in range(0,256)],
+               "General Purpos Lower bound threshold"
+              )
 
-param_space.add('beta1',
-                [float(i)/256 for i in range(0,256)],
-                "General Purpos Lower bound threshold"
-               )
+seg_params.add('alpha2',
+               [float(i)/256 for i in range(0,256)],
+               "General Purpos Upper bound threshold"
+              )
 
-param_space.add('beta2',
-                [float(i)/256 for i in range(0,256)],
-                "General Purpos Upper bound threshold"
-               )
+seg_params.add('beta1',
+               [float(i)/256 for i in range(0,256)],
+               "General Purpos Lower bound threshold"
+              )
 
-param_space.add('gamma1',
-                [float(i)/256 for i in range(0,256)],
-                "General Purpos Lower bound threshold"
-               )
+seg_params.add('beta2',
+               [float(i)/256 for i in range(0,256)],
+               "General Purpos Upper bound threshold"
+              )
 
-param_space.add('gamma2',
-                [float(i)/256 for i in range(0,256)],
-                "General Purpos Upper bound threshold"
-               )
+seg_params.add('gamma1',
+               [float(i)/256 for i in range(0,256)],
+               "General Purpos Lower bound threshold"
+              )
 
-param_space.add('n_segments',
-                [i for i in range(0,10)],
-                "General Purpos Upper bound threshold"
-               )
+seg_params.add('gamma2',
+               [float(i)/256 for i in range(0,256)],
+               "General Purpos Upper bound threshold"
+              )
 
-param_space.add('max_iter',
-                [i for i in range(1,20)],
-                "General Purpos Upper bound threshold"
-               )
+seg_params.add('n_segments',
+               [i for i in range(0,10)],
+               "General Purpos Upper bound threshold"
+              )
+
+seg_params.add('max_iter',
+               [i for i in range(1,20)],
+               "General Purpos Upper bound threshold"
+              )
 
 class segmentor(algorithm):
     """Base class for segmentor classes defined below.
@@ -77,7 +82,7 @@ class segmentor(algorithm):
     def __init__(self, paramlist=None):
         """Generate algorithm params from parameter list."""
         #super(ColorThreshold, self).__init__(paramlist)
-        self.params = param_space()
+        self.params = seg_params()
         
         self.params['algorithm'] = 'ColorThreshold'
         self.params['alpha1'] = 0.3
@@ -95,9 +100,14 @@ class segmentor(algorithm):
         self.thisalgo = segmentor.algorithmspace[self.params['algorithm']](self.params)
         return self.thisalgo.evaluate(img)
     
-def addsegmentor(key, seg):
-    param_space.ranges['algorithm'].append(key)
-    segmentor.algorithmspace[key] = seg
+    def pipe(self, data):
+        data.mask = self.evaluate(data.img)
+        return data
+    
+    @classmethod
+    def addsegmentor(cls, key, seg):
+        seg_params.ranges['algorithm'].append(key)
+        cls.algorithmspace[key] = seg
     
 class ColorThreshold(segmentor):
     """ColorThreshold
@@ -127,7 +137,7 @@ class ColorThreshold(segmentor):
     def __init__(self, params=None):
         """Get parameters from parameter list that are used in segmentation algorithm.
          Assign default values to these parameters."""
-        self.params = param_space()
+        self.params = seg_params()
         
         self.params["algorithm"] = "ColorThreshold"
         self.params["alpha1"] = 0.4
@@ -190,7 +200,7 @@ class ColorThreshold(segmentor):
                 output[img < my_mx] = 1
         return output
 
-addsegmentor('ColorThreshold',ColorThreshold)
+segmentor.addsegmentor('ColorThreshold',ColorThreshold)
 
 class Felzenszwalb(segmentor):
     """Perform Felzenszwalb segmentation algorithm. The felzenszwalb algorithms computes a 
@@ -219,11 +229,10 @@ class Felzenszwalb(segmentor):
         """Get parameters from parameter list that are used in segmentation algorithm.
          Assign default values to these parameters."""
         super(Felzenszwalb, self).__init__(paramlist)
-        if not paramlist:
-            self.params["algorithm"] = "Felzenszwalb"
-            self.params["alpha2"] = 0.984
-            self.params["alpha1"] = 0.09
-            self.params["beta1"] = 0.92
+        self.params["algorithm"] = "Felzenszwalb"
+        self.params["alpha2"] = 0.984
+        self.params["alpha1"] = 0.09
+        self.params["beta1"] = 0.92
         self.paramindexes = ["alpha1", "alpha2", "beta1"]
         self.checkparamindex()
         
@@ -288,10 +297,7 @@ class Felzenszwalb(segmentor):
 #             )"""
 #         return mystring
         
-        
-        
-        
-addsegmentor('Felzenszwalb',Felzenszwalb)
+segmentor.addsegmentor('Felzenszwalb',Felzenszwalb)
 
 class Slic(segmentor):
     """Perform the Slic segmentation algorithm. Segments k-means clustering in Color space
@@ -325,19 +331,16 @@ class Slic(segmentor):
         """Get parameters from parameter list that are used in segmentation algorithm.
          Assign default values to these parameters."""
         super(Slic, self).__init__(paramlist)
-        if not paramlist:
-            self.params["algorithm"] = "Slic"
-            self.params["multichannel"]=True
-            self.params["colorspace"] = 'HSV'
-            self.params["n_segments"] = 5
-            self.params["channel"] = 2
-            self.params["max_iter"] = 10
-            self.params["alpha1"] = 0.5
-        self.paramindexes = ["multichannel", "colorspace", "channel", "n_segments", "alpha1", "max_iter"]
+        self.params["algorithm"] = "Slic"
+        self.params["n_segments"] = 5
+        self.params["beta1"] = 2
+        self.params["max_iter"] = 10
+        self.params["alpha1"] = 0.5
+        self.paramindexes = ["n_segments", "alpha1", "beta1", "max_iter"]
         self.checkparamindex()
         self.slico = False
         
-    def evaluate(self, input_img):
+    def evaluate(self, img):
         """Evaluate segmentation algorithm on training image.
 
         Keyword arguments:
@@ -346,16 +349,12 @@ class Slic(segmentor):
         Output:
         output -- resulting segmentation mask from algorithm.
 
-        """
+        """     
 
-        [img, channel, dimention] = getchannel(
-            input_img, self.params["colorspace"], self.params["channel"]
-        )                     
-
-        compactness=10**(self.params["channel"]-3)
+        compactness=10**(self.params["beta1"]*3-3)
         n_segments = self.params["n_segments"]+1
         max_iter=self.params["max_iter"]
-        if(self.params["multichannel"] and dimention > 1):            
+        if (len(img.shape) > 2):           
             output = skimage.segmentation.slic(
                 img,
                 n_segments=n_segments,
@@ -378,7 +377,7 @@ class Slic(segmentor):
             )       
         return output
 
-addsegmentor('Slic',Slic)
+segmentor.addsegmentor('Slic',Slic)
 
 #TODO Update to remove any parameters that SLICO dosn't use. (Currently this includes the SLIP parameters)
 
@@ -415,7 +414,7 @@ class SlicO(Slic):
         super(SlicO, self).__init__(paramlist)
         self.slico = True
 
-addsegmentor('SlicO',SlicO)
+segmentor.addsegmentor('SlicO',SlicO)
 
 #TODO Quickshift is very slow, we need to do some benchmarks and see what are resonable running ranges.
 
@@ -442,18 +441,16 @@ class QuickShift(segmentor):
         """Get parameters from parameter list that are used in segmentation algorithm.
          Assign default values to these parameters."""
         super(QuickShift, self).__init__(paramlist)
-        if not paramlist:
-            self.params["algorithm"] = "QuickShift"
-            self.params["colorspace"]= "HSV"
-            self.params["channel"] = 2
-            self.params["alpha1"] = 0.5
-            self.params["beta1"] = 0.5
-            self.params["beta2"] = 0.5
+        self.params["algorithm"] = "QuickShift"
+        self.params["colorspace"]= "HSV"
+        self.params["alpha1"] = 0.5
+        self.params["beta1"] = 0.5
+        self.params["beta2"] = 0.5
 
-        self.paramindexes = ["colorspace", "channel", "alpha1", "beta1", "beta2" ]
+        self.paramindexes = ["alpha1", "beta1", "beta2" ]
         self.checkparamindex()
         
-    def evaluate(self, input_img):
+    def evaluate(self, img):
         """Evaluate segmentation algorithm on training image.
 
         Keyword arguments:
@@ -464,14 +461,10 @@ class QuickShift(segmentor):
 
         """
         
-        [img, channel, dimention] = getchannel(
-            input_img, self.params["colorspace"], self.params["channel"]
-        ) 
-        
-        mindim = min(channel.shape)
+        mindim = min(img.shape)
         
         ratio = self.params["alpha1"]
-        kernel_size = mindim/10*self.params["beta1"]
+        kernel_size = mindim/10*self.params["beta1"]+1
         max_dist = mindim*self.params["beta2"]
         output = skimage.segmentation.quickshift(
             img,
@@ -484,7 +477,7 @@ class QuickShift(segmentor):
         return output
 
 
-addsegmentor('QuickShift',QuickShift)
+segmentor.addsegmentor('QuickShift',QuickShift)
 
 #TODO Watershed one seems to be broken all we get is a line at the top.
 
@@ -510,15 +503,12 @@ class Watershed(segmentor):
         """Get parameters from parameter list that are used in segmentation algorithm.
          Assign default values to these parameters."""
         super(Watershed, self).__init__(paramlist)
-        if not paramlist:
-            self.params["algorithm"] = "Watershed"
-            self.params["colorspace"]= "HSV"
-            self.params["channel"] = 2
-            self.params["alpha1"] = 0.66
-        self.paramindexes = ["colorspace", "channel", "alpha1"]
+        self.params["algorithm"] = "Watershed"
+        self.params["alpha1"] = 0.66
+        self.paramindexes = ["alpha1"]
         self.checkparamindex()
         
-    def evaluate(self, input_img):
+    def evaluate(self, img):
         """Evaluate segmentation algorithm on training image.
 
         Keyword arguments:
@@ -530,9 +520,6 @@ class Watershed(segmentor):
         
 
         """
-        [img, channel, dimention] = getchannel(
-            input_img, self.params["colorspace"], self.params["channel"]
-        ) 
         
         compactness=self.params["alpha1"]*3
         
@@ -541,7 +528,7 @@ class Watershed(segmentor):
         )
         return output
 
-addsegmentor('Watershed',Watershed)
+segmentor.addsegmentor('Watershed',Watershed)
 
 #TODO Chan_Vese one seems very broken.  All we get is a circle.
 
@@ -575,21 +562,18 @@ class Chan_Vese(segmentor):
         """Get parameters from parameter list that are used in segmentation algorithm.
          Assign default values to these parameters."""
         super(Chan_Vese, self).__init__(paramlist)
-        if not paramlist:
-            self.params["algorithm"] = "Chan_Vese"
-            self.params["colorspace"]= "HSV"
-            self.params["channel"] = 2
-            self.params["alpha1"] = 1
-            self.params["beta1"] = 1
-            self.params["beta2"] = 1
-            self.params["max_iter"] = 10
-            self.params["alpha2"] = 0.10
-            self.params["n_segments"] = 0
-            #self.params["tolerance"] = 0.001 #TODO Removed, consider adding in later if need be.
-        self.paramindexes = ["colorspace", "channel", "alpha1", "alpha2", "beta1", "beta2", "n_segments", "max_iter"]
+        self.params["algorithm"] = "Chan_Vese"
+        self.params["alpha1"] = 1
+        self.params["beta1"] = 1
+        self.params["beta2"] = 1
+        self.params["max_iter"] = 10
+        self.params["alpha2"] = 0.10
+        self.params["n_segments"] = 0
+        #self.params["tolerance"] = 0.001 #TODO Removed, consider adding in later if need be.
+        self.paramindexes = ["alpha1", "alpha2", "beta1", "beta2", "n_segments", "max_iter"]
         self.checkparamindex()
         
-    def evaluate(self, input_img):
+    def evaluate(self, img):
         """Evaluate segmentation algorithm on training image.
 
         Keyword arguments:
@@ -600,10 +584,6 @@ class Chan_Vese(segmentor):
 
         """
         
-        [img, channel, dimention] = getchannel(
-            input_img, self.params["colorspace"], self.params["channel"]
-        ) 
-        
         mu= self.params["alpha1"]*2 #TODO I think this should be between zero and one.
         lambda1 = self.params["beta1"] #TODO Not sure about the range of these. Previous was (10,20)
         lambda2 = self.params["beta2"]
@@ -613,8 +593,17 @@ class Chan_Vese(segmentor):
         level_set_shapes= ['checkerboard', 'disk', 'small disk']
         init_level_set = level_set_shapes[self.params['n_segments']%3]
         
+        
+        if(len(img.shape) > 2):
+            if "channel" in self.params:
+                channel = self.params['channel']
+                img = img[:,:,channel]
+            else:
+                img = color.rgb2gray(img)
+                
+        
         output = skimage.segmentation.chan_vese(
-            channel,
+            img,
             mu=mu,
             lambda1=lambda1,
             lambda2=lambda2,
@@ -626,7 +615,7 @@ class Chan_Vese(segmentor):
         return output
 
 
-addsegmentor('Chan_Vese',Chan_Vese)
+segmentor.addsegmentor('Chan_Vese',Chan_Vese)
 
 class Morphological_Chan_Vese(segmentor):
     """Peform Morphological Chan Vese segmentation algorithm.
@@ -661,18 +650,16 @@ class Morphological_Chan_Vese(segmentor):
         super(Morphological_Chan_Vese, self).__init__(paramlist)
         if not paramlist:
             self.params["algorithm"] = "Morphological_Chan_Vese"
-            self.params["colorspace"]= "HSV"
-            self.params["channel"] = 2
             self.params["alpha1"] = 1
             self.params["beta1"] = 1
             self.params["beta2"] = 1
             self.params["max_iter"] = 10
             self.params["n_segments"] = 0
             #self.params["tolerance"] = 0.001 #TODO Removed, consider adding in later if need be.
-        self.paramindexes = ["colorspace", "channel", "alpha1",  "beta1", "beta2", "n_segments", "max_iter"]
+        self.paramindexes = [ "alpha1",  "beta1", "beta2", "n_segments", "max_iter"]
         self.checkparamindex()
         
-    def evaluate(self, input_img):
+    def evaluate(self, img):
         """Evaluate segmentation algorithm on training image.
 
         Keyword arguments:
@@ -683,9 +670,6 @@ class Morphological_Chan_Vese(segmentor):
 
         """
                 
-        [img, channel, dimention] = getchannel(
-            input_img, self.params["colorspace"], self.params["channel"]
-        ) 
         
         smoothing= int(self.params["alpha1"]*4) #TODO We may want to move this? We need a number 1-4 smoothing iterations
         
@@ -695,11 +679,13 @@ class Morphological_Chan_Vese(segmentor):
         level_set_shapes= ['checkerboard', 'circle']
         init_level_set = level_set_shapes[self.params['n_segments']%2]
         
+        if(len(img.shape) > 2):
+            if "channel" in self.params:
+                channel = self.params['channel']
+                img = img[:,:,channel]
+            else:
+                img = color.rgb2gray(img)
         
-        
-        
-        if len(img.shape) == 3:
-            img = skimage.color.rgb2gray(img)
         output = skimage.segmentation.morphological_chan_vese(
             img,
             iterations=max_iter,
@@ -710,7 +696,7 @@ class Morphological_Chan_Vese(segmentor):
         )
         return output
 
-addsegmentor('Morphological_Chan_Vese',Morphological_Chan_Vese)
+segmentor.addsegmentor('Morphological_Chan_Vese',Morphological_Chan_Vese)
 
 class MorphGeodesicActiveContour(segmentor):
     """Peform Morphological Geodesic Active Contour segmentation algorithm. Uses
@@ -749,8 +735,6 @@ class MorphGeodesicActiveContour(segmentor):
         super(MorphGeodesicActiveContour, self).__init__(paramlist)
         if not paramlist:
             self.params["algorithm"] = "MorphGeodesicActiveContour"
-            self.params["colorspace"]= "HSV"
-            self.params["channel"] = 2
             self.params["alpha1"] = 1
             self.params["alpha2"] = 1
             self.params["beta1"] = 0.2
@@ -759,10 +743,10 @@ class MorphGeodesicActiveContour(segmentor):
             self.params["max_iter"] = 10
             self.params["n_segments"] = 0
             #self.params["tolerance"] = 0.001 #TODO Removed, consider adding in later if need be.
-        self.paramindexes = ["colorspace", "channel", "alpha1",  "alpha2", "beta1", "beta2", "n_segments", "max_iter"]
+        self.paramindexes = ["alpha1",  "alpha2", "beta1", "beta2", "n_segments", "max_iter"]
         self.checkparamindex()
         
-    def evaluate(self, input_img):
+    def evaluate(self, img):
         """Evaluate segmentation algorithm on training image.
 
         Keyword arguments:
@@ -773,20 +757,23 @@ class MorphGeodesicActiveContour(segmentor):
 
         """
         
-        [img, channel, dimention] = getchannel(
-            input_img, self.params["colorspace"], self.params["channel"]
-        ) 
-        
         smoothing= int(self.params["alpha1"]*4) #TODO We may want to move this? We need a number 1-4 smoothing iterations
         balloon = (self.params["alpha2"]*100)-50
         max_iter = self.params["max_iter"]
         level_set_shapes= ['checkerboard', 'circle']
         init_level_set = level_set_shapes[self.params['n_segments']%2]
 
+        if(len(img.shape) > 2):
+            if "channel" in self.params:
+                channel = self.params['channel']
+                img = img[:,:,channel]
+            else:
+                img = color.rgb2gray(img)
+        
         
         # We run the inverse_gaussian_gradient to get the image to use
         gimage = skimage.segmentation.inverse_gaussian_gradient(
-            color.rgb2gray(img), self.params["beta1"], self.params["beta2"]
+            img, self.params["beta1"], self.params["beta2"]
         )
         # zeros = 0
         output = skimage.segmentation.morphological_geodesic_active_contour(
@@ -800,5 +787,120 @@ class MorphGeodesicActiveContour(segmentor):
         return output
 
 
-addsegmentor('MorphGeodesicActiveContour',MorphGeodesicActiveContour)
+segmentor.addsegmentor('MorphGeodesicActiveContour',MorphGeodesicActiveContour)
+
+
+##########################
+
+
+def mutateAlgo(copy_child, pos_vals, flip_prob=0.5, seed=False):
+    """Generate an offspring based on current individual."""
+
+    child = copy.deepcopy(copy_child)
+    
+    # Not every algorithm is associated with every value
+    # Let's first see if we change the algorithm
+    rand_val = random.random()
+    if rand_val < flip_prob:
+        # Let's mutate the algorithm
+        child[0] = random.choice(pos_vals[0])
+
+    #use the local search for mutation.
+    seg = algoFromParams(child)
+    child = seg.mutateself(flip_prob)
+    return child
+
+
+def runAlgo(img, ground_img, individual, return_mask=False):
+    """Run and evaluate the performance of an individual.
+
+    Keyword arguments:
+    img -- training image
+    ground_img -- the ground truth for the image mask
+    individual -- the list representing an individual in our population
+    return_mask -- Boolean value indicating whether to return resulting
+     mask for the individual or not (default False)
+
+    Output:
+    fitness -- resulting fitness value for the individual
+    mask -- resulting image mask associated with the individual (if return_mask=True)
+
+    """
+    logging.getLogger().info(f"Running Algorithm {individual[0]}")
+    # img = copy.deepcopy(copyImg)
+    seg = algoFromParams(individual)
+    mask = seg.evaluate(img)
+    logging.getLogger().info("Calculating Fitness")
+    fitness = FitnessFunction(mask, ground_img)
+    if return_mask:
+        print("Returning mask")
+        return [fitness, mask]
+    else:
+        return fitness
+
+
+def algoFromParams(individual):
+    """Convert an individual's param list to an algorithm. Assumes order
+     defined in the parameters class.
+
+    Keyword arguments:
+    individual -- the list representing an individual in our population
+
+    Output:
+    algorithm(individual) -- algorithm associated with the individual
+
+    """
+    if individual["algorithm"] in segmentor.algorithmspace:
+        algorithm = algorithmspace[individual["algorithm"]]
+        return algorithm(individual)
+    else:
+        raise ValueError("Algorithm not avaliable")
+
+def print_best_algorithm_code(individual):
+    """Print usable code to run segmentation algorithm based on an
+     individual's genetic representation vector."""
+    #ind_algo = Segmentors.algoFromParams(individual)
+    ind_algo = algoFromParams(individual)
+    original_function = inspect.getsource(ind_algo.evaluate)
+
+    # Get the body of the function
+    function_contents = original_function[original_function.find('        '):\
+                            original_function.find('return')]
+    while function_contents.find('self.params') != -1:
+
+        # Find the index of the 's' at the start of self.params
+        params_index = function_contents.find('self.params')
+
+        # Find the index of the ']' at the end of self.params["<SOME_TEXT>"]
+        end_bracket_index = function_contents.find(']', params_index)+1
+
+        # Find the first occurance of self.params["<SOME_TEXT>"] and store it
+        code_to_replace = function_contents[params_index:end_bracket_index]
+
+        # These offset will be used to access only the params_key
+        offset = len('self.params["')
+        offset2 = len('"]')
+
+        # Get the params key
+        params_key = function_contents[params_index + offset:end_bracket_index-offset2]
+
+        # Use the params_key to access the params_value
+        param_value = str(ind_algo.params[params_key])
+
+        # Replace self.params["<SOME_TEXT>"] with the value of self.params["<SOME_TEXT>"]
+        function_contents = function_contents.replace(code_to_replace, param_value)
+
+    function_contents = function_contents.replace('        ', '')
+    function_contents = function_contents[function_contents.find('\n\"\"\"')+5:]
+    print(function_contents)
+    return function_contents
+   
+def popCounts(pop):
+    """Count the number of each algorihtm in a population"""
+    algorithms = seg_params.ranges["algorithm"]
+    counts = {a:0 for a in algorithms}
+    for p in pop:
+        #print(p[0])
+        counts[p[0]] += 1
+    return counts
 
