@@ -6,7 +6,7 @@ import matplotlib.pylab as plt
 import ipywidgets as widgets
 from IPython.display import display, clear_output
 from pathlib import Path
-from see.Segmentors import segmentor, param_space
+from see.Segmentors import segmentor, seg_params
 import imageio
 
 
@@ -45,7 +45,6 @@ def show_segment(img, mask):
     fig = showtwo(im1, im2)
     return fig
 
-
 def pickimage(folder='Image_data/Examples/'):
     #def pickimage(
 
@@ -74,13 +73,13 @@ def pickimage(folder='Image_data/Examples/'):
         display(w)
         w.img = imageio.imread(w.value)
         index = filelist.index(w.value)
-        w.mask = imageio.imread(masklist[index])
-        if len(w.mask.shape) > 2:
-            w.mask = w.mask[:,:,0]
-        fig = showtwo(w.img, w.mask)
+        w.gmask = imageio.imread(masklist[index])
+        if len(w.gmask.shape) > 2:
+            w.gmask = w.gmask[:,:,0]
+        fig = showtwo(w.img, w.gmask)
         print(f"import imageio")
         print(f"data.img = imageio.imread(\'{w.value}\')")
-        print(f"data.mask = imageio.imread(\'{masklist[index]}\')")
+        print(f"data.gmask = imageio.imread(\'{masklist[index]}\')")
         
     def on_change(change):
         if change['type'] == 'change' and change['name'] == 'value':
@@ -138,7 +137,7 @@ def segmentwidget(img, params=None, alg=None):
     widglist = []
 
     for ppp, ind in zip(seg.paramindexes, range(len(seg.paramindexes))):
-        thislist = param_space.ranges[ppp]
+        thislist = seg_params.ranges[ppp]
         name = ppp
         current_value = seg.params[ppp]
         if not current_value in thislist:

@@ -10,17 +10,24 @@ import skimage
 from skimage import color
 from see.base_classes import param_space, algorithm
 
-param_space.add('colorspace', 
-                ['RGB', 'HSV', 'RGB CIE', 'XYZ', 'YUV', 'YIQ', 'YPbPr', 'YCbCr', 'YDbDr'],
-                "Pick a colorspace [‘RGB’, ‘HSV’, ‘RGB CIE’, ‘XYZ’, ‘YUV’, ‘YIQ’, ‘YPbPr’, ‘YCbCr’, ‘YDbDr’]"
-               )
-param_space.add('multichannel',
-                [True, False],
-                "True/False parameter")
-param_space.add('channel',
-                [0,1,2],
-                "A parameter for Picking the Channel 0,1,2"
-               )
+
+class color_params(param_space):
+    descriptions = dict()
+    ranges = dict()
+    pkeys = []
+    
+color_params.add('colorspace', 
+                 ['RGB', 'HSV', 'RGB CIE', 'XYZ', 'YUV', 'YIQ', 'YPbPr', 'YCbCr', 'YDbDr'],
+                 "Pick a colorspace [‘RGB’, ‘HSV’, ‘RGB CIE’, ‘XYZ’, ‘YUV’, ‘YIQ’, ‘YPbPr’, ‘YCbCr’, ‘YDbDr’]"
+                )
+color_params.add('multichannel',
+    [True, False],
+    "True/False parameter"
+   )
+color_params.add('channel',
+    [0,1,2],
+    "A parameter for Picking the Channel 0,1,2"
+   )
 
 class colorspace(algorithm):
     
@@ -46,7 +53,8 @@ class colorspace(algorithm):
     ##TODO Update to allow paramlist to be either a list or the parameters class
     def __init__(self, paramlist=None):
         """Generate algorithm params from parameter list."""
-        self.params = param_space()
+        #init_params()
+        self.params = color_params()
         self.params['colorspace'] = 'RGB'
         self.params['multichannel'] = True
         self.params['channel'] = 2
@@ -76,3 +84,7 @@ class colorspace(algorithm):
             return img
         else:
             return channel
+    
+    def pipe(self, data):
+        data.colorspace = self.evaluate(data.img)
+        return data
