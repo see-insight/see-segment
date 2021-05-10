@@ -1,4 +1,4 @@
-"""Using the specified search space and fitness function defined in 'Segmentors' this runs
+"""Using the specified search space and fitness function defined in 'Algorithm' this runs
  the genetic algorithm over that space. Best individuals are stored in the hall of fame (hof)."""
 
 import random
@@ -14,10 +14,9 @@ from deap import tools
 from deap import creator
 from scoop import futures
 
+from see.base_classes import algorithm, param_space
 from see import Segmentors
-#import Segmentors
-# from see import Segmentors_MinParams as Segmentors
-# from see import Segmentors_OrgAndReducedParams as Segmentors
+
 
 def twoPointCopy(np1, np2, seed=False):
     """Execute a crossover between two numpy arrays of the same length."""
@@ -125,10 +124,10 @@ def makeToolbox(pop_size):
     # DO: May want to later do a different selection process
 
     # We choose the parameters, for the most part, random
-    params = Segmentors.parameters()
+    params = param_space()
 
     for key in params.pkeys:
-        toolbox.register(key, random.choice, eval(params.ranges[key]))
+        toolbox.register(key, random.choice, params.ranges[key])
 
     func_seq = []
     for key in params.pkeys:
@@ -174,9 +173,9 @@ class Evolver(object):
     """
 
     AllVals = []
-    my_p = Segmentors.parameters()
+    my_p=param_space
     for key in my_p.pkeys:
-        AllVals.append(eval(my_p.ranges[key]))
+        AllVals.append(my_p.ranges[key])
 
     def __init__(self, img, mask, pop_size=10):
         """Set default values for the variables.
