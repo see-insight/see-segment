@@ -1,14 +1,21 @@
+"""The base_classes module is used for the rest of the image grammar to set up base classes."""
+
+
 class pipedata(object):
+    """The pipedata is just an instance of a basic python object. It is used to dynamically
+    store output data from a wide variety of algorithms. Most algorithms in the pipe jsut add
+    data to this objet which is passed in as an input argument and returned as an output argument.
+    """
     pass
 
 
 class param_space(dict):
     """Construct an parameter dictionary that represents the search space.
 
-    Functions:
-    printparam -- returns description for each parameter
-    tolist -- converts dictionary of params into list
-    fromlist -- converts individual into dictionary of params
+    Components:
+        pkeys - paramters keys used by the current algorithsm.
+        descriptions - Descriptions of the parameters
+        ranges - List of possible choices for each parameter.
     """
     
     descriptions = dict()
@@ -17,12 +24,20 @@ class param_space(dict):
     
     @classmethod
     def add(cls, key, prange, description):
+        """This is a class function which adds in parameters. 
+        
+        Inputs:
+            key - the paramter name
+            prange - the parameter range
+            description - the description of the parameter
+        """
         cls.descriptions[key] = description
         cls.ranges[key] = prange
         if not key in cls.pkeys:
             cls.pkeys.append(key)
 
     def addall(self,params):
+        """Function to add a list of paramters to the current paramter list"""
         for key in params:
             self.add(key, params.ranges[key], params.descriptions[key])
             self[key] = params[key]
@@ -30,8 +45,14 @@ class param_space(dict):
     def printparam(self, key):
         """Return description of parameter from param list."""
         
-        #TODO put an if statment to check for len(ranges) < 4
-        return f"{key}={self[key]}\n\t{self.descriptions[key]}\n\t{self.ranges[key][:2]}...{self.ranges[key][-2:]}\n\n"
+        outstring = f"{key}={self[key]}\n\t{self.descriptions[key]}"
+        
+        if len(self.ranges) < 10:
+            outstring += "\n\t{self.ranges[key]}\n\n"
+        else:
+            outstring += "\n\t{self.ranges[key][:2]}...{self.ranges[key][-2:]}\n\n"
+        
+        return outstring
 
     def __str__(self):
         """Return descriptions of all parameters in param list."""
@@ -72,9 +93,7 @@ class algorithm(object):
             
             
     def checkparamindex(self):
-#         print(f"pkeys={self.params.pkeys}")
-#         print(f"params = {self.params}")
-        """Check paramiter index to ensure values are valid"""
+        """Check paramiter keys to ensure values are valid"""
         for myparams in self.params.pkeys:
             assert myparams in self.params, f"ERROR {myparams} is not in parameter list"
              
@@ -88,6 +107,7 @@ class algorithm(object):
     
     def pipe(self, data):
         """Run segmentation algorithm to get inferred mask."""
+        print("WARNING: Default Pipe, doing nothing\n")
         return data
 
     def __str__(self):
@@ -98,45 +118,25 @@ class algorithm(object):
         return mystring
 
 
-    def runAlgo(self, data, params="none"):
+    def runAlgo(self, data, params=None):
         """Run and evaluate the performance of an individual.
 
         Keyword arguments:
-        img -- training image
-        ground_img -- the ground truth for the image mask
-        individual -- the list representing an individual in our population
-        return_mask -- Boolean value indicating whether to return resulting
-         mask for the individual or not (default False)
+        data -- pipedata both input and output.
+        params -- the list representing an individual in our population
 
         Output:
         fitness -- resulting fitness value for the individual
         mask -- resulting image mask associated with the individual (if return_mask=True)
 
         """
+    
+        #TODO make this funciton more flexible and allow multiple types of params 
+        # i'm thinking (list, param_space and algorithm)
         seg = algorithm(paramlist=params)
         data = seg.pipe(data)
-        data.fitness = 1
+        data.fitness=1 #TODO This needs to be removed
         return data    
-    
-    
-
-def algoFromParams(individual):
-    """Convert an individual's param list to an algorithm. Assumes order
-     defined in the parameters class.
-
-    Keyword arguments:
-    individual -- the list representing an individual in our population
-
-    Output:
-    algorithm(individual) -- algorithm associated with the individual
-
-    """
-    if individual["algorithm"] in segmentor.algorithmspace:
-        algorithm = algorithmspace[individual["algorithm"]]
-        return algorithm(individual)
-    else:
-        raise ValueError("Algorithm not avaliable")
-
     
 def mutateAlgo(copy_child, pos_vals, flip_prob=0.5, seed=False):
     """Generate an offspring based on current individual."""
