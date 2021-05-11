@@ -17,7 +17,7 @@ from scoop import futures
 from see import base_classes
 
 
-#TODO Change algoirthm and algo_instance to be more clear.  use consistant naming.
+# TODO Change algoirthm and algo_instance to be more clear.  use consistant naming.
 
 
 def twoPointCopy(np1, np2, seed=False):
@@ -35,6 +35,7 @@ def twoPointCopy(np1, np2, seed=False):
     np1[point1:point2], np2[point1:point2] = np2[point1:point2].copy(
     ), np1[point1:point2].copy()
     return np1, np2
+
 
 def skimageCrossRandom(np1, np2, seed=False):
     """Execute a crossover between two arrays (np1 and np2) picking a random
@@ -82,18 +83,18 @@ def mutate(copy_child, pos_vals, flip_prob=0.5, seed=False):
     # Now let's get the indexes (parameters) related to that value
     #switcher = AlgoHelp().algoIndexes()
     #indexes = switcher.get(child[0])
-    
+
     for index in range(len(pos_vals)):
         rand_val = random.random()
         if rand_val < flip_prob:
-#             # Then we mutate said value
-#             if index == 22:
-#                 # Do some special
-#                 my_x = random.choice(pos_vals[22])
-#                 my_y = random.choice(pos_vals[23])
-#                 my_z = random.choice(pos_vals[24])
-#                 child[index] = (my_x, my_y, my_z)
-#                 continue
+            #             # Then we mutate said value
+            #             if index == 22:
+            #                 # Do some special
+            #                 my_x = random.choice(pos_vals[22])
+            #                 my_y = random.choice(pos_vals[23])
+            #                 my_z = random.choice(pos_vals[24])
+            #                 child[index] = (my_x, my_y, my_z)
+            #                 continue
             child[index] = random.choice(pos_vals[index])
     return child
 
@@ -117,7 +118,7 @@ def makeToolbox(pop_size, algo_instance):
 
     # Genetic functions
     toolbox.register("mate", skimageCrossRandom)  # crossover
-    #toolbox.register("mutate", mutate)  # Mutation
+    # toolbox.register("mutate", mutate)  # Mutation
     toolbox.register("mutate", base_classes.mutateAlgo)  # Mutation
     toolbox.register("evaluate", algo_instance.runAlgo)  # Fitness
     toolbox.register("select", tools.selTournament, tournsize=5)  # Selection
@@ -230,7 +231,7 @@ class Evolver(object):
                            list, self.tool.individual_guess, "my_guess.json")
 
         return self.tool.population_read()
-    
+
     def popfitness(self, tpop):
         """Calculate the fitness values for the population, and log general statistics about these
          values. Uses hall of fame (hof) to keep track of top 10 individuals.
@@ -243,16 +244,16 @@ class Evolver(object):
         tpop -- current population
 
         """
-        
-        #make copies of self.data
+
+        # make copies of self.data
         data_references = [self.data for i in range(0, len(tpop))]
-        
-        #Map the evaluation command to reference data and then to population list
+
+        # Map the evaluation command to reference data and then to population list
         outdata = map(self.tool.evaluate, data_references, tpop)
-        
+
         # Loop though outputs and add them to ind.fitness so we have a complete record.
-        for ind, data in zip(tpop, outdata): 
-            ind.fitness.values = [ data.fitness ]
+        for ind, data in zip(tpop, outdata):
+            ind.fitness.values = [data.fitness]
         extract_fits = [ind.fitness.values[0] for ind in tpop]
 
         self.hof.update(tpop)
@@ -283,7 +284,7 @@ class Evolver(object):
 
         return extract_fits, tpop
 
-    def mutate(self, tpop, keep_prob = 0.1, mutate_prob = 0.4):
+    def mutate(self, tpop, keep_prob=0.1, mutate_prob=0.4):
         """Return new population with mutated individuals. Perform both mutation and crossover.
 
         Keyword arguments:
@@ -295,10 +296,9 @@ class Evolver(object):
        """
         # Calculate next population
 
-    
-        #TODO: There is an error here. We need to make sure the best hof is included?
-        
-        my_sz = len(tpop) #Length of current population
+        # TODO: There is an error here. We need to make sure the best hof is included?
+
+        my_sz = len(tpop)  # Length of current population
         top = min(10, max(1, round(keep_prob * my_sz)))
         top = min(top, len(self.hof))
         var = max(1, round(mutate_prob * my_sz))
@@ -307,12 +307,12 @@ class Evolver(object):
 
 #         print(f"pop[0:{top}:{var}:{ran}]")
 #         print(f"pop[0:{top}:{top+var}:{my_sz}]")
-        
+
 #         offspring = self.tool.select(tpop, var)
 #         offspring = list(map(self.tool.clone, offspring))  # original code
 
         offspring = copy.deepcopy(list(self.hof))
-        
+
         # crossover
         for child1, child2 in zip(offspring[::2], offspring[1::2]):
             # Do we crossover?
@@ -335,12 +335,12 @@ class Evolver(object):
 
         final = pop[0:ran]
         #print(f"pop size should be {len(final)}")
-        final += self.hof[0:top] 
+        final += self.hof[0:top]
         #print(f"pop size should be {len(final)}")
-        final += offspring[0:var] 
+        final += offspring[0:var]
         #print(f"pop size should be {len(final)}")
-        
-        #print(f"pop[0:{top}:{var}:{ran}]")
+
+        # print(f"pop[0:{top}:{var}:{ran}]")
         #print(f"pop size should be {len(final)}")
 
         # Replacing the old population
@@ -355,8 +355,8 @@ class Evolver(object):
         """
         _, tpop = self.popfitness(tpop)
         return self.mutate(tpop)
-        
-    def run(self, ngen=10, population=None,startfile=None, checkpoint=None, cp_freq=1):
+
+    def run(self, ngen=10, population=None, startfile=None, checkpoint=None, cp_freq=1):
         """Run the genetic algorithm, updating the population over ngen number of generations.
 
         Keywork arguments:
@@ -368,7 +368,7 @@ class Evolver(object):
         population -- Resulting population after ngen generations.
 
         """
-        
+
         if startfile:
             try:
                 print(f"Reading in {startfile}")
@@ -377,38 +377,37 @@ class Evolver(object):
                 print("WARNING: Start file not found")
             except:
                 raise
-        
+
         if not population:
             print(f"Initializing a new random population")
             population = self.newpopulation()
             if checkpoint:
                 self.writepop(population, filename=f"{checkpoint}")
-        
 
         for cur_g in range(0, ngen+1):
             print(f"Generation {cur_g} of population size {len(population)}")
-            
+
             #histogram = Segmentors.popCounts(population)
-            #print(f"#HIST {histogram}")
-            
+            # print(f"#HIST {histogram}")
+
             _, population = self.popfitness(population)
-            
+
             bestsofar = self.hof[0]
-            
-            #Create a new instance from the current algorithm
+
+            # Create a new instance from the current algorithm
             seg = type(self.algorithm)(bestsofar)
-            
+
             self.data = seg.pipe(self.data)
             fitness = self.data.fitness
             print(f"#BEST [{fitness},  {bestsofar}]")
 
-            if checkpoint and cur_g%cp_freq == 0:
+            if checkpoint and cur_g % cp_freq == 0:
                 print(f"Writing Checkpoint file - {checkpoint}")
                 copyfile(f"{checkpoint}", f"{checkpoint}.prev")
                 self.writepop(population, filename=f"{checkpoint}")
                 for cur_p in range(len(population)):
                     logging.getLogger().info(population[cur_p])
-            if cur_g < ngen+1:          
+            if cur_g < ngen+1:
                 if bestsofar.fitness.values[0] >= 0.95:
                     population = self.newpopulation()
                   # if the best fitness value is at or above the
@@ -418,12 +417,12 @@ class Evolver(object):
                   # note: setting keep_prob = 0 and mutate_prob = 1
                   # as mutate arguments
                   # should have same result as self.new_population()
-                else:                
+                else:
                     population = self.mutate(population)
                   # if the best fitness value is below this threshold,
                   # proceed as normal, mutating the current population
-                  # to get the next generation 
-            
+                  # to get the next generation
+
         if checkpoint:
             print(f"Writing Checkpoint file - {checkpoint}")
             copyfile(f"{checkpoint}", f"{checkpoint}.prev")
