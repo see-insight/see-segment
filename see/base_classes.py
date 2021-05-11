@@ -72,8 +72,8 @@ class algorithm(object):
             
             
     def checkparamindex(self):
-        print(f"pkeys={self.params.pkeys}")
-        print(f"params = {self.params}")
+#         print(f"pkeys={self.params.pkeys}")
+#         print(f"params = {self.params}")
         """Check paramiter index to ensure values are valid"""
         for myparams in self.params.pkeys:
             assert myparams in self.params, f"ERROR {myparams} is not in parameter list"

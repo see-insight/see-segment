@@ -127,8 +127,8 @@ def makeToolbox(pop_size, algo_instance):
 
     # We choose the parameters, for the most part, random
     params = algo_instance.params
-    print(f"Running makeToolbox {algo_instance}")
-    print(f"param keys = {params.pkeys}")
+#     print(f"Running makeToolbox {algo_instance}")
+#     print(f"param keys = {params.pkeys}")
 
     for key in params.pkeys:
         toolbox.register(key, random.choice, params.ranges[key])
@@ -305,8 +305,8 @@ class Evolver(object):
         var = min(var, len(self.hof))
         ran = my_sz - top - var
 
-        print(f"pop[0:{top}:{var}:{ran}]")
-        print(f"pop[0:{top}:{top+var}:{my_sz}]")
+#         print(f"pop[0:{top}:{var}:{ran}]")
+#         print(f"pop[0:{top}:{top+var}:{my_sz}]")
         
 #         offspring = self.tool.select(tpop, var)
 #         offspring = list(map(self.tool.clone, offspring))  # original code
