@@ -15,19 +15,20 @@ class color_params(param_space):
     descriptions = dict()
     ranges = dict()
     pkeys = []
-    
+
+
 color_params.add('colorspace', 
                  ['RGB', 'HSV', 'RGB CIE', 'XYZ', 'YUV', 'YIQ', 'YPbPr', 'YCbCr', 'YDbDr'],
                  "Pick a colorspace [‘RGB’, ‘HSV’, ‘RGB CIE’, ‘XYZ’, ‘YUV’, ‘YIQ’, ‘YPbPr’, ‘YCbCr’, ‘YDbDr’]"
                 )
 color_params.add('multichannel',
-    [True, False],
-    "True/False parameter"
-   )
+                 [True, False],
+                 "True/False parameter"
+                )
 color_params.add('channel',
-    [0,1,2],
-    "A parameter for Picking the Channel 0,1,2"
-   )
+                 [0,1,2],
+                 "A parameter for Picking the Channel 0,1,2"
+                )
 
 class colorspace(algorithm):
     
@@ -61,7 +62,10 @@ class colorspace(algorithm):
         
         self.chache = dict()
         if paramlist:
-            self.params.fromlist(paramlist)
+            if (type(paramlist) == list):
+                self.params.fromlist(paramlist)
+            else:
+                self.params = paramlist
         else:
             self.params["multichannel"] = True
             self.params["colorspace"] = "RGB"

@@ -14,8 +14,10 @@ from deap import tools
 from deap import creator
 from scoop import futures
 
-from see.base_classes import algorithm, param_space
-from see import Segmentors
+from see import base_classes
+
+
+#TODO Change algoirthm and algo_instance to be more clear.  use consistant naming.
 
 
 def twoPointCopy(np1, np2, seed=False):
@@ -98,7 +100,7 @@ def mutate(copy_child, pos_vals, flip_prob=0.5, seed=False):
 
 # DO: Make a toolbox from a list of individuals
 # DO: Save a population as a list of indivudals (with fitness functions?)
-def makeToolbox(pop_size):
+def makeToolbox(pop_size, algo_instance):
     """Make a genetic algorithm toolbox using DEAP. The toolbox uses premade functions
      for crossover, mutation, evaluation and fitness.
 
@@ -116,15 +118,17 @@ def makeToolbox(pop_size):
     # Genetic functions
     toolbox.register("mate", skimageCrossRandom)  # crossover
     #toolbox.register("mutate", mutate)  # Mutation
-    toolbox.register("mutate", Segmentors.mutateAlgo)  # Mutation
-    toolbox.register("evaluate", Segmentors.runAlgo)  # Fitness
+    toolbox.register("mutate", base_classes.mutateAlgo)  # Mutation
+    toolbox.register("evaluate", algo_instance.runAlgo)  # Fitness
     toolbox.register("select", tools.selTournament, tournsize=5)  # Selection
     toolbox.register("map", futures.map)  # So that we can use scoop
 
     # DO: May want to later do a different selection process
 
     # We choose the parameters, for the most part, random
-    params = param_space()
+    params = algo_instance.params
+    print(f"Running makeToolbox {algo_instance}")
+    print(f"param keys = {params.pkeys}")
 
     for key in params.pkeys:
         toolbox.register(key, random.choice, params.ranges[key])
@@ -172,12 +176,12 @@ class Evolver(object):
 
     """
 
-    AllVals = []
-    my_p=param_space
-    for key in my_p.pkeys:
-        AllVals.append(my_p.ranges[key])
+#     AllVals = []
+# #     my_p=param_space
+#     for key in my_p.pkeys:
+#         AllVals.append(my_p.ranges[key])
 
-    def __init__(self, img, mask, pop_size=10):
+    def __init__(self, algo_instance, data, pop_size=10):
         """Set default values for the variables.
 
         Keyword arguments:
@@ -188,9 +192,9 @@ class Evolver(object):
 
         """
         # Build Population based on size
-        self.img = img
-        self.mask = mask
-        self.tool = makeToolbox(pop_size)
+        self.data = data
+        self.algorithm = algo_instance
+        self.tool = makeToolbox(pop_size, algo_instance)
         self.hof = deap.tools.HallOfFame(10)
         self.best_avgs = []
         self.gen = 0
@@ -239,13 +243,16 @@ class Evolver(object):
         tpop -- current population
 
         """
-        new_image = [self.img for i in range(0, len(tpop))]
-        new_val = [self.mask for i in range(0, len(tpop))]
-        fitnesses = map(self.tool.evaluate, new_image, new_val, tpop)
         
-        # DO: Dirk is not sure exactly why we need these
-        for ind, fit in zip(tpop, fitnesses): 
-            ind.fitness.values = [ fit[0] ]
+        #make copies of self.data
+        data_references = [self.data for i in range(0, len(tpop))]
+        
+        #Map the evaluation command to reference data and then to population list
+        outdata = map(self.tool.evaluate, data_references, tpop)
+        
+        # Loop though outputs and add them to ind.fitness so we have a complete record.
+        for ind, data in zip(tpop, outdata): 
+            ind.fitness.values = [ data.fitness ]
         extract_fits = [ind.fitness.values[0] for ind in tpop]
 
         self.hof.update(tpop)
@@ -381,15 +388,18 @@ class Evolver(object):
         for cur_g in range(0, ngen+1):
             print(f"Generation {cur_g} of population size {len(population)}")
             
-            histogram = Segmentors.popCounts(population)
-            print(f"#HIST {histogram}")
+            #histogram = Segmentors.popCounts(population)
+            #print(f"#HIST {histogram}")
             
             _, population = self.popfitness(population)
             
             bestsofar = self.hof[0]
-            seg = Segmentors.algoFromParams(bestsofar)
-            mask = seg.evaluate(self.img)
-            fitness = Segmentors.FitnessFunction(mask, self.mask)
+            
+            #Create a new instance from the current algorithm
+            seg = type(self.algorithm)(bestsofar)
+            
+            self.data = seg.pipe(self.data)
+            fitness = self.data.fitness
             print(f"#BEST [{fitness},  {bestsofar}]")
 
             if checkpoint and cur_g%cp_freq == 0:
