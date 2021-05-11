@@ -16,21 +16,30 @@ from see.base_classes import param_space, algorithm
 
 class workflow(algorithm):
     
-    ##TODO Update to allow paramlist to be either a list or the parameters class
-    def __init__(self, algolist=None):
+    algolist = []
+    
+    def addalgo(self, algorithm):
+        print(algorithm)
+        workflow.algolist.append(algorithm)
+        
+        thisalgo = algorithm()
+        self.params.addall(thisalgo.params)
+    
+    
+    def __init__(self, paramlist=None, algolist=None):
         """Generate algorithm params from parameter list."""
-        self.algolist = []        
         self.params = param_space()
-        for algo in algolist:
-            thisalgo = algo()
-            self.algolist.append(thisalgo)
-            for key in thisalgo.params:
-                self.params[key] = thisalgo.params[key]
-            #params.addall(thisalgo.params)
+        if paramlist:
+            self.params.fromlist(paramlist)      
+        if algolist:
+            for algo in algolist:
+                self.addalgo(algo)
             
     def pipe(self, data):
-        for algo in self.algolist:
+        for constructor in self.algolist:
+            algo = constructor(self.params)
             data = algo.pipe(data)
+        data.fitness = 3
         return data
     
 #PROBLEMS
