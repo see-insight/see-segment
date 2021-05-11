@@ -19,7 +19,6 @@ class workflow(algorithm):
     algolist = []
     
     def addalgo(self, algorithm):
-        print(algorithm)
         workflow.algolist.append(algorithm)
         
         thisalgo = algorithm()
