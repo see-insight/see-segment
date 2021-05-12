@@ -10,6 +10,7 @@ import skimage
 from skimage import color
 from see.base_classes import param_space, algorithm
 
+#TODO My guess is this algorithm is very slow.  We need to use a cache to speed it up. 
 
 class color_params(param_space):
     descriptions = dict()
