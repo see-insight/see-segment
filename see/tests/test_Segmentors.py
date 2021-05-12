@@ -4,7 +4,7 @@ import pytest
 import numpy as np
 from skimage import segmentation, color
 from see import Segmentors
-from see import Segment_Similarity_Measure as SSM
+from see import Segment_Fitness as SSM
 
 # Define toy rgb and grayscale images used for testing below
 TEST_IM_COLOR = np.zeros((20, 20, 3))
