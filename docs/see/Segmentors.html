@@ -5,9 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.9.2" />
 <title>see.Segmentors API documentation</title>
+<<<<<<< HEAD
 <meta name="description" content="Segmentor library designed to learn how to segment images using GAs.
 This libary actually does not incode the GA itself, instead it just defines
 the …" />
+=======
+<meta name="description" content="Segmentor algorithm library designed to segment images with a searchable parameter space.
+This libary actually does not incode the search code itself, …" />
+>>>>>>> Updating documentation strings
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -24,19 +29,26 @@ the …" />
 <h1 class="title">Module <code>see.Segmentors</code></h1>
 </header>
 <section id="section-intro">
-<p>Segmentor library designed to learn how to segment images using GAs.
-This libary actually does not incode the GA itself, instead it just defines
-the search parameters the evaluation funtions and the fitness function (comming soon).</p>
+<p>Segmentor algorithm library designed to segment images with a searchable parameter space.
+This libary actually does not incode the search code itself, instead it just defines
+the search parameters and the evaluation funtions.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
+<<<<<<< HEAD
 <pre><code class="python">&#34;&#34;&#34;Segmentor library designed to learn how to segment images using GAs.
  This libary actually does not incode the GA itself, instead it just defines
   the search parameters the evaluation funtions and the fitness function (comming soon).&#34;&#34;&#34;
 # DO: Research project-clean up the parameters class to reduce the search space
 # DO: Change the seed from a number to a fraction 0-1 which is scaled to image rows and columns
 # DO: Enumerate teh word based measures.
+=======
+<pre><code class="python">&#34;&#34;&#34;Segmentor algorithm library designed to segment images with a searchable parameter space.
+ This libary actually does not incode the search code itself, instead it just defines
+  the search parameters and the evaluation funtions.&#34;&#34;&#34;
+
+>>>>>>> Updating documentation strings
 import copy
 import inspect
 import random
@@ -49,6 +61,7 @@ import skimage
 from skimage import segmentation
 from skimage import color
 
+<<<<<<< HEAD
 from see.Segment_Similarity_Measure import FF_ML2DHD_V2 as FitnessFunction
 
 # List of all algorithms
@@ -168,14 +181,27 @@ def popCounts(pop):
         
 class parameters(OrderedDict):
     &#34;&#34;&#34;Construct an ordered dictionary that represents the search space.
+=======
+from see.base_classes import param_space, algorithm
 
-    Functions:
-    printparam -- returns description for each parameter
-    tolist -- converts dictionary of params into list
-    fromlist -- converts individual into dictionary of params
 
-    &#34;&#34;&#34;
+class seg_params(param_space):
+    descriptions = dict()
+    ranges = dict()
+    pkeys = []
 
+>>>>>>> Updating documentation strings
+
+seg_params.add(&#39;algorithm&#39;,
+               [],
+               &#34;string code for the algorithm&#34;)
+
+seg_params.add(&#39;alpha1&#39;,
+               [float(i)/256 for i in range(0, 256)],
+               &#34;General Purpos Lower bound threshold&#34;
+               )
+
+<<<<<<< HEAD
     descriptions = OrderedDict()
     ranges = OrderedDict()
     pkeys = []
@@ -340,6 +366,45 @@ class parameters(OrderedDict):
 
 
 class segmentor(object):
+=======
+seg_params.add(&#39;alpha2&#39;,
+               [float(i)/256 for i in range(0, 256)],
+               &#34;General Purpos Upper bound threshold&#34;
+               )
+
+seg_params.add(&#39;beta1&#39;,
+               [float(i)/256 for i in range(0, 256)],
+               &#34;General Purpos Lower bound threshold&#34;
+               )
+
+seg_params.add(&#39;beta2&#39;,
+               [float(i)/256 for i in range(0, 256)],
+               &#34;General Purpos Upper bound threshold&#34;
+               )
+
+seg_params.add(&#39;gamma1&#39;,
+               [float(i)/256 for i in range(0, 256)],
+               &#34;General Purpos Lower bound threshold&#34;
+               )
+
+seg_params.add(&#39;gamma2&#39;,
+               [float(i)/256 for i in range(0, 256)],
+               &#34;General Purpos Upper bound threshold&#34;
+               )
+
+seg_params.add(&#39;n_segments&#39;,
+               [i for i in range(0, 10)],
+               &#34;General Purpos Upper bound threshold&#34;
+               )
+
+seg_params.add(&#39;max_iter&#39;,
+               [i for i in range(1, 20)],
+               &#34;General Purpos Upper bound threshold&#34;
+               )
+
+
+class segmentor(algorithm):
+>>>>>>> Updating documentation strings
     &#34;&#34;&#34;Base class for segmentor classes defined below.
 
     Functions:
@@ -347,10 +412,11 @@ class segmentor(object):
 
     &#34;&#34;&#34;
 
-    algorithm = &#34;&#34;
+    algorithmspace = dict()
 
     def __init__(self, paramlist=None):
         &#34;&#34;&#34;Generate algorithm params from parameter list.&#34;&#34;&#34;
+<<<<<<< HEAD
         self.params = parameters()
         self.altnames = []
         if paramlist:
@@ -369,10 +435,31 @@ class segmentor(object):
                 self.params[myparam] = random.choice(eval(self.params.ranges[myparam]))
         return self.params
     
+=======
+        #super(ColorThreshold, self).__init__(paramlist)
+        self.params = seg_params()
+
+        self.params[&#39;algorithm&#39;] = &#39;ColorThreshold&#39;
+        self.params[&#39;alpha1&#39;] = 0.3
+        self.params[&#39;alpha2&#39;] = 0.5
+        self.params[&#39;beta1&#39;] = 0.2
+        self.params[&#39;beta2&#39;] = 0.7
+        self.params[&#39;gamma1&#39;] = 0.3
+        self.params[&#39;gamma2&#39;] = 0.5
+        self.params[&#39;n_segments&#39;] = 2
+        self.params[&#39;max_iter&#39;] = 10
+        self.set_params(paramlist)
+
+        
+    # TODO use name to build a dictionary to use as a chache
+>>>>>>> Updating documentation strings
     def evaluate(self, img):
         &#34;&#34;&#34;Run segmentation algorithm to get inferred mask.&#34;&#34;&#34;
-        return np.zeros(img.shape[0:1])
+        self.thisalgo = segmentor.algorithmspace[self.params[&#39;algorithm&#39;]](
+            self.params)
+        return self.thisalgo.evaluate(img)
 
+<<<<<<< HEAD
     def __str__(self):
         &#34;&#34;&#34;Return params for algorithm.&#34;&#34;&#34;
         mystring = f&#34;{self.params[&#39;algorithm&#39;]} -- \n&#34;
@@ -380,21 +467,47 @@ class segmentor(object):
             mystring += f&#34;\t{p} = {self.params[p]}\n&#34;
         return mystring
         
+=======
+    def pipe(self, data):
+        data.mask = self.evaluate(data.img)
+        return data
+
+    @classmethod
+    def addsegmentor(cls, key, seg):
+        seg_params.ranges[&#39;algorithm&#39;].append(key)
+        cls.algorithmspace[key] = seg
+>>>>>>> Updating documentation strings
 
 
 class ColorThreshold(segmentor):
-    &#34;&#34;&#34;Peform Color Thresholding segmentation algorithm. Segments parts of the image
-     based on the numerical values for the respective channel.
+    &#34;&#34;&#34;ColorThreshold
+
+    Peform Color Thresholding segmentation algorithm. Segments parts of the image
+    based on the numerical values for the respective channel.
 
     Parameters:
-    my_mx -- maximum thresholding value
-    my_mn -- minimum thresholding value
+    mulitchannel - (multichannel) - bool, Whether the image is 2D or 3D
+    colorspace - (colorspace) Select the colorspace [‘RGB’, ‘HSV’, ‘RGB CIE’, ‘XYZ’, ‘YUV’, ‘YIQ’, ‘YPbPr’, ‘YCbCr’, ‘YDbDr’]
+    channel - (channel) color chanel (0:R/H/L 1:G/S/A, 2:B/V/B)
+    ch0_mn - (alpha1) - minimum thresholding value for channel 0
+    ch0_mx - (alpha2) - maximum thresholding value for channel 0
+    ch1_mn - (beta1) - minimum thresholding value for channel 1
+    ch1_mx - (beta2) - maximum thresholding value for channel 1
+    ch2_mn - (gamma1) - minimum thresholding value for channel 2
+    ch2_mx - (gamma2) - maximum thresholding value for channel 2
 
+    Note: a colorspace of &#39;HSV&#39; and a channel of 2 is a grayscale image. 
+
+    Typically any pixel between my_mn and my_mx are true. Other pixels are false.
+
+    if my_mn &gt; my_mx then the logic flips and anything above my_mn and below my_mx are true. 
+    The pixels between the valuse are false
     &#34;&#34;&#34;
 
     def __init__(self, paramlist=None):
         &#34;&#34;&#34;Get parameters from parameter list that are used in segmentation algorithm.
          Assign default values to these parameters.&#34;&#34;&#34;
+<<<<<<< HEAD
         super(ColorThreshold, self).__init__(paramlist)
         if not paramlist:
             self.params[&#34;algorithm&#34;] = &#34;CT&#34;
@@ -406,6 +519,24 @@ class ColorThreshold(segmentor):
         self.checkparamindex()
 
     def evaluate(self, img): #XX
+=======
+        self.params = seg_params()
+
+        self.params[&#34;algorithm&#34;] = &#34;ColorThreshold&#34;
+        self.params[&#34;alpha1&#34;] = 0.4
+        self.params[&#34;alpha2&#34;] = 0.6
+        self.params[&#34;beta1&#34;] = 0.4
+        self.params[&#34;beta2&#34;] = 0.6
+        self.params[&#34;gamma1&#34;] = 0.4
+        self.params[&#34;gamma2&#34;] = 0.6
+        self.paramindexes = [&#34;alpha1&#34;, &#34;alpha2&#34;,
+                             &#34;beta1&#34;, &#34;beta2&#34;,
+                             &#34;gamma1&#34;, &#34;gamma2&#34;]
+        self.set_params(paramlist)
+
+
+    def evaluate(self, img):  # XX
+>>>>>>> Updating documentation strings
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
         Keyword arguments:
@@ -415,6 +546,7 @@ class ColorThreshold(segmentor):
         output -- resulting segmentation mask from algorithm.
 
         &#34;&#34;&#34;
+<<<<<<< HEAD
         channel_num = self.params[&#34;Channel&#34;]
         if len(img.shape) &gt; 2:
             num_channels = img.shape[2]
@@ -477,35 +609,78 @@ class TripleA (segmentor):
         output = np.ones(channel.shape)
         output[channel &lt; my_mn] = 0
         output[channel &gt; my_mx] = 0
+=======
+        minlist = [&#34;alpha1&#34;, &#34;beta1&#34;, &#34;gamma1&#34;]
+        maxlist = [&#34;alpha2&#34;, &#34;beta2&#34;, &#34;gamma2&#34;]
 
+        output = None
+
+        if (len(img.shape) &gt; 2):
+            output = np.ones([img.shape[0], img.shape[1]])
+            for dimidx in range(3):
+                pscale = np.max(img[:, :, dimidx])
+                my_mn = self.params[minlist[dimidx]] * pscale
+                my_mx = self.params[maxlist[dimidx]] * pscale
+
+                if my_mn &lt; my_mx:
+                    output[img[:, :, dimidx] &lt; my_mn] = 0
+                    output[img[:, :, dimidx] &gt; my_mx] = 0
+                else:
+                    flag1 = img[:, :, dimidx] &gt; my_mn
+                    flag2 = img[:, :, dimidx] &lt; my_mx
+                    output[np.logical_and(flag1, flag2)] = 0
+        else:
+            pscale = np.max(img)
+            if &#34;channel&#34; in self.params:
+                chidx = self.params[&#34;channel&#34;]
+            else:
+                chidx = 0
+            my_mx = self.params[maxlist[chidx]] * pscale
+            my_mn = self.params[minlist[chidx]] * pscale
+
+            if my_mn &lt; my_mx:
+                output = np.ones(img.shape)
+                output[img &lt; my_mn] = 0
+                output[img &gt; my_mx] = 0
+            else:
+                output = np.zeros(img.shape)
+                output[img &gt; my_mn] = 1
+                output[img &lt; my_mx] = 1
         return output
 
 
-algorithmspace[&#34;AAA&#34;] = TripleA
+segmentor.addsegmentor(&#39;ColorThreshold&#39;, ColorThreshold)
+
+>>>>>>> Updating documentation strings
 
 class Felzenszwalb(segmentor):
-    &#34;&#34;&#34;Perform Felzenszwalb segmentation algorithm. ONLY WORKS FOR RGB. The felzenszwalb
-     algorithms computes a graph based on the segmentation. Produces an oversegmentation
-     of the multichannel using min-span tree. Returns an integer mask indicating the segment labels.
+    &#34;&#34;&#34;Perform Felzenszwalb segmentation algorithm. The felzenszwalb algorithms computes a 
+    graph based on the segmentation. Produces an oversegmentation of the multichannel using 
+    min-span tree. Returns an integer mask indicating the segment labels.
+
+    Note: a colorspace of &#39;HSV&#39; and a channel of 2 is a grayscale image. 
+
+    https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.felzenszwalb
 
     Parameters:
-    scale -- float, higher meanse larger clusters
-    sigma -- float, std. dev of Gaussian kernel for preprocessing
-    min_size -- int, minimum component size. For postprocessing
-    mulitchannel -- bool, Whether the image is 2D or 3D
-
+    colorspace - (colorspace) Select the colorspace (0:RGB, 1:HSV, 2:LAB)
+    channel - (channel) color chanel (0:R/H/L 1:G/S/A, 2:B/V/B)
+    scale - (alpha2*1000) - float, higher meanse larger clusters
+    sigma - (alpha1) - float, std. dev of Gaussian kernel for preprocessing
+    min_size - int(beta1*100) - int, minimum component size (in pixels). For postprocessing
     &#34;&#34;&#34;
 
-    def __doc__(self):
-        &#34;&#34;&#34;Return help string for function.&#34;&#34;&#34;
-        myhelp = &#34;Wrapper function for the scikit-image Felzenszwalb segmentor:&#34;
-        myhelp += f&#34; xx {skimage.segmentation.random_walker.__doc__}&#34;
-        return myhelp
+#     def __doc__(self):
+#         &#34;&#34;&#34;Return help string for function.&#34;&#34;&#34;
+#         myhelp = &#34;Wrapper function for the scikit-image Felzenszwalb segmentor:&#34;
+#         myhelp += f&#34; xx {skimage.segmentation.random_walker.__doc__}&#34;
+#         return myhelp
 
     def __init__(self, paramlist=None):
         &#34;&#34;&#34;Get parameters from parameter list that are used in segmentation algorithm.
          Assign default values to these parameters.&#34;&#34;&#34;
         super(Felzenszwalb, self).__init__(paramlist)
+<<<<<<< HEAD
         if not paramlist:
             self.params[&#34;algorithm&#34;] = &#34;FB&#34;
             self.params[&#34;scale&#34;] = 984
@@ -514,6 +689,15 @@ class Felzenszwalb(segmentor):
         self.paramindexes = [&#34;scale&#34;, &#34;sigma&#34;, &#34;min_size&#34;]
         self.checkparamindex()
         
+=======
+        self.params[&#34;algorithm&#34;] = &#34;Felzenszwalb&#34;
+        self.params[&#34;alpha2&#34;] = 0.984
+        self.params[&#34;alpha1&#34;] = 0.09
+        self.params[&#34;beta1&#34;] = 0.92
+        self.paramindexes = [&#34;alpha1&#34;, &#34;alpha2&#34;, &#34;beta1&#34;]
+        self.set_params(paramlist)
+                
+>>>>>>> Updating documentation strings
     def evaluate(self, img):
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
@@ -524,20 +708,58 @@ class Felzenszwalb(segmentor):
         output -- resulting segmentation mask from algorithm.
 
         &#34;&#34;&#34;
-        multichannel = False
-        if len(img.shape) &gt; 2:
-            multichannel = True
-        output = skimage.segmentation.felzenszwalb(
-            img,
-            self.params[&#34;scale&#34;],
-            self.params[&#34;sigma&#34;],
-            self.params[&#34;min_size&#34;],
-            multichannel=multichannel,
-        )
+
+        scale = self.params[&#34;alpha2&#34;]*1000
+        sigma = self.params[&#34;alpha1&#34;]
+        min_size = int(self.params[&#34;beta1&#34;]*100)
+
+        if (len(img.shape) &gt; 2):
+            output = skimage.segmentation.felzenszwalb(
+                img,
+                scale,
+                sigma,
+                min_size,
+                multichannel=True
+            )
+        else:
+            output = skimage.segmentation.felzenszwalb(
+                img,
+                scale,
+                sigma,
+                min_size,
+                multichannel=False
+            )
+
         return output
 
+#     def sharepython(self, img):
 
-algorithmspace[&#34;FB&#34;] = Felzenszwalb
+
+#         multichannel = self.params[&#39;multichannel&#39;]
+#         if len(img.shape) == 1:
+#             multichannel = False
+#         if (multichannel):
+#             mystring= f&#34;&#34;&#34;
+#             output = skimage.segmentation.felzenszwalb(
+#                 img,
+#                 {self.params[&#34;alpha2&#34;]*1000},
+#                 {self.params[&#34;alpha1&#34;]},
+#                 {int(self.params[&#34;beta1&#34;]*100)},
+#                 multichannel={multichannel}
+#             )&#34;&#34;&#34;
+#         else:
+#             mystring= f&#34;&#34;&#34;
+#             output = skimage.segmentation.felzenszwalb(
+#                 getchannel(img, {self.params[&#34;channel&#34;]}),
+#                 {self.params[&#34;alpha2&#34;]*1000},
+#                 {self.params[&#34;alpha1&#34;]},
+#                 {int(self.params[&#34;beta1&#34;]*100)},
+#                 multichannel={multichannel}
+#             )&#34;&#34;&#34;
+#         return mystring
+
+segmentor.addsegmentor(&#39;Felzenszwalb&#39;, Felzenszwalb)
+
 
 class Slic(segmentor):
     &#34;&#34;&#34;Perform the Slic segmentation algorithm. Segments k-means clustering in Color space
@@ -558,12 +780,20 @@ class Slic(segmentor):
         dimension. Defalt is uniform spacing
     multichannel -- bool,  multichannel (True) vs grayscale (False)
 
+    enforce_connectivity
+
+   https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.slic
+
+   https://www.pyimagesearch.com/2014/07/28/a-slic-superpixel-tutorial-using-python/
+
+
     &#34;&#34;&#34;
 
     def __init__(self, paramlist=None):
         &#34;&#34;&#34;Get parameters from parameter list that are used in segmentation algorithm.
          Assign default values to these parameters.&#34;&#34;&#34;
         super(Slic, self).__init__(paramlist)
+<<<<<<< HEAD
         if not paramlist:
             self.params[&#34;algorithm&#34;] = &#34;SC&#34;
             self.params[&#34;n_segments&#34;] = 5
@@ -573,6 +803,17 @@ class Slic(segmentor):
         self.paramindexes = [&#34;n_segments&#34;, &#34;compactness&#34;, &#34;iterations&#34;, &#34;sigma&#34;]
         self.checkparamindex()
         
+=======
+        self.params[&#34;algorithm&#34;] = &#34;Slic&#34;
+        self.params[&#34;n_segments&#34;] = 5
+        self.params[&#34;beta1&#34;] = 2
+        self.params[&#34;max_iter&#34;] = 10
+        self.params[&#34;alpha1&#34;] = 0.5
+        self.paramindexes = [&#34;n_segments&#34;, &#34;alpha1&#34;, &#34;beta1&#34;, &#34;max_iter&#34;]
+        self.slico = False
+        self.set_params(paramlist)
+                
+>>>>>>> Updating documentation strings
     def evaluate(self, img):
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
@@ -583,22 +824,79 @@ class Slic(segmentor):
         output -- resulting segmentation mask from algorithm.
 
         &#34;&#34;&#34;
-        multichannel = False
-        if len(img.shape) &gt; 2:
-            multichannel = True
-        output = skimage.segmentation.slic(
-            img,
-            n_segments=self.params[&#34;n_segments&#34;],
-            compactness=self.params[&#34;compactness&#34;],
-            max_iter=self.params[&#34;iterations&#34;],
-            sigma=self.params[&#34;sigma&#34;],
-            convert2lab=True,
-            multichannel=multichannel,
-        )
+
+        compactness = 10**(self.params[&#34;beta1&#34;]*3-3)
+        n_segments = self.params[&#34;n_segments&#34;]+1
+        max_iter = self.params[&#34;max_iter&#34;]
+        if (len(img.shape) &gt; 2):
+            output = skimage.segmentation.slic(
+                img,
+                n_segments=n_segments,
+                compactness=compactness,
+                max_iter=max_iter,
+                # Gaussian smoothing should happen as a preprocessing step.
+                sigma=0,
+                convert2lab=False,
+                multichannel=True,
+                slic_zero=self.slico
+            )
+        else:
+            output = skimage.segmentation.slic(
+                img,
+                n_segments=n_segments,
+                compactness=compactness,
+                max_iter=max_iter,
+                sigma=self.params[&#34;alpha1&#34;],
+                multichannel=False,
+                slic_zero=self.slico
+            )
         return output
 
 
-algorithmspace[&#34;SC&#34;] = Slic
+segmentor.addsegmentor(&#39;Slic&#39;, Slic)
+
+# TODO Update to remove any parameters that SLICO dosn&#39;t use. (Currently this includes the SLIP parameters)
+
+
+class SlicO(Slic):
+    &#34;&#34;&#34;Perform the SlicO segmentation algorithm. Segments k-means clustering in Color space
+     (x, y, z). Returns a 2D or 3D array of labels.
+
+    Parameters:
+    image -- ndarray, input image
+    n_segments -- int, approximate number of labels in segmented output image
+    compactness -- float, Balances color proximity and space proximity.
+        Higher values mean more weight to space proximity (superpixels
+        become more square/cubic) Recommended log scale values (0.01,
+        0.1, 1, 10, 100, etc)
+    max_iter -- int, max number of iterations of k-means
+    sigma -- float or (3,) shape array of floats, width of Guassian
+        smoothing kernel. For pre-processing for each dimesion of the
+        image. Zero means no smoothing.
+    spacing -- (3,) shape float array. Voxel spacing along each image
+        dimension. Defalt is uniform spacing
+    multichannel -- bool,  multichannel (True) vs grayscale (False)
+
+    enforce_connectivity
+
+    https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.slic
+
+    https://www.pyimagesearch.com/2014/07/28/a-slic-superpixel-tutorial-using-python/
+
+
+    &#34;&#34;&#34;
+
+    def __init__(self, paramlist=None):
+        &#34;&#34;&#34;Get parameters from parameter list that are used in segmentation algorithm.
+         Assign default values to these parameters.&#34;&#34;&#34;
+        super(SlicO, self).__init__(paramlist)
+        self.slico = True
+        self.set_params(paramlist)
+
+segmentor.addsegmentor(&#39;SlicO&#39;, SlicO)
+
+# TODO Quickshift is very slow, we need to do some benchmarks and see what are resonable running ranges.
+
 
 class QuickShift(segmentor):
     &#34;&#34;&#34;Perform the Quick Shift segmentation algorithm. Segments images with quickshift
@@ -615,12 +913,15 @@ class QuickShift(segmentor):
         Zero means no smoothing
     random_seed -- int, Random seed used for breacking ties.
 
+    https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.quickshift
+
     &#34;&#34;&#34;
 
     def __init__(self, paramlist=None):
         &#34;&#34;&#34;Get parameters from parameter list that are used in segmentation algorithm.
          Assign default values to these parameters.&#34;&#34;&#34;
         super(QuickShift, self).__init__(paramlist)
+<<<<<<< HEAD
         if not paramlist:
             self.params[&#34;algorithm&#34;] = &#34;QS&#34;
             self.params[&#34;kernel_size&#34;] = 5
@@ -631,6 +932,15 @@ class QuickShift(segmentor):
         self.paramindexes = [&#34;kernel_size&#34;, &#34;max_dist&#34;, &#34;sigma&#34;, &#34;Channel&#34;, &#34;ratio&#34;]
         self.checkparamindex()
         
+=======
+        self.params[&#34;algorithm&#34;] = &#34;QuickShift&#34;
+        self.params[&#34;alpha1&#34;] = 0.5
+        self.params[&#34;beta1&#34;] = 0.5
+        self.params[&#34;beta2&#34;] = 0.5
+        self.paramindexes = [&#34;alpha1&#34;, &#34;beta1&#34;, &#34;beta2&#34;]
+        self.set_params(paramlist)
+
+>>>>>>> Updating documentation strings
     def evaluate(self, img):
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
@@ -641,20 +951,36 @@ class QuickShift(segmentor):
         output -- resulting segmentation mask from algorithm.
 
         &#34;&#34;&#34;
+
+        mindim = min(img.shape)
+
+        ratio = self.params[&#34;alpha1&#34;]
+        kernel_size = mindim/10*self.params[&#34;beta1&#34;]+1
+        max_dist = mindim*self.params[&#34;beta2&#34;]
         output = skimage.segmentation.quickshift(
+<<<<<<< HEAD
             color.gray2rgb(img),
             ratio=self.params[&#34;ratio&#34;],
             kernel_size=self.params[&#34;kernel_size&#34;],
             max_dist=self.params[&#34;max_dist&#34;],
             sigma=self.params[&#34;sigma&#34;],
             random_seed=self.params[&#34;Channel&#34;],
+=======
+            img,
+            ratio=ratio,
+            kernel_size=kernel_size,
+            max_dist=max_dist,
+            sigma=0,  # TODO this should be handeled in the preprocessing step
+            random_seed=1,
+>>>>>>> Updating documentation strings
         )
         return output
 
 
-algorithmspace[&#34;QS&#34;] = QuickShift
+segmentor.addsegmentor(&#39;QuickShift&#39;, QuickShift)
 
-#DO: This algorithm seems to need a channel input. We should fix that.
+# TODO Watershed one seems to be broken all we get is a line at the top.
+
 
 class Watershed(segmentor):
     &#34;&#34;&#34;Perform the Watershed segmentation algorithm. Uses user-markers.
@@ -666,6 +992,8 @@ class Watershed(segmentor):
     compactness -- float, compactness of the basins. Higher values
         make more regularly-shaped basin.
 
+    https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.watershed
+
     &#34;&#34;&#34;
 
     # Not using connectivity, markers, or offset params as arrays would
@@ -676,12 +1004,20 @@ class Watershed(segmentor):
         &#34;&#34;&#34;Get parameters from parameter list that are used in segmentation algorithm.
          Assign default values to these parameters.&#34;&#34;&#34;
         super(Watershed, self).__init__(paramlist)
+<<<<<<< HEAD
         if not paramlist:
             self.params[&#34;algorithm&#34;] = &#34;WS&#34;
             self.params[&#34;compactness&#34;] = 2.0
         self.paramindexes = [&#34;compactness&#34;]
         self.checkparamindex()
         
+=======
+        self.params[&#34;algorithm&#34;] = &#34;Watershed&#34;
+        self.params[&#34;alpha1&#34;] = 0.66
+        self.paramindexes = [&#34;alpha1&#34;]
+        self.set_params(paramlist)
+                
+>>>>>>> Updating documentation strings
     def evaluate(self, img):
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
@@ -691,16 +1027,22 @@ class Watershed(segmentor):
         Output:
         output -- resulting segmentation mask from algorithm.
 
+
+
         &#34;&#34;&#34;
-        channel = 0
-        channel_img = img[:, :, channel]
+
+        compactness = self.params[&#34;alpha1&#34;]*3
+
         output = skimage.segmentation.watershed(
-            channel_img, markers=None, compactness=self.params[&#34;compactness&#34;]
+            img, markers=None, compactness=compactness
         )
         return output
 
 
-algorithmspace[&#34;WS&#34;] = Watershed
+segmentor.addsegmentor(&#39;Watershed&#39;, Watershed)
+
+# TODO Chan_Vese one seems very broken.  All we get is a circle.
+
 
 class Chan_Vese(segmentor):
     &#34;&#34;&#34;Peform Chan Vese segmentation algorithm. ONLY GRAYSCALE. Segments objects
@@ -722,6 +1064,8 @@ class Chan_Vese(segmentor):
     max_iter -- uint,  max number of iterations before algorithms stops
     dt -- float, Multiplication factor applied at the calculations step
 
+
+
     &#34;&#34;&#34;
 
     # Abbreviation for Algorithm = CV
@@ -730,6 +1074,7 @@ class Chan_Vese(segmentor):
         &#34;&#34;&#34;Get parameters from parameter list that are used in segmentation algorithm.
          Assign default values to these parameters.&#34;&#34;&#34;
         super(Chan_Vese, self).__init__(paramlist)
+<<<<<<< HEAD
         if not paramlist:
             self.params[&#34;algorithm&#34;] = &#34;CV&#34;
             self.params[&#34;mu&#34;] = 2.0
@@ -741,6 +1086,20 @@ class Chan_Vese(segmentor):
         self.paramindexes = [&#34;mu&#34;, &#34;lambda&#34;, &#34;iterations&#34;, &#34;dt&#34;, &#34;init_level_set_chan&#34;]
         self.checkparamindex()
         
+=======
+        self.params[&#34;algorithm&#34;] = &#34;Chan_Vese&#34;
+        self.params[&#34;alpha1&#34;] = 1
+        self.params[&#34;beta1&#34;] = 1
+        self.params[&#34;beta2&#34;] = 1
+        self.params[&#34;max_iter&#34;] = 10
+        self.params[&#34;alpha2&#34;] = 0.10
+        self.params[&#34;n_segments&#34;] = 0
+        # self.params[&#34;tolerance&#34;] = 0.001 #TODO Removed, consider adding in later if need be.
+        self.paramindexes = [&#34;alpha1&#34;, &#34;alpha2&#34;,
+                             &#34;beta1&#34;, &#34;beta2&#34;, &#34;n_segments&#34;, &#34;max_iter&#34;]
+        self.set_params(paramlist)
+
+>>>>>>> Updating documentation strings
     def evaluate(self, img):
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
@@ -751,21 +1110,40 @@ class Chan_Vese(segmentor):
         output -- resulting segmentation mask from algorithm.
 
         &#34;&#34;&#34;
-        if len(img.shape) == 3:
-            img = skimage.color.rgb2gray(img)
+
+        # TODO I think this should be between zero and one.
+        mu = self.params[&#34;alpha1&#34;]*2
+        # TODO Not sure about the range of these. Previous was (10,20)
+        lambda1 = self.params[&#34;beta1&#34;]
+        lambda2 = self.params[&#34;beta2&#34;]
+        max_iter = self.params[&#34;max_iter&#34;]
+        dt = self.params[&#34;alpha2&#34;]
+
+        level_set_shapes = [&#39;checkerboard&#39;, &#39;disk&#39;, &#39;small disk&#39;]
+        init_level_set = level_set_shapes[self.params[&#39;n_segments&#39;] % 3]
+
+        if(len(img.shape) &gt; 2):
+            if &#34;channel&#34; in self.params:
+                channel = self.params[&#39;channel&#39;]
+                img = img[:, :, channel]
+            else:
+                img = color.rgb2gray(img)
+
         output = skimage.segmentation.chan_vese(
             img,
-            mu=self.params[&#34;mu&#34;],
-            lambda1=self.params[&#34;lambda&#34;][0],
-            lambda2=self.params[&#34;lambda&#34;][1],
-            tol=self.params[&#34;tolerance&#34;],
-            max_iter=self.params[&#34;iterations&#34;],
-            dt=self.params[&#34;dt&#34;],
+            mu=mu,
+            lambda1=lambda1,
+            lambda2=lambda2,
+            max_iter=max_iter,
+            dt=dt,
+            init_level_set=init_level_set
+
         )
         return output
 
 
-algorithmspace[&#34;CV&#34;] = Chan_Vese
+segmentor.addsegmentor(&#39;Chan_Vese&#39;, Chan_Vese)
+
 
 class Morphological_Chan_Vese(segmentor):
     &#34;&#34;&#34;Peform Morphological Chan Vese segmentation algorithm.
@@ -788,6 +1166,8 @@ class Morphological_Chan_Vese(segmentor):
     lambda2 -- Weight param for inner region. If larger thant lambda1,
         inner region will have a larger range of values than outer region.
 
+    https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.morphological_chan_vese
+
     &#34;&#34;&#34;
 
     # Abbreviation for algorithm = MCV
@@ -797,6 +1177,7 @@ class Morphological_Chan_Vese(segmentor):
          Assign default values to these parameters.&#34;&#34;&#34;
         super(Morphological_Chan_Vese, self).__init__(paramlist)
         if not paramlist:
+<<<<<<< HEAD
             self.params[&#34;algorithm&#34;] = &#34;MCV&#34;
             self.params[&#34;iterations&#34;] = 10
             self.params[&#34;init_level_set_morph&#34;] = &#34;checkerboard&#34;
@@ -810,6 +1191,19 @@ class Morphological_Chan_Vese(segmentor):
         ]
         self.checkparamindex()
         
+=======
+            self.params[&#34;algorithm&#34;] = &#34;Morphological_Chan_Vese&#34;
+            self.params[&#34;alpha1&#34;] = 1
+            self.params[&#34;beta1&#34;] = 1
+            self.params[&#34;beta2&#34;] = 1
+            self.params[&#34;max_iter&#34;] = 10
+            self.params[&#34;n_segments&#34;] = 0
+            # self.params[&#34;tolerance&#34;] = 0.001 #TODO Removed, consider adding in later if need be.
+        self.paramindexes = [&#34;alpha1&#34;,  &#34;beta1&#34;,
+                             &#34;beta2&#34;, &#34;n_segments&#34;, &#34;max_iter&#34;]
+        self.set_params(paramlist)
+
+>>>>>>> Updating documentation strings
     def evaluate(self, img):
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
@@ -820,20 +1214,37 @@ class Morphological_Chan_Vese(segmentor):
         output -- resulting segmentation mask from algorithm.
 
         &#34;&#34;&#34;
-        if len(img.shape) == 3:
-            img = skimage.color.rgb2gray(img)
+
+        # TODO We may want to move this? We need a number 1-4 smoothing iterations
+        smoothing = int(self.params[&#34;alpha1&#34;]*4)
+
+        # TODO Not sure about the range of these. Previous was (10,20)
+        lambda1 = self.params[&#34;beta1&#34;]
+        lambda2 = self.params[&#34;beta2&#34;]
+        max_iter = self.params[&#34;max_iter&#34;]
+        level_set_shapes = [&#39;checkerboard&#39;, &#39;circle&#39;]
+        init_level_set = level_set_shapes[self.params[&#39;n_segments&#39;] % 2]
+
+        if(len(img.shape) &gt; 2):
+            if &#34;channel&#34; in self.params:
+                channel = self.params[&#39;channel&#39;]
+                img = img[:, :, channel]
+            else:
+                img = color.rgb2gray(img)
+
         output = skimage.segmentation.morphological_chan_vese(
             img,
-            iterations=self.params[&#34;iterations&#34;],
-            init_level_set=self.params[&#34;init_level_set_morph&#34;],
-            smoothing=self.params[&#34;smoothing&#34;],
-            lambda1=self.params[&#34;lambda&#34;][0],
-            lambda2=self.params[&#34;lambda&#34;][1],
+            iterations=max_iter,
+            init_level_set=init_level_set,
+            smoothing=smoothing,
+            lambda1=lambda1,
+            lambda2=lambda2,
         )
         return output
 
 
-algorithmspace[&#34;MCV&#34;] = Morphological_Chan_Vese
+segmentor.addsegmentor(&#39;Morphological_Chan_Vese&#39;, Morphological_Chan_Vese)
+
 
 class MorphGeodesicActiveContour(segmentor):
     &#34;&#34;&#34;Peform Morphological Geodesic Active Contour segmentation algorithm. Uses
@@ -855,6 +1266,13 @@ class MorphGeodesicActiveContour(segmentor):
     threshold -- Areas of image with a smaller value than the threshold are borders.
     balloon -- float, guides contour of low-information parts of image.
 
+    morphological_geodesic_active_contour
+    https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.morphological_geodesic_active_contour
+
+    Preprocessign step:
+    https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.inverse_gaussian_gradient
+
+
     &#34;&#34;&#34;
 
     # Abbrevieation for algorithm = AC
@@ -864,6 +1282,7 @@ class MorphGeodesicActiveContour(segmentor):
          Assign default values to these parameters.&#34;&#34;&#34;
         super(MorphGeodesicActiveContour, self).__init__(paramlist)
         if not paramlist:
+<<<<<<< HEAD
             self.params[&#34;algorithm&#34;] = &#34;AC&#34;
             self.params[&#34;alpha&#34;] = 0.2
             self.params[&#34;sigma&#34;] = 0.3
@@ -881,6 +1300,21 @@ class MorphGeodesicActiveContour(segmentor):
         ]
         self.checkparamindex()
         
+=======
+            self.params[&#34;algorithm&#34;] = &#34;MorphGeodesicActiveContour&#34;
+            self.params[&#34;alpha1&#34;] = 1
+            self.params[&#34;alpha2&#34;] = 1
+            self.params[&#34;beta1&#34;] = 0.2
+            self.params[&#34;beta2&#34;] = 0.3
+            self.params[&#34;beta2&#34;] = 1
+            self.params[&#34;max_iter&#34;] = 10
+            self.params[&#34;n_segments&#34;] = 0
+            # self.params[&#34;tolerance&#34;] = 0.001 #TODO Removed, consider adding in later if need be.
+        self.paramindexes = [&#34;alpha1&#34;,  &#34;alpha2&#34;,
+                             &#34;beta1&#34;, &#34;beta2&#34;, &#34;n_segments&#34;, &#34;max_iter&#34;]
+        self.set_params(paramlist)
+
+>>>>>>> Updating documentation strings
     def evaluate(self, img):
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
@@ -891,22 +1325,42 @@ class MorphGeodesicActiveContour(segmentor):
         output -- resulting segmentation mask from algorithm.
 
         &#34;&#34;&#34;
+
+        # TODO We may want to move this? We need a number 1-4 smoothing iterations
+        smoothing = int(self.params[&#34;alpha1&#34;]*4)
+        balloon = (self.params[&#34;alpha2&#34;]*100)-50
+        max_iter = self.params[&#34;max_iter&#34;]
+        level_set_shapes = [&#39;checkerboard&#39;, &#39;circle&#39;]
+        init_level_set = level_set_shapes[self.params[&#39;n_segments&#39;] % 2]
+
+        if(len(img.shape) &gt; 2):
+            if &#34;channel&#34; in self.params:
+                channel = self.params[&#39;channel&#39;]
+                img = img[:, :, channel]
+            else:
+                img = color.rgb2gray(img)
+
         # We run the inverse_gaussian_gradient to get the image to use
         gimage = skimage.segmentation.inverse_gaussian_gradient(
-            color.rgb2gray(img), self.params[&#34;alpha&#34;], self.params[&#34;sigma&#34;]
+            img, self.params[&#34;beta1&#34;], self.params[&#34;beta2&#34;]
         )
         # zeros = 0
         output = skimage.segmentation.morphological_geodesic_active_contour(
             gimage,
-            self.params[&#34;iterations&#34;],
-            self.params[&#34;init_level_set_morph&#34;],
-            smoothing=self.params[&#34;smoothing&#34;],
+            max_iter,
+            init_level_set,
+            smoothing,
             threshold=&#34;auto&#34;,
-            balloon=self.params[&#34;balloon&#34;],
+            balloon=balloon,
         )
         return output
 
-algorithmspace[&#34;AC&#34;] = MorphGeodesicActiveContour</code></pre>
+
+segmentor.addsegmentor(&#39;MorphGeodesicActiveContour&#39;,
+                       MorphGeodesicActiveContour)
+
+
+##########################</code></pre>
 </details>
 </section>
 <section>
@@ -914,6 +1368,7 @@ algorithmspace[&#34;AC&#34;] = MorphGeodesicActiveContour</code></pre>
 <section>
 </section>
 <section>
+<<<<<<< HEAD
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="see.Segmentors.algoFromParams"><code class="name flex">
@@ -1091,6 +1546,8 @@ mask &ndash; resulting image mask associated with the individual (if return_mask
 </details>
 </dd>
 </dl>
+=======
+>>>>>>> Updating documentation strings
 </section>
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
@@ -1144,6 +1601,8 @@ Assign default values to these parameters.</p></div>
     max_iter -- uint,  max number of iterations before algorithms stops
     dt -- float, Multiplication factor applied at the calculations step
 
+
+
     &#34;&#34;&#34;
 
     # Abbreviation for Algorithm = CV
@@ -1152,6 +1611,7 @@ Assign default values to these parameters.</p></div>
         &#34;&#34;&#34;Get parameters from parameter list that are used in segmentation algorithm.
          Assign default values to these parameters.&#34;&#34;&#34;
         super(Chan_Vese, self).__init__(paramlist)
+<<<<<<< HEAD
         if not paramlist:
             self.params[&#34;algorithm&#34;] = &#34;CV&#34;
             self.params[&#34;mu&#34;] = 2.0
@@ -1163,6 +1623,20 @@ Assign default values to these parameters.</p></div>
         self.paramindexes = [&#34;mu&#34;, &#34;lambda&#34;, &#34;iterations&#34;, &#34;dt&#34;, &#34;init_level_set_chan&#34;]
         self.checkparamindex()
         
+=======
+        self.params[&#34;algorithm&#34;] = &#34;Chan_Vese&#34;
+        self.params[&#34;alpha1&#34;] = 1
+        self.params[&#34;beta1&#34;] = 1
+        self.params[&#34;beta2&#34;] = 1
+        self.params[&#34;max_iter&#34;] = 10
+        self.params[&#34;alpha2&#34;] = 0.10
+        self.params[&#34;n_segments&#34;] = 0
+        # self.params[&#34;tolerance&#34;] = 0.001 #TODO Removed, consider adding in later if need be.
+        self.paramindexes = [&#34;alpha1&#34;, &#34;alpha2&#34;,
+                             &#34;beta1&#34;, &#34;beta2&#34;, &#34;n_segments&#34;, &#34;max_iter&#34;]
+        self.set_params(paramlist)
+
+>>>>>>> Updating documentation strings
     def evaluate(self, img):
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
@@ -1173,22 +1647,41 @@ Assign default values to these parameters.</p></div>
         output -- resulting segmentation mask from algorithm.
 
         &#34;&#34;&#34;
-        if len(img.shape) == 3:
-            img = skimage.color.rgb2gray(img)
+
+        # TODO I think this should be between zero and one.
+        mu = self.params[&#34;alpha1&#34;]*2
+        # TODO Not sure about the range of these. Previous was (10,20)
+        lambda1 = self.params[&#34;beta1&#34;]
+        lambda2 = self.params[&#34;beta2&#34;]
+        max_iter = self.params[&#34;max_iter&#34;]
+        dt = self.params[&#34;alpha2&#34;]
+
+        level_set_shapes = [&#39;checkerboard&#39;, &#39;disk&#39;, &#39;small disk&#39;]
+        init_level_set = level_set_shapes[self.params[&#39;n_segments&#39;] % 3]
+
+        if(len(img.shape) &gt; 2):
+            if &#34;channel&#34; in self.params:
+                channel = self.params[&#39;channel&#39;]
+                img = img[:, :, channel]
+            else:
+                img = color.rgb2gray(img)
+
         output = skimage.segmentation.chan_vese(
             img,
-            mu=self.params[&#34;mu&#34;],
-            lambda1=self.params[&#34;lambda&#34;][0],
-            lambda2=self.params[&#34;lambda&#34;][1],
-            tol=self.params[&#34;tolerance&#34;],
-            max_iter=self.params[&#34;iterations&#34;],
-            dt=self.params[&#34;dt&#34;],
+            mu=mu,
+            lambda1=lambda1,
+            lambda2=lambda2,
+            max_iter=max_iter,
+            dt=dt,
+            init_level_set=init_level_set
+
         )
         return output</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></li>
+<li><a title="see.base_classes.algorithm" href="base_classes.html#see.base_classes.algorithm">algorithm</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
@@ -1215,16 +1708,34 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
     output -- resulting segmentation mask from algorithm.
 
     &#34;&#34;&#34;
-    if len(img.shape) == 3:
-        img = skimage.color.rgb2gray(img)
+
+    # TODO I think this should be between zero and one.
+    mu = self.params[&#34;alpha1&#34;]*2
+    # TODO Not sure about the range of these. Previous was (10,20)
+    lambda1 = self.params[&#34;beta1&#34;]
+    lambda2 = self.params[&#34;beta2&#34;]
+    max_iter = self.params[&#34;max_iter&#34;]
+    dt = self.params[&#34;alpha2&#34;]
+
+    level_set_shapes = [&#39;checkerboard&#39;, &#39;disk&#39;, &#39;small disk&#39;]
+    init_level_set = level_set_shapes[self.params[&#39;n_segments&#39;] % 3]
+
+    if(len(img.shape) &gt; 2):
+        if &#34;channel&#34; in self.params:
+            channel = self.params[&#39;channel&#39;]
+            img = img[:, :, channel]
+        else:
+            img = color.rgb2gray(img)
+
     output = skimage.segmentation.chan_vese(
         img,
-        mu=self.params[&#34;mu&#34;],
-        lambda1=self.params[&#34;lambda&#34;][0],
-        lambda2=self.params[&#34;lambda&#34;][1],
-        tol=self.params[&#34;tolerance&#34;],
-        max_iter=self.params[&#34;iterations&#34;],
-        dt=self.params[&#34;dt&#34;],
+        mu=mu,
+        lambda1=lambda1,
+        lambda2=lambda2,
+        max_iter=max_iter,
+        dt=dt,
+        init_level_set=init_level_set
+
     )
     return output</code></pre>
 </details>
@@ -1234,8 +1745,15 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
 <ul class="hlist">
 <li><code><b><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></b></code>:
 <ul class="hlist">
+<<<<<<< HEAD
 <li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
+=======
+<li><code><a title="see.Segmentors.segmentor.checkparamindex" href="base_classes.html#see.base_classes.algorithm.checkparamindex">checkparamindex</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.mutateself" href="base_classes.html#see.base_classes.algorithm.mutateself">mutateself</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.pipe" href="base_classes.html#see.base_classes.algorithm.pipe">pipe</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.runAlgo" href="base_classes.html#see.base_classes.algorithm.runAlgo">runAlgo</a></code></li>
+>>>>>>> Updating documentation strings
 </ul>
 </li>
 </ul>
@@ -1245,11 +1763,27 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
 <span>(</span><span>paramlist=None)</span>
 </code></dt>
 <dd>
+<<<<<<< HEAD
 <div class="desc"><p>Peform Color Thresholding segmentation algorithm. Segments parts of the image
+=======
+<div class="desc"><p>ColorThreshold</p>
+<p>Peform Color Thresholding segmentation algorithm. Segments parts of the image
+>>>>>>> Updating documentation strings
 based on the numerical values for the respective channel.</p>
 <p>Parameters:
-my_mx &ndash; maximum thresholding value
-my_mn &ndash; minimum thresholding value</p>
+mulitchannel - (multichannel) - bool, Whether the image is 2D or 3D
+colorspace - (colorspace) Select the colorspace [‘RGB’, ‘HSV’, ‘RGB CIE’, ‘XYZ’, ‘YUV’, ‘YIQ’, ‘YPbPr’, ‘YCbCr’, ‘YDbDr’]
+channel - (channel) color chanel (0:R/H/L 1:G/S/A, 2:B/V/B)
+ch0_mn - (alpha1) - minimum thresholding value for channel 0
+ch0_mx - (alpha2) - maximum thresholding value for channel 0
+ch1_mn - (beta1) - minimum thresholding value for channel 1
+ch1_mx - (beta2) - maximum thresholding value for channel 1
+ch2_mn - (gamma1) - minimum thresholding value for channel 2
+ch2_mx - (gamma2) - maximum thresholding value for channel 2</p>
+<p>Note: a colorspace of 'HSV' and a channel of 2 is a grayscale image. </p>
+<p>Typically any pixel between my_mn and my_mx are true. Other pixels are false.</p>
+<p>if my_mn &gt; my_mx then the logic flips and anything above my_mn and below my_mx are true.
+The pixels between the valuse are false</p>
 <p>Get parameters from parameter list that are used in segmentation algorithm.
 Assign default values to these parameters.</p></div>
 <details class="source">
@@ -1257,18 +1791,34 @@ Assign default values to these parameters.</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class ColorThreshold(segmentor):
-    &#34;&#34;&#34;Peform Color Thresholding segmentation algorithm. Segments parts of the image
-     based on the numerical values for the respective channel.
+    &#34;&#34;&#34;ColorThreshold
+
+    Peform Color Thresholding segmentation algorithm. Segments parts of the image
+    based on the numerical values for the respective channel.
 
     Parameters:
-    my_mx -- maximum thresholding value
-    my_mn -- minimum thresholding value
+    mulitchannel - (multichannel) - bool, Whether the image is 2D or 3D
+    colorspace - (colorspace) Select the colorspace [‘RGB’, ‘HSV’, ‘RGB CIE’, ‘XYZ’, ‘YUV’, ‘YIQ’, ‘YPbPr’, ‘YCbCr’, ‘YDbDr’]
+    channel - (channel) color chanel (0:R/H/L 1:G/S/A, 2:B/V/B)
+    ch0_mn - (alpha1) - minimum thresholding value for channel 0
+    ch0_mx - (alpha2) - maximum thresholding value for channel 0
+    ch1_mn - (beta1) - minimum thresholding value for channel 1
+    ch1_mx - (beta2) - maximum thresholding value for channel 1
+    ch2_mn - (gamma1) - minimum thresholding value for channel 2
+    ch2_mx - (gamma2) - maximum thresholding value for channel 2
 
+    Note: a colorspace of &#39;HSV&#39; and a channel of 2 is a grayscale image. 
+
+    Typically any pixel between my_mn and my_mx are true. Other pixels are false.
+
+    if my_mn &gt; my_mx then the logic flips and anything above my_mn and below my_mx are true. 
+    The pixels between the valuse are false
     &#34;&#34;&#34;
 
     def __init__(self, paramlist=None):
         &#34;&#34;&#34;Get parameters from parameter list that are used in segmentation algorithm.
          Assign default values to these parameters.&#34;&#34;&#34;
+<<<<<<< HEAD
         super(ColorThreshold, self).__init__(paramlist)
         if not paramlist:
             self.params[&#34;algorithm&#34;] = &#34;CT&#34;
@@ -1280,6 +1830,24 @@ Assign default values to these parameters.</p></div>
         self.checkparamindex()
 
     def evaluate(self, img): #XX
+=======
+        self.params = seg_params()
+
+        self.params[&#34;algorithm&#34;] = &#34;ColorThreshold&#34;
+        self.params[&#34;alpha1&#34;] = 0.4
+        self.params[&#34;alpha2&#34;] = 0.6
+        self.params[&#34;beta1&#34;] = 0.4
+        self.params[&#34;beta2&#34;] = 0.6
+        self.params[&#34;gamma1&#34;] = 0.4
+        self.params[&#34;gamma2&#34;] = 0.6
+        self.paramindexes = [&#34;alpha1&#34;, &#34;alpha2&#34;,
+                             &#34;beta1&#34;, &#34;beta2&#34;,
+                             &#34;gamma1&#34;, &#34;gamma2&#34;]
+        self.set_params(paramlist)
+
+
+    def evaluate(self, img):  # XX
+>>>>>>> Updating documentation strings
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
         Keyword arguments:
@@ -1289,6 +1857,7 @@ Assign default values to these parameters.</p></div>
         output -- resulting segmentation mask from algorithm.
 
         &#34;&#34;&#34;
+<<<<<<< HEAD
         channel_num = self.params[&#34;Channel&#34;]
         if len(img.shape) &gt; 2:
             num_channels = img.shape[2]
@@ -1315,11 +1884,50 @@ Assign default values to these parameters.</p></div>
             output[channel &gt; my_mn] = 1
             output[channel &lt; my_mx] = 1
 
+=======
+        minlist = [&#34;alpha1&#34;, &#34;beta1&#34;, &#34;gamma1&#34;]
+        maxlist = [&#34;alpha2&#34;, &#34;beta2&#34;, &#34;gamma2&#34;]
+
+        output = None
+
+        if (len(img.shape) &gt; 2):
+            output = np.ones([img.shape[0], img.shape[1]])
+            for dimidx in range(3):
+                pscale = np.max(img[:, :, dimidx])
+                my_mn = self.params[minlist[dimidx]] * pscale
+                my_mx = self.params[maxlist[dimidx]] * pscale
+
+                if my_mn &lt; my_mx:
+                    output[img[:, :, dimidx] &lt; my_mn] = 0
+                    output[img[:, :, dimidx] &gt; my_mx] = 0
+                else:
+                    flag1 = img[:, :, dimidx] &gt; my_mn
+                    flag2 = img[:, :, dimidx] &lt; my_mx
+                    output[np.logical_and(flag1, flag2)] = 0
+        else:
+            pscale = np.max(img)
+            if &#34;channel&#34; in self.params:
+                chidx = self.params[&#34;channel&#34;]
+            else:
+                chidx = 0
+            my_mx = self.params[maxlist[chidx]] * pscale
+            my_mn = self.params[minlist[chidx]] * pscale
+
+            if my_mn &lt; my_mx:
+                output = np.ones(img.shape)
+                output[img &lt; my_mn] = 0
+                output[img &gt; my_mx] = 0
+            else:
+                output = np.zeros(img.shape)
+                output[img &gt; my_mn] = 1
+                output[img &lt; my_mx] = 1
+>>>>>>> Updating documentation strings
         return output</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></li>
+<li><a title="see.base_classes.algorithm" href="base_classes.html#see.base_classes.algorithm">algorithm</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
@@ -1336,7 +1944,7 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def evaluate(self, img): #XX
+<pre><code class="python">def evaluate(self, img):  # XX
     &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
     Keyword arguments:
@@ -1346,6 +1954,7 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
     output -- resulting segmentation mask from algorithm.
 
     &#34;&#34;&#34;
+<<<<<<< HEAD
     channel_num = self.params[&#34;Channel&#34;]
     if len(img.shape) &gt; 2:
         num_channels = img.shape[2]
@@ -1371,7 +1980,44 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
         output = np.zeros(channel.shape)
         output[channel &gt; my_mn] = 1
         output[channel &lt; my_mx] = 1
+=======
+    minlist = [&#34;alpha1&#34;, &#34;beta1&#34;, &#34;gamma1&#34;]
+    maxlist = [&#34;alpha2&#34;, &#34;beta2&#34;, &#34;gamma2&#34;]
+>>>>>>> Updating documentation strings
 
+    output = None
+
+    if (len(img.shape) &gt; 2):
+        output = np.ones([img.shape[0], img.shape[1]])
+        for dimidx in range(3):
+            pscale = np.max(img[:, :, dimidx])
+            my_mn = self.params[minlist[dimidx]] * pscale
+            my_mx = self.params[maxlist[dimidx]] * pscale
+
+            if my_mn &lt; my_mx:
+                output[img[:, :, dimidx] &lt; my_mn] = 0
+                output[img[:, :, dimidx] &gt; my_mx] = 0
+            else:
+                flag1 = img[:, :, dimidx] &gt; my_mn
+                flag2 = img[:, :, dimidx] &lt; my_mx
+                output[np.logical_and(flag1, flag2)] = 0
+    else:
+        pscale = np.max(img)
+        if &#34;channel&#34; in self.params:
+            chidx = self.params[&#34;channel&#34;]
+        else:
+            chidx = 0
+        my_mx = self.params[maxlist[chidx]] * pscale
+        my_mn = self.params[minlist[chidx]] * pscale
+
+        if my_mn &lt; my_mx:
+            output = np.ones(img.shape)
+            output[img &lt; my_mn] = 0
+            output[img &gt; my_mx] = 0
+        else:
+            output = np.zeros(img.shape)
+            output[img &gt; my_mn] = 1
+            output[img &lt; my_mx] = 1
     return output</code></pre>
 </details>
 </dd>
@@ -1380,8 +2026,15 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
 <ul class="hlist">
 <li><code><b><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></b></code>:
 <ul class="hlist">
+<<<<<<< HEAD
 <li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
+=======
+<li><code><a title="see.Segmentors.segmentor.checkparamindex" href="base_classes.html#see.base_classes.algorithm.checkparamindex">checkparamindex</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.mutateself" href="base_classes.html#see.base_classes.algorithm.mutateself">mutateself</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.pipe" href="base_classes.html#see.base_classes.algorithm.pipe">pipe</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.runAlgo" href="base_classes.html#see.base_classes.algorithm.runAlgo">runAlgo</a></code></li>
+>>>>>>> Updating documentation strings
 </ul>
 </li>
 </ul>
@@ -1391,35 +2044,55 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
 <span>(</span><span>paramlist=None)</span>
 </code></dt>
 <dd>
+<<<<<<< HEAD
 <div class="desc"><p>Get parameters from parameter list that are used in segmentation algorithm.
+=======
+<div class="desc"><p>Perform Felzenszwalb segmentation algorithm. The felzenszwalb algorithms computes a
+graph based on the segmentation. Produces an oversegmentation of the multichannel using
+min-span tree. Returns an integer mask indicating the segment labels.</p>
+<p>Note: a colorspace of 'HSV' and a channel of 2 is a grayscale image. </p>
+<p><a href="https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.felzenszwalb">https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.felzenszwalb</a></p>
+<p>Parameters:
+colorspace - (colorspace) Select the colorspace (0:RGB, 1:HSV, 2:LAB)
+channel - (channel) color chanel (0:R/H/L 1:G/S/A, 2:B/V/B)
+scale - (alpha2<em>1000) - float, higher meanse larger clusters
+sigma - (alpha1) - float, std. dev of Gaussian kernel for preprocessing
+min_size - int(beta1</em>100) - int, minimum component size (in pixels). For postprocessing</p>
+<p>Get parameters from parameter list that are used in segmentation algorithm.
+>>>>>>> Updating documentation strings
 Assign default values to these parameters.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Felzenszwalb(segmentor):
-    &#34;&#34;&#34;Perform Felzenszwalb segmentation algorithm. ONLY WORKS FOR RGB. The felzenszwalb
-     algorithms computes a graph based on the segmentation. Produces an oversegmentation
-     of the multichannel using min-span tree. Returns an integer mask indicating the segment labels.
+    &#34;&#34;&#34;Perform Felzenszwalb segmentation algorithm. The felzenszwalb algorithms computes a 
+    graph based on the segmentation. Produces an oversegmentation of the multichannel using 
+    min-span tree. Returns an integer mask indicating the segment labels.
+
+    Note: a colorspace of &#39;HSV&#39; and a channel of 2 is a grayscale image. 
+
+    https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.felzenszwalb
 
     Parameters:
-    scale -- float, higher meanse larger clusters
-    sigma -- float, std. dev of Gaussian kernel for preprocessing
-    min_size -- int, minimum component size. For postprocessing
-    mulitchannel -- bool, Whether the image is 2D or 3D
-
+    colorspace - (colorspace) Select the colorspace (0:RGB, 1:HSV, 2:LAB)
+    channel - (channel) color chanel (0:R/H/L 1:G/S/A, 2:B/V/B)
+    scale - (alpha2*1000) - float, higher meanse larger clusters
+    sigma - (alpha1) - float, std. dev of Gaussian kernel for preprocessing
+    min_size - int(beta1*100) - int, minimum component size (in pixels). For postprocessing
     &#34;&#34;&#34;
 
-    def __doc__(self):
-        &#34;&#34;&#34;Return help string for function.&#34;&#34;&#34;
-        myhelp = &#34;Wrapper function for the scikit-image Felzenszwalb segmentor:&#34;
-        myhelp += f&#34; xx {skimage.segmentation.random_walker.__doc__}&#34;
-        return myhelp
+#     def __doc__(self):
+#         &#34;&#34;&#34;Return help string for function.&#34;&#34;&#34;
+#         myhelp = &#34;Wrapper function for the scikit-image Felzenszwalb segmentor:&#34;
+#         myhelp += f&#34; xx {skimage.segmentation.random_walker.__doc__}&#34;
+#         return myhelp
 
     def __init__(self, paramlist=None):
         &#34;&#34;&#34;Get parameters from parameter list that are used in segmentation algorithm.
          Assign default values to these parameters.&#34;&#34;&#34;
         super(Felzenszwalb, self).__init__(paramlist)
+<<<<<<< HEAD
         if not paramlist:
             self.params[&#34;algorithm&#34;] = &#34;FB&#34;
             self.params[&#34;scale&#34;] = 984
@@ -1428,6 +2101,15 @@ Assign default values to these parameters.</p></div>
         self.paramindexes = [&#34;scale&#34;, &#34;sigma&#34;, &#34;min_size&#34;]
         self.checkparamindex()
         
+=======
+        self.params[&#34;algorithm&#34;] = &#34;Felzenszwalb&#34;
+        self.params[&#34;alpha2&#34;] = 0.984
+        self.params[&#34;alpha1&#34;] = 0.09
+        self.params[&#34;beta1&#34;] = 0.92
+        self.paramindexes = [&#34;alpha1&#34;, &#34;alpha2&#34;, &#34;beta1&#34;]
+        self.set_params(paramlist)
+                
+>>>>>>> Updating documentation strings
     def evaluate(self, img):
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
@@ -1438,21 +2120,34 @@ Assign default values to these parameters.</p></div>
         output -- resulting segmentation mask from algorithm.
 
         &#34;&#34;&#34;
-        multichannel = False
-        if len(img.shape) &gt; 2:
-            multichannel = True
-        output = skimage.segmentation.felzenszwalb(
-            img,
-            self.params[&#34;scale&#34;],
-            self.params[&#34;sigma&#34;],
-            self.params[&#34;min_size&#34;],
-            multichannel=multichannel,
-        )
+
+        scale = self.params[&#34;alpha2&#34;]*1000
+        sigma = self.params[&#34;alpha1&#34;]
+        min_size = int(self.params[&#34;beta1&#34;]*100)
+
+        if (len(img.shape) &gt; 2):
+            output = skimage.segmentation.felzenszwalb(
+                img,
+                scale,
+                sigma,
+                min_size,
+                multichannel=True
+            )
+        else:
+            output = skimage.segmentation.felzenszwalb(
+                img,
+                scale,
+                sigma,
+                min_size,
+                multichannel=False
+            )
+
         return output</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></li>
+<li><a title="see.base_classes.algorithm" href="base_classes.html#see.base_classes.algorithm">algorithm</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
@@ -1479,16 +2174,28 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
     output -- resulting segmentation mask from algorithm.
 
     &#34;&#34;&#34;
-    multichannel = False
-    if len(img.shape) &gt; 2:
-        multichannel = True
-    output = skimage.segmentation.felzenszwalb(
-        img,
-        self.params[&#34;scale&#34;],
-        self.params[&#34;sigma&#34;],
-        self.params[&#34;min_size&#34;],
-        multichannel=multichannel,
-    )
+
+    scale = self.params[&#34;alpha2&#34;]*1000
+    sigma = self.params[&#34;alpha1&#34;]
+    min_size = int(self.params[&#34;beta1&#34;]*100)
+
+    if (len(img.shape) &gt; 2):
+        output = skimage.segmentation.felzenszwalb(
+            img,
+            scale,
+            sigma,
+            min_size,
+            multichannel=True
+        )
+    else:
+        output = skimage.segmentation.felzenszwalb(
+            img,
+            scale,
+            sigma,
+            min_size,
+            multichannel=False
+        )
+
     return output</code></pre>
 </details>
 </dd>
@@ -1497,8 +2204,15 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
 <ul class="hlist">
 <li><code><b><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></b></code>:
 <ul class="hlist">
+<<<<<<< HEAD
 <li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
+=======
+<li><code><a title="see.Segmentors.segmentor.checkparamindex" href="base_classes.html#see.base_classes.algorithm.checkparamindex">checkparamindex</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.mutateself" href="base_classes.html#see.base_classes.algorithm.mutateself">mutateself</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.pipe" href="base_classes.html#see.base_classes.algorithm.pipe">pipe</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.runAlgo" href="base_classes.html#see.base_classes.algorithm.runAlgo">runAlgo</a></code></li>
+>>>>>>> Updating documentation strings
 </ul>
 </li>
 </ul>
@@ -1525,6 +2239,10 @@ smoothing &ndash; uint, number of times the smoothing operator is applied
 per iteration. Usually 1-4, larger values have smoother segmentation.
 threshold &ndash; Areas of image with a smaller value than the threshold are borders.
 balloon &ndash; float, guides contour of low-information parts of image.</p>
+<p>morphological_geodesic_active_contour
+<a href="https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.morphological_geodesic_active_contour">https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.morphological_geodesic_active_contour</a></p>
+<p>Preprocessign step:
+<a href="https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.inverse_gaussian_gradient">https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.inverse_gaussian_gradient</a></p>
 <p>Get parameters from parameter list that are used in segmentation algorithm.
 Assign default values to these parameters.</p></div>
 <details class="source">
@@ -1551,6 +2269,13 @@ Assign default values to these parameters.</p></div>
     threshold -- Areas of image with a smaller value than the threshold are borders.
     balloon -- float, guides contour of low-information parts of image.
 
+    morphological_geodesic_active_contour
+    https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.morphological_geodesic_active_contour
+
+    Preprocessign step:
+    https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.inverse_gaussian_gradient
+
+
     &#34;&#34;&#34;
 
     # Abbrevieation for algorithm = AC
@@ -1560,6 +2285,7 @@ Assign default values to these parameters.</p></div>
          Assign default values to these parameters.&#34;&#34;&#34;
         super(MorphGeodesicActiveContour, self).__init__(paramlist)
         if not paramlist:
+<<<<<<< HEAD
             self.params[&#34;algorithm&#34;] = &#34;AC&#34;
             self.params[&#34;alpha&#34;] = 0.2
             self.params[&#34;sigma&#34;] = 0.3
@@ -1577,6 +2303,21 @@ Assign default values to these parameters.</p></div>
         ]
         self.checkparamindex()
         
+=======
+            self.params[&#34;algorithm&#34;] = &#34;MorphGeodesicActiveContour&#34;
+            self.params[&#34;alpha1&#34;] = 1
+            self.params[&#34;alpha2&#34;] = 1
+            self.params[&#34;beta1&#34;] = 0.2
+            self.params[&#34;beta2&#34;] = 0.3
+            self.params[&#34;beta2&#34;] = 1
+            self.params[&#34;max_iter&#34;] = 10
+            self.params[&#34;n_segments&#34;] = 0
+            # self.params[&#34;tolerance&#34;] = 0.001 #TODO Removed, consider adding in later if need be.
+        self.paramindexes = [&#34;alpha1&#34;,  &#34;alpha2&#34;,
+                             &#34;beta1&#34;, &#34;beta2&#34;, &#34;n_segments&#34;, &#34;max_iter&#34;]
+        self.set_params(paramlist)
+
+>>>>>>> Updating documentation strings
     def evaluate(self, img):
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
@@ -1587,24 +2328,40 @@ Assign default values to these parameters.</p></div>
         output -- resulting segmentation mask from algorithm.
 
         &#34;&#34;&#34;
+
+        # TODO We may want to move this? We need a number 1-4 smoothing iterations
+        smoothing = int(self.params[&#34;alpha1&#34;]*4)
+        balloon = (self.params[&#34;alpha2&#34;]*100)-50
+        max_iter = self.params[&#34;max_iter&#34;]
+        level_set_shapes = [&#39;checkerboard&#39;, &#39;circle&#39;]
+        init_level_set = level_set_shapes[self.params[&#39;n_segments&#39;] % 2]
+
+        if(len(img.shape) &gt; 2):
+            if &#34;channel&#34; in self.params:
+                channel = self.params[&#39;channel&#39;]
+                img = img[:, :, channel]
+            else:
+                img = color.rgb2gray(img)
+
         # We run the inverse_gaussian_gradient to get the image to use
         gimage = skimage.segmentation.inverse_gaussian_gradient(
-            color.rgb2gray(img), self.params[&#34;alpha&#34;], self.params[&#34;sigma&#34;]
+            img, self.params[&#34;beta1&#34;], self.params[&#34;beta2&#34;]
         )
         # zeros = 0
         output = skimage.segmentation.morphological_geodesic_active_contour(
             gimage,
-            self.params[&#34;iterations&#34;],
-            self.params[&#34;init_level_set_morph&#34;],
-            smoothing=self.params[&#34;smoothing&#34;],
+            max_iter,
+            init_level_set,
+            smoothing,
             threshold=&#34;auto&#34;,
-            balloon=self.params[&#34;balloon&#34;],
+            balloon=balloon,
         )
         return output</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></li>
+<li><a title="see.base_classes.algorithm" href="base_classes.html#see.base_classes.algorithm">algorithm</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
@@ -1631,18 +2388,33 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
     output -- resulting segmentation mask from algorithm.
 
     &#34;&#34;&#34;
+
+    # TODO We may want to move this? We need a number 1-4 smoothing iterations
+    smoothing = int(self.params[&#34;alpha1&#34;]*4)
+    balloon = (self.params[&#34;alpha2&#34;]*100)-50
+    max_iter = self.params[&#34;max_iter&#34;]
+    level_set_shapes = [&#39;checkerboard&#39;, &#39;circle&#39;]
+    init_level_set = level_set_shapes[self.params[&#39;n_segments&#39;] % 2]
+
+    if(len(img.shape) &gt; 2):
+        if &#34;channel&#34; in self.params:
+            channel = self.params[&#39;channel&#39;]
+            img = img[:, :, channel]
+        else:
+            img = color.rgb2gray(img)
+
     # We run the inverse_gaussian_gradient to get the image to use
     gimage = skimage.segmentation.inverse_gaussian_gradient(
-        color.rgb2gray(img), self.params[&#34;alpha&#34;], self.params[&#34;sigma&#34;]
+        img, self.params[&#34;beta1&#34;], self.params[&#34;beta2&#34;]
     )
     # zeros = 0
     output = skimage.segmentation.morphological_geodesic_active_contour(
         gimage,
-        self.params[&#34;iterations&#34;],
-        self.params[&#34;init_level_set_morph&#34;],
-        smoothing=self.params[&#34;smoothing&#34;],
+        max_iter,
+        init_level_set,
+        smoothing,
         threshold=&#34;auto&#34;,
-        balloon=self.params[&#34;balloon&#34;],
+        balloon=balloon,
     )
     return output</code></pre>
 </details>
@@ -1652,8 +2424,15 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
 <ul class="hlist">
 <li><code><b><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></b></code>:
 <ul class="hlist">
+<<<<<<< HEAD
 <li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
+=======
+<li><code><a title="see.Segmentors.segmentor.checkparamindex" href="base_classes.html#see.base_classes.algorithm.checkparamindex">checkparamindex</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.mutateself" href="base_classes.html#see.base_classes.algorithm.mutateself">mutateself</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.pipe" href="base_classes.html#see.base_classes.algorithm.pipe">pipe</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.runAlgo" href="base_classes.html#see.base_classes.algorithm.runAlgo">runAlgo</a></code></li>
+>>>>>>> Updating documentation strings
 </ul>
 </li>
 </ul>
@@ -1681,6 +2460,7 @@ lambda1 &ndash; Weight param for outer region. If larger than lambda2,
 outer region will give larger range of values than inner value.
 lambda2 &ndash; Weight param for inner region. If larger thant lambda1,
 inner region will have a larger range of values than outer region.</p>
+<p><a href="https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.morphological_chan_vese">https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.morphological_chan_vese</a></p>
 <p>Get parameters from parameter list that are used in segmentation algorithm.
 Assign default values to these parameters.</p></div>
 <details class="source">
@@ -1708,6 +2488,8 @@ Assign default values to these parameters.</p></div>
     lambda2 -- Weight param for inner region. If larger thant lambda1,
         inner region will have a larger range of values than outer region.
 
+    https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.morphological_chan_vese
+
     &#34;&#34;&#34;
 
     # Abbreviation for algorithm = MCV
@@ -1717,6 +2499,7 @@ Assign default values to these parameters.</p></div>
          Assign default values to these parameters.&#34;&#34;&#34;
         super(Morphological_Chan_Vese, self).__init__(paramlist)
         if not paramlist:
+<<<<<<< HEAD
             self.params[&#34;algorithm&#34;] = &#34;MCV&#34;
             self.params[&#34;iterations&#34;] = 10
             self.params[&#34;init_level_set_morph&#34;] = &#34;checkerboard&#34;
@@ -1730,6 +2513,19 @@ Assign default values to these parameters.</p></div>
         ]
         self.checkparamindex()
         
+=======
+            self.params[&#34;algorithm&#34;] = &#34;Morphological_Chan_Vese&#34;
+            self.params[&#34;alpha1&#34;] = 1
+            self.params[&#34;beta1&#34;] = 1
+            self.params[&#34;beta2&#34;] = 1
+            self.params[&#34;max_iter&#34;] = 10
+            self.params[&#34;n_segments&#34;] = 0
+            # self.params[&#34;tolerance&#34;] = 0.001 #TODO Removed, consider adding in later if need be.
+        self.paramindexes = [&#34;alpha1&#34;,  &#34;beta1&#34;,
+                             &#34;beta2&#34;, &#34;n_segments&#34;, &#34;max_iter&#34;]
+        self.set_params(paramlist)
+
+>>>>>>> Updating documentation strings
     def evaluate(self, img):
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
@@ -1740,21 +2536,38 @@ Assign default values to these parameters.</p></div>
         output -- resulting segmentation mask from algorithm.
 
         &#34;&#34;&#34;
-        if len(img.shape) == 3:
-            img = skimage.color.rgb2gray(img)
+
+        # TODO We may want to move this? We need a number 1-4 smoothing iterations
+        smoothing = int(self.params[&#34;alpha1&#34;]*4)
+
+        # TODO Not sure about the range of these. Previous was (10,20)
+        lambda1 = self.params[&#34;beta1&#34;]
+        lambda2 = self.params[&#34;beta2&#34;]
+        max_iter = self.params[&#34;max_iter&#34;]
+        level_set_shapes = [&#39;checkerboard&#39;, &#39;circle&#39;]
+        init_level_set = level_set_shapes[self.params[&#39;n_segments&#39;] % 2]
+
+        if(len(img.shape) &gt; 2):
+            if &#34;channel&#34; in self.params:
+                channel = self.params[&#39;channel&#39;]
+                img = img[:, :, channel]
+            else:
+                img = color.rgb2gray(img)
+
         output = skimage.segmentation.morphological_chan_vese(
             img,
-            iterations=self.params[&#34;iterations&#34;],
-            init_level_set=self.params[&#34;init_level_set_morph&#34;],
-            smoothing=self.params[&#34;smoothing&#34;],
-            lambda1=self.params[&#34;lambda&#34;][0],
-            lambda2=self.params[&#34;lambda&#34;][1],
+            iterations=max_iter,
+            init_level_set=init_level_set,
+            smoothing=smoothing,
+            lambda1=lambda1,
+            lambda2=lambda2,
         )
         return output</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></li>
+<li><a title="see.base_classes.algorithm" href="base_classes.html#see.base_classes.algorithm">algorithm</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
@@ -1781,15 +2594,31 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
     output -- resulting segmentation mask from algorithm.
 
     &#34;&#34;&#34;
-    if len(img.shape) == 3:
-        img = skimage.color.rgb2gray(img)
+
+    # TODO We may want to move this? We need a number 1-4 smoothing iterations
+    smoothing = int(self.params[&#34;alpha1&#34;]*4)
+
+    # TODO Not sure about the range of these. Previous was (10,20)
+    lambda1 = self.params[&#34;beta1&#34;]
+    lambda2 = self.params[&#34;beta2&#34;]
+    max_iter = self.params[&#34;max_iter&#34;]
+    level_set_shapes = [&#39;checkerboard&#39;, &#39;circle&#39;]
+    init_level_set = level_set_shapes[self.params[&#39;n_segments&#39;] % 2]
+
+    if(len(img.shape) &gt; 2):
+        if &#34;channel&#34; in self.params:
+            channel = self.params[&#39;channel&#39;]
+            img = img[:, :, channel]
+        else:
+            img = color.rgb2gray(img)
+
     output = skimage.segmentation.morphological_chan_vese(
         img,
-        iterations=self.params[&#34;iterations&#34;],
-        init_level_set=self.params[&#34;init_level_set_morph&#34;],
-        smoothing=self.params[&#34;smoothing&#34;],
-        lambda1=self.params[&#34;lambda&#34;][0],
-        lambda2=self.params[&#34;lambda&#34;][1],
+        iterations=max_iter,
+        init_level_set=init_level_set,
+        smoothing=smoothing,
+        lambda1=lambda1,
+        lambda2=lambda2,
     )
     return output</code></pre>
 </details>
@@ -1799,8 +2628,15 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
 <ul class="hlist">
 <li><code><b><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></b></code>:
 <ul class="hlist">
+<<<<<<< HEAD
 <li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
+=======
+<li><code><a title="see.Segmentors.segmentor.checkparamindex" href="base_classes.html#see.base_classes.algorithm.checkparamindex">checkparamindex</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.mutateself" href="base_classes.html#see.base_classes.algorithm.mutateself">mutateself</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.pipe" href="base_classes.html#see.base_classes.algorithm.pipe">pipe</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.runAlgo" href="base_classes.html#see.base_classes.algorithm.runAlgo">runAlgo</a></code></li>
+>>>>>>> Updating documentation strings
 </ul>
 </li>
 </ul>
@@ -1822,6 +2658,7 @@ max_dist &ndash; float, Cut-off point for data distances. Higher means fewer clu
 sigma &ndash; float, Width of Guassian smoothing as preprocessing.
 Zero means no smoothing
 random_seed &ndash; int, Random seed used for breacking ties.</p>
+<p><a href="https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.quickshift">https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.quickshift</a></p>
 <p>Get parameters from parameter list that are used in segmentation algorithm.
 Assign default values to these parameters.</p></div>
 <details class="source">
@@ -1843,12 +2680,15 @@ Assign default values to these parameters.</p></div>
         Zero means no smoothing
     random_seed -- int, Random seed used for breacking ties.
 
+    https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.quickshift
+
     &#34;&#34;&#34;
 
     def __init__(self, paramlist=None):
         &#34;&#34;&#34;Get parameters from parameter list that are used in segmentation algorithm.
          Assign default values to these parameters.&#34;&#34;&#34;
         super(QuickShift, self).__init__(paramlist)
+<<<<<<< HEAD
         if not paramlist:
             self.params[&#34;algorithm&#34;] = &#34;QS&#34;
             self.params[&#34;kernel_size&#34;] = 5
@@ -1859,6 +2699,15 @@ Assign default values to these parameters.</p></div>
         self.paramindexes = [&#34;kernel_size&#34;, &#34;max_dist&#34;, &#34;sigma&#34;, &#34;Channel&#34;, &#34;ratio&#34;]
         self.checkparamindex()
         
+=======
+        self.params[&#34;algorithm&#34;] = &#34;QuickShift&#34;
+        self.params[&#34;alpha1&#34;] = 0.5
+        self.params[&#34;beta1&#34;] = 0.5
+        self.params[&#34;beta2&#34;] = 0.5
+        self.paramindexes = [&#34;alpha1&#34;, &#34;beta1&#34;, &#34;beta2&#34;]
+        self.set_params(paramlist)
+
+>>>>>>> Updating documentation strings
     def evaluate(self, img):
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
@@ -1869,19 +2718,35 @@ Assign default values to these parameters.</p></div>
         output -- resulting segmentation mask from algorithm.
 
         &#34;&#34;&#34;
+
+        mindim = min(img.shape)
+
+        ratio = self.params[&#34;alpha1&#34;]
+        kernel_size = mindim/10*self.params[&#34;beta1&#34;]+1
+        max_dist = mindim*self.params[&#34;beta2&#34;]
         output = skimage.segmentation.quickshift(
+<<<<<<< HEAD
             color.gray2rgb(img),
             ratio=self.params[&#34;ratio&#34;],
             kernel_size=self.params[&#34;kernel_size&#34;],
             max_dist=self.params[&#34;max_dist&#34;],
             sigma=self.params[&#34;sigma&#34;],
             random_seed=self.params[&#34;Channel&#34;],
+=======
+            img,
+            ratio=ratio,
+            kernel_size=kernel_size,
+            max_dist=max_dist,
+            sigma=0,  # TODO this should be handeled in the preprocessing step
+            random_seed=1,
+>>>>>>> Updating documentation strings
         )
         return output</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></li>
+<li><a title="see.base_classes.algorithm" href="base_classes.html#see.base_classes.algorithm">algorithm</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
@@ -1908,13 +2773,28 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
     output -- resulting segmentation mask from algorithm.
 
     &#34;&#34;&#34;
+
+    mindim = min(img.shape)
+
+    ratio = self.params[&#34;alpha1&#34;]
+    kernel_size = mindim/10*self.params[&#34;beta1&#34;]+1
+    max_dist = mindim*self.params[&#34;beta2&#34;]
     output = skimage.segmentation.quickshift(
+<<<<<<< HEAD
         color.gray2rgb(img),
         ratio=self.params[&#34;ratio&#34;],
         kernel_size=self.params[&#34;kernel_size&#34;],
         max_dist=self.params[&#34;max_dist&#34;],
         sigma=self.params[&#34;sigma&#34;],
         random_seed=self.params[&#34;Channel&#34;],
+=======
+        img,
+        ratio=ratio,
+        kernel_size=kernel_size,
+        max_dist=max_dist,
+        sigma=0,  # TODO this should be handeled in the preprocessing step
+        random_seed=1,
+>>>>>>> Updating documentation strings
     )
     return output</code></pre>
 </details>
@@ -1924,8 +2804,15 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
 <ul class="hlist">
 <li><code><b><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></b></code>:
 <ul class="hlist">
+<<<<<<< HEAD
 <li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
+=======
+<li><code><a title="see.Segmentors.segmentor.checkparamindex" href="base_classes.html#see.base_classes.algorithm.checkparamindex">checkparamindex</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.mutateself" href="base_classes.html#see.base_classes.algorithm.mutateself">mutateself</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.pipe" href="base_classes.html#see.base_classes.algorithm.pipe">pipe</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.runAlgo" href="base_classes.html#see.base_classes.algorithm.runAlgo">runAlgo</a></code></li>
+>>>>>>> Updating documentation strings
 </ul>
 </li>
 </ul>
@@ -1952,6 +2839,9 @@ spacing &ndash; (3,) shape float array. Voxel spacing along each image
 dimension. Defalt is uniform spacing
 multichannel &ndash; bool,
 multichannel (True) vs grayscale (False)</p>
+<p>enforce_connectivity</p>
+<p><a href="https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.slic">https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.slic</a></p>
+<p><a href="https://www.pyimagesearch.com/2014/07/28/a-slic-superpixel-tutorial-using-python/">https://www.pyimagesearch.com/2014/07/28/a-slic-superpixel-tutorial-using-python/</a></p>
 <p>Get parameters from parameter list that are used in segmentation algorithm.
 Assign default values to these parameters.</p></div>
 <details class="source">
@@ -1977,12 +2867,20 @@ Assign default values to these parameters.</p></div>
         dimension. Defalt is uniform spacing
     multichannel -- bool,  multichannel (True) vs grayscale (False)
 
+    enforce_connectivity
+
+   https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.slic
+
+   https://www.pyimagesearch.com/2014/07/28/a-slic-superpixel-tutorial-using-python/
+
+
     &#34;&#34;&#34;
 
     def __init__(self, paramlist=None):
         &#34;&#34;&#34;Get parameters from parameter list that are used in segmentation algorithm.
          Assign default values to these parameters.&#34;&#34;&#34;
         super(Slic, self).__init__(paramlist)
+<<<<<<< HEAD
         if not paramlist:
             self.params[&#34;algorithm&#34;] = &#34;SC&#34;
             self.params[&#34;n_segments&#34;] = 5
@@ -1992,6 +2890,17 @@ Assign default values to these parameters.</p></div>
         self.paramindexes = [&#34;n_segments&#34;, &#34;compactness&#34;, &#34;iterations&#34;, &#34;sigma&#34;]
         self.checkparamindex()
         
+=======
+        self.params[&#34;algorithm&#34;] = &#34;Slic&#34;
+        self.params[&#34;n_segments&#34;] = 5
+        self.params[&#34;beta1&#34;] = 2
+        self.params[&#34;max_iter&#34;] = 10
+        self.params[&#34;alpha1&#34;] = 0.5
+        self.paramindexes = [&#34;n_segments&#34;, &#34;alpha1&#34;, &#34;beta1&#34;, &#34;max_iter&#34;]
+        self.slico = False
+        self.set_params(paramlist)
+                
+>>>>>>> Updating documentation strings
     def evaluate(self, img):
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
@@ -2002,23 +2911,42 @@ Assign default values to these parameters.</p></div>
         output -- resulting segmentation mask from algorithm.
 
         &#34;&#34;&#34;
-        multichannel = False
-        if len(img.shape) &gt; 2:
-            multichannel = True
-        output = skimage.segmentation.slic(
-            img,
-            n_segments=self.params[&#34;n_segments&#34;],
-            compactness=self.params[&#34;compactness&#34;],
-            max_iter=self.params[&#34;iterations&#34;],
-            sigma=self.params[&#34;sigma&#34;],
-            convert2lab=True,
-            multichannel=multichannel,
-        )
+
+        compactness = 10**(self.params[&#34;beta1&#34;]*3-3)
+        n_segments = self.params[&#34;n_segments&#34;]+1
+        max_iter = self.params[&#34;max_iter&#34;]
+        if (len(img.shape) &gt; 2):
+            output = skimage.segmentation.slic(
+                img,
+                n_segments=n_segments,
+                compactness=compactness,
+                max_iter=max_iter,
+                # Gaussian smoothing should happen as a preprocessing step.
+                sigma=0,
+                convert2lab=False,
+                multichannel=True,
+                slic_zero=self.slico
+            )
+        else:
+            output = skimage.segmentation.slic(
+                img,
+                n_segments=n_segments,
+                compactness=compactness,
+                max_iter=max_iter,
+                sigma=self.params[&#34;alpha1&#34;],
+                multichannel=False,
+                slic_zero=self.slico
+            )
         return output</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></li>
+<li><a title="see.base_classes.algorithm" href="base_classes.html#see.base_classes.algorithm">algorithm</a></li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="see.Segmentors.SlicO" href="#see.Segmentors.SlicO">SlicO</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
@@ -2045,18 +2973,32 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
     output -- resulting segmentation mask from algorithm.
 
     &#34;&#34;&#34;
-    multichannel = False
-    if len(img.shape) &gt; 2:
-        multichannel = True
-    output = skimage.segmentation.slic(
-        img,
-        n_segments=self.params[&#34;n_segments&#34;],
-        compactness=self.params[&#34;compactness&#34;],
-        max_iter=self.params[&#34;iterations&#34;],
-        sigma=self.params[&#34;sigma&#34;],
-        convert2lab=True,
-        multichannel=multichannel,
-    )
+
+    compactness = 10**(self.params[&#34;beta1&#34;]*3-3)
+    n_segments = self.params[&#34;n_segments&#34;]+1
+    max_iter = self.params[&#34;max_iter&#34;]
+    if (len(img.shape) &gt; 2):
+        output = skimage.segmentation.slic(
+            img,
+            n_segments=n_segments,
+            compactness=compactness,
+            max_iter=max_iter,
+            # Gaussian smoothing should happen as a preprocessing step.
+            sigma=0,
+            convert2lab=False,
+            multichannel=True,
+            slic_zero=self.slico
+        )
+    else:
+        output = skimage.segmentation.slic(
+            img,
+            n_segments=n_segments,
+            compactness=compactness,
+            max_iter=max_iter,
+            sigma=self.params[&#34;alpha1&#34;],
+            multichannel=False,
+            slic_zero=self.slico
+        )
     return output</code></pre>
 </details>
 </dd>
@@ -2065,25 +3007,58 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
 <ul class="hlist">
 <li><code><b><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></b></code>:
 <ul class="hlist">
+<<<<<<< HEAD
 <li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
+=======
+<li><code><a title="see.Segmentors.segmentor.checkparamindex" href="base_classes.html#see.base_classes.algorithm.checkparamindex">checkparamindex</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.mutateself" href="base_classes.html#see.base_classes.algorithm.mutateself">mutateself</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.pipe" href="base_classes.html#see.base_classes.algorithm.pipe">pipe</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.runAlgo" href="base_classes.html#see.base_classes.algorithm.runAlgo">runAlgo</a></code></li>
+>>>>>>> Updating documentation strings
 </ul>
 </li>
 </ul>
 </dd>
-<dt id="see.Segmentors.TripleA"><code class="flex name class">
-<span>class <span class="ident">TripleA</span></span>
+<dt id="see.Segmentors.SlicO"><code class="flex name class">
+<span>class <span class="ident">SlicO</span></span>
 <span>(</span><span>paramlist=None)</span>
 </code></dt>
 <dd>
+<<<<<<< HEAD
 <div class="desc"><p>Base class for segmentor classes defined below.</p>
 <p>Functions:
 evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
 <p>Generate algorithm params from parameter list.</p></div>
+=======
+<div class="desc"><p>Perform the SlicO segmentation algorithm. Segments k-means clustering in Color space
+(x, y, z). Returns a 2D or 3D array of labels.</p>
+<p>Parameters:
+image &ndash; ndarray, input image
+n_segments &ndash; int, approximate number of labels in segmented output image
+compactness &ndash; float, Balances color proximity and space proximity.
+Higher values mean more weight to space proximity (superpixels
+become more square/cubic) Recommended log scale values (0.01,
+0.1, 1, 10, 100, etc)
+max_iter &ndash; int, max number of iterations of k-means
+sigma &ndash; float or (3,) shape array of floats, width of Guassian
+smoothing kernel. For pre-processing for each dimesion of the
+image. Zero means no smoothing.
+spacing &ndash; (3,) shape float array. Voxel spacing along each image
+dimension. Defalt is uniform spacing
+multichannel &ndash; bool,
+multichannel (True) vs grayscale (False)</p>
+<p>enforce_connectivity</p>
+<p><a href="https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.slic">https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.slic</a></p>
+<p><a href="https://www.pyimagesearch.com/2014/07/28/a-slic-superpixel-tutorial-using-python/">https://www.pyimagesearch.com/2014/07/28/a-slic-superpixel-tutorial-using-python/</a></p>
+<p>Get parameters from parameter list that are used in segmentation algorithm.
+Assign default values to these parameters.</p></div>
+>>>>>>> Updating documentation strings
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
+<<<<<<< HEAD
 <pre><code class="python">class TripleA (segmentor):
     def __init__(self, paramlist=None):
         super(TripleA, self).__init__(paramlist)
@@ -2115,20 +3090,64 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
         output = np.ones(channel.shape)
         output[channel &lt; my_mn] = 0
         output[channel &gt; my_mx] = 0
+=======
+<pre><code class="python">class SlicO(Slic):
+    &#34;&#34;&#34;Perform the SlicO segmentation algorithm. Segments k-means clustering in Color space
+     (x, y, z). Returns a 2D or 3D array of labels.
+>>>>>>> Updating documentation strings
 
-        return output</code></pre>
+    Parameters:
+    image -- ndarray, input image
+    n_segments -- int, approximate number of labels in segmented output image
+    compactness -- float, Balances color proximity and space proximity.
+        Higher values mean more weight to space proximity (superpixels
+        become more square/cubic) Recommended log scale values (0.01,
+        0.1, 1, 10, 100, etc)
+    max_iter -- int, max number of iterations of k-means
+    sigma -- float or (3,) shape array of floats, width of Guassian
+        smoothing kernel. For pre-processing for each dimesion of the
+        image. Zero means no smoothing.
+    spacing -- (3,) shape float array. Voxel spacing along each image
+        dimension. Defalt is uniform spacing
+    multichannel -- bool,  multichannel (True) vs grayscale (False)
+
+    enforce_connectivity
+
+    https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.slic
+
+    https://www.pyimagesearch.com/2014/07/28/a-slic-superpixel-tutorial-using-python/
+
+
+    &#34;&#34;&#34;
+
+    def __init__(self, paramlist=None):
+        &#34;&#34;&#34;Get parameters from parameter list that are used in segmentation algorithm.
+         Assign default values to these parameters.&#34;&#34;&#34;
+        super(SlicO, self).__init__(paramlist)
+        self.slico = True
+        self.set_params(paramlist)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
+<li><a title="see.Segmentors.Slic" href="#see.Segmentors.Slic">Slic</a></li>
 <li><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></li>
+<li><a title="see.base_classes.algorithm" href="base_classes.html#see.base_classes.algorithm">algorithm</a></li>
 </ul>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></b></code>:
+<li><code><b><a title="see.Segmentors.Slic" href="#see.Segmentors.Slic">Slic</a></b></code>:
 <ul class="hlist">
+<<<<<<< HEAD
 <li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.evaluate" href="#see.Segmentors.segmentor.evaluate">evaluate</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
+=======
+<li><code><a title="see.Segmentors.Slic.checkparamindex" href="base_classes.html#see.base_classes.algorithm.checkparamindex">checkparamindex</a></code></li>
+<li><code><a title="see.Segmentors.Slic.evaluate" href="#see.Segmentors.Slic.evaluate">evaluate</a></code></li>
+<li><code><a title="see.Segmentors.Slic.mutateself" href="base_classes.html#see.base_classes.algorithm.mutateself">mutateself</a></code></li>
+<li><code><a title="see.Segmentors.Slic.pipe" href="base_classes.html#see.base_classes.algorithm.pipe">pipe</a></code></li>
+<li><code><a title="see.Segmentors.Slic.runAlgo" href="base_classes.html#see.base_classes.algorithm.runAlgo">runAlgo</a></code></li>
+>>>>>>> Updating documentation strings
 </ul>
 </li>
 </ul>
@@ -2145,6 +3164,7 @@ Returns a labeled image ndarray.</p>
 image &ndash; ndarray, input array
 compactness &ndash; float, compactness of the basins. Higher values
 make more regularly-shaped basin.</p>
+<p><a href="https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.watershed">https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.watershed</a></p>
 <p>Get parameters from parameter list that are used in segmentation algorithm.
 Assign default values to these parameters.</p></div>
 <details class="source">
@@ -2161,6 +3181,8 @@ Assign default values to these parameters.</p></div>
     compactness -- float, compactness of the basins. Higher values
         make more regularly-shaped basin.
 
+    https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.watershed
+
     &#34;&#34;&#34;
 
     # Not using connectivity, markers, or offset params as arrays would
@@ -2171,12 +3193,20 @@ Assign default values to these parameters.</p></div>
         &#34;&#34;&#34;Get parameters from parameter list that are used in segmentation algorithm.
          Assign default values to these parameters.&#34;&#34;&#34;
         super(Watershed, self).__init__(paramlist)
+<<<<<<< HEAD
         if not paramlist:
             self.params[&#34;algorithm&#34;] = &#34;WS&#34;
             self.params[&#34;compactness&#34;] = 2.0
         self.paramindexes = [&#34;compactness&#34;]
         self.checkparamindex()
         
+=======
+        self.params[&#34;algorithm&#34;] = &#34;Watershed&#34;
+        self.params[&#34;alpha1&#34;] = 0.66
+        self.paramindexes = [&#34;alpha1&#34;]
+        self.set_params(paramlist)
+                
+>>>>>>> Updating documentation strings
     def evaluate(self, img):
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
@@ -2186,17 +3216,21 @@ Assign default values to these parameters.</p></div>
         Output:
         output -- resulting segmentation mask from algorithm.
 
+
+
         &#34;&#34;&#34;
-        channel = 0
-        channel_img = img[:, :, channel]
+
+        compactness = self.params[&#34;alpha1&#34;]*3
+
         output = skimage.segmentation.watershed(
-            channel_img, markers=None, compactness=self.params[&#34;compactness&#34;]
+            img, markers=None, compactness=compactness
         )
         return output</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></li>
+<li><a title="see.base_classes.algorithm" href="base_classes.html#see.base_classes.algorithm">algorithm</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
@@ -2222,11 +3256,14 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
     Output:
     output -- resulting segmentation mask from algorithm.
 
+
+
     &#34;&#34;&#34;
-    channel = 0
-    channel_img = img[:, :, channel]
+
+    compactness = self.params[&#34;alpha1&#34;]*3
+
     output = skimage.segmentation.watershed(
-        channel_img, markers=None, compactness=self.params[&#34;compactness&#34;]
+        img, markers=None, compactness=compactness
     )
     return output</code></pre>
 </details>
@@ -2236,26 +3273,43 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
 <ul class="hlist">
 <li><code><b><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></b></code>:
 <ul class="hlist">
+<<<<<<< HEAD
 <li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
+=======
+<li><code><a title="see.Segmentors.segmentor.checkparamindex" href="base_classes.html#see.base_classes.algorithm.checkparamindex">checkparamindex</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.mutateself" href="base_classes.html#see.base_classes.algorithm.mutateself">mutateself</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.pipe" href="base_classes.html#see.base_classes.algorithm.pipe">pipe</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.runAlgo" href="base_classes.html#see.base_classes.algorithm.runAlgo">runAlgo</a></code></li>
+>>>>>>> Updating documentation strings
 </ul>
 </li>
 </ul>
 </dd>
-<dt id="see.Segmentors.parameters"><code class="flex name class">
-<span>class <span class="ident">parameters</span></span>
+<dt id="see.Segmentors.seg_params"><code class="flex name class">
+<span>class <span class="ident">seg_params</span></span>
+<span>(</span><span>*args, **kwargs)</span>
 </code></dt>
 <dd>
+<<<<<<< HEAD
 <div class="desc"><p>Construct an ordered dictionary that represents the search space.</p>
 <p>Functions:
 printparam &ndash; returns description for each parameter
 tolist &ndash; converts dictionary of params into list
 fromlist &ndash; converts individual into dictionary of params</p>
 <p>Set default values for each param in the dictionary.</p></div>
+=======
+<div class="desc"><p>Construct an parameter dictionary that represents the search space.</p>
+<h2 id="components">Components</h2>
+<p>pkeys - paramters keys used by the current algorithsm.
+descriptions - Descriptions of the parameters
+ranges - List of possible choices for each parameter.</p></div>
+>>>>>>> Updating documentation strings
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
+<<<<<<< HEAD
 <pre><code class="python">class parameters(OrderedDict):
     &#34;&#34;&#34;Construct an ordered dictionary that represents the search space.
 
@@ -2427,25 +3481,32 @@ fromlist &ndash; converts individual into dictionary of params</p>
         logging.getLogger().info(f&#34;Parsing Parameter List for {len(individual)} parameters&#34;)
         for index, key in enumerate(self.pkeys):
             self[key] = individual[index]</code></pre>
+=======
+<pre><code class="python">class seg_params(param_space):
+    descriptions = dict()
+    ranges = dict()
+    pkeys = []</code></pre>
+>>>>>>> Updating documentation strings
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li>collections.OrderedDict</li>
+<li><a title="see.base_classes.param_space" href="base_classes.html#see.base_classes.param_space">param_space</a></li>
 <li>builtins.dict</li>
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="see.Segmentors.parameters.descriptions"><code class="name">var <span class="ident">descriptions</span></code></dt>
+<dt id="see.Segmentors.seg_params.descriptions"><code class="name">var <span class="ident">descriptions</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="see.Segmentors.parameters.pkeys"><code class="name">var <span class="ident">pkeys</span></code></dt>
+<dt id="see.Segmentors.seg_params.pkeys"><code class="name">var <span class="ident">pkeys</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="see.Segmentors.parameters.ranges"><code class="name">var <span class="ident">ranges</span></code></dt>
+<dt id="see.Segmentors.seg_params.ranges"><code class="name">var <span class="ident">ranges</span></code></dt>
 <dd>
 <div class="desc"></div>
+<<<<<<< HEAD
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -2496,8 +3557,22 @@ fromlist &ndash; converts individual into dictionary of params</p>
         plist.append(self.params[key])
     return plist</code></pre>
 </details>
+=======
+>>>>>>> Updating documentation strings
 </dd>
 </dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="see.base_classes.param_space" href="base_classes.html#see.base_classes.param_space">param_space</a></b></code>:
+<ul class="hlist">
+<li><code><a title="see.base_classes.param_space.add" href="base_classes.html#see.base_classes.param_space.add">add</a></code></li>
+<li><code><a title="see.base_classes.param_space.addall" href="base_classes.html#see.base_classes.param_space.addall">addall</a></code></li>
+<li><code><a title="see.base_classes.param_space.fromlist" href="base_classes.html#see.base_classes.param_space.fromlist">fromlist</a></code></li>
+<li><code><a title="see.base_classes.param_space.printparam" href="base_classes.html#see.base_classes.param_space.printparam">printparam</a></code></li>
+<li><code><a title="see.base_classes.param_space.tolist" href="base_classes.html#see.base_classes.param_space.tolist">tolist</a></code></li>
+</ul>
+</li>
+</ul>
 </dd>
 <dt id="see.Segmentors.segmentor"><code class="flex name class">
 <span>class <span class="ident">segmentor</span></span>
@@ -2512,7 +3587,7 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class segmentor(object):
+<pre><code class="python">class segmentor(algorithm):
     &#34;&#34;&#34;Base class for segmentor classes defined below.
 
     Functions:
@@ -2520,10 +3595,11 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
 
     &#34;&#34;&#34;
 
-    algorithm = &#34;&#34;
+    algorithmspace = dict()
 
     def __init__(self, paramlist=None):
         &#34;&#34;&#34;Generate algorithm params from parameter list.&#34;&#34;&#34;
+<<<<<<< HEAD
         self.params = parameters()
         self.altnames = []
         if paramlist:
@@ -2542,17 +3618,43 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
                 self.params[myparam] = random.choice(eval(self.params.ranges[myparam]))
         return self.params
     
+=======
+        #super(ColorThreshold, self).__init__(paramlist)
+        self.params = seg_params()
+
+        self.params[&#39;algorithm&#39;] = &#39;ColorThreshold&#39;
+        self.params[&#39;alpha1&#39;] = 0.3
+        self.params[&#39;alpha2&#39;] = 0.5
+        self.params[&#39;beta1&#39;] = 0.2
+        self.params[&#39;beta2&#39;] = 0.7
+        self.params[&#39;gamma1&#39;] = 0.3
+        self.params[&#39;gamma2&#39;] = 0.5
+        self.params[&#39;n_segments&#39;] = 2
+        self.params[&#39;max_iter&#39;] = 10
+        self.set_params(paramlist)
+
+        
+    # TODO use name to build a dictionary to use as a chache
+>>>>>>> Updating documentation strings
     def evaluate(self, img):
         &#34;&#34;&#34;Run segmentation algorithm to get inferred mask.&#34;&#34;&#34;
-        return np.zeros(img.shape[0:1])
+        self.thisalgo = segmentor.algorithmspace[self.params[&#39;algorithm&#39;]](
+            self.params)
+        return self.thisalgo.evaluate(img)
 
-    def __str__(self):
-        &#34;&#34;&#34;Return params for algorithm.&#34;&#34;&#34;
-        mystring = f&#34;{self.params[&#39;algorithm&#39;]} -- \n&#34;
-        for p in self.paramindexes:
-            mystring += f&#34;\t{p} = {self.params[p]}\n&#34;
-        return mystring</code></pre>
+    def pipe(self, data):
+        data.mask = self.evaluate(data.img)
+        return data
+
+    @classmethod
+    def addsegmentor(cls, key, seg):
+        seg_params.ranges[&#39;algorithm&#39;].append(key)
+        cls.algorithmspace[key] = seg</code></pre>
 </details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="see.base_classes.algorithm" href="base_classes.html#see.base_classes.algorithm">algorithm</a></li>
+</ul>
 <h3>Subclasses</h3>
 <ul class="hlist">
 <li><a title="see.Segmentors.Chan_Vese" href="#see.Segmentors.Chan_Vese">Chan_Vese</a></li>
@@ -2562,14 +3664,38 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
 <li><a title="see.Segmentors.Morphological_Chan_Vese" href="#see.Segmentors.Morphological_Chan_Vese">Morphological_Chan_Vese</a></li>
 <li><a title="see.Segmentors.QuickShift" href="#see.Segmentors.QuickShift">QuickShift</a></li>
 <li><a title="see.Segmentors.Slic" href="#see.Segmentors.Slic">Slic</a></li>
+<<<<<<< HEAD
 <li><a title="see.Segmentors.TripleA" href="#see.Segmentors.TripleA">TripleA</a></li>
+=======
+>>>>>>> Updating documentation strings
 <li><a title="see.Segmentors.Watershed" href="#see.Segmentors.Watershed">Watershed</a></li>
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="see.Segmentors.segmentor.algorithm"><code class="name">var <span class="ident">algorithm</span></code></dt>
+<dt id="see.Segmentors.segmentor.algorithmspace"><code class="name">var <span class="ident">algorithmspace</span></code></dt>
 <dd>
 <div class="desc"></div>
+<<<<<<< HEAD
+=======
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="see.Segmentors.segmentor.addsegmentor"><code class="name flex">
+<span>def <span class="ident">addsegmentor</span></span>(<span>key, seg)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def addsegmentor(cls, key, seg):
+    seg_params.ranges[&#39;algorithm&#39;].append(key)
+    cls.algorithmspace[key] = seg</code></pre>
+</details>
+>>>>>>> Updating documentation strings
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -2600,7 +3726,9 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
 </summary>
 <pre><code class="python">def evaluate(self, img):
     &#34;&#34;&#34;Run segmentation algorithm to get inferred mask.&#34;&#34;&#34;
-    return np.zeros(img.shape[0:1])</code></pre>
+    self.thisalgo = segmentor.algorithmspace[self.params[&#39;algorithm&#39;]](
+        self.params)
+    return self.thisalgo.evaluate(img)</code></pre>
 </details>
 </dd>
 <dt id="see.Segmentors.segmentor.mutateself"><code class="name flex">
@@ -2622,6 +3750,17 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
 </details>
 </dd>
 </dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="see.base_classes.algorithm" href="base_classes.html#see.base_classes.algorithm">algorithm</a></b></code>:
+<ul class="hlist">
+<li><code><a title="see.base_classes.algorithm.checkparamindex" href="base_classes.html#see.base_classes.algorithm.checkparamindex">checkparamindex</a></code></li>
+<li><code><a title="see.base_classes.algorithm.mutateself" href="base_classes.html#see.base_classes.algorithm.mutateself">mutateself</a></code></li>
+<li><code><a title="see.base_classes.algorithm.pipe" href="base_classes.html#see.base_classes.algorithm.pipe">pipe</a></code></li>
+<li><code><a title="see.base_classes.algorithm.runAlgo" href="base_classes.html#see.base_classes.algorithm.runAlgo">runAlgo</a></code></li>
+</ul>
+</li>
+</ul>
 </dd>
 </dl>
 </section>
@@ -2637,6 +3776,7 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
 <li><code><a title="see" href="index.html">see</a></code></li>
 </ul>
 </li>
+<<<<<<< HEAD
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="see.Segmentors.algoFromParams" href="#see.Segmentors.algoFromParams">algoFromParams</a></code></li>
@@ -2646,6 +3786,8 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
 <li><code><a title="see.Segmentors.runAlgo" href="#see.Segmentors.runAlgo">runAlgo</a></code></li>
 </ul>
 </li>
+=======
+>>>>>>> Updating documentation strings
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
@@ -2691,7 +3833,7 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
 </ul>
 </li>
 <li>
-<h4><code><a title="see.Segmentors.TripleA" href="#see.Segmentors.TripleA">TripleA</a></code></h4>
+<h4><code><a title="see.Segmentors.SlicO" href="#see.Segmentors.SlicO">SlicO</a></code></h4>
 </li>
 <li>
 <h4><code><a title="see.Segmentors.Watershed" href="#see.Segmentors.Watershed">Watershed</a></code></h4>
@@ -2700,21 +3842,23 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
 </ul>
 </li>
 <li>
-<h4><code><a title="see.Segmentors.parameters" href="#see.Segmentors.parameters">parameters</a></code></h4>
-<ul class="two-column">
-<li><code><a title="see.Segmentors.parameters.descriptions" href="#see.Segmentors.parameters.descriptions">descriptions</a></code></li>
-<li><code><a title="see.Segmentors.parameters.fromlist" href="#see.Segmentors.parameters.fromlist">fromlist</a></code></li>
-<li><code><a title="see.Segmentors.parameters.pkeys" href="#see.Segmentors.parameters.pkeys">pkeys</a></code></li>
-<li><code><a title="see.Segmentors.parameters.printparam" href="#see.Segmentors.parameters.printparam">printparam</a></code></li>
-<li><code><a title="see.Segmentors.parameters.ranges" href="#see.Segmentors.parameters.ranges">ranges</a></code></li>
-<li><code><a title="see.Segmentors.parameters.tolist" href="#see.Segmentors.parameters.tolist">tolist</a></code></li>
+<h4><code><a title="see.Segmentors.seg_params" href="#see.Segmentors.seg_params">seg_params</a></code></h4>
+<ul class="">
+<li><code><a title="see.Segmentors.seg_params.descriptions" href="#see.Segmentors.seg_params.descriptions">descriptions</a></code></li>
+<li><code><a title="see.Segmentors.seg_params.pkeys" href="#see.Segmentors.seg_params.pkeys">pkeys</a></code></li>
+<li><code><a title="see.Segmentors.seg_params.ranges" href="#see.Segmentors.seg_params.ranges">ranges</a></code></li>
 </ul>
 </li>
 <li>
 <h4><code><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></code></h4>
 <ul class="">
+<<<<<<< HEAD
 <li><code><a title="see.Segmentors.segmentor.algorithm" href="#see.Segmentors.segmentor.algorithm">algorithm</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
+=======
+<li><code><a title="see.Segmentors.segmentor.addsegmentor" href="#see.Segmentors.segmentor.addsegmentor">addsegmentor</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.algorithmspace" href="#see.Segmentors.segmentor.algorithmspace">algorithmspace</a></code></li>
+>>>>>>> Updating documentation strings
 <li><code><a title="see.Segmentors.segmentor.evaluate" href="#see.Segmentors.segmentor.evaluate">evaluate</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
 </ul>
