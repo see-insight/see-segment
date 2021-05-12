@@ -35,9 +35,8 @@ class workflow(algorithm):
 
     def pipe(self, data):
         for constructor in self.algolist:
-            algo = constructor(self.params)
+            algo = constructor(paramlist=self.params)
             data = algo.pipe(data)
-        data.fitness = 3
         return data
 
 # PROBLEMS
