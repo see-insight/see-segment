@@ -8,7 +8,7 @@ help:
 	@echo "	conda activate ./envs"
 	@echo ""
 	@echo "To generate project documentation use:"
-	@echo "	make doc"
+	@echo "	make docs"
 	@echo ""
 	@echo "To Lint the project use:"
 	@echo "	make lint"
@@ -22,7 +22,7 @@ init:
 	conda env create --prefix ./envs --file environment.yml
 
 docs:
-	pdoc3--force --html --output-dir ./docs $(MODULENAME)
+	pdoc3 --force --html --output-dir ./docs $(MODULENAME)
 
 lint:
 	pylint $(MODULENAME) 
@@ -33,4 +33,4 @@ doclint:
 test:
 	pytest -v $(MODULENAME) 
 
-.PHONY: init doc lint test 
+.PHONY: init docs lint test 

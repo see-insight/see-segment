@@ -3,17 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.7.2" />
+<meta name="generator" content="pdoc 0.9.2" />
 <title>see.Segmentors API documentation</title>
 <meta name="description" content="Segmentor library designed to learn how to segment images using GAs.
 This libary actually does not incode the GA itself, instead it just defines
 the …" />
-<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
-<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
-<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
-<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
 </head>
 <body>
 <main>
@@ -35,6 +37,9 @@ the search parameters the evaluation funtions and the fitness function (comming 
 # DO: Research project-clean up the parameters class to reduce the search space
 # DO: Change the seed from a number to a fraction 0-1 which is scaled to image rows and columns
 # DO: Enumerate teh word based measures.
+import copy
+import inspect
+import random
 
 from collections import OrderedDict
 import sys
@@ -44,14 +49,28 @@ import skimage
 from skimage import segmentation
 from skimage import color
 
-from see.Segment_Similarity_Measure import FF_ML2DHD_V2
-
-def FitnessFunction(inferred, ground_truth):
-    return FF_ML2DHD_V2(inferred, ground_truth)
-
+from see.Segment_Similarity_Measure import FF_ML2DHD_V2 as FitnessFunction
 
 # List of all algorithms
 algorithmspace = dict()
+
+def mutateAlgo(copy_child, pos_vals, flip_prob=0.5, seed=False):
+    &#34;&#34;&#34;Generate an offspring based on current individual.&#34;&#34;&#34;
+
+    child = copy.deepcopy(copy_child)
+    
+    # Not every algorithm is associated with every value
+    # Let&#39;s first see if we change the algorithm
+    rand_val = random.random()
+    if rand_val &lt; flip_prob:
+        # Let&#39;s mutate the algorithm
+        child[0] = random.choice(pos_vals[0])
+
+    #use the local search for mutation.
+    seg = algoFromParams(child)
+    child = seg.mutateself(flip_prob)
+    return child
+
 
 def runAlgo(img, ground_img, individual, return_mask=False):
     &#34;&#34;&#34;Run and evaluate the performance of an individual.
@@ -75,6 +94,7 @@ def runAlgo(img, ground_img, individual, return_mask=False):
     logging.getLogger().info(&#34;Calculating Fitness&#34;)
     fitness = FitnessFunction(mask, ground_img)
     if return_mask:
+        print(&#34;Returning mask&#34;)
         return [fitness, mask]
     else:
         return fitness
@@ -97,7 +117,55 @@ def algoFromParams(individual):
     else:
         raise ValueError(&#34;Algorithm not avaliable&#34;)
 
+def print_best_algorithm_code(individual):
+    &#34;&#34;&#34;Print usable code to run segmentation algorithm based on an
+     individual&#39;s genetic representation vector.&#34;&#34;&#34;
+    #ind_algo = Segmentors.algoFromParams(individual)
+    ind_algo = algoFromParams(individual)
+    original_function = inspect.getsource(ind_algo.evaluate)
 
+    # Get the body of the function
+    function_contents = original_function[original_function.find(&#39;        &#39;):\
+                            original_function.find(&#39;return&#39;)]
+    while function_contents.find(&#39;self.params&#39;) != -1:
+
+        # Find the index of the &#39;s&#39; at the start of self.params
+        params_index = function_contents.find(&#39;self.params&#39;)
+
+        # Find the index of the &#39;]&#39; at the end of self.params[&#34;&lt;SOME_TEXT&gt;&#34;]
+        end_bracket_index = function_contents.find(&#39;]&#39;, params_index)+1
+
+        # Find the first occurance of self.params[&#34;&lt;SOME_TEXT&gt;&#34;] and store it
+        code_to_replace = function_contents[params_index:end_bracket_index]
+
+        # These offset will be used to access only the params_key
+        offset = len(&#39;self.params[&#34;&#39;)
+        offset2 = len(&#39;&#34;]&#39;)
+
+        # Get the params key
+        params_key = function_contents[params_index + offset:end_bracket_index-offset2]
+
+        # Use the params_key to access the params_value
+        param_value = str(ind_algo.params[params_key])
+
+        # Replace self.params[&#34;&lt;SOME_TEXT&gt;&#34;] with the value of self.params[&#34;&lt;SOME_TEXT&gt;&#34;]
+        function_contents = function_contents.replace(code_to_replace, param_value)
+
+    function_contents = function_contents.replace(&#39;        &#39;, &#39;&#39;)
+    function_contents = function_contents[function_contents.find(&#39;\n\&#34;\&#34;\&#34;&#39;)+5:]
+    print(function_contents)
+    return function_contents
+   
+def popCounts(pop):
+    &#34;&#34;&#34;Count the number of each algorihtm in a population&#34;&#34;&#34;
+    algorithms = eval(parameters.ranges[&#34;algorithm&#34;])
+    counts = {a:0 for a in algorithms}
+    for p in pop:
+        #print(p[0])
+        counts[p[0]] += 1
+    return counts
+        
+        
 class parameters(OrderedDict):
     &#34;&#34;&#34;Construct an ordered dictionary that represents the search space.
 
@@ -108,82 +176,107 @@ class parameters(OrderedDict):
 
     &#34;&#34;&#34;
 
-    descriptions = dict()
-    ranges = dict()
+    descriptions = OrderedDict()
+    ranges = OrderedDict()
     pkeys = []
 
+    #0
     ranges[&#34;algorithm&#34;] = &#34;[&#39;CT&#39;,&#39;FB&#39;,&#39;SC&#39;,&#39;WS&#39;,&#39;CV&#39;,&#39;MCV&#39;,&#39;AC&#39;]&#34;
     descriptions[&#34;algorithm&#34;] = &#34;string code for the algorithm&#34;
 
+    #1
     descriptions[&#34;beta&#34;] = &#34;A parameter for randomWalker So, I should take this out&#34;
     ranges[&#34;beta&#34;] = &#34;[i for i in range(0,10000)]&#34;
 
+    #2
     descriptions[&#34;tolerance&#34;] = &#34;A parameter for flood and flood_fill&#34;
     ranges[&#34;tolerance&#34;] = &#34;[float(i)/1000 for i in range(0,1000,1)]&#34;
 
+    #3
     descriptions[&#34;scale&#34;] = &#34;A parameter for felzenszwalb&#34;
     ranges[&#34;scale&#34;] = &#34;[i for i in range(0,10000)]&#34;
 
+    #4
     descriptions[&#34;sigma&#34;] = &#34;sigma value. A parameter for felzenswalb, inverse_guassian_gradient, slic, and quickshift&#34;
-    ranges[&#34;sigma&#34;] = &#34;[float(i)/100 for i in range(0,10,1)]&#34;
+    ranges[&#34;sigma&#34;] = &#34;[float(i)/100 for i in range(0,100)]&#34;
 
+    #5
     descriptions[&#34;min_size&#34;] = &#34;parameter for felzenszwalb&#34;
     ranges[&#34;min_size&#34;] = &#34;[i for i in range(0,10000)]&#34;
 
+    #6
     descriptions[&#34;n_segments&#34;] = &#34;A parameter for slic&#34;
     ranges[&#34;n_segments&#34;] = &#34;[i for i in range(2,10000)]&#34;
 
+    #7
     descriptions[&#34;iterations&#34;] = &#34;A parameter for both morphological algorithms&#34;
     ranges[&#34;iterations&#34;] = &#34;[10, 10]&#34;
 
+    #8
     descriptions[&#34;ratio&#34;] = &#34;A parameter for ratio&#34;
     ranges[&#34;ratio&#34;] = &#34;[float(i)/100 for i in range(0,100)]&#34;
 
+    #9
     descriptions[&#34;kernel_size&#34;] = &#34;A parameter for kernel_size&#34;
     ranges[&#34;kernel_size&#34;] = &#34;[i for i in range(0,10000)]&#34;
 
+    #10
     descriptions[&#34;max_dist&#34;] = &#34;A parameter for quickshift&#34;
     ranges[&#34;max_dist&#34;] = &#34;[i for i in range(0,10000)]&#34;
 
-    descriptions[&#34;seed&#34;] = &#34;A parameter for quickshift, and perhaps other random stuff&#34;
-    ranges[&#34;seed&#34;] = &#34;[0,1,2,3,4,5]&#34;
+    #11
+    descriptions[&#34;Channel&#34;] = &#34;A parameter for Picking the Channel R,G,B,H,S,V&#34;
+    ranges[&#34;Channel&#34;] = &#34;[0,1,2,3,4,5]&#34;
 
+    #12
     descriptions[&#34;connectivity&#34;] = &#34;A parameter for flood and floodfill&#34;
     ranges[&#34;connectivity&#34;] = &#34;[i for i in range(0, 9)]&#34;
 
+    #13
     descriptions[&#34;compactness&#34;] = &#34;A parameter for slic and watershed&#34;
     ranges[&#34;compactness&#34;] = &#34;[0.0001,0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000]&#34;
 
+    #14
     descriptions[&#34;mu&#34;] = &#34;A parameter for chan_vese&#34;
     ranges[&#34;mu&#34;] = &#34;[float(i)/100 for i in range(0,100)]&#34;
 
+    #15
     descriptions[&#34;lambda&#34;] = &#34;A parameter for chan_vese and morphological_chan_vese&#34;
     ranges[&#34;lambda&#34;] = &#34;[(1,1), (1,2), (2,1)]&#34;
 
+    #16
     descriptions[&#34;dt&#34;] = &#34;#An algorithm for chan_vese May want to make seperate level sets for different functions e.g. Morph_chan_vese vs morph_geo_active_contour&#34;
     ranges[&#34;dt&#34;] = &#34;[float(i)/10 for i in range(0,100)]&#34;
 
+    #17
     descriptions[&#34;init_level_set_chan&#34;] = &#34;A parameter for chan_vese and morphological_chan_vese&#34;
     ranges[&#34;init_level_set_chan&#34;] = &#34;[&#39;checkerboard&#39;, &#39;disk&#39;, &#39;small disk&#39;]&#34;
 
+    #18
     descriptions[&#34;init_level_set_morph&#34;] = &#34;A parameter for morphological_chan_vese&#34;
     ranges[&#34;init_level_set_morph&#34;] = &#34;[&#39;checkerboard&#39;, &#39;circle&#39;]&#34;
 
+    #19
     descriptions[&#34;smoothing&#34;] = &#34;A parameter used in morphological_geodesic_active_contour&#34;
     ranges[&#34;smoothing&#34;] = &#34;[i for i in range(1, 10)]&#34;
 
+    #20
     descriptions[&#34;alpha&#34;] = &#34;A parameter for inverse_guassian_gradient&#34;
     ranges[&#34;alpha&#34;] = &#34;[i for i in range(0,10000)]&#34;
 
+    #21
     descriptions[&#34;balloon&#34;] = &#34;A parameter for morphological_geodesic_active_contour&#34;
     ranges[&#34;balloon&#34;] = &#34;[i for i in range(-50,50)]&#34;
 
+    #22
     descriptions[&#34;seed_pointX&#34;] = &#34;A parameter for flood and flood_fill&#34;
     ranges[&#34;seed_pointX&#34;] = &#34;[0.0]&#34;
 
+    #23
     descriptions[&#34;seed_pointY&#34;] = &#34;??&#34;
     ranges[&#34;seed_pointY&#34;] = &#34;[0.0]&#34;
 
+    #24
     descriptions[&#34;seed_pointZ&#34;] = &#34;??&#34;
     ranges[&#34;seed_pointZ&#34;] = &#34;[0.0]&#34;
 
@@ -205,7 +298,7 @@ class parameters(OrderedDict):
         self[&#34;ratio&#34;] = 0.0
         self[&#34;kernel_size&#34;] = 0.0
         self[&#34;max_dist&#34;] = 0.0
-        self[&#34;seed&#34;] = 0.0
+        self[&#34;Channel&#34;] = 0.0
         self[&#34;connectivity&#34;] = 0.0
         self[&#34;compactness&#34;] = 0.0
         self[&#34;mu&#34;] = 0.0
@@ -259,9 +352,23 @@ class segmentor(object):
     def __init__(self, paramlist=None):
         &#34;&#34;&#34;Generate algorithm params from parameter list.&#34;&#34;&#34;
         self.params = parameters()
+        self.altnames = []
         if paramlist:
             self.params.fromlist(paramlist)
 
+    def checkparamindex(self):
+        &#34;&#34;&#34;Check paramiter index to ensure values are valid&#34;&#34;&#34;
+        for myparams in self.paramindexes:
+            assert myparams in self.params, f&#34;ERROR {myparams} is not in parameter list&#34;
+             
+    def mutateself(self, flip_prob=0.5):
+        &#34;&#34;&#34;Mutate self and return new params.&#34;&#34;&#34;
+        for myparam in self.paramindexes:
+            rand_val = random.random()
+            if rand_val &lt; flip_prob:
+                self.params[myparam] = random.choice(eval(self.params.ranges[myparam]))
+        return self.params
+    
     def evaluate(self, img):
         &#34;&#34;&#34;Run segmentation algorithm to get inferred mask.&#34;&#34;&#34;
         return np.zeros(img.shape[0:1])
@@ -272,6 +379,7 @@ class segmentor(object):
         for p in self.paramindexes:
             mystring += f&#34;\t{p} = {self.params[p]}\n&#34;
         return mystring
+        
 
 
 class ColorThreshold(segmentor):
@@ -290,9 +398,12 @@ class ColorThreshold(segmentor):
         super(ColorThreshold, self).__init__(paramlist)
         if not paramlist:
             self.params[&#34;algorithm&#34;] = &#34;CT&#34;
+            self.params[&#34;Channel&#34;] = 5
             self.params[&#34;mu&#34;] = 0.4
             self.params[&#34;sigma&#34;] = 0.6
-        self.paramindexes = [&#34;sigma&#34;, &#34;mu&#34;]
+        self.paramindexes = [&#34;Channel&#34;, &#34;sigma&#34;, &#34;mu&#34;]
+        self.altnames = [&#34;Channel&#34;, &#34;MaxThreshold&#34;, &#34;MinThreshold&#34;]
+        self.checkparamindex()
 
     def evaluate(self, img): #XX
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
@@ -304,32 +415,36 @@ class ColorThreshold(segmentor):
         output -- resulting segmentation mask from algorithm.
 
         &#34;&#34;&#34;
-        channel_num = self.params[&#34;seed&#34;]
+        channel_num = self.params[&#34;Channel&#34;]
         if len(img.shape) &gt; 2:
             num_channels = img.shape[2]
             if channel_num &lt; num_channels:
                 channel = img[:, :, int(channel_num)]
             else:
                 hsv = skimage.color.rgb2hsv(img)
-                channel = hsv[:, :, 1]
+                #print(f&#34;working with hsv channel {channel_num-3}&#34;)
+                channel = hsv[:, :, int(channel_num)-3]
         else:
             channel = img
         pscale = np.max(channel)
         my_mx = self.params[&#34;sigma&#34;] * pscale
         my_mn = self.params[&#34;mu&#34;] * pscale
-        if my_mx &lt; my_mn:
-            temp = my_mx
-            my_mx = my_mn
-            my_mn = temp
 
-        output = np.ones(channel.shape)
-        output[channel &lt; my_mn] = 0
-        output[channel &gt; my_mx] = 0
+        output = None
+        
+        if my_mn &lt; my_mx:
+            output = np.ones(channel.shape)
+            output[channel &lt; my_mn] = 0
+            output[channel &gt; my_mx] = 0
+        else:
+            output = np.zeros(channel.shape)
+            output[channel &gt; my_mn] = 1
+            output[channel &lt; my_mx] = 1
 
         return output
 
 
-algorithmspace[&#34;CT&#34;] = ColorThreshold
+algorithmspace[&#39;CT&#39;] = ColorThreshold
 
 class TripleA (segmentor):
     def __init__(self, paramlist=None):
@@ -339,6 +454,8 @@ class TripleA (segmentor):
             self.params[&#34;mu&#34;] = 0.4
             self.params[&#34;sigma&#34;] = 0.6
         self.paramindexes = [&#34;sigma&#34;, &#34;mu&#34;]
+        self.altnames = [&#34;MaxThreshold&#34;, &#34;MinThreshold&#34;]
+        self.checkparamindex()
 
     def evaluate(self, img): #XX
         channel_num = 1  # Do: Need to make this a searchable parameter.
@@ -395,7 +512,8 @@ class Felzenszwalb(segmentor):
             self.params[&#34;sigma&#34;] = 0.09
             self.params[&#34;min_size&#34;] = 92
         self.paramindexes = [&#34;scale&#34;, &#34;sigma&#34;, &#34;min_size&#34;]
-
+        self.checkparamindex()
+        
     def evaluate(self, img):
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
@@ -453,7 +571,8 @@ class Slic(segmentor):
             self.params[&#34;iterations&#34;] = 3
             self.params[&#34;sigma&#34;] = 5
         self.paramindexes = [&#34;n_segments&#34;, &#34;compactness&#34;, &#34;iterations&#34;, &#34;sigma&#34;]
-
+        self.checkparamindex()
+        
     def evaluate(self, img):
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
@@ -507,10 +626,11 @@ class QuickShift(segmentor):
             self.params[&#34;kernel_size&#34;] = 5
             self.params[&#34;max_dist&#34;] = 60
             self.params[&#34;sigma&#34;] = 5
-            self.params[&#34;seed&#34;] = 1
+            self.params[&#34;Channel&#34;] = 1
             self.params[&#34;ratio&#34;] = 2
-        self.paramindexes = [&#34;kernel_size&#34;, &#34;max_dist&#34;, &#34;sigma&#34;, &#34;seed&#34;, &#34;ratio&#34;]
-
+        self.paramindexes = [&#34;kernel_size&#34;, &#34;max_dist&#34;, &#34;sigma&#34;, &#34;Channel&#34;, &#34;ratio&#34;]
+        self.checkparamindex()
+        
     def evaluate(self, img):
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
@@ -527,7 +647,7 @@ class QuickShift(segmentor):
             kernel_size=self.params[&#34;kernel_size&#34;],
             max_dist=self.params[&#34;max_dist&#34;],
             sigma=self.params[&#34;sigma&#34;],
-            random_seed=self.params[&#34;seed&#34;],
+            random_seed=self.params[&#34;Channel&#34;],
         )
         return output
 
@@ -560,7 +680,8 @@ class Watershed(segmentor):
             self.params[&#34;algorithm&#34;] = &#34;WS&#34;
             self.params[&#34;compactness&#34;] = 2.0
         self.paramindexes = [&#34;compactness&#34;]
-
+        self.checkparamindex()
+        
     def evaluate(self, img):
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
@@ -618,7 +739,8 @@ class Chan_Vese(segmentor):
             self.params[&#34;tolerance&#34;] = 0.001
             self.params[&#34;init_level_set_chan&#34;] = &#34;small disk&#34;
         self.paramindexes = [&#34;mu&#34;, &#34;lambda&#34;, &#34;iterations&#34;, &#34;dt&#34;, &#34;init_level_set_chan&#34;]
-
+        self.checkparamindex()
+        
     def evaluate(self, img):
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
@@ -686,7 +808,8 @@ class Morphological_Chan_Vese(segmentor):
             &#34;smoothing&#34;,
             &#34;lambda&#34;,
         ]
-
+        self.checkparamindex()
+        
     def evaluate(self, img):
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
@@ -756,7 +879,8 @@ class MorphGeodesicActiveContour(segmentor):
             &#34;smoothing&#34;,
             &#34;balloon&#34;,
         ]
-
+        self.checkparamindex()
+        
     def evaluate(self, img):
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
@@ -792,29 +916,16 @@ algorithmspace[&#34;AC&#34;] = MorphGeodesicActiveContour</code></pre>
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="see.Segmentors.FitnessFunction"><code class="name flex">
-<span>def <span class="ident">FitnessFunction</span></span>(<span>inferred, ground_truth)</span>
-</code></dt>
-<dd>
-<section class="desc"></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def FitnessFunction(inferred, ground_truth):
-    return FF_ML2DHD_V2(inferred, ground_truth)</code></pre>
-</details>
-</dd>
 <dt id="see.Segmentors.algoFromParams"><code class="name flex">
 <span>def <span class="ident">algoFromParams</span></span>(<span>individual)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Convert an individual's param list to an algorithm. Assumes order
+<div class="desc"><p>Convert an individual's param list to an algorithm. Assumes order
 defined in the parameters class.</p>
 <p>Keyword arguments:
 individual &ndash; the list representing an individual in our population</p>
 <p>Output:
-algorithm(individual) &ndash; algorithm associated with the individual</p></section>
+algorithm(individual) &ndash; algorithm associated with the individual</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -837,11 +948,107 @@ algorithm(individual) &ndash; algorithm associated with the individual</p></sect
         raise ValueError(&#34;Algorithm not avaliable&#34;)</code></pre>
 </details>
 </dd>
+<dt id="see.Segmentors.mutateAlgo"><code class="name flex">
+<span>def <span class="ident">mutateAlgo</span></span>(<span>copy_child, pos_vals, flip_prob=0.5, seed=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generate an offspring based on current individual.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mutateAlgo(copy_child, pos_vals, flip_prob=0.5, seed=False):
+    &#34;&#34;&#34;Generate an offspring based on current individual.&#34;&#34;&#34;
+
+    child = copy.deepcopy(copy_child)
+    
+    # Not every algorithm is associated with every value
+    # Let&#39;s first see if we change the algorithm
+    rand_val = random.random()
+    if rand_val &lt; flip_prob:
+        # Let&#39;s mutate the algorithm
+        child[0] = random.choice(pos_vals[0])
+
+    #use the local search for mutation.
+    seg = algoFromParams(child)
+    child = seg.mutateself(flip_prob)
+    return child</code></pre>
+</details>
+</dd>
+<dt id="see.Segmentors.popCounts"><code class="name flex">
+<span>def <span class="ident">popCounts</span></span>(<span>pop)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Count the number of each algorihtm in a population</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def popCounts(pop):
+    &#34;&#34;&#34;Count the number of each algorihtm in a population&#34;&#34;&#34;
+    algorithms = eval(parameters.ranges[&#34;algorithm&#34;])
+    counts = {a:0 for a in algorithms}
+    for p in pop:
+        #print(p[0])
+        counts[p[0]] += 1
+    return counts</code></pre>
+</details>
+</dd>
+<dt id="see.Segmentors.print_best_algorithm_code"><code class="name flex">
+<span>def <span class="ident">print_best_algorithm_code</span></span>(<span>individual)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Print usable code to run segmentation algorithm based on an
+individual's genetic representation vector.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def print_best_algorithm_code(individual):
+    &#34;&#34;&#34;Print usable code to run segmentation algorithm based on an
+     individual&#39;s genetic representation vector.&#34;&#34;&#34;
+    #ind_algo = Segmentors.algoFromParams(individual)
+    ind_algo = algoFromParams(individual)
+    original_function = inspect.getsource(ind_algo.evaluate)
+
+    # Get the body of the function
+    function_contents = original_function[original_function.find(&#39;        &#39;):\
+                            original_function.find(&#39;return&#39;)]
+    while function_contents.find(&#39;self.params&#39;) != -1:
+
+        # Find the index of the &#39;s&#39; at the start of self.params
+        params_index = function_contents.find(&#39;self.params&#39;)
+
+        # Find the index of the &#39;]&#39; at the end of self.params[&#34;&lt;SOME_TEXT&gt;&#34;]
+        end_bracket_index = function_contents.find(&#39;]&#39;, params_index)+1
+
+        # Find the first occurance of self.params[&#34;&lt;SOME_TEXT&gt;&#34;] and store it
+        code_to_replace = function_contents[params_index:end_bracket_index]
+
+        # These offset will be used to access only the params_key
+        offset = len(&#39;self.params[&#34;&#39;)
+        offset2 = len(&#39;&#34;]&#39;)
+
+        # Get the params key
+        params_key = function_contents[params_index + offset:end_bracket_index-offset2]
+
+        # Use the params_key to access the params_value
+        param_value = str(ind_algo.params[params_key])
+
+        # Replace self.params[&#34;&lt;SOME_TEXT&gt;&#34;] with the value of self.params[&#34;&lt;SOME_TEXT&gt;&#34;]
+        function_contents = function_contents.replace(code_to_replace, param_value)
+
+    function_contents = function_contents.replace(&#39;        &#39;, &#39;&#39;)
+    function_contents = function_contents[function_contents.find(&#39;\n\&#34;\&#34;\&#34;&#39;)+5:]
+    print(function_contents)
+    return function_contents</code></pre>
+</details>
+</dd>
 <dt id="see.Segmentors.runAlgo"><code class="name flex">
 <span>def <span class="ident">runAlgo</span></span>(<span>img, ground_img, individual, return_mask=False)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Run and evaluate the performance of an individual.</p>
+<div class="desc"><p>Run and evaluate the performance of an individual.</p>
 <p>Keyword arguments:
 img &ndash; training image
 ground_img &ndash; the ground truth for the image mask
@@ -850,7 +1057,7 @@ return_mask &ndash; Boolean value indicating whether to return resulting
 mask for the individual or not (default False)</p>
 <p>Output:
 fitness &ndash; resulting fitness value for the individual
-mask &ndash; resulting image mask associated with the individual (if return_mask=True)</p></section>
+mask &ndash; resulting image mask associated with the individual (if return_mask=True)</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -877,6 +1084,7 @@ mask &ndash; resulting image mask associated with the individual (if return_mask
     logging.getLogger().info(&#34;Calculating Fitness&#34;)
     fitness = FitnessFunction(mask, ground_img)
     if return_mask:
+        print(&#34;Returning mask&#34;)
         return [fitness, mask]
     else:
         return fitness</code></pre>
@@ -892,7 +1100,7 @@ mask &ndash; resulting image mask associated with the individual (if return_mask
 <span>(</span><span>paramlist=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Peform Chan Vese segmentation algorithm. ONLY GRAYSCALE. Segments objects
+<div class="desc"><p>Peform Chan Vese segmentation algorithm. ONLY GRAYSCALE. Segments objects
 without clear boundaries. Returns segmentation array of algorithm.</p>
 <p>Parameters:
 image &ndash; ndarray grayscale image to be segmented
@@ -911,7 +1119,7 @@ max_iter &ndash; uint,
 max number of iterations before algorithms stops
 dt &ndash; float, Multiplication factor applied at the calculations step</p>
 <p>Get parameters from parameter list that are used in segmentation algorithm.
-Assign default values to these parameters.</p></section>
+Assign default values to these parameters.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -953,7 +1161,8 @@ Assign default values to these parameters.</p></section>
             self.params[&#34;tolerance&#34;] = 0.001
             self.params[&#34;init_level_set_chan&#34;] = &#34;small disk&#34;
         self.paramindexes = [&#34;mu&#34;, &#34;lambda&#34;, &#34;iterations&#34;, &#34;dt&#34;, &#34;init_level_set_chan&#34;]
-
+        self.checkparamindex()
+        
     def evaluate(self, img):
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
@@ -987,11 +1196,11 @@ Assign default values to these parameters.</p></section>
 <span>def <span class="ident">evaluate</span></span>(<span>self, img)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Evaluate segmentation algorithm on training image.</p>
+<div class="desc"><p>Evaluate segmentation algorithm on training image.</p>
 <p>Keyword arguments:
 img &ndash; Original training image.</p>
 <p>Output:
-output &ndash; resulting segmentation mask from algorithm.</p></section>
+output &ndash; resulting segmentation mask from algorithm.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1025,7 +1234,8 @@ output &ndash; resulting segmentation mask from algorithm.</p></section>
 <ul class="hlist">
 <li><code><b><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></b></code>:
 <ul class="hlist">
-<li><code><a title="see.Segmentors.segmentor.algorithm" href="#see.Segmentors.segmentor.algorithm">algorithm</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
 </ul>
 </li>
 </ul>
@@ -1035,13 +1245,13 @@ output &ndash; resulting segmentation mask from algorithm.</p></section>
 <span>(</span><span>paramlist=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Peform Color Thresholding segmentation algorithm. Segments parts of the image
+<div class="desc"><p>Peform Color Thresholding segmentation algorithm. Segments parts of the image
 based on the numerical values for the respective channel.</p>
 <p>Parameters:
 my_mx &ndash; maximum thresholding value
 my_mn &ndash; minimum thresholding value</p>
 <p>Get parameters from parameter list that are used in segmentation algorithm.
-Assign default values to these parameters.</p></section>
+Assign default values to these parameters.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1062,9 +1272,12 @@ Assign default values to these parameters.</p></section>
         super(ColorThreshold, self).__init__(paramlist)
         if not paramlist:
             self.params[&#34;algorithm&#34;] = &#34;CT&#34;
+            self.params[&#34;Channel&#34;] = 5
             self.params[&#34;mu&#34;] = 0.4
             self.params[&#34;sigma&#34;] = 0.6
-        self.paramindexes = [&#34;sigma&#34;, &#34;mu&#34;]
+        self.paramindexes = [&#34;Channel&#34;, &#34;sigma&#34;, &#34;mu&#34;]
+        self.altnames = [&#34;Channel&#34;, &#34;MaxThreshold&#34;, &#34;MinThreshold&#34;]
+        self.checkparamindex()
 
     def evaluate(self, img): #XX
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
@@ -1076,27 +1289,31 @@ Assign default values to these parameters.</p></section>
         output -- resulting segmentation mask from algorithm.
 
         &#34;&#34;&#34;
-        channel_num = self.params[&#34;seed&#34;]
+        channel_num = self.params[&#34;Channel&#34;]
         if len(img.shape) &gt; 2:
             num_channels = img.shape[2]
             if channel_num &lt; num_channels:
                 channel = img[:, :, int(channel_num)]
             else:
                 hsv = skimage.color.rgb2hsv(img)
-                channel = hsv[:, :, 1]
+                #print(f&#34;working with hsv channel {channel_num-3}&#34;)
+                channel = hsv[:, :, int(channel_num)-3]
         else:
             channel = img
         pscale = np.max(channel)
         my_mx = self.params[&#34;sigma&#34;] * pscale
         my_mn = self.params[&#34;mu&#34;] * pscale
-        if my_mx &lt; my_mn:
-            temp = my_mx
-            my_mx = my_mn
-            my_mn = temp
 
-        output = np.ones(channel.shape)
-        output[channel &lt; my_mn] = 0
-        output[channel &gt; my_mx] = 0
+        output = None
+        
+        if my_mn &lt; my_mx:
+            output = np.ones(channel.shape)
+            output[channel &lt; my_mn] = 0
+            output[channel &gt; my_mx] = 0
+        else:
+            output = np.zeros(channel.shape)
+            output[channel &gt; my_mn] = 1
+            output[channel &lt; my_mx] = 1
 
         return output</code></pre>
 </details>
@@ -1110,11 +1327,11 @@ Assign default values to these parameters.</p></section>
 <span>def <span class="ident">evaluate</span></span>(<span>self, img)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Evaluate segmentation algorithm on training image.</p>
+<div class="desc"><p>Evaluate segmentation algorithm on training image.</p>
 <p>Keyword arguments:
 img &ndash; Original training image.</p>
 <p>Output:
-output &ndash; resulting segmentation mask from algorithm.</p></section>
+output &ndash; resulting segmentation mask from algorithm.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1129,27 +1346,31 @@ output &ndash; resulting segmentation mask from algorithm.</p></section>
     output -- resulting segmentation mask from algorithm.
 
     &#34;&#34;&#34;
-    channel_num = self.params[&#34;seed&#34;]
+    channel_num = self.params[&#34;Channel&#34;]
     if len(img.shape) &gt; 2:
         num_channels = img.shape[2]
         if channel_num &lt; num_channels:
             channel = img[:, :, int(channel_num)]
         else:
             hsv = skimage.color.rgb2hsv(img)
-            channel = hsv[:, :, 1]
+            #print(f&#34;working with hsv channel {channel_num-3}&#34;)
+            channel = hsv[:, :, int(channel_num)-3]
     else:
         channel = img
     pscale = np.max(channel)
     my_mx = self.params[&#34;sigma&#34;] * pscale
     my_mn = self.params[&#34;mu&#34;] * pscale
-    if my_mx &lt; my_mn:
-        temp = my_mx
-        my_mx = my_mn
-        my_mn = temp
 
-    output = np.ones(channel.shape)
-    output[channel &lt; my_mn] = 0
-    output[channel &gt; my_mx] = 0
+    output = None
+    
+    if my_mn &lt; my_mx:
+        output = np.ones(channel.shape)
+        output[channel &lt; my_mn] = 0
+        output[channel &gt; my_mx] = 0
+    else:
+        output = np.zeros(channel.shape)
+        output[channel &gt; my_mn] = 1
+        output[channel &lt; my_mx] = 1
 
     return output</code></pre>
 </details>
@@ -1159,7 +1380,8 @@ output &ndash; resulting segmentation mask from algorithm.</p></section>
 <ul class="hlist">
 <li><code><b><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></b></code>:
 <ul class="hlist">
-<li><code><a title="see.Segmentors.segmentor.algorithm" href="#see.Segmentors.segmentor.algorithm">algorithm</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
 </ul>
 </li>
 </ul>
@@ -1169,8 +1391,8 @@ output &ndash; resulting segmentation mask from algorithm.</p></section>
 <span>(</span><span>paramlist=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Get parameters from parameter list that are used in segmentation algorithm.
-Assign default values to these parameters.</p></section>
+<div class="desc"><p>Get parameters from parameter list that are used in segmentation algorithm.
+Assign default values to these parameters.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1204,7 +1426,8 @@ Assign default values to these parameters.</p></section>
             self.params[&#34;sigma&#34;] = 0.09
             self.params[&#34;min_size&#34;] = 92
         self.paramindexes = [&#34;scale&#34;, &#34;sigma&#34;, &#34;min_size&#34;]
-
+        self.checkparamindex()
+        
     def evaluate(self, img):
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
@@ -1237,11 +1460,11 @@ Assign default values to these parameters.</p></section>
 <span>def <span class="ident">evaluate</span></span>(<span>self, img)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Evaluate segmentation algorithm on training image.</p>
+<div class="desc"><p>Evaluate segmentation algorithm on training image.</p>
 <p>Keyword arguments:
 img &ndash; Original training image.</p>
 <p>Output:
-output &ndash; resulting segmentation mask from algorithm.</p></section>
+output &ndash; resulting segmentation mask from algorithm.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1274,7 +1497,8 @@ output &ndash; resulting segmentation mask from algorithm.</p></section>
 <ul class="hlist">
 <li><code><b><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></b></code>:
 <ul class="hlist">
-<li><code><a title="see.Segmentors.segmentor.algorithm" href="#see.Segmentors.segmentor.algorithm">algorithm</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
 </ul>
 </li>
 </ul>
@@ -1284,7 +1508,7 @@ output &ndash; resulting segmentation mask from algorithm.</p></section>
 <span>(</span><span>paramlist=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Peform Morphological Geodesic Active Contour segmentation algorithm. Uses
+<div class="desc"><p>Peform Morphological Geodesic Active Contour segmentation algorithm. Uses
 an image from inverse_gaussian_gradient in order to segment object with visible,
 but noisy/broken borders. inverse_gaussian_gradient computes the magnitude of
 the gradients in an image. Returns a preprocessed image suitable for above function.
@@ -1302,7 +1526,7 @@ per iteration. Usually 1-4, larger values have smoother segmentation.
 threshold &ndash; Areas of image with a smaller value than the threshold are borders.
 balloon &ndash; float, guides contour of low-information parts of image.</p>
 <p>Get parameters from parameter list that are used in segmentation algorithm.
-Assign default values to these parameters.</p></section>
+Assign default values to these parameters.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1351,7 +1575,8 @@ Assign default values to these parameters.</p></section>
             &#34;smoothing&#34;,
             &#34;balloon&#34;,
         ]
-
+        self.checkparamindex()
+        
     def evaluate(self, img):
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
@@ -1387,11 +1612,11 @@ Assign default values to these parameters.</p></section>
 <span>def <span class="ident">evaluate</span></span>(<span>self, img)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Evaluate segmentation algorithm on training image.</p>
+<div class="desc"><p>Evaluate segmentation algorithm on training image.</p>
 <p>Keyword arguments:
 img &ndash; Original training image.</p>
 <p>Output:
-output &ndash; resulting segmentation mask from algorithm.</p></section>
+output &ndash; resulting segmentation mask from algorithm.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1427,7 +1652,8 @@ output &ndash; resulting segmentation mask from algorithm.</p></section>
 <ul class="hlist">
 <li><code><b><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></b></code>:
 <ul class="hlist">
-<li><code><a title="see.Segmentors.segmentor.algorithm" href="#see.Segmentors.segmentor.algorithm">algorithm</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
 </ul>
 </li>
 </ul>
@@ -1437,7 +1663,7 @@ output &ndash; resulting segmentation mask from algorithm.</p></section>
 <span>(</span><span>paramlist=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Peform Morphological Chan Vese segmentation algorithm.
+<div class="desc"><p>Peform Morphological Chan Vese segmentation algorithm.
 ONLY WORKS ON GRAYSCALE. Active contours without edges. Can be used to
 segment images/volumes without good borders. Required that the inside of
 the object looks different than outside (color, shade, darker).</p>
@@ -1456,7 +1682,7 @@ outer region will give larger range of values than inner value.
 lambda2 &ndash; Weight param for inner region. If larger thant lambda1,
 inner region will have a larger range of values than outer region.</p>
 <p>Get parameters from parameter list that are used in segmentation algorithm.
-Assign default values to these parameters.</p></section>
+Assign default values to these parameters.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1502,7 +1728,8 @@ Assign default values to these parameters.</p></section>
             &#34;smoothing&#34;,
             &#34;lambda&#34;,
         ]
-
+        self.checkparamindex()
+        
     def evaluate(self, img):
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
@@ -1535,11 +1762,11 @@ Assign default values to these parameters.</p></section>
 <span>def <span class="ident">evaluate</span></span>(<span>self, img)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Evaluate segmentation algorithm on training image.</p>
+<div class="desc"><p>Evaluate segmentation algorithm on training image.</p>
 <p>Keyword arguments:
 img &ndash; Original training image.</p>
 <p>Output:
-output &ndash; resulting segmentation mask from algorithm.</p></section>
+output &ndash; resulting segmentation mask from algorithm.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1572,7 +1799,8 @@ output &ndash; resulting segmentation mask from algorithm.</p></section>
 <ul class="hlist">
 <li><code><b><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></b></code>:
 <ul class="hlist">
-<li><code><a title="see.Segmentors.segmentor.algorithm" href="#see.Segmentors.segmentor.algorithm">algorithm</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
 </ul>
 </li>
 </ul>
@@ -1582,7 +1810,7 @@ output &ndash; resulting segmentation mask from algorithm.</p></section>
 <span>(</span><span>paramlist=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Perform the Quick Shift segmentation algorithm. Segments images with quickshift
+<div class="desc"><p>Perform the Quick Shift segmentation algorithm. Segments images with quickshift
 clustering in Color (x,y) space. Returns ndarray segmentation mask of the labels.</p>
 <p>Parameters:
 image &ndash; ndarray, input image
@@ -1595,7 +1823,7 @@ sigma &ndash; float, Width of Guassian smoothing as preprocessing.
 Zero means no smoothing
 random_seed &ndash; int, Random seed used for breacking ties.</p>
 <p>Get parameters from parameter list that are used in segmentation algorithm.
-Assign default values to these parameters.</p></section>
+Assign default values to these parameters.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1626,10 +1854,11 @@ Assign default values to these parameters.</p></section>
             self.params[&#34;kernel_size&#34;] = 5
             self.params[&#34;max_dist&#34;] = 60
             self.params[&#34;sigma&#34;] = 5
-            self.params[&#34;seed&#34;] = 1
+            self.params[&#34;Channel&#34;] = 1
             self.params[&#34;ratio&#34;] = 2
-        self.paramindexes = [&#34;kernel_size&#34;, &#34;max_dist&#34;, &#34;sigma&#34;, &#34;seed&#34;, &#34;ratio&#34;]
-
+        self.paramindexes = [&#34;kernel_size&#34;, &#34;max_dist&#34;, &#34;sigma&#34;, &#34;Channel&#34;, &#34;ratio&#34;]
+        self.checkparamindex()
+        
     def evaluate(self, img):
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
@@ -1646,7 +1875,7 @@ Assign default values to these parameters.</p></section>
             kernel_size=self.params[&#34;kernel_size&#34;],
             max_dist=self.params[&#34;max_dist&#34;],
             sigma=self.params[&#34;sigma&#34;],
-            random_seed=self.params[&#34;seed&#34;],
+            random_seed=self.params[&#34;Channel&#34;],
         )
         return output</code></pre>
 </details>
@@ -1660,11 +1889,11 @@ Assign default values to these parameters.</p></section>
 <span>def <span class="ident">evaluate</span></span>(<span>self, img)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Evaluate segmentation algorithm on training image.</p>
+<div class="desc"><p>Evaluate segmentation algorithm on training image.</p>
 <p>Keyword arguments:
 img &ndash; Original training image.</p>
 <p>Output:
-output &ndash; resulting segmentation mask from algorithm.</p></section>
+output &ndash; resulting segmentation mask from algorithm.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1685,7 +1914,7 @@ output &ndash; resulting segmentation mask from algorithm.</p></section>
         kernel_size=self.params[&#34;kernel_size&#34;],
         max_dist=self.params[&#34;max_dist&#34;],
         sigma=self.params[&#34;sigma&#34;],
-        random_seed=self.params[&#34;seed&#34;],
+        random_seed=self.params[&#34;Channel&#34;],
     )
     return output</code></pre>
 </details>
@@ -1695,7 +1924,8 @@ output &ndash; resulting segmentation mask from algorithm.</p></section>
 <ul class="hlist">
 <li><code><b><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></b></code>:
 <ul class="hlist">
-<li><code><a title="see.Segmentors.segmentor.algorithm" href="#see.Segmentors.segmentor.algorithm">algorithm</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
 </ul>
 </li>
 </ul>
@@ -1705,7 +1935,7 @@ output &ndash; resulting segmentation mask from algorithm.</p></section>
 <span>(</span><span>paramlist=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Perform the Slic segmentation algorithm. Segments k-means clustering in Color space
+<div class="desc"><p>Perform the Slic segmentation algorithm. Segments k-means clustering in Color space
 (x, y, z). Returns a 2D or 3D array of labels.</p>
 <p>Parameters:
 image &ndash; ndarray, input image
@@ -1723,7 +1953,7 @@ dimension. Defalt is uniform spacing
 multichannel &ndash; bool,
 multichannel (True) vs grayscale (False)</p>
 <p>Get parameters from parameter list that are used in segmentation algorithm.
-Assign default values to these parameters.</p></section>
+Assign default values to these parameters.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1760,7 +1990,8 @@ Assign default values to these parameters.</p></section>
             self.params[&#34;iterations&#34;] = 3
             self.params[&#34;sigma&#34;] = 5
         self.paramindexes = [&#34;n_segments&#34;, &#34;compactness&#34;, &#34;iterations&#34;, &#34;sigma&#34;]
-
+        self.checkparamindex()
+        
     def evaluate(self, img):
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
@@ -1795,11 +2026,11 @@ Assign default values to these parameters.</p></section>
 <span>def <span class="ident">evaluate</span></span>(<span>self, img)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Evaluate segmentation algorithm on training image.</p>
+<div class="desc"><p>Evaluate segmentation algorithm on training image.</p>
 <p>Keyword arguments:
 img &ndash; Original training image.</p>
 <p>Output:
-output &ndash; resulting segmentation mask from algorithm.</p></section>
+output &ndash; resulting segmentation mask from algorithm.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1834,7 +2065,8 @@ output &ndash; resulting segmentation mask from algorithm.</p></section>
 <ul class="hlist">
 <li><code><b><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></b></code>:
 <ul class="hlist">
-<li><code><a title="see.Segmentors.segmentor.algorithm" href="#see.Segmentors.segmentor.algorithm">algorithm</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
 </ul>
 </li>
 </ul>
@@ -1844,10 +2076,10 @@ output &ndash; resulting segmentation mask from algorithm.</p></section>
 <span>(</span><span>paramlist=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Base class for segmentor classes defined below.</p>
+<div class="desc"><p>Base class for segmentor classes defined below.</p>
 <p>Functions:
 evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
-<p>Generate algorithm params from parameter list.</p></section>
+<p>Generate algorithm params from parameter list.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1860,6 +2092,8 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
             self.params[&#34;mu&#34;] = 0.4
             self.params[&#34;sigma&#34;] = 0.6
         self.paramindexes = [&#34;sigma&#34;, &#34;mu&#34;]
+        self.altnames = [&#34;MaxThreshold&#34;, &#34;MinThreshold&#34;]
+        self.checkparamindex()
 
     def evaluate(self, img): #XX
         channel_num = 1  # Do: Need to make this a searchable parameter.
@@ -1892,8 +2126,9 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
 <ul class="hlist">
 <li><code><b><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></b></code>:
 <ul class="hlist">
-<li><code><a title="see.Segmentors.segmentor.algorithm" href="#see.Segmentors.segmentor.algorithm">algorithm</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.evaluate" href="#see.Segmentors.segmentor.evaluate">evaluate</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
 </ul>
 </li>
 </ul>
@@ -1903,7 +2138,7 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
 <span>(</span><span>paramlist=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Perform the Watershed segmentation algorithm. Uses user-markers.
+<div class="desc"><p>Perform the Watershed segmentation algorithm. Uses user-markers.
 treats markers as basins and 'floods' them. Especially good if overlapping objects.
 Returns a labeled image ndarray.</p>
 <p>Parameters:
@@ -1911,7 +2146,7 @@ image &ndash; ndarray, input array
 compactness &ndash; float, compactness of the basins. Higher values
 make more regularly-shaped basin.</p>
 <p>Get parameters from parameter list that are used in segmentation algorithm.
-Assign default values to these parameters.</p></section>
+Assign default values to these parameters.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1940,7 +2175,8 @@ Assign default values to these parameters.</p></section>
             self.params[&#34;algorithm&#34;] = &#34;WS&#34;
             self.params[&#34;compactness&#34;] = 2.0
         self.paramindexes = [&#34;compactness&#34;]
-
+        self.checkparamindex()
+        
     def evaluate(self, img):
         &#34;&#34;&#34;Evaluate segmentation algorithm on training image.
 
@@ -1968,11 +2204,11 @@ Assign default values to these parameters.</p></section>
 <span>def <span class="ident">evaluate</span></span>(<span>self, img)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Evaluate segmentation algorithm on training image.</p>
+<div class="desc"><p>Evaluate segmentation algorithm on training image.</p>
 <p>Keyword arguments:
 img &ndash; Original training image.</p>
 <p>Output:
-output &ndash; resulting segmentation mask from algorithm.</p></section>
+output &ndash; resulting segmentation mask from algorithm.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2000,7 +2236,8 @@ output &ndash; resulting segmentation mask from algorithm.</p></section>
 <ul class="hlist">
 <li><code><b><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></b></code>:
 <ul class="hlist">
-<li><code><a title="see.Segmentors.segmentor.algorithm" href="#see.Segmentors.segmentor.algorithm">algorithm</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
 </ul>
 </li>
 </ul>
@@ -2009,12 +2246,12 @@ output &ndash; resulting segmentation mask from algorithm.</p></section>
 <span>class <span class="ident">parameters</span></span>
 </code></dt>
 <dd>
-<section class="desc"><p>Construct an ordered dictionary that represents the search space.</p>
+<div class="desc"><p>Construct an ordered dictionary that represents the search space.</p>
 <p>Functions:
 printparam &ndash; returns description for each parameter
 tolist &ndash; converts dictionary of params into list
 fromlist &ndash; converts individual into dictionary of params</p>
-<p>Set default values for each param in the dictionary.</p></section>
+<p>Set default values for each param in the dictionary.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2029,82 +2266,107 @@ fromlist &ndash; converts individual into dictionary of params</p>
 
     &#34;&#34;&#34;
 
-    descriptions = dict()
-    ranges = dict()
+    descriptions = OrderedDict()
+    ranges = OrderedDict()
     pkeys = []
 
+    #0
     ranges[&#34;algorithm&#34;] = &#34;[&#39;CT&#39;,&#39;FB&#39;,&#39;SC&#39;,&#39;WS&#39;,&#39;CV&#39;,&#39;MCV&#39;,&#39;AC&#39;]&#34;
     descriptions[&#34;algorithm&#34;] = &#34;string code for the algorithm&#34;
 
+    #1
     descriptions[&#34;beta&#34;] = &#34;A parameter for randomWalker So, I should take this out&#34;
     ranges[&#34;beta&#34;] = &#34;[i for i in range(0,10000)]&#34;
 
+    #2
     descriptions[&#34;tolerance&#34;] = &#34;A parameter for flood and flood_fill&#34;
     ranges[&#34;tolerance&#34;] = &#34;[float(i)/1000 for i in range(0,1000,1)]&#34;
 
+    #3
     descriptions[&#34;scale&#34;] = &#34;A parameter for felzenszwalb&#34;
     ranges[&#34;scale&#34;] = &#34;[i for i in range(0,10000)]&#34;
 
+    #4
     descriptions[&#34;sigma&#34;] = &#34;sigma value. A parameter for felzenswalb, inverse_guassian_gradient, slic, and quickshift&#34;
-    ranges[&#34;sigma&#34;] = &#34;[float(i)/100 for i in range(0,10,1)]&#34;
+    ranges[&#34;sigma&#34;] = &#34;[float(i)/100 for i in range(0,100)]&#34;
 
+    #5
     descriptions[&#34;min_size&#34;] = &#34;parameter for felzenszwalb&#34;
     ranges[&#34;min_size&#34;] = &#34;[i for i in range(0,10000)]&#34;
 
+    #6
     descriptions[&#34;n_segments&#34;] = &#34;A parameter for slic&#34;
     ranges[&#34;n_segments&#34;] = &#34;[i for i in range(2,10000)]&#34;
 
+    #7
     descriptions[&#34;iterations&#34;] = &#34;A parameter for both morphological algorithms&#34;
     ranges[&#34;iterations&#34;] = &#34;[10, 10]&#34;
 
+    #8
     descriptions[&#34;ratio&#34;] = &#34;A parameter for ratio&#34;
     ranges[&#34;ratio&#34;] = &#34;[float(i)/100 for i in range(0,100)]&#34;
 
+    #9
     descriptions[&#34;kernel_size&#34;] = &#34;A parameter for kernel_size&#34;
     ranges[&#34;kernel_size&#34;] = &#34;[i for i in range(0,10000)]&#34;
 
+    #10
     descriptions[&#34;max_dist&#34;] = &#34;A parameter for quickshift&#34;
     ranges[&#34;max_dist&#34;] = &#34;[i for i in range(0,10000)]&#34;
 
-    descriptions[&#34;seed&#34;] = &#34;A parameter for quickshift, and perhaps other random stuff&#34;
-    ranges[&#34;seed&#34;] = &#34;[0,1,2,3,4,5]&#34;
+    #11
+    descriptions[&#34;Channel&#34;] = &#34;A parameter for Picking the Channel R,G,B,H,S,V&#34;
+    ranges[&#34;Channel&#34;] = &#34;[0,1,2,3,4,5]&#34;
 
+    #12
     descriptions[&#34;connectivity&#34;] = &#34;A parameter for flood and floodfill&#34;
     ranges[&#34;connectivity&#34;] = &#34;[i for i in range(0, 9)]&#34;
 
+    #13
     descriptions[&#34;compactness&#34;] = &#34;A parameter for slic and watershed&#34;
     ranges[&#34;compactness&#34;] = &#34;[0.0001,0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000]&#34;
 
+    #14
     descriptions[&#34;mu&#34;] = &#34;A parameter for chan_vese&#34;
     ranges[&#34;mu&#34;] = &#34;[float(i)/100 for i in range(0,100)]&#34;
 
+    #15
     descriptions[&#34;lambda&#34;] = &#34;A parameter for chan_vese and morphological_chan_vese&#34;
     ranges[&#34;lambda&#34;] = &#34;[(1,1), (1,2), (2,1)]&#34;
 
+    #16
     descriptions[&#34;dt&#34;] = &#34;#An algorithm for chan_vese May want to make seperate level sets for different functions e.g. Morph_chan_vese vs morph_geo_active_contour&#34;
     ranges[&#34;dt&#34;] = &#34;[float(i)/10 for i in range(0,100)]&#34;
 
+    #17
     descriptions[&#34;init_level_set_chan&#34;] = &#34;A parameter for chan_vese and morphological_chan_vese&#34;
     ranges[&#34;init_level_set_chan&#34;] = &#34;[&#39;checkerboard&#39;, &#39;disk&#39;, &#39;small disk&#39;]&#34;
 
+    #18
     descriptions[&#34;init_level_set_morph&#34;] = &#34;A parameter for morphological_chan_vese&#34;
     ranges[&#34;init_level_set_morph&#34;] = &#34;[&#39;checkerboard&#39;, &#39;circle&#39;]&#34;
 
+    #19
     descriptions[&#34;smoothing&#34;] = &#34;A parameter used in morphological_geodesic_active_contour&#34;
     ranges[&#34;smoothing&#34;] = &#34;[i for i in range(1, 10)]&#34;
 
+    #20
     descriptions[&#34;alpha&#34;] = &#34;A parameter for inverse_guassian_gradient&#34;
     ranges[&#34;alpha&#34;] = &#34;[i for i in range(0,10000)]&#34;
 
+    #21
     descriptions[&#34;balloon&#34;] = &#34;A parameter for morphological_geodesic_active_contour&#34;
     ranges[&#34;balloon&#34;] = &#34;[i for i in range(-50,50)]&#34;
 
+    #22
     descriptions[&#34;seed_pointX&#34;] = &#34;A parameter for flood and flood_fill&#34;
     ranges[&#34;seed_pointX&#34;] = &#34;[0.0]&#34;
 
+    #23
     descriptions[&#34;seed_pointY&#34;] = &#34;??&#34;
     ranges[&#34;seed_pointY&#34;] = &#34;[0.0]&#34;
 
+    #24
     descriptions[&#34;seed_pointZ&#34;] = &#34;??&#34;
     ranges[&#34;seed_pointZ&#34;] = &#34;[0.0]&#34;
 
@@ -2126,7 +2388,7 @@ fromlist &ndash; converts individual into dictionary of params</p>
         self[&#34;ratio&#34;] = 0.0
         self[&#34;kernel_size&#34;] = 0.0
         self[&#34;max_dist&#34;] = 0.0
-        self[&#34;seed&#34;] = 0.0
+        self[&#34;Channel&#34;] = 0.0
         self[&#34;connectivity&#34;] = 0.0
         self[&#34;compactness&#34;] = 0.0
         self[&#34;mu&#34;] = 0.0
@@ -2175,37 +2437,15 @@ fromlist &ndash; converts individual into dictionary of params</p>
 <dl>
 <dt id="see.Segmentors.parameters.descriptions"><code class="name">var <span class="ident">descriptions</span></code></dt>
 <dd>
-<section class="desc"><p>dict() -&gt; new empty dictionary
-dict(mapping) -&gt; new dictionary initialized from a mapping object's
-(key, value) pairs
-dict(iterable) -&gt; new dictionary initialized as if via:
-d = {}
-for k, v in iterable:
-d[k] = v
-dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
-in the keyword argument list.
-For example:
-dict(one=1, two=2)</p></section>
+<div class="desc"></div>
 </dd>
 <dt id="see.Segmentors.parameters.pkeys"><code class="name">var <span class="ident">pkeys</span></code></dt>
 <dd>
-<section class="desc"><p>Built-in mutable sequence.</p>
-<p>If no argument is given, the constructor creates a new empty list.
-The argument must be an iterable if specified.</p></section>
+<div class="desc"></div>
 </dd>
 <dt id="see.Segmentors.parameters.ranges"><code class="name">var <span class="ident">ranges</span></code></dt>
 <dd>
-<section class="desc"><p>dict() -&gt; new empty dictionary
-dict(mapping) -&gt; new dictionary initialized from a mapping object's
-(key, value) pairs
-dict(iterable) -&gt; new dictionary initialized as if via:
-d = {}
-for k, v in iterable:
-d[k] = v
-dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
-in the keyword argument list.
-For example:
-dict(one=1, two=2)</p></section>
+<div class="desc"></div>
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -2214,7 +2454,7 @@ dict(one=1, two=2)</p></section>
 <span>def <span class="ident">fromlist</span></span>(<span>self, individual)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Convert individual's list into dictionary of params.</p></section>
+<div class="desc"><p>Convert individual's list into dictionary of params.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2230,7 +2470,7 @@ dict(one=1, two=2)</p></section>
 <span>def <span class="ident">printparam</span></span>(<span>self, key)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Return description of parameter from param list.</p></section>
+<div class="desc"><p>Return description of parameter from param list.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2244,7 +2484,7 @@ dict(one=1, two=2)</p></section>
 <span>def <span class="ident">tolist</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Convert dictionary of params into list of parameters.</p></section>
+<div class="desc"><p>Convert dictionary of params into list of parameters.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2264,10 +2504,10 @@ dict(one=1, two=2)</p></section>
 <span>(</span><span>paramlist=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Base class for segmentor classes defined below.</p>
+<div class="desc"><p>Base class for segmentor classes defined below.</p>
 <p>Functions:
 evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
-<p>Generate algorithm params from parameter list.</p></section>
+<p>Generate algorithm params from parameter list.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2285,9 +2525,23 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
     def __init__(self, paramlist=None):
         &#34;&#34;&#34;Generate algorithm params from parameter list.&#34;&#34;&#34;
         self.params = parameters()
+        self.altnames = []
         if paramlist:
             self.params.fromlist(paramlist)
 
+    def checkparamindex(self):
+        &#34;&#34;&#34;Check paramiter index to ensure values are valid&#34;&#34;&#34;
+        for myparams in self.paramindexes:
+            assert myparams in self.params, f&#34;ERROR {myparams} is not in parameter list&#34;
+             
+    def mutateself(self, flip_prob=0.5):
+        &#34;&#34;&#34;Mutate self and return new params.&#34;&#34;&#34;
+        for myparam in self.paramindexes:
+            rand_val = random.random()
+            if rand_val &lt; flip_prob:
+                self.params[myparam] = random.choice(eval(self.params.ranges[myparam]))
+        return self.params
+    
     def evaluate(self, img):
         &#34;&#34;&#34;Run segmentation algorithm to get inferred mask.&#34;&#34;&#34;
         return np.zeros(img.shape[0:1])
@@ -2301,38 +2555,45 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
-<li><a title="see.Segmentors.ColorThreshold" href="#see.Segmentors.ColorThreshold">ColorThreshold</a></li>
-<li><a title="see.Segmentors.TripleA" href="#see.Segmentors.TripleA">TripleA</a></li>
-<li><a title="see.Segmentors.Felzenszwalb" href="#see.Segmentors.Felzenszwalb">Felzenszwalb</a></li>
-<li><a title="see.Segmentors.Slic" href="#see.Segmentors.Slic">Slic</a></li>
-<li><a title="see.Segmentors.QuickShift" href="#see.Segmentors.QuickShift">QuickShift</a></li>
-<li><a title="see.Segmentors.Watershed" href="#see.Segmentors.Watershed">Watershed</a></li>
 <li><a title="see.Segmentors.Chan_Vese" href="#see.Segmentors.Chan_Vese">Chan_Vese</a></li>
-<li><a title="see.Segmentors.Morphological_Chan_Vese" href="#see.Segmentors.Morphological_Chan_Vese">Morphological_Chan_Vese</a></li>
+<li><a title="see.Segmentors.ColorThreshold" href="#see.Segmentors.ColorThreshold">ColorThreshold</a></li>
+<li><a title="see.Segmentors.Felzenszwalb" href="#see.Segmentors.Felzenszwalb">Felzenszwalb</a></li>
 <li><a title="see.Segmentors.MorphGeodesicActiveContour" href="#see.Segmentors.MorphGeodesicActiveContour">MorphGeodesicActiveContour</a></li>
+<li><a title="see.Segmentors.Morphological_Chan_Vese" href="#see.Segmentors.Morphological_Chan_Vese">Morphological_Chan_Vese</a></li>
+<li><a title="see.Segmentors.QuickShift" href="#see.Segmentors.QuickShift">QuickShift</a></li>
+<li><a title="see.Segmentors.Slic" href="#see.Segmentors.Slic">Slic</a></li>
+<li><a title="see.Segmentors.TripleA" href="#see.Segmentors.TripleA">TripleA</a></li>
+<li><a title="see.Segmentors.Watershed" href="#see.Segmentors.Watershed">Watershed</a></li>
 </ul>
 <h3>Class variables</h3>
 <dl>
 <dt id="see.Segmentors.segmentor.algorithm"><code class="name">var <span class="ident">algorithm</span></code></dt>
 <dd>
-<section class="desc"><p>str(object='') -&gt; str
-str(bytes_or_buffer[, encoding[, errors]]) -&gt; str</p>
-<p>Create a new string object from the given object. If encoding or
-errors is specified, then the object must expose a data buffer
-that will be decoded using the given encoding and error handler.
-Otherwise, returns the result of object.<strong>str</strong>() (if defined)
-or repr(object).
-encoding defaults to sys.getdefaultencoding().
-errors defaults to 'strict'.</p></section>
+<div class="desc"></div>
 </dd>
 </dl>
 <h3>Methods</h3>
 <dl>
+<dt id="see.Segmentors.segmentor.checkparamindex"><code class="name flex">
+<span>def <span class="ident">checkparamindex</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Check paramiter index to ensure values are valid</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def checkparamindex(self):
+    &#34;&#34;&#34;Check paramiter index to ensure values are valid&#34;&#34;&#34;
+    for myparams in self.paramindexes:
+        assert myparams in self.params, f&#34;ERROR {myparams} is not in parameter list&#34;</code></pre>
+</details>
+</dd>
 <dt id="see.Segmentors.segmentor.evaluate"><code class="name flex">
 <span>def <span class="ident">evaluate</span></span>(<span>self, img)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Run segmentation algorithm to get inferred mask.</p></section>
+<div class="desc"><p>Run segmentation algorithm to get inferred mask.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2340,6 +2601,24 @@ errors defaults to 'strict'.</p></section>
 <pre><code class="python">def evaluate(self, img):
     &#34;&#34;&#34;Run segmentation algorithm to get inferred mask.&#34;&#34;&#34;
     return np.zeros(img.shape[0:1])</code></pre>
+</details>
+</dd>
+<dt id="see.Segmentors.segmentor.mutateself"><code class="name flex">
+<span>def <span class="ident">mutateself</span></span>(<span>self, flip_prob=0.5)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Mutate self and return new params.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mutateself(self, flip_prob=0.5):
+    &#34;&#34;&#34;Mutate self and return new params.&#34;&#34;&#34;
+    for myparam in self.paramindexes:
+        rand_val = random.random()
+        if rand_val &lt; flip_prob:
+            self.params[myparam] = random.choice(eval(self.params.ranges[myparam]))
+    return self.params</code></pre>
 </details>
 </dd>
 </dl>
@@ -2360,8 +2639,10 @@ errors defaults to 'strict'.</p></section>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="see.Segmentors.FitnessFunction" href="#see.Segmentors.FitnessFunction">FitnessFunction</a></code></li>
 <li><code><a title="see.Segmentors.algoFromParams" href="#see.Segmentors.algoFromParams">algoFromParams</a></code></li>
+<li><code><a title="see.Segmentors.mutateAlgo" href="#see.Segmentors.mutateAlgo">mutateAlgo</a></code></li>
+<li><code><a title="see.Segmentors.popCounts" href="#see.Segmentors.popCounts">popCounts</a></code></li>
+<li><code><a title="see.Segmentors.print_best_algorithm_code" href="#see.Segmentors.print_best_algorithm_code">print_best_algorithm_code</a></code></li>
 <li><code><a title="see.Segmentors.runAlgo" href="#see.Segmentors.runAlgo">runAlgo</a></code></li>
 </ul>
 </li>
@@ -2433,7 +2714,9 @@ errors defaults to 'strict'.</p></section>
 <h4><code><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></code></h4>
 <ul class="">
 <li><code><a title="see.Segmentors.segmentor.algorithm" href="#see.Segmentors.segmentor.algorithm">algorithm</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.evaluate" href="#see.Segmentors.segmentor.evaluate">evaluate</a></code></li>
+<li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
 </ul>
 </li>
 </ul>
@@ -2442,9 +2725,7 @@ errors defaults to 'strict'.</p></section>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.2</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
 </footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-<script>hljs.initHighlightingOnLoad()</script>
 </body>
 </html>
