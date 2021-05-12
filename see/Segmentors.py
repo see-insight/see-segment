@@ -14,8 +14,6 @@ import skimage
 from skimage import segmentation
 from skimage import color
 
-from see.Segment_Similarity_Measure import FF_ML2DHD_V2 as FitnessFunction
-
 from see.base_classes import param_space, algorithm
 
 
@@ -94,7 +92,9 @@ class segmentor(algorithm):
         self.params['gamma2'] = 0.5
         self.params['n_segments'] = 2
         self.params['max_iter'] = 10
+        self.set_params(paramlist)
 
+        
     # TODO use name to build a dictionary to use as a chache
     def evaluate(self, img):
         """Run segmentation algorithm to get inferred mask."""
@@ -137,7 +137,7 @@ class ColorThreshold(segmentor):
     The pixels between the valuse are false
     """
 
-    def __init__(self, params=None):
+    def __init__(self, paramlist=None):
         """Get parameters from parameter list that are used in segmentation algorithm.
          Assign default values to these parameters."""
         self.params = seg_params()
@@ -152,13 +152,8 @@ class ColorThreshold(segmentor):
         self.paramindexes = ["alpha1", "alpha2",
                              "beta1", "beta2",
                              "gamma1", "gamma2"]
-        if params:
-            if (type(params) == list):
-                self.params.fromlist(params)
-            else:
-                self.params = params
-        # TODO I think we want this function butit is causing a bug
-        self.checkparamindex()
+        self.set_params(paramlist)
+
 
     def evaluate(self, img):  # XX
         """Evaluate segmentation algorithm on training image.
@@ -244,8 +239,8 @@ class Felzenszwalb(segmentor):
         self.params["alpha1"] = 0.09
         self.params["beta1"] = 0.92
         self.paramindexes = ["alpha1", "alpha2", "beta1"]
-        self.checkparamindex()
-
+        self.set_params(paramlist)
+                
     def evaluate(self, img):
         """Evaluate segmentation algorithm on training image.
 
@@ -347,9 +342,9 @@ class Slic(segmentor):
         self.params["max_iter"] = 10
         self.params["alpha1"] = 0.5
         self.paramindexes = ["n_segments", "alpha1", "beta1", "max_iter"]
-        self.checkparamindex()
         self.slico = False
-
+        self.set_params(paramlist)
+                
     def evaluate(self, img):
         """Evaluate segmentation algorithm on training image.
 
@@ -427,7 +422,7 @@ class SlicO(Slic):
          Assign default values to these parameters."""
         super(SlicO, self).__init__(paramlist)
         self.slico = True
-
+        self.set_params(paramlist)
 
 segmentor.addsegmentor('SlicO', SlicO)
 
@@ -458,13 +453,11 @@ class QuickShift(segmentor):
          Assign default values to these parameters."""
         super(QuickShift, self).__init__(paramlist)
         self.params["algorithm"] = "QuickShift"
-        self.params["colorspace"] = "HSV"
         self.params["alpha1"] = 0.5
         self.params["beta1"] = 0.5
         self.params["beta2"] = 0.5
-
         self.paramindexes = ["alpha1", "beta1", "beta2"]
-        self.checkparamindex()
+        self.set_params(paramlist)
 
     def evaluate(self, img):
         """Evaluate segmentation algorithm on training image.
@@ -523,8 +516,8 @@ class Watershed(segmentor):
         self.params["algorithm"] = "Watershed"
         self.params["alpha1"] = 0.66
         self.paramindexes = ["alpha1"]
-        self.checkparamindex()
-
+        self.set_params(paramlist)
+                
     def evaluate(self, img):
         """Evaluate segmentation algorithm on training image.
 
@@ -591,7 +584,7 @@ class Chan_Vese(segmentor):
         # self.params["tolerance"] = 0.001 #TODO Removed, consider adding in later if need be.
         self.paramindexes = ["alpha1", "alpha2",
                              "beta1", "beta2", "n_segments", "max_iter"]
-        self.checkparamindex()
+        self.set_params(paramlist)
 
     def evaluate(self, img):
         """Evaluate segmentation algorithm on training image.
@@ -679,7 +672,7 @@ class Morphological_Chan_Vese(segmentor):
             # self.params["tolerance"] = 0.001 #TODO Removed, consider adding in later if need be.
         self.paramindexes = ["alpha1",  "beta1",
                              "beta2", "n_segments", "max_iter"]
-        self.checkparamindex()
+        self.set_params(paramlist)
 
     def evaluate(self, img):
         """Evaluate segmentation algorithm on training image.
@@ -770,7 +763,7 @@ class MorphGeodesicActiveContour(segmentor):
             # self.params["tolerance"] = 0.001 #TODO Removed, consider adding in later if need be.
         self.paramindexes = ["alpha1",  "alpha2",
                              "beta1", "beta2", "n_segments", "max_iter"]
-        self.checkparamindex()
+        self.set_params(paramlist)
 
     def evaluate(self, img):
         """Evaluate segmentation algorithm on training image.

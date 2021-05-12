@@ -128,8 +128,6 @@ def makeToolbox(pop_size, algo_instance):
 
     # We choose the parameters, for the most part, random
     params = algo_instance.params
-#     print(f"Running makeToolbox {algo_instance}")
-#     print(f"param keys = {params.pkeys}")
 
     for key in params.pkeys:
         toolbox.register(key, random.choice, params.ranges[key])
@@ -227,6 +225,7 @@ class Evolver(object):
 
         self.tool.register("individual_guess",
                            initIndividual, creator.Individual)
+        
         self.tool.register("population_guess", initPopulation,
                            list, self.tool.individual_guess, "my_guess.json")
 
@@ -244,15 +243,15 @@ class Evolver(object):
         tpop -- current population
 
         """
-
         # make copies of self.data
-        data_references = [self.data for i in range(0, len(tpop))]
+        data_references = [copy.deepcopy(self.data) for i in range(0, len(tpop))]
 
         # Map the evaluation command to reference data and then to population list
         outdata = map(self.tool.evaluate, data_references, tpop)
 
         # Loop though outputs and add them to ind.fitness so we have a complete record.
         for ind, data in zip(tpop, outdata):
+            print(f"fitness={data.fitness}\n")
             ind.fitness.values = [data.fitness]
         extract_fits = [ind.fitness.values[0] for ind in tpop]
 
@@ -326,7 +325,7 @@ class Evolver(object):
         # mutation
         for mutant in offspring:
             if random.random() < self.mutpb:
-                self.tool.mutate(mutant, self.AllVals, self.flip_prob)
+                self.tool.mutate(mutant, self.algorithm.params.pkeys, self.flip_prob)
                 del mutant.fitness.values
 
         # new

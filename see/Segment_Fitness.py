@@ -2,6 +2,8 @@ import sys
 from skimage import color
 import numpy as np
 
+from see.base_classes import algorithm
+
 def countMatches(inferred, ground_truth):
     """Map the segments in the inferred segmentation mask to the ground truth segmentation
      mask, and record the number of pixels in each of these mappings as well as the number
@@ -464,3 +466,23 @@ def FF_ML2DHD_V2(inferred, ground_truth):
 
 def FitnessFunction(inferred, ground_truth):
     return FF_ML2DHD_V2(inferred, ground_truth)
+
+class segment_fitness(algorithm):
+    
+    def __init__(self, paramlist=None):
+        """Generate algorithm params from parameter list."""
+        super(segment_fitness, self).__init__(paramlist)
+        
+    def evaluate(self, mask, gmask):
+        return FitnessFunction(mask, gmask)
+        
+    def pipe(self, data):
+        """Run segmentation algorithm to get inferred mask."""
+        data.fitness = self.evaluate(data.mask, data.gmask)[0]
+        return data    
+    
+    
+    
+    
+    
+    
