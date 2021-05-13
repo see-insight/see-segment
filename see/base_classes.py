@@ -2,6 +2,7 @@
 import copy
 import time    
 import random
+import inspect
 
 class pipedata(object):
     """The pipedata is just an instance of a basic python object. It is used to dynamically
@@ -111,7 +112,7 @@ class algorithm(object):
         for myparam in self.params.pkeys:
             rand_val = random.random()
             if rand_val < flip_prob:
-                self.params[myparam] = random.choice(eval(self.params.ranges[myparam]))
+                self.params[myparam] = random.choice(self.params.ranges[myparam])
         return self.params
     
     def pipe(self, data):
@@ -121,7 +122,7 @@ class algorithm(object):
 
     def __str__(self):
         """Return params for algorithm."""
-        mystring = f"{self.params['algorithm']} -- \n"
+        mystring = f"{type(self)} parameters: \n"
         for p in self.params.pkeys:
             mystring += f"\t{p} = {self.params[p]}\n"
         return mystring
@@ -143,78 +144,40 @@ class algorithm(object):
         # i'm thinking (list, param_space and algorithm)
         startTime = int(round(time.time() * 1000))
         if params:
+            print(f"{seg}")
             seg = type(self)(paramlist=params)
             data = seg.pipe(data)
             endTime = int(round(time.time() * 1000))
-            print(f"{seg}Time: {(endTime - startTime)/1000} s")
+            print(f"Time: {(endTime - startTime)/1000} s")
         else:
+            print(f"{self}")
             data = self.pipe(data) 
             endTime = int(round(time.time() * 1000))
-            print(f"{self}Time: {(endTime - startTime)/1000} s")
+            print(f"Time: {(endTime - startTime)/1000} s")
         
         return data    
     
-def mutateAlgo(copy_child, pos_vals, flip_prob=0.5, seed=False):
+    def mutate_self(self,flip_prob=0.5):
+        print("using default mutation function")
+        for keys in self.params:
+            rand_val = random.random()
+            if rand_val < flip_prob:
+                # Let's mutate the algorithm
+                self.params[index] = random.choice(self.params.ranges[index])
+                
+    def algorithm_code(self):
+        """Print usable code to run segmentation algorithm based on an
+         individual's genetic representation vector."""
+
+        original_function = inspect.getsource(self.evaluate)
+
+        return original_function
+
+def mutateAlgo(algorithm, paramlist, flip_prob=0.5):
     """Generate an offspring based on current individual."""
-    
-    #print(f"copy_child = {type(copy_child)}")
-    child = copy.deepcopy(copy_child)
-    
-    # Not every algorithm is associated with every value
-    # Let's first see if we change the algorithm
-    for index,vals in enumerate(pos_vals):
-        rand_val = random.random()
-        if rand_val < flip_prob:
-            # Let's mutate the algorithm
-            child[index] = random.choice(pos_vals[index])
-
-#     #use the local search for mutation.
-#     seg = algoFromParams(child)
-#     child = seg.mutateself(flip_prob)
+    child = algorithm(paramlist=paramlist)
+    child.mutateself(flip_prob=flip_prob)
     return child
-
-
-def print_best_algorithm_code(individual):
-    """Print usable code to run segmentation algorithm based on an
-     individual's genetic representation vector."""
-    pass
-
-#TODO Try to fix this print. I'm not sure the best way to generate an algorithm from parameters.
-#     #ind_algo = Segmentors.algoFromParams(individual)
-#     ind_algo = algoFromParams(individual)
-#     original_function = inspect.getsource(ind_algo.evaluate)
-
-#     # Get the body of the function
-#     function_contents = original_function[original_function.find('        '):\
-#                             original_function.find('return')]
-#     while function_contents.find('self.params') != -1:
-
-#         # Find the index of the 's' at the start of self.params
-#         params_index = function_contents.find('self.params')
-
-#         # Find the index of the ']' at the end of self.params["<SOME_TEXT>"]
-#         end_bracket_index = function_contents.find(']', params_index)+1
-
-#         # Find the first occurance of self.params["<SOME_TEXT>"] and store it
-#         code_to_replace = function_contents[params_index:end_bracket_index]
-
-#         # These offset will be used to access only the params_key
-#         offset = len('self.params["')
-#         offset2 = len('"]')
-
-#         # Get the params key
-#         params_key = function_contents[params_index + offset:end_bracket_index-offset2]
-
-#         # Use the params_key to access the params_value
-#         param_value = str(ind_algo.params[params_key])
-
-#         # Replace self.params["<SOME_TEXT>"] with the value of self.params["<SOME_TEXT>"]
-#         function_contents = function_contents.replace(code_to_replace, param_value)
-
-#     function_contents = function_contents.replace('        ', '')
-#     function_contents = function_contents[function_contents.find('\n\"\"\"')+5:]
-#     print(function_contents)
-#     return function_contents
    
 def popCounts(pop):
     """Count the number of each algorihtm in a population"""

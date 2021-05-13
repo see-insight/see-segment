@@ -20,6 +20,9 @@ help:
 
 init:
 	conda env create --prefix ./envs --file environment.yml
+    
+install:
+	pip install -e .
 
 docs:
 	pdoc3 --force --html --output-dir ./docs $(MODULENAME)
@@ -32,5 +35,8 @@ doclint:
 
 test:
 	pytest -v $(MODULENAME) 
+    
+demo:
+	seesearch ./Image_data/Examples/Chameleon.jpg ./Image_data/Examples/Chameleon_GT.png
 
 .PHONY: init docs lint test 

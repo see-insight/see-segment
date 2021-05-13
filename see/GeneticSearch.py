@@ -103,7 +103,7 @@ def mutate(copy_child, pos_vals, flip_prob=0.5, seed=False):
 # DO: Save a population as a list of indivudals (with fitness functions?)
 
 #TODO: change algo_instance to an algorithm class. 
-def makeToolbox(pop_size, algorithm):
+def makeToolbox(pop_size, algo_constructor):
     """Make a genetic algorithm toolbox using DEAP. The toolbox uses premade functions
      for crossover, mutation, evaluation and fitness.
 
@@ -122,14 +122,14 @@ def makeToolbox(pop_size, algorithm):
     toolbox.register("mate", skimageCrossRandom)  # crossover
     # toolbox.register("mutate", mutate)  # Mutation
     toolbox.register("mutate", base_classes.mutateAlgo)  # Mutation
-    toolbox.register("evaluate", algorithm.runAlgo)  # Fitness
+    toolbox.register("evaluate", algo_constructor.runAlgo)  # Fitness
     toolbox.register("select", tools.selTournament, tournsize=5)  # Selection
     toolbox.register("map", futures.map)  # So that we can use scoop
 
     # DO: May want to later do a different selection process
 
     # We choose the parameters, for the most part, random
-    algo_instance = algorithm()
+    algo_instance = algo_constructor()
     params = algo_instance.params
 
     for key in params.pkeys:
@@ -183,7 +183,7 @@ class Evolver(object):
 #     for key in my_p.pkeys:
 #         AllVals.append(my_p.ranges[key])
 
-    def __init__(self, algorithm, data, pop_size=10):
+    def __init__(self, algo_constructor, data, pop_size=10):
         """Set default values for the variables.
 
         Keyword arguments:
@@ -195,8 +195,8 @@ class Evolver(object):
         """
         # Build Population based on size
         self.data = data
-        self.algorithm = algorithm
-        self.tool = makeToolbox(pop_size, algorithm)
+        self.algo_constructor = algo_constructor
+        self.tool = makeToolbox(pop_size, algo_constructor)
         self.hof = deap.tools.HallOfFame(10)
         self.best_avgs = []
         self.gen = 0
@@ -248,7 +248,7 @@ class Evolver(object):
         """
         # make copies of self.data
         data_references = [copy.deepcopy(self.data) for i in range(0, len(tpop))]
-        algos = [self.algorithm(paramlist=list(ind)) for ind in tpop]
+        algos = [self.algo_constructor(paramlist=list(ind)) for ind in tpop]
         
         # Map the evaluation command to reference data and then to population list
         outdata = map(self.tool.evaluate, algos, data_references)
@@ -327,11 +327,9 @@ class Evolver(object):
                 del child2.fitness.values
 
         # mutation
-        algo_instance = self.algorithm()
-        pkeys = algo_instance.params.pkeys
         for mutant in offspring:
             if random.random() < self.mutpb:
-                self.tool.mutate(mutant, pkeys, self.flip_prob)
+                self.tool.mutate(self.algo_constructor, mutant, self.flip_prob)
                 del mutant.fitness.values
 
         # new
@@ -390,17 +388,14 @@ class Evolver(object):
                 self.writepop(population, filename=f"{checkpoint}")
 
         for cur_g in range(0, ngen+1):
-            print(f"Generation {cur_g} of population size {len(population)}")
-
-            #histogram = Segmentors.popCounts(population)
-            # print(f"#HIST {histogram}")
+            print(f"Generation {cur_g}/{ngen} of population size {len(population)}")
 
             _, population = self.popfitness(population)
 
             bestsofar = self.hof[0]
 
             # Create a new instance from the current algorithm
-            seg = self.algorithm(bestsofar)
+            seg = self.algo_constructor(bestsofar)
 
             self.data = seg.pipe(self.data)
             fitness = self.data.fitness
@@ -413,7 +408,7 @@ class Evolver(object):
                 for cur_p in range(len(population)):
                     logging.getLogger().info(population[cur_p])
             if cur_g < ngen+1:
-                if bestsofar.fitness.values[0] >= 0.95:
+                if bestsofar.fitness.values[0] >= 20:
                     population = self.newpopulation()
                   # if the best fitness value is at or above the
                   # threshold of 0.95, discard the entire current
