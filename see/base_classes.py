@@ -39,9 +39,12 @@ class param_space(dict):
 
     def addall(self,params):
         """Function to add a list of paramters to the current paramter list"""
-        for key in params:
-            self.add(key, params.ranges[key], params.descriptions[key])
-            self[key] = params[key]
+        if issubclass(type(params), param_space):
+            for key in params:
+                self.add(key, params.ranges[key], params.descriptions[key])
+                self[key] = params[key]
+        else:
+            raise TypeError('A very specific bad thing happened.')
                             
     def printparam(self, key):
         """Return description of parameter from param list."""
@@ -90,10 +93,12 @@ class algorithm(object):
     
     def set_params(self, paramlist=None):
         if paramlist:
-            if (type(paramlist) == list):
-                self.params.fromlist(paramlist)
-            else:
+            if  issubclass(type(paramlist), param_space):
                 self.params = copy.deepcopy(paramlist)
+            else:
+                #print(f"{type(paramlist)}_paramlist={paramlist}")
+                self.params.fromlist(list(paramlist))
+        #TODO Comment this back in
         #self.checkparamindex()
         
     def checkparamindex(self):

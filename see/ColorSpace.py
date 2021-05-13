@@ -94,5 +94,6 @@ class colorspace(algorithm):
             return channel
 
     def pipe(self, data):
-        data.colorspace = self.evaluate(data.img)
+        data.inputimage = data.img
+        data.img = self.evaluate(data.img)
         return data

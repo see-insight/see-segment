@@ -5,6 +5,7 @@ import numpy as np
 from skimage import segmentation, color
 from see import Segmentors
 from see import Segment_Fitness as SSM
+from see.base_classes import pipedata
 
 # Define toy rgb and grayscale images used for testing below
 TEST_IM_COLOR = np.zeros((20, 20, 3))
@@ -34,12 +35,15 @@ TEST_IM_GRAY = TEST_IM_COLOR[:, :, 0]
 def test_runAlgo():
     """Unit test for runAlgo function.
      Checks to see if the output is what it's supposed to be in this case."""
-    individual = Segmentors.ColorThreshold()
-    Segmentors.runAlgo(TEST_IM_COLOR, TEST_IM_COLOR[:, :, 0], individual.params.tolist())
+    individual = Segmentors.segmentor()
+    data = pipedata()
+    data.img = TEST_IM_COLOR
+    data.gmask = TEST_IM_COLOR[:, :, 0]
+    individual.runAlgo(data)
 
 def test_parameter_len():
     """Unit test for parameters function. Checks formatting of parameter."""
-    param = Segmentors.parameters()
+    param = Segmentors.segmentor().params
     assert len(param) > 1
     
 

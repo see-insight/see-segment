@@ -101,7 +101,9 @@ def mutate(copy_child, pos_vals, flip_prob=0.5, seed=False):
 
 # DO: Make a toolbox from a list of individuals
 # DO: Save a population as a list of indivudals (with fitness functions?)
-def makeToolbox(pop_size, algo_instance):
+
+#TODO: change algo_instance to an algorithm class. 
+def makeToolbox(pop_size, algorithm):
     """Make a genetic algorithm toolbox using DEAP. The toolbox uses premade functions
      for crossover, mutation, evaluation and fitness.
 
@@ -120,13 +122,14 @@ def makeToolbox(pop_size, algo_instance):
     toolbox.register("mate", skimageCrossRandom)  # crossover
     # toolbox.register("mutate", mutate)  # Mutation
     toolbox.register("mutate", base_classes.mutateAlgo)  # Mutation
-    toolbox.register("evaluate", algo_instance.runAlgo)  # Fitness
+    toolbox.register("evaluate", algorithm.runAlgo)  # Fitness
     toolbox.register("select", tools.selTournament, tournsize=5)  # Selection
     toolbox.register("map", futures.map)  # So that we can use scoop
 
     # DO: May want to later do a different selection process
 
     # We choose the parameters, for the most part, random
+    algo_instance = algorithm()
     params = algo_instance.params
 
     for key in params.pkeys:
@@ -180,7 +183,7 @@ class Evolver(object):
 #     for key in my_p.pkeys:
 #         AllVals.append(my_p.ranges[key])
 
-    def __init__(self, algo_instance, data, pop_size=10):
+    def __init__(self, algorithm, data, pop_size=10):
         """Set default values for the variables.
 
         Keyword arguments:
@@ -192,8 +195,8 @@ class Evolver(object):
         """
         # Build Population based on size
         self.data = data
-        self.algorithm = algo_instance
-        self.tool = makeToolbox(pop_size, algo_instance)
+        self.algorithm = algorithm
+        self.tool = makeToolbox(pop_size, algorithm)
         self.hof = deap.tools.HallOfFame(10)
         self.best_avgs = []
         self.gen = 0
@@ -245,9 +248,10 @@ class Evolver(object):
         """
         # make copies of self.data
         data_references = [copy.deepcopy(self.data) for i in range(0, len(tpop))]
-
+        algos = [self.algorithm(paramlist=list(ind)) for ind in tpop]
+        
         # Map the evaluation command to reference data and then to population list
-        outdata = map(self.tool.evaluate, data_references, tpop)
+        outdata = map(self.tool.evaluate, algos, data_references)
 
         # Loop though outputs and add them to ind.fitness so we have a complete record.
         for ind, data in zip(tpop, outdata):
@@ -323,9 +327,11 @@ class Evolver(object):
                 del child2.fitness.values
 
         # mutation
+        algo_instance = self.algorithm()
+        pkeys = algo_instance.params.pkeys
         for mutant in offspring:
             if random.random() < self.mutpb:
-                self.tool.mutate(mutant, self.algorithm.params.pkeys, self.flip_prob)
+                self.tool.mutate(mutant, pkeys, self.flip_prob)
                 del mutant.fitness.values
 
         # new
@@ -394,7 +400,7 @@ class Evolver(object):
             bestsofar = self.hof[0]
 
             # Create a new instance from the current algorithm
-            seg = type(self.algorithm)(bestsofar)
+            seg = self.algorithm(bestsofar)
 
             self.data = seg.pipe(self.data)
             fitness = self.data.fitness
