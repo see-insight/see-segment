@@ -3,8 +3,14 @@ import sys
 import matplotlib.pylab as plt
 import imageio
 from see import GeneticSearch, Segmentors
+import random
 
 
+from see.Segmentors import segmentor
+from see.ColorSpace import colorspace
+from see.Workflow import workflow
+from see.Segment_Fitness import segment_fitness
+from see import base_classes 
 
 def readfpop(fpop_file):
     fid_out= open(f"{input_file}.txt","r")
@@ -16,16 +22,17 @@ def continuous_search(input_file,
                       checkpoint='checkpoint.txt',
                       best_mask_file="temp_mask.png", 
                       pop_size=10):
-    
-    img = imageio.imread(input_file)
-    gmask = imageio.imread(input_mask)
+    mydata = base_classes.pipedata()
+    mydata.img = imageio.imread(input_file)
+    mydata.gmask = imageio.imread(input_mask)
 
     fid_out= open(f"{input_file}.txt","w+")
     
     #TODO: Read this file in and set population first
-    
+    wf = workflow(algolist=[colorspace, segmentor, segment_fitness])
+
     #Run the search
-    my_evolver = GeneticSearch.Evolver(img, gmask, pop_size=pop_size)
+    my_evolver = GeneticSearch.Evolver(workflow, mydata, pop_size=pop_size)
 
     best_fitness=2.0
     iteration = 0
@@ -42,10 +49,10 @@ def continuous_search(input_file,
         params = my_evolver.hof[0]
 
         #Generate mask of best so far.
-        seg = Segmentors.algoFromParams(params)
-        mask = seg.evaluate(img)
+        seg = workflow(paramlist=params)
+        mydata = seg.pipe(mydata)
         
-        fitness = Segmentors.FitnessFunction(mask, gmask)[0]
+        fitness = mydata.fitness
         if (fitness < best_fitness):
             best_fitness = fitness
             print(f"\n\n\n\nIteration {iteration} Finess Improved to {fitness}")
@@ -59,18 +66,20 @@ def continuous_search(input_file,
 def geneticsearch_commandline():
     """Rename Instructor notebook using git and fix all
     student links in files."""
-    parser = argparse.ArgumentParser(description='rename notebook')
+    parser = argparse.ArgumentParser(description='Run Genetic Search on Workflow')
 
     parser.add_argument('input_file', help=' input image')
     parser.add_argument('input_mask', help=' input Ground Truthe Mask')
     parser.add_argument('start_pop', nargs='?', help=' Population File used in transfer learning')
-    
+    parser.add_argument('--seed', type=int,default=1, help='Input seed (integer)') 
     args = parser.parse_args()
     
     print("HELLO WORLD DIRK")
     print('\n\n')
     print(args)
     print('\n\n')
+    
+    random.seed(args.seed)
     
     continuous_search(args.input_file, args.input_mask, args.start_pop);
 
