@@ -98,8 +98,11 @@ class segmentor(algorithm):
     # TODO use name to build a dictionary to use as a chache
     def evaluate(self, img):
         """Run segmentation algorithm to get inferred mask."""
-        self.thisalgo = segmentor.algorithmspace[self.params['algorithm']](
-            self.params)
+        import sys
+
+        #print(f"Running {self.params}")
+        sys.stdout.flush()
+        self.thisalgo = segmentor.algorithmspace[self.params['algorithm']](self.params)
         return self.thisalgo.evaluate(img)
 
     def pipe(self, data):
@@ -152,7 +155,10 @@ class ColorThreshold(segmentor):
         self.paramindexes = ["alpha1", "alpha2",
                              "beta1", "beta2",
                              "gamma1", "gamma2"]
+        #print(f"colorthreshold.paramlist = {paramlist}")
         self.set_params(paramlist)
+        #print(f"_init_.self.params={self.params}")
+          
 
 
     def evaluate(self, img):  # XX
@@ -170,12 +176,13 @@ class ColorThreshold(segmentor):
 
         output = None
 
+        #print(f"self.params={self.params}")
         if (len(img.shape) > 2):
             output = np.ones([img.shape[0], img.shape[1]])
             for dimidx in range(3):
                 pscale = np.max(img[:, :, dimidx])
-                my_mn = self.params[minlist[dimidx]] * pscale
-                my_mx = self.params[maxlist[dimidx]] * pscale
+                my_mn = float(self.params[minlist[dimidx]]) * pscale
+                my_mx = float(self.params[maxlist[dimidx]])  * pscale
 
                 if my_mn < my_mx:
                     output[img[:, :, dimidx] < my_mn] = 0
@@ -186,12 +193,12 @@ class ColorThreshold(segmentor):
                     output[np.logical_and(flag1, flag2)] = 0
         else:
             pscale = np.max(img)
+            chidx = 0
             if "channel" in self.params:
                 chidx = self.params["channel"]
-            else:
-                chidx = 0
-            my_mx = self.params[maxlist[chidx]] * pscale
-            my_mn = self.params[minlist[chidx]] * pscale
+            my_mn = float(self.params[minlist[chidx]]) * pscale
+            my_mx = float(self.params[maxlist[chidx]]) * pscale
+
 
             if my_mn < my_mx:
                 output = np.ones(img.shape)
@@ -471,7 +478,6 @@ class QuickShift(segmentor):
         """
 
         mindim = min(img.shape)
-
         ratio = self.params["alpha1"]
         kernel_size = mindim/10*self.params["beta1"]+1
         max_dist = mindim*self.params["beta2"]
@@ -482,6 +488,7 @@ class QuickShift(segmentor):
             max_dist=max_dist,
             sigma=0,  # TODO this should be handeled in the preprocessing step
             random_seed=1,
+            convert2lab=False
         )
         return output
 

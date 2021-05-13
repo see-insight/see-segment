@@ -3,6 +3,7 @@ import pytest
 import numpy as np
 from see import Segmentors
 from see import GeneticSearch
+from see import base_classes
 
 def test_twoPointCopy():
     """Unit test for twoPointCopy function. Checks test individuals to see
@@ -47,7 +48,7 @@ def test_mutate():
 def test_makeToolbox():
     """Unit test for makeToolbox function. Checks that a toolbox of the
      correct size was made."""
-    assert GeneticSearch.makeToolbox(10).population.keywords['n'] == 10
+    assert GeneticSearch.makeToolbox(10, Segmentors.segmentor).population.keywords['n'] == 10
 
 def test_newpopulation():
     """Unit test for newpopulation function. Checks the type and length of
@@ -55,7 +56,12 @@ def test_newpopulation():
     img = np.zeros((20, 20, 3))
     img[4:10, 4:10, :] = 1
     mask = img[:, :, 0]
-    evolv = GeneticSearch.Evolver(img, mask)
+    
+    data = base_classes.pipedata()
+    data.img = img
+    data.gmask = mask
+    data.fitness = 2
+    evolv = GeneticSearch.Evolver(Segmentors.segmentor, data, pop_size=10)
     assert isinstance(evolv.tool.population(), list)
     assert len(evolv.tool.population()) == 10
 
@@ -78,7 +84,11 @@ def test_mutate():
     img = np.zeros((20, 20, 3))
     img[4:10, 4:10, :] = 1
     mask = img[:, :, 0]
-    evolv = GeneticSearch.Evolver(img, mask)
+    
+    data = base_classes.pipedata()
+    data.img = img
+    data.gmask = mask
+    evolv = GeneticSearch.Evolver(Segmentors.segmentor, data, pop_size=10)
     tpop = evolv.mutate(evolv.tool.population())
     assert isinstance(tpop, list)
     assert len(tpop) == 10
@@ -89,7 +99,11 @@ def test_nextgen():
     img = np.zeros((20, 20, 3))
     img[4:10, 4:10, :] = 1
     mask = img[:, :, 0]
-    evolv = GeneticSearch.Evolver(img, mask, pop_size=10)
+    
+    data = base_classes.pipedata()
+    data.img = img
+    data.gmask = mask
+    evolv = GeneticSearch.Evolver(Segmentors.segmentor, data, pop_size=10)
     pop = evolv.tool.population()
     tpop = evolv.mutate(pop)
     assert isinstance(tpop, list)
@@ -102,7 +116,12 @@ def test_run():
     img = np.zeros((20, 20, 3))
     img[4:10, 4:10, :] = 1
     mask = img[:, :, 0]
-    evolv = GeneticSearch.Evolver(img, mask, pop_size=10)
+    
+    data = base_classes.pipedata()
+    data.img = img
+    data.gmask = mask
+    data.fitness = 2
+    evolv = GeneticSearch.Evolver(Segmentors.segmentor, data, pop_size=10)
     start_pop = evolv.tool.population()
     final_pop = evolv.run()
     assert isinstance(final_pop, list)
