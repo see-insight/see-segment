@@ -34,7 +34,7 @@ color_params.add('channel',
 
 
 class colorspace(algorithm):
-
+    
     def getchannel(img, colorspace, channel):
         """function that returns a single channel from an image
         ['RGB', ‘HSV’, ‘RGB CIE’, ‘XYZ’, ‘YUV’, ‘YIQ’, ‘YPbPr’, ‘YCbCr’, ‘YDbDr’]
