@@ -40,15 +40,8 @@ import matplotlib.pylab as plt
 import ipywidgets as widgets
 from IPython.display import display, clear_output
 from pathlib import Path
-<<<<<<< HEAD
-from see import Segmentors
-=======
 from see.Segmentors import segmentor, seg_params
-<<<<<<< HEAD
->>>>>>> Updating documentation strings
-=======
 from see.ColorSpace import colorspace
->>>>>>> Updating docs
 import imageio
 import numpy as np
 
@@ -90,12 +83,6 @@ def show_segment(img, mask):
 def pickimage(folder=&#39;Image_data/Examples/&#39;):
     #def pickimage(
 
-<<<<<<< HEAD
-def pickimage(folder=&#39;Image_data/Examples/&#39;):
-    #def pickimage(
-
-=======
->>>>>>> Updating documentation strings
     directory = Path(folder)
 
     allfiles = sorted(directory.glob(&#39;*&#39;))
@@ -121,28 +108,13 @@ def pickimage(folder=&#39;Image_data/Examples/&#39;):
         display(w)
         w.img = imageio.imread(w.value)
         index = filelist.index(w.value)
-<<<<<<< HEAD
-        w.mask = imageio.imread(masklist[index])
-        if len(w.mask.shape) &gt; 2:
-            w.mask = w.mask[:,:,0]
-        fig = showtwo(w.img, w.mask)
-        print(f&#34;import imageio&#34;)
-        print(f&#34;data.img = imageio.imread(\&#39;{w.value}\&#39;)&#34;)
-        print(f&#34;data.mask = imageio.imread(\&#39;{masklist[index]}\&#39;)&#34;)
-=======
         w.gmask = imageio.imread(masklist[index])
         if len(w.gmask.shape) &gt; 2:
             w.gmask = w.gmask[:,:,0]
         fig = showtwo(w.img, w.gmask)
         print(f&#34;import imageio&#34;)
-<<<<<<< HEAD
-        print(f&#34;data.img = imageio.imread(\&#39;{w.value}\&#39;)&#34;)
-        print(f&#34;data.gmask = imageio.imread(\&#39;{masklist[index]}\&#39;)&#34;)
->>>>>>> Updating documentation strings
-=======
         print(f&#34;img = imageio.imread(\&#39;{w.value}\&#39;)&#34;)
         print(f&#34;gmask = imageio.imread(\&#39;{masklist[index]}\&#39;)&#34;)
->>>>>>> Updating docs
         
     def on_change(change):
         if change[&#39;type&#39;] == &#39;change&#39; and change[&#39;name&#39;] == &#39;value&#39;:
@@ -165,22 +137,11 @@ def picksegment(algorithms):
         if change[&#39;type&#39;] == &#39;change&#39; and change[&#39;name&#39;] == &#39;value&#39;:
             clear_output(wait=True) # Clear output for dynamic display
             display(w)
-<<<<<<< HEAD
-            print(Segmentors.algorithmspace[change[&#39;new&#39;]].__doc__)
-=======
             print(segmentor.algorithmspace[change[&#39;new&#39;]].__doc__)
->>>>>>> Updating documentation strings
             print(f&#34;\nsegmentor_name=\&#39;{w.value}\&#39;&#34;)
     w.observe(on_change)
 
     display(w)
-<<<<<<< HEAD
-    print(Segmentors.algorithmspace[w.value].__doc__)
-    print(f&#34;\nalg.value=\&#39;{w.value}\&#39;&#34;)
-    return w
-
-def segmentwidget(img, gmask, params=None, alg=None):
-=======
     print(segmentor.algorithmspace[w.value].__doc__)
     print(f&#34;\nalg.value=\&#39;{w.value}\&#39;&#34;)
     return w
@@ -314,7 +275,6 @@ def colorwidget(img, paramlist=None):
     return seg.params    
 
 def segmentwidget(img, params=None, alg=None):
->>>>>>> Updating documentation strings
     &#34;&#34;&#34;Generate GUI. Produce slider for each parameter for the current segmentor.
      Show both options for the masked image.
 
@@ -327,16 +287,6 @@ def segmentwidget(img, params=None, alg=None):
     &#34;&#34;&#34;
     if params:
         if alg:
-<<<<<<< HEAD
-            params[0] = alg;
-        seg = Segmentors.algoFromParams(params)
-    else:
-        if alg:
-            algorithm_gen = Segmentors.algorithmspace[alg]
-            seg = algorithm_gen()
-        else:
-            seg = Segmentors.segmentor()
-=======
             params[&#39;algorithm&#39;] = alg;
         seg = segmentor.algoFromParams(params)
     else:
@@ -345,21 +295,12 @@ def segmentwidget(img, params=None, alg=None):
             seg = algorithm_gen()
         else:
             seg = segmentor()
->>>>>>> Updating documentation strings
 
     widg = dict()
     widglist = []
 
     for ppp, ind in zip(seg.paramindexes, range(len(seg.paramindexes))):
-<<<<<<< HEAD
-<<<<<<< HEAD
-        thislist = eval(seg.params.ranges[ppp])
-=======
-        thislist = seg_params.ranges[ppp]
->>>>>>> Updating documentation strings
-=======
         thislist = seg.params.ranges[ppp]
->>>>>>> Updating docs
         name = ppp
         current_value = seg.params[ppp]
         if not current_value in thislist:
@@ -378,21 +319,8 @@ def segmentwidget(img, params=None, alg=None):
         widglist.append(thiswidg)
         widg[ppp] = thiswidg
 
-<<<<<<< HEAD
-#     algorithms = list(Segmentors.algorithmspace.keys())
-#     w = widgets.Dropdown(
-#         options=algorithms,
-#         value=algorithms[0],
-#         description=&#39;Choose Algorithm:&#39;,
-#     )
-    
-
-    
-    def func(img=img, mask=gmask, **kwargs):
-=======
     
     def func(**kwargs):
->>>>>>> Updating documentation strings
         &#34;&#34;&#34;Find mask and fitness for current algorithm. Show masked image.&#34;&#34;&#34;
         print(seg.params[&#34;algorithm&#34;])
         for k in kwargs:
@@ -522,28 +450,13 @@ def segmentwidget(img, params=None, alg=None):
         display(w)
         w.img = imageio.imread(w.value)
         index = filelist.index(w.value)
-<<<<<<< HEAD
-        w.mask = imageio.imread(masklist[index])
-        if len(w.mask.shape) &gt; 2:
-            w.mask = w.mask[:,:,0]
-        fig = showtwo(w.img, w.mask)
-        print(f&#34;import imageio&#34;)
-        print(f&#34;data.img = imageio.imread(\&#39;{w.value}\&#39;)&#34;)
-        print(f&#34;data.mask = imageio.imread(\&#39;{masklist[index]}\&#39;)&#34;)
-=======
         w.gmask = imageio.imread(masklist[index])
         if len(w.gmask.shape) &gt; 2:
             w.gmask = w.gmask[:,:,0]
         fig = showtwo(w.img, w.gmask)
         print(f&#34;import imageio&#34;)
-<<<<<<< HEAD
-        print(f&#34;data.img = imageio.imread(\&#39;{w.value}\&#39;)&#34;)
-        print(f&#34;data.gmask = imageio.imread(\&#39;{masklist[index]}\&#39;)&#34;)
->>>>>>> Updating documentation strings
-=======
         print(f&#34;img = imageio.imread(\&#39;{w.value}\&#39;)&#34;)
         print(f&#34;gmask = imageio.imread(\&#39;{masklist[index]}\&#39;)&#34;)
->>>>>>> Updating docs
         
     def on_change(change):
         if change[&#39;type&#39;] == &#39;change&#39; and change[&#39;name&#39;] == &#39;value&#39;:
@@ -574,20 +487,12 @@ def segmentwidget(img, params=None, alg=None):
         if change[&#39;type&#39;] == &#39;change&#39; and change[&#39;name&#39;] == &#39;value&#39;:
             clear_output(wait=True) # Clear output for dynamic display
             display(w)
-<<<<<<< HEAD
-            print(Segmentors.algorithmspace[change[&#39;new&#39;]].__doc__)
-=======
             print(segmentor.algorithmspace[change[&#39;new&#39;]].__doc__)
->>>>>>> Updating documentation strings
             print(f&#34;\nsegmentor_name=\&#39;{w.value}\&#39;&#34;)
     w.observe(on_change)
 
     display(w)
-<<<<<<< HEAD
-    print(Segmentors.algorithmspace[w.value].__doc__)
-=======
     print(segmentor.algorithmspace[w.value].__doc__)
->>>>>>> Updating documentation strings
     print(f&#34;\nalg.value=\&#39;{w.value}\&#39;&#34;)
     return w</code></pre>
 </details>
@@ -620,16 +525,6 @@ alg &ndash; algorithm to search parameters over</p></div>
     &#34;&#34;&#34;
     if params:
         if alg:
-<<<<<<< HEAD
-            params[0] = alg;
-        seg = Segmentors.algoFromParams(params)
-    else:
-        if alg:
-            algorithm_gen = Segmentors.algorithmspace[alg]
-            seg = algorithm_gen()
-        else:
-            seg = Segmentors.segmentor()
-=======
             params[&#39;algorithm&#39;] = alg;
         seg = segmentor.algoFromParams(params)
     else:
@@ -638,21 +533,12 @@ alg &ndash; algorithm to search parameters over</p></div>
             seg = algorithm_gen()
         else:
             seg = segmentor()
->>>>>>> Updating documentation strings
 
     widg = dict()
     widglist = []
 
     for ppp, ind in zip(seg.paramindexes, range(len(seg.paramindexes))):
-<<<<<<< HEAD
-<<<<<<< HEAD
-        thislist = eval(seg.params.ranges[ppp])
-=======
-        thislist = seg_params.ranges[ppp]
->>>>>>> Updating documentation strings
-=======
         thislist = seg.params.ranges[ppp]
->>>>>>> Updating docs
         name = ppp
         current_value = seg.params[ppp]
         if not current_value in thislist:
@@ -671,21 +557,8 @@ alg &ndash; algorithm to search parameters over</p></div>
         widglist.append(thiswidg)
         widg[ppp] = thiswidg
 
-<<<<<<< HEAD
-#     algorithms = list(Segmentors.algorithmspace.keys())
-#     w = widgets.Dropdown(
-#         options=algorithms,
-#         value=algorithms[0],
-#         description=&#39;Choose Algorithm:&#39;,
-#     )
-    
-
-    
-    def func(img=img, mask=gmask, **kwargs):
-=======
     
     def func(**kwargs):
->>>>>>> Updating documentation strings
         &#34;&#34;&#34;Find mask and fitness for current algorithm. Show masked image.&#34;&#34;&#34;
         print(seg.params[&#34;algorithm&#34;])
         for k in kwargs:

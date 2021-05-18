@@ -45,18 +45,11 @@ from deap import tools
 from deap import creator
 from scoop import futures
 
-<<<<<<< HEAD
-from see import Segmentors
-#import Segmentors
-# from see import Segmentors_MinParams as Segmentors
-# from see import Segmentors_OrgAndReducedParams as Segmentors
-=======
 from see import base_classes
 
 
 # TODO Change algoirthm and algo_instance to be more clear.  use consistant naming.
 
->>>>>>> Updating documentation strings
 
 def twoPointCopy(np1, np2, seed=False):
     &#34;&#34;&#34;Execute a crossover between two numpy arrays of the same length.&#34;&#34;&#34;
@@ -121,20 +114,10 @@ def mutate(copy_child, pos_vals, flip_prob=0.5, seed=False):
     # Now let&#39;s get the indexes (parameters) related to that value
     #switcher = AlgoHelp().algoIndexes()
     #indexes = switcher.get(child[0])
-    
+
     for index in range(len(pos_vals)):
         rand_val = random.random()
         if rand_val &lt; flip_prob:
-<<<<<<< HEAD
-#             # Then we mutate said value
-#             if index == 22:
-#                 # Do some special
-#                 my_x = random.choice(pos_vals[22])
-#                 my_y = random.choice(pos_vals[23])
-#                 my_z = random.choice(pos_vals[24])
-#                 child[index] = (my_x, my_y, my_z)
-#                 continue
-=======
             #             # Then we mutate said value
             #             if index == 22:
             #                 # Do some special
@@ -143,7 +126,6 @@ def mutate(copy_child, pos_vals, flip_prob=0.5, seed=False):
             #                 my_z = random.choice(pos_vals[24])
             #                 child[index] = (my_x, my_y, my_z)
             #                 continue
->>>>>>> Updating documentation strings
             child[index] = random.choice(pos_vals[index])
     return child
 
@@ -169,19 +151,9 @@ def makeToolbox(pop_size, algo_constructor):
 
     # Genetic functions
     toolbox.register(&#34;mate&#34;, skimageCrossRandom)  # crossover
-<<<<<<< HEAD
-    #toolbox.register(&#34;mutate&#34;, mutate)  # Mutation
-    toolbox.register(&#34;mutate&#34;, Segmentors.mutateAlgo)  # Mutation
-    toolbox.register(&#34;evaluate&#34;, Segmentors.runAlgo)  # Fitness
-=======
     # toolbox.register(&#34;mutate&#34;, mutate)  # Mutation
     toolbox.register(&#34;mutate&#34;, base_classes.mutateAlgo)  # Mutation
-<<<<<<< HEAD
-    toolbox.register(&#34;evaluate&#34;, algo_instance.runAlgo)  # Fitness
->>>>>>> Updating documentation strings
-=======
     toolbox.register(&#34;evaluate&#34;, algo_constructor.runAlgo)  # Fitness
->>>>>>> Updating docs
     toolbox.register(&#34;select&#34;, tools.selTournament, tournsize=5)  # Selection
     toolbox.register(&#34;map&#34;, futures.map)  # So that we can use scoop
 
@@ -292,7 +264,7 @@ class Evolver(object):
                            list, self.tool.individual_guess, &#34;my_guess.json&#34;)
 
         return self.tool.population_read()
-    
+
     def popfitness(self, tpop):
         &#34;&#34;&#34;Calculate the fitness values for the population, and log general statistics about these
          values. Uses hall of fame (hof) to keep track of top 10 individuals.
@@ -305,15 +277,6 @@ class Evolver(object):
         tpop -- current population
 
         &#34;&#34;&#34;
-<<<<<<< HEAD
-        new_image = [self.img for i in range(0, len(tpop))]
-        new_val = [self.mask for i in range(0, len(tpop))]
-        fitnesses = map(self.tool.evaluate, new_image, new_val, tpop)
-        
-        # DO: Dirk is not sure exactly why we need these
-        for ind, fit in zip(tpop, fitnesses): 
-            ind.fitness.values = [ fit[0] ]
-=======
         # make copies of self.data
         data_references = [copy.deepcopy(self.data)
                            for i in range(0, len(tpop))]
@@ -326,7 +289,6 @@ class Evolver(object):
         for ind, data in zip(tpop, outdata):
             print(f&#34;fitness={data.fitness}\n&#34;)
             ind.fitness.values = [data.fitness]
->>>>>>> Updating documentation strings
         extract_fits = [ind.fitness.values[0] for ind in tpop]
 
         self.hof.update(tpop)
@@ -357,11 +319,7 @@ class Evolver(object):
 
         return extract_fits, tpop
 
-<<<<<<< HEAD
-    def mutate(self, tpop, keep_prob = 0.1, mutate_prob = 0.4):
-=======
     def mutate(self, tpop, keep_prob=0.1, mutate_prob=0.4):
->>>>>>> Updating documentation strings
         &#34;&#34;&#34;Return new population with mutated individuals. Perform both mutation and crossover.
 
         Keyword arguments:
@@ -373,16 +331,9 @@ class Evolver(object):
        &#34;&#34;&#34;
         # Calculate next population
 
-<<<<<<< HEAD
-    
-        #TODO: There is an error here. We need to make sure the best hof is included?
-        
-        my_sz = len(tpop) #Length of current population
-=======
         # TODO: There is an error here. We need to make sure the best hof is included?
 
         my_sz = len(tpop)  # Length of current population
->>>>>>> Updating documentation strings
         top = min(10, max(1, round(keep_prob * my_sz)))
         top = min(top, len(self.hof))
         var = max(1, round(mutate_prob * my_sz))
@@ -419,21 +370,12 @@ class Evolver(object):
 
         final = pop[0:ran]
         #print(f&#34;pop size should be {len(final)}&#34;)
-<<<<<<< HEAD
-        final += self.hof[0:top] 
-        #print(f&#34;pop size should be {len(final)}&#34;)
-        final += offspring[0:var] 
-        #print(f&#34;pop size should be {len(final)}&#34;)
-        
-        #print(f&#34;pop[0:{top}:{var}:{ran}]&#34;)
-=======
         final += self.hof[0:top]
         #print(f&#34;pop size should be {len(final)}&#34;)
         final += offspring[0:var]
         #print(f&#34;pop size should be {len(final)}&#34;)
 
         # print(f&#34;pop[0:{top}:{var}:{ran}]&#34;)
->>>>>>> Updating documentation strings
         #print(f&#34;pop size should be {len(final)}&#34;)
 
         # Replacing the old population
@@ -478,37 +420,12 @@ class Evolver(object):
                 self.writepop(population, filename=f&#34;{checkpoint}&#34;)
 
         for cur_g in range(0, ngen+1):
-<<<<<<< HEAD
-<<<<<<< HEAD
-            print(f&#34;Generation {cur_g} of population size {len(population)}&#34;)
-<<<<<<< HEAD
-            
-            histogram = Segmentors.popCounts(population)
-            print(f&#34;#HIST {histogram}&#34;)
-            
-=======
-
-            #histogram = Segmentors.popCounts(population)
-            # print(f&#34;#HIST {histogram}&#34;)
-=======
-            print(f&#34;Generation {cur_g}/{ngen} of population size {len(population)}&#34;)
->>>>>>> Updating docs
-=======
             print(
                 f&#34;Generation {cur_g}/{ngen} of population size {len(population)}&#34;)
->>>>>>> Adding ColorSpace unit testing
 
->>>>>>> Updating documentation strings
             _, population = self.popfitness(population)
 
             bestsofar = self.hof[0]
-<<<<<<< HEAD
-            seg = Segmentors.algoFromParams(bestsofar)
-            mask = seg.evaluate(self.img)
-            fitness = Segmentors.FitnessFunction(mask, self.mask)
-            print(f&#34;#BEST [{fitness},  {bestsofar}]&#34;)
-=======
->>>>>>> Updating documentation strings
 
             # Create a new instance from the current algorithm
             seg = self.algo_constructor(bestsofar)
@@ -523,20 +440,8 @@ class Evolver(object):
                 self.writepop(population, filename=f&#34;{checkpoint}&#34;)
                 for cur_p in range(len(population)):
                     logging.getLogger().info(population[cur_p])
-<<<<<<< HEAD
-            if cur_g &lt; ngen+1:          
-=======
             if cur_g &lt; ngen+1:
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> Updating documentation strings
                 if bestsofar.fitness.values[0] &gt;= 0.95:
-=======
-                if bestsofar.fitness.values[0] &gt;= 20:
->>>>>>> Updating docs
-=======
-                if bestsofar.fitness.values[0] &gt;= 0.95:
->>>>>>> updating docs
                     population = self.newpopulation()
                   # if the best fitness value is at or above the
                   # threshold of 0.95, discard the entire current
@@ -545,21 +450,12 @@ class Evolver(object):
                   # note: setting keep_prob = 0 and mutate_prob = 1
                   # as mutate arguments
                   # should have same result as self.new_population()
-<<<<<<< HEAD
-                else:                
-                    population = self.mutate(population)
-                  # if the best fitness value is below this threshold,
-                  # proceed as normal, mutating the current population
-                  # to get the next generation 
-            
-=======
                 else:
                     population = self.mutate(population)
                   # if the best fitness value is below this threshold,
                   # proceed as normal, mutating the current population
                   # to get the next generation
 
->>>>>>> Updating documentation strings
         if checkpoint:
             print(f&#34;Writing Checkpoint file - {checkpoint}&#34;)
             copyfile(f&#34;{checkpoint}&#34;, f&#34;{checkpoint}.prev&#34;)
@@ -636,19 +532,9 @@ pop_size &ndash; The size of our population, or how many individuals we have</p>
 
     # Genetic functions
     toolbox.register(&#34;mate&#34;, skimageCrossRandom)  # crossover
-<<<<<<< HEAD
-    #toolbox.register(&#34;mutate&#34;, mutate)  # Mutation
-    toolbox.register(&#34;mutate&#34;, Segmentors.mutateAlgo)  # Mutation
-    toolbox.register(&#34;evaluate&#34;, Segmentors.runAlgo)  # Fitness
-=======
     # toolbox.register(&#34;mutate&#34;, mutate)  # Mutation
     toolbox.register(&#34;mutate&#34;, base_classes.mutateAlgo)  # Mutation
-<<<<<<< HEAD
-    toolbox.register(&#34;evaluate&#34;, algo_instance.runAlgo)  # Fitness
->>>>>>> Updating documentation strings
-=======
     toolbox.register(&#34;evaluate&#34;, algo_constructor.runAlgo)  # Fitness
->>>>>>> Updating docs
     toolbox.register(&#34;select&#34;, tools.selTournament, tournsize=5)  # Selection
     toolbox.register(&#34;map&#34;, futures.map)  # So that we can use scoop
 
@@ -720,20 +606,10 @@ child &ndash; New, possibly mutated, individual.</p></div>
     # Now let&#39;s get the indexes (parameters) related to that value
     #switcher = AlgoHelp().algoIndexes()
     #indexes = switcher.get(child[0])
-    
+
     for index in range(len(pos_vals)):
         rand_val = random.random()
         if rand_val &lt; flip_prob:
-<<<<<<< HEAD
-#             # Then we mutate said value
-#             if index == 22:
-#                 # Do some special
-#                 my_x = random.choice(pos_vals[22])
-#                 my_y = random.choice(pos_vals[23])
-#                 my_z = random.choice(pos_vals[24])
-#                 child[index] = (my_x, my_y, my_z)
-#                 continue
-=======
             #             # Then we mutate said value
             #             if index == 22:
             #                 # Do some special
@@ -742,7 +618,6 @@ child &ndash; New, possibly mutated, individual.</p></div>
             #                 my_z = random.choice(pos_vals[24])
             #                 child[index] = (my_x, my_y, my_z)
             #                 continue
->>>>>>> Updating documentation strings
             child[index] = random.choice(pos_vals[index])
     return child</code></pre>
 </details>
@@ -902,7 +777,7 @@ or how many individuals there are (default 10)</p></div>
                            list, self.tool.individual_guess, &#34;my_guess.json&#34;)
 
         return self.tool.population_read()
-    
+
     def popfitness(self, tpop):
         &#34;&#34;&#34;Calculate the fitness values for the population, and log general statistics about these
          values. Uses hall of fame (hof) to keep track of top 10 individuals.
@@ -915,15 +790,6 @@ or how many individuals there are (default 10)</p></div>
         tpop -- current population
 
         &#34;&#34;&#34;
-<<<<<<< HEAD
-        new_image = [self.img for i in range(0, len(tpop))]
-        new_val = [self.mask for i in range(0, len(tpop))]
-        fitnesses = map(self.tool.evaluate, new_image, new_val, tpop)
-        
-        # DO: Dirk is not sure exactly why we need these
-        for ind, fit in zip(tpop, fitnesses): 
-            ind.fitness.values = [ fit[0] ]
-=======
         # make copies of self.data
         data_references = [copy.deepcopy(self.data)
                            for i in range(0, len(tpop))]
@@ -936,7 +802,6 @@ or how many individuals there are (default 10)</p></div>
         for ind, data in zip(tpop, outdata):
             print(f&#34;fitness={data.fitness}\n&#34;)
             ind.fitness.values = [data.fitness]
->>>>>>> Updating documentation strings
         extract_fits = [ind.fitness.values[0] for ind in tpop]
 
         self.hof.update(tpop)
@@ -967,11 +832,7 @@ or how many individuals there are (default 10)</p></div>
 
         return extract_fits, tpop
 
-<<<<<<< HEAD
-    def mutate(self, tpop, keep_prob = 0.1, mutate_prob = 0.4):
-=======
     def mutate(self, tpop, keep_prob=0.1, mutate_prob=0.4):
->>>>>>> Updating documentation strings
         &#34;&#34;&#34;Return new population with mutated individuals. Perform both mutation and crossover.
 
         Keyword arguments:
@@ -983,16 +844,9 @@ or how many individuals there are (default 10)</p></div>
        &#34;&#34;&#34;
         # Calculate next population
 
-<<<<<<< HEAD
-    
-        #TODO: There is an error here. We need to make sure the best hof is included?
-        
-        my_sz = len(tpop) #Length of current population
-=======
         # TODO: There is an error here. We need to make sure the best hof is included?
 
         my_sz = len(tpop)  # Length of current population
->>>>>>> Updating documentation strings
         top = min(10, max(1, round(keep_prob * my_sz)))
         top = min(top, len(self.hof))
         var = max(1, round(mutate_prob * my_sz))
@@ -1029,21 +883,12 @@ or how many individuals there are (default 10)</p></div>
 
         final = pop[0:ran]
         #print(f&#34;pop size should be {len(final)}&#34;)
-<<<<<<< HEAD
-        final += self.hof[0:top] 
-        #print(f&#34;pop size should be {len(final)}&#34;)
-        final += offspring[0:var] 
-        #print(f&#34;pop size should be {len(final)}&#34;)
-        
-        #print(f&#34;pop[0:{top}:{var}:{ran}]&#34;)
-=======
         final += self.hof[0:top]
         #print(f&#34;pop size should be {len(final)}&#34;)
         final += offspring[0:var]
         #print(f&#34;pop size should be {len(final)}&#34;)
 
         # print(f&#34;pop[0:{top}:{var}:{ran}]&#34;)
->>>>>>> Updating documentation strings
         #print(f&#34;pop size should be {len(final)}&#34;)
 
         # Replacing the old population
@@ -1088,37 +933,12 @@ or how many individuals there are (default 10)</p></div>
                 self.writepop(population, filename=f&#34;{checkpoint}&#34;)
 
         for cur_g in range(0, ngen+1):
-<<<<<<< HEAD
-<<<<<<< HEAD
-            print(f&#34;Generation {cur_g} of population size {len(population)}&#34;)
-<<<<<<< HEAD
-            
-            histogram = Segmentors.popCounts(population)
-            print(f&#34;#HIST {histogram}&#34;)
-            
-=======
-
-            #histogram = Segmentors.popCounts(population)
-            # print(f&#34;#HIST {histogram}&#34;)
-=======
-            print(f&#34;Generation {cur_g}/{ngen} of population size {len(population)}&#34;)
->>>>>>> Updating docs
-=======
             print(
                 f&#34;Generation {cur_g}/{ngen} of population size {len(population)}&#34;)
->>>>>>> Adding ColorSpace unit testing
 
->>>>>>> Updating documentation strings
             _, population = self.popfitness(population)
 
             bestsofar = self.hof[0]
-<<<<<<< HEAD
-            seg = Segmentors.algoFromParams(bestsofar)
-            mask = seg.evaluate(self.img)
-            fitness = Segmentors.FitnessFunction(mask, self.mask)
-            print(f&#34;#BEST [{fitness},  {bestsofar}]&#34;)
-=======
->>>>>>> Updating documentation strings
 
             # Create a new instance from the current algorithm
             seg = self.algo_constructor(bestsofar)
@@ -1133,20 +953,8 @@ or how many individuals there are (default 10)</p></div>
                 self.writepop(population, filename=f&#34;{checkpoint}&#34;)
                 for cur_p in range(len(population)):
                     logging.getLogger().info(population[cur_p])
-<<<<<<< HEAD
-            if cur_g &lt; ngen+1:          
-=======
             if cur_g &lt; ngen+1:
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> Updating documentation strings
                 if bestsofar.fitness.values[0] &gt;= 0.95:
-=======
-                if bestsofar.fitness.values[0] &gt;= 20:
->>>>>>> Updating docs
-=======
-                if bestsofar.fitness.values[0] &gt;= 0.95:
->>>>>>> updating docs
                     population = self.newpopulation()
                   # if the best fitness value is at or above the
                   # threshold of 0.95, discard the entire current
@@ -1155,21 +963,12 @@ or how many individuals there are (default 10)</p></div>
                   # note: setting keep_prob = 0 and mutate_prob = 1
                   # as mutate arguments
                   # should have same result as self.new_population()
-<<<<<<< HEAD
-                else:                
-                    population = self.mutate(population)
-                  # if the best fitness value is below this threshold,
-                  # proceed as normal, mutating the current population
-                  # to get the next generation 
-            
-=======
                 else:
                     population = self.mutate(population)
                   # if the best fitness value is below this threshold,
                   # proceed as normal, mutating the current population
                   # to get the next generation
 
->>>>>>> Updating documentation strings
         if checkpoint:
             print(f&#34;Writing Checkpoint file - {checkpoint}&#34;)
             copyfile(f&#34;{checkpoint}&#34;, f&#34;{checkpoint}.prev&#34;)
@@ -1178,24 +977,6 @@ or how many individuals there are (default 10)</p></div>
                 logging.getLogger().info(population[cur_p])
         return population</code></pre>
 </details>
-<<<<<<< HEAD
-<h3>Class variables</h3>
-<dl>
-<dt id="see.GeneticSearch.Evolver.AllVals"><code class="name">var <span class="ident">AllVals</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="see.GeneticSearch.Evolver.key"><code class="name">var <span class="ident">key</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="see.GeneticSearch.Evolver.my_p"><code class="name">var <span class="ident">my_p</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-</dl>
-=======
->>>>>>> Updating documentation strings
 <h3>Methods</h3>
 <dl>
 <dt id="see.GeneticSearch.Evolver.mutate"><code class="name flex">
@@ -1211,11 +992,7 @@ final &ndash; new population with mutated individuals.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<<<<<<< HEAD
-<pre><code class="python">    def mutate(self, tpop, keep_prob = 0.1, mutate_prob = 0.4):
-=======
 <pre><code class="python">    def mutate(self, tpop, keep_prob=0.1, mutate_prob=0.4):
->>>>>>> Updating documentation strings
         &#34;&#34;&#34;Return new population with mutated individuals. Perform both mutation and crossover.
 
         Keyword arguments:
@@ -1227,16 +1004,9 @@ final &ndash; new population with mutated individuals.</p></div>
        &#34;&#34;&#34;
         # Calculate next population
 
-<<<<<<< HEAD
-    
-        #TODO: There is an error here. We need to make sure the best hof is included?
-        
-        my_sz = len(tpop) #Length of current population
-=======
         # TODO: There is an error here. We need to make sure the best hof is included?
 
         my_sz = len(tpop)  # Length of current population
->>>>>>> Updating documentation strings
         top = min(10, max(1, round(keep_prob * my_sz)))
         top = min(top, len(self.hof))
         var = max(1, round(mutate_prob * my_sz))
@@ -1273,21 +1043,12 @@ final &ndash; new population with mutated individuals.</p></div>
 
         final = pop[0:ran]
         #print(f&#34;pop size should be {len(final)}&#34;)
-<<<<<<< HEAD
-        final += self.hof[0:top] 
-        #print(f&#34;pop size should be {len(final)}&#34;)
-        final += offspring[0:var] 
-        #print(f&#34;pop size should be {len(final)}&#34;)
-        
-        #print(f&#34;pop[0:{top}:{var}:{ran}]&#34;)
-=======
         final += self.hof[0:top]
         #print(f&#34;pop size should be {len(final)}&#34;)
         final += offspring[0:var]
         #print(f&#34;pop size should be {len(final)}&#34;)
 
         # print(f&#34;pop[0:{top}:{var}:{ran}]&#34;)
->>>>>>> Updating documentation strings
         #print(f&#34;pop size should be {len(final)}&#34;)
 
         # Replacing the old population
@@ -1357,15 +1118,6 @@ tpop &ndash; current population</p></div>
     tpop -- current population
 
     &#34;&#34;&#34;
-<<<<<<< HEAD
-    new_image = [self.img for i in range(0, len(tpop))]
-    new_val = [self.mask for i in range(0, len(tpop))]
-    fitnesses = map(self.tool.evaluate, new_image, new_val, tpop)
-    
-    # DO: Dirk is not sure exactly why we need these
-    for ind, fit in zip(tpop, fitnesses): 
-        ind.fitness.values = [ fit[0] ]
-=======
     # make copies of self.data
     data_references = [copy.deepcopy(self.data)
                        for i in range(0, len(tpop))]
@@ -1378,7 +1130,6 @@ tpop &ndash; current population</p></div>
     for ind, data in zip(tpop, outdata):
         print(f&#34;fitness={data.fitness}\n&#34;)
         ind.fitness.values = [data.fitness]
->>>>>>> Updating documentation strings
     extract_fits = [ind.fitness.values[0] for ind in tpop]
 
     self.hof.update(tpop)
@@ -1479,37 +1230,12 @@ population &ndash; Resulting population after ngen generations.</p></div>
             self.writepop(population, filename=f&#34;{checkpoint}&#34;)
 
     for cur_g in range(0, ngen+1):
-<<<<<<< HEAD
-<<<<<<< HEAD
-        print(f&#34;Generation {cur_g} of population size {len(population)}&#34;)
-<<<<<<< HEAD
-        
-        histogram = Segmentors.popCounts(population)
-        print(f&#34;#HIST {histogram}&#34;)
-        
-=======
-
-        #histogram = Segmentors.popCounts(population)
-        # print(f&#34;#HIST {histogram}&#34;)
-=======
-        print(f&#34;Generation {cur_g}/{ngen} of population size {len(population)}&#34;)
->>>>>>> Updating docs
-=======
         print(
             f&#34;Generation {cur_g}/{ngen} of population size {len(population)}&#34;)
->>>>>>> Adding ColorSpace unit testing
 
->>>>>>> Updating documentation strings
         _, population = self.popfitness(population)
 
         bestsofar = self.hof[0]
-<<<<<<< HEAD
-        seg = Segmentors.algoFromParams(bestsofar)
-        mask = seg.evaluate(self.img)
-        fitness = Segmentors.FitnessFunction(mask, self.mask)
-        print(f&#34;#BEST [{fitness},  {bestsofar}]&#34;)
-=======
->>>>>>> Updating documentation strings
 
         # Create a new instance from the current algorithm
         seg = self.algo_constructor(bestsofar)
@@ -1524,20 +1250,8 @@ population &ndash; Resulting population after ngen generations.</p></div>
             self.writepop(population, filename=f&#34;{checkpoint}&#34;)
             for cur_p in range(len(population)):
                 logging.getLogger().info(population[cur_p])
-<<<<<<< HEAD
-        if cur_g &lt; ngen+1:          
-=======
         if cur_g &lt; ngen+1:
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> Updating documentation strings
             if bestsofar.fitness.values[0] &gt;= 0.95:
-=======
-            if bestsofar.fitness.values[0] &gt;= 20:
->>>>>>> Updating docs
-=======
-            if bestsofar.fitness.values[0] &gt;= 0.95:
->>>>>>> updating docs
                 population = self.newpopulation()
               # if the best fitness value is at or above the
               # threshold of 0.95, discard the entire current
@@ -1546,21 +1260,12 @@ population &ndash; Resulting population after ngen generations.</p></div>
               # note: setting keep_prob = 0 and mutate_prob = 1
               # as mutate arguments
               # should have same result as self.new_population()
-<<<<<<< HEAD
-            else:                
-                population = self.mutate(population)
-              # if the best fitness value is below this threshold,
-              # proceed as normal, mutating the current population
-              # to get the next generation 
-        
-=======
             else:
                 population = self.mutate(population)
               # if the best fitness value is below this threshold,
               # proceed as normal, mutating the current population
               # to get the next generation
 
->>>>>>> Updating documentation strings
     if checkpoint:
         print(f&#34;Writing Checkpoint file - {checkpoint}&#34;)
         copyfile(f&#34;{checkpoint}&#34;, f&#34;{checkpoint}.prev&#34;)

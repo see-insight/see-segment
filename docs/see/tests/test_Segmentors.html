@@ -41,24 +41,6 @@ TEST_IM_COLOR = np.zeros((20, 20, 3))
 TEST_IM_COLOR[4:10, 4:10, :] = 1.0
 TEST_IM_GRAY = TEST_IM_COLOR[:, :, 0]
 
-<<<<<<< HEAD
-def test_print_best_algorithm_code():
-    &#34;&#34;&#34;Unit test for print_best_algorithm_code function.
-     Checks function output matches method contents it&#39;s printing.&#34;&#34;&#34;
-    individual = [&#39;FB&#39;, 0, 0, 984, 0.09, 92, 0, 0, 0, 0, 0, 0, 0, 0, 0,\
-     (1, 2), 0, &#34;checkerboard&#34;, &#34;checkerboard&#34;, 0, 0, 0, 0, 0, 0]
-    print_statement = &#34;multichannel = False\n\
-if len(img.shape) &gt; 2:\n\
-    multichannel = True\n\
-output = skimage.segmentation.felzenszwalb(\n\
-    img,\n\
-    984,\n\
-    0.09,\n\
-    92,\n\
-    multichannel=multichannel,\n\
-)\n&#34;
-    assert Segmentors.print_best_algorithm_code(individual) == print_statement
-=======
 
 #TODO: Need new print best algorithm tests.
 # I don&#39;t like this because our output string will be differnet each time.
@@ -78,7 +60,6 @@ output = skimage.segmentation.felzenszwalb(\n\
 #     multichannel=multichannel,\n\
 # )\n&#34;
 #     assert Segmentors.print_best_algorithm_code(individual) == print_statement
->>>>>>> Updating documentation strings
     
 def test_runAlgo():
     &#34;&#34;&#34;Unit test for runAlgo function.
@@ -227,31 +208,6 @@ def test_countsets():
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<<<<<<< HEAD
-<dt id="see.tests.test_Segmentors.test_Chan_Vese"><code class="name flex">
-<span>def <span class="ident">test_Chan_Vese</span></span>(<span>)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Unit test for Chan_Vese method. Checks if evaluate function output
-is the same as manually running the skimage function.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def test_Chan_Vese():
-    &#34;&#34;&#34;Unit test for Chan_Vese method. Checks if evaluate function output\
-     is the same as manually running the skimage function.&#34;&#34;&#34;
-    cv1 = Segmentors.Chan_Vese()
-    assert cv1.evaluate(TEST_IM_COLOR).all() == segmentation.chan_vese(\
-                color.rgb2gray(TEST_IM_COLOR), mu=2.0, lambda1=10, \
-                lambda2=20, tol=0.001, max_iter=10, dt=0.10).all()
-    assert cv1.evaluate(TEST_IM_GRAY).all() == segmentation.chan_vese(\
-                TEST_IM_GRAY, mu=2.0, lambda1=10, \
-                lambda2=20, tol=0.001, max_iter=10, dt=0.10).all()</code></pre>
-</details>
-</dd>
-=======
->>>>>>> Updating documentation strings
 <dt id="see.tests.test_Segmentors.test_Felzenszwalb"><code class="name flex">
 <span>def <span class="ident">test_Felzenszwalb</span></span>(<span>)</span>
 </code></dt>
@@ -266,77 +222,6 @@ is the same as manually running the skimage function.</p></div>
     &#34;&#34;&#34;Unit test for Felzenszwalb method. Checks if evaluate function output\
      is the same as manually running the skimage function.&#34;&#34;&#34;
     fb1 = Segmentors.Felzenszwalb()
-<<<<<<< HEAD
-    assert fb1.evaluate(TEST_IM_COLOR).all() == segmentation.felzenszwalb(\
-            TEST_IM_COLOR, 984, 0.09, 92, multichannel=True).all()
-    assert fb1.evaluate(TEST_IM_GRAY).all() == segmentation.felzenszwalb(\
-            TEST_IM_GRAY, 984, 0.09, 92, multichannel=False).all()</code></pre>
-</details>
-</dd>
-<dt id="see.tests.test_Segmentors.test_MorphGeodesicActiveContour"><code class="name flex">
-<span>def <span class="ident">test_MorphGeodesicActiveContour</span></span>(<span>)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Unit test for MorphGeodesicActiveContour method. Checks if evaluate function output
-is the same as manually running the skimage function.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def test_MorphGeodesicActiveContour():
-    &#34;&#34;&#34;Unit test for MorphGeodesicActiveContour method. Checks if evaluate function output\
-     is the same as manually running the skimage function.&#34;&#34;&#34;
-    ac1 = Segmentors.MorphGeodesicActiveContour()
-    assert ac1.evaluate(TEST_IM_COLOR).all() == segmentation.morphological_geodesic_active_contour(\
-                segmentation.inverse_gaussian_gradient(color.rgb2gray(TEST_IM_COLOR), 0.2, 0.3),\
-                iterations=10, init_level_set=&#39;checkerboard&#39;, smoothing=5, threshold=&#39;auto&#39;,\
-                balloon=10).all()
-    assert ac1.evaluate(TEST_IM_GRAY).all() == segmentation.morphological_geodesic_active_contour(\
-                segmentation.inverse_gaussian_gradient(TEST_IM_GRAY, 0.2, 0.3), iterations=10,\
-                init_level_set=&#39;checkerboard&#39;, smoothing=5, threshold=&#39;auto&#39;, balloon=10).all()</code></pre>
-</details>
-</dd>
-<dt id="see.tests.test_Segmentors.test_Morphological_Chan_Vese"><code class="name flex">
-<span>def <span class="ident">test_Morphological_Chan_Vese</span></span>(<span>)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Unit test for Morphological_Chan_Vese method. Checks if evaluate function output
-is the same as manually running the skimage function.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def test_Morphological_Chan_Vese():
-    &#34;&#34;&#34;Unit test for Morphological_Chan_Vese method. Checks if evaluate function output\
-     is the same as manually running the skimage function.&#34;&#34;&#34;
-    mcv1 = Segmentors.Morphological_Chan_Vese()
-    assert mcv1.evaluate(TEST_IM_COLOR).all() == segmentation.morphological_chan_vese(\
-                color.rgb2gray(TEST_IM_COLOR), iterations=10, init_level_set=&#34;checkerboard&#34;, \
-                smoothing=10, lambda1=10, lambda2=20).all()
-    assert mcv1.evaluate(TEST_IM_GRAY).all() == segmentation.morphological_chan_vese(\
-                TEST_IM_GRAY, iterations=10, init_level_set=&#34;checkerboard&#34;, \
-                smoothing=10, lambda1=10, lambda2=20).all()</code></pre>
-</details>
-</dd>
-<dt id="see.tests.test_Segmentors.test_QuickShift"><code class="name flex">
-<span>def <span class="ident">test_QuickShift</span></span>(<span>)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Unit test for QuickShift method. Checks if evaluate function output
-is the same as manually running the skimage function.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def test_QuickShift():
-    &#34;&#34;&#34;Unit test for QuickShift method. Checks if evaluate function output\
-     is the same as manually running the skimage function.&#34;&#34;&#34;
-    qs1 = Segmentors.QuickShift()
-    assert qs1.evaluate(TEST_IM_COLOR).all() == segmentation.quickshift(\
-                TEST_IM_COLOR, ratio=2, kernel_size=5, max_dist=60, sigma=5, random_seed=1).all()
-    assert qs1.evaluate(TEST_IM_GRAY).all() == segmentation.quickshift(color.gray2rgb(\
-                TEST_IM_GRAY), ratio=2, kernel_size=5, max_dist=60, sigma=5, random_seed=1).all()</code></pre>
-=======
     
     out1 = fb1.evaluate(TEST_IM_COLOR)
     out2 = segmentation.felzenszwalb(TEST_IM_COLOR, 984, 0.09, 92, multichannel=True)
@@ -345,7 +230,6 @@ is the same as manually running the skimage function.</p></div>
     out1 = fb1.evaluate(TEST_IM_GRAY)
     out2 = segmentation.felzenszwalb(TEST_IM_GRAY, 984, 0.09, 92, multichannel=True)
     assert out1.all() == out2.all()</code></pre>
->>>>>>> Updating documentation strings
 </details>
 </dd>
 <dt id="see.tests.test_Segmentors.test_Slic"><code class="name flex">
@@ -370,27 +254,6 @@ is the same as manually running the skimage function.</p></div>
                 sigma=5, convert2lab=True, multichannel=False).all()</code></pre>
 </details>
 </dd>
-<<<<<<< HEAD
-<dt id="see.tests.test_Segmentors.test_Watershed"><code class="name flex">
-<span>def <span class="ident">test_Watershed</span></span>(<span>)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Unit test for Watershed method. Checks if evaluate function output
-is the same as manually running the skimage function.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def test_Watershed():
-    &#34;&#34;&#34;Unit test for Watershed method. Checks if evaluate function output\
-     is the same as manually running the skimage function.&#34;&#34;&#34;
-    ws1 = Segmentors.Watershed()
-    assert ws1.evaluate(TEST_IM_COLOR).all() == segmentation.watershed(\
-                TEST_IM_COLOR, markers=None, compactness=2.0).all()</code></pre>
-</details>
-</dd>
-=======
->>>>>>> Updating documentation strings
 <dt id="see.tests.test_Segmentors.test_countMatches"><code class="name flex">
 <span>def <span class="ident">test_countMatches</span></span>(<span>)</span>
 </code></dt>
@@ -475,34 +338,6 @@ expected for a variety of extreme cases.</p></div>
     assert len(param) &gt; 1</code></pre>
 </details>
 </dd>
-<dt id="see.tests.test_Segmentors.test_print_best_algorithm_code"><code class="name flex">
-<span>def <span class="ident">test_print_best_algorithm_code</span></span>(<span>)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Unit test for print_best_algorithm_code function.
-Checks function output matches method contents it's printing.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def test_print_best_algorithm_code():
-    &#34;&#34;&#34;Unit test for print_best_algorithm_code function.
-     Checks function output matches method contents it&#39;s printing.&#34;&#34;&#34;
-    individual = [&#39;FB&#39;, 0, 0, 984, 0.09, 92, 0, 0, 0, 0, 0, 0, 0, 0, 0,\
-     (1, 2), 0, &#34;checkerboard&#34;, &#34;checkerboard&#34;, 0, 0, 0, 0, 0, 0]
-    print_statement = &#34;multichannel = False\n\
-if len(img.shape) &gt; 2:\n\
-    multichannel = True\n\
-output = skimage.segmentation.felzenszwalb(\n\
-    img,\n\
-    984,\n\
-    0.09,\n\
-    92,\n\
-    multichannel=multichannel,\n\
-)\n&#34;
-    assert Segmentors.print_best_algorithm_code(individual) == print_statement</code></pre>
-</details>
-</dd>
 <dt id="see.tests.test_Segmentors.test_runAlgo"><code class="name flex">
 <span>def <span class="ident">test_runAlgo</span></span>(<span>)</span>
 </code></dt>
@@ -545,12 +380,7 @@ Checks to see if the output is what it's supposed to be in this case.</p></div>
 <li><code><a title="see.tests.test_Segmentors.test_Slic" href="#see.tests.test_Segmentors.test_Slic">test_Slic</a></code></li>
 <li><code><a title="see.tests.test_Segmentors.test_countMatches" href="#see.tests.test_Segmentors.test_countMatches">test_countMatches</a></code></li>
 <li><code><a title="see.tests.test_Segmentors.test_countsets" href="#see.tests.test_Segmentors.test_countsets">test_countsets</a></code></li>
-<<<<<<< HEAD
-<li><code><a title="see.tests.test_Segmentors.test_parameters" href="#see.tests.test_Segmentors.test_parameters">test_parameters</a></code></li>
-<li><code><a title="see.tests.test_Segmentors.test_print_best_algorithm_code" href="#see.tests.test_Segmentors.test_print_best_algorithm_code">test_print_best_algorithm_code</a></code></li>
-=======
 <li><code><a title="see.tests.test_Segmentors.test_parameter_len" href="#see.tests.test_Segmentors.test_parameter_len">test_parameter_len</a></code></li>
->>>>>>> Updating documentation strings
 <li><code><a title="see.tests.test_Segmentors.test_runAlgo" href="#see.tests.test_Segmentors.test_runAlgo">test_runAlgo</a></code></li>
 </ul>
 </li>
