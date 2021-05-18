@@ -410,7 +410,7 @@ class Evolver(object):
                 for cur_p in range(len(population)):
                     logging.getLogger().info(population[cur_p])
             if cur_g < ngen+1:
-                if bestsofar.fitness.values[0] >= 20:
+                if bestsofar.fitness.values[0] >= 0.95:
                     population = self.newpopulation()
                   # if the best fitness value is at or above the
                   # threshold of 0.95, discard the entire current
