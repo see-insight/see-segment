@@ -31,6 +31,7 @@
 import copy
 import time    
 import random
+import inspect
 
 class pipedata(object):
     &#34;&#34;&#34;The pipedata is just an instance of a basic python object. It is used to dynamically
@@ -68,9 +69,12 @@ class param_space(dict):
 
     def addall(self,params):
         &#34;&#34;&#34;Function to add a list of paramters to the current paramter list&#34;&#34;&#34;
-        for key in params:
-            self.add(key, params.ranges[key], params.descriptions[key])
-            self[key] = params[key]
+        if issubclass(type(params), param_space):
+            for key in params:
+                self.add(key, params.ranges[key], params.descriptions[key])
+                self[key] = params[key]
+        else:
+            raise TypeError(&#39;A very specific bad thing happened.&#39;)
                             
     def printparam(self, key):
         &#34;&#34;&#34;Return description of parameter from param list.&#34;&#34;&#34;
@@ -119,10 +123,12 @@ class algorithm(object):
     
     def set_params(self, paramlist=None):
         if paramlist:
-            if (type(paramlist) == list):
-                self.params.fromlist(paramlist)
-            else:
+            if  issubclass(type(paramlist), param_space):
                 self.params = copy.deepcopy(paramlist)
+            else:
+                #print(f&#34;{type(paramlist)}_paramlist={paramlist}&#34;)
+                self.params.fromlist(list(paramlist))
+        #TODO Comment this back in
         #self.checkparamindex()
         
     def checkparamindex(self):
@@ -135,7 +141,7 @@ class algorithm(object):
         for myparam in self.params.pkeys:
             rand_val = random.random()
             if rand_val &lt; flip_prob:
-                self.params[myparam] = random.choice(eval(self.params.ranges[myparam]))
+                self.params[myparam] = random.choice(self.params.ranges[myparam])
         return self.params
     
     def pipe(self, data):
@@ -145,7 +151,7 @@ class algorithm(object):
 
     def __str__(self):
         &#34;&#34;&#34;Return params for algorithm.&#34;&#34;&#34;
-        mystring = f&#34;{self.params[&#39;algorithm&#39;]} -- \n&#34;
+        mystring = f&#34;{type(self)} parameters: \n&#34;
         for p in self.params.pkeys:
             mystring += f&#34;\t{p} = {self.params[p]}\n&#34;
         return mystring
@@ -167,78 +173,40 @@ class algorithm(object):
         # i&#39;m thinking (list, param_space and algorithm)
         startTime = int(round(time.time() * 1000))
         if params:
+            print(f&#34;{seg}&#34;)
             seg = type(self)(paramlist=params)
             data = seg.pipe(data)
             endTime = int(round(time.time() * 1000))
-            print(f&#34;{seg}Time: {(endTime - startTime)/1000} s&#34;)
+            print(f&#34;Time: {(endTime - startTime)/1000} s&#34;)
         else:
+            print(f&#34;{self}&#34;)
             data = self.pipe(data) 
             endTime = int(round(time.time() * 1000))
-            print(f&#34;{self}Time: {(endTime - startTime)/1000} s&#34;)
+            print(f&#34;Time: {(endTime - startTime)/1000} s&#34;)
         
         return data    
     
-def mutateAlgo(copy_child, pos_vals, flip_prob=0.5, seed=False):
+    def mutate_self(self,flip_prob=0.5):
+        print(&#34;using default mutation function&#34;)
+        for keys in self.params:
+            rand_val = random.random()
+            if rand_val &lt; flip_prob:
+                # Let&#39;s mutate the algorithm
+                self.params[index] = random.choice(self.params.ranges[index])
+                
+    def algorithm_code(self):
+        &#34;&#34;&#34;Print usable code to run segmentation algorithm based on an
+         individual&#39;s genetic representation vector.&#34;&#34;&#34;
+
+        original_function = inspect.getsource(self.evaluate)
+
+        return original_function
+
+def mutateAlgo(algorithm, paramlist, flip_prob=0.5):
     &#34;&#34;&#34;Generate an offspring based on current individual.&#34;&#34;&#34;
-    
-    #print(f&#34;copy_child = {type(copy_child)}&#34;)
-    child = copy.deepcopy(copy_child)
-    
-    # Not every algorithm is associated with every value
-    # Let&#39;s first see if we change the algorithm
-    for index,vals in enumerate(pos_vals):
-        rand_val = random.random()
-        if rand_val &lt; flip_prob:
-            # Let&#39;s mutate the algorithm
-            child[index] = random.choice(pos_vals[index])
-
-#     #use the local search for mutation.
-#     seg = algoFromParams(child)
-#     child = seg.mutateself(flip_prob)
+    child = algorithm(paramlist=paramlist)
+    child.mutateself(flip_prob=flip_prob)
     return child
-
-
-def print_best_algorithm_code(individual):
-    &#34;&#34;&#34;Print usable code to run segmentation algorithm based on an
-     individual&#39;s genetic representation vector.&#34;&#34;&#34;
-    pass
-
-#TODO Try to fix this print. I&#39;m not sure the best way to generate an algorithm from parameters.
-#     #ind_algo = Segmentors.algoFromParams(individual)
-#     ind_algo = algoFromParams(individual)
-#     original_function = inspect.getsource(ind_algo.evaluate)
-
-#     # Get the body of the function
-#     function_contents = original_function[original_function.find(&#39;        &#39;):\
-#                             original_function.find(&#39;return&#39;)]
-#     while function_contents.find(&#39;self.params&#39;) != -1:
-
-#         # Find the index of the &#39;s&#39; at the start of self.params
-#         params_index = function_contents.find(&#39;self.params&#39;)
-
-#         # Find the index of the &#39;]&#39; at the end of self.params[&#34;&lt;SOME_TEXT&gt;&#34;]
-#         end_bracket_index = function_contents.find(&#39;]&#39;, params_index)+1
-
-#         # Find the first occurance of self.params[&#34;&lt;SOME_TEXT&gt;&#34;] and store it
-#         code_to_replace = function_contents[params_index:end_bracket_index]
-
-#         # These offset will be used to access only the params_key
-#         offset = len(&#39;self.params[&#34;&#39;)
-#         offset2 = len(&#39;&#34;]&#39;)
-
-#         # Get the params key
-#         params_key = function_contents[params_index + offset:end_bracket_index-offset2]
-
-#         # Use the params_key to access the params_value
-#         param_value = str(ind_algo.params[params_key])
-
-#         # Replace self.params[&#34;&lt;SOME_TEXT&gt;&#34;] with the value of self.params[&#34;&lt;SOME_TEXT&gt;&#34;]
-#         function_contents = function_contents.replace(code_to_replace, param_value)
-
-#     function_contents = function_contents.replace(&#39;        &#39;, &#39;&#39;)
-#     function_contents = function_contents[function_contents.find(&#39;\n\&#34;\&#34;\&#34;&#39;)+5:]
-#     print(function_contents)
-#     return function_contents
    
 def popCounts(pop):
     &#34;&#34;&#34;Count the number of each algorihtm in a population&#34;&#34;&#34;
@@ -258,7 +226,7 @@ def popCounts(pop):
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="see.base_classes.mutateAlgo"><code class="name flex">
-<span>def <span class="ident">mutateAlgo</span></span>(<span>copy_child, pos_vals, flip_prob=0.5, seed=False)</span>
+<span>def <span class="ident">mutateAlgo</span></span>(<span>algorithm, paramlist, flip_prob=0.5)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Generate an offspring based on current individual.</p></div>
@@ -266,23 +234,10 @@ def popCounts(pop):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def mutateAlgo(copy_child, pos_vals, flip_prob=0.5, seed=False):
+<pre><code class="python">def mutateAlgo(algorithm, paramlist, flip_prob=0.5):
     &#34;&#34;&#34;Generate an offspring based on current individual.&#34;&#34;&#34;
-    
-    #print(f&#34;copy_child = {type(copy_child)}&#34;)
-    child = copy.deepcopy(copy_child)
-    
-    # Not every algorithm is associated with every value
-    # Let&#39;s first see if we change the algorithm
-    for index,vals in enumerate(pos_vals):
-        rand_val = random.random()
-        if rand_val &lt; flip_prob:
-            # Let&#39;s mutate the algorithm
-            child[index] = random.choice(pos_vals[index])
-
-#     #use the local search for mutation.
-#     seg = algoFromParams(child)
-#     child = seg.mutateself(flip_prob)
+    child = algorithm(paramlist=paramlist)
+    child.mutateself(flip_prob=flip_prob)
     return child</code></pre>
 </details>
 </dd>
@@ -303,22 +258,6 @@ def popCounts(pop):
         #print(p[0])
         counts[p[0]] += 1
     return counts</code></pre>
-</details>
-</dd>
-<dt id="see.base_classes.print_best_algorithm_code"><code class="name flex">
-<span>def <span class="ident">print_best_algorithm_code</span></span>(<span>individual)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Print usable code to run segmentation algorithm based on an
-individual's genetic representation vector.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def print_best_algorithm_code(individual):
-    &#34;&#34;&#34;Print usable code to run segmentation algorithm based on an
-     individual&#39;s genetic representation vector.&#34;&#34;&#34;
-    pass</code></pre>
 </details>
 </dd>
 </dl>
@@ -354,10 +293,12 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
     
     def set_params(self, paramlist=None):
         if paramlist:
-            if (type(paramlist) == list):
-                self.params.fromlist(paramlist)
-            else:
+            if  issubclass(type(paramlist), param_space):
                 self.params = copy.deepcopy(paramlist)
+            else:
+                #print(f&#34;{type(paramlist)}_paramlist={paramlist}&#34;)
+                self.params.fromlist(list(paramlist))
+        #TODO Comment this back in
         #self.checkparamindex()
         
     def checkparamindex(self):
@@ -370,7 +311,7 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
         for myparam in self.params.pkeys:
             rand_val = random.random()
             if rand_val &lt; flip_prob:
-                self.params[myparam] = random.choice(eval(self.params.ranges[myparam]))
+                self.params[myparam] = random.choice(self.params.ranges[myparam])
         return self.params
     
     def pipe(self, data):
@@ -380,7 +321,7 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
 
     def __str__(self):
         &#34;&#34;&#34;Return params for algorithm.&#34;&#34;&#34;
-        mystring = f&#34;{self.params[&#39;algorithm&#39;]} -- \n&#34;
+        mystring = f&#34;{type(self)} parameters: \n&#34;
         for p in self.params.pkeys:
             mystring += f&#34;\t{p} = {self.params[p]}\n&#34;
         return mystring
@@ -402,16 +343,34 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
         # i&#39;m thinking (list, param_space and algorithm)
         startTime = int(round(time.time() * 1000))
         if params:
+            print(f&#34;{seg}&#34;)
             seg = type(self)(paramlist=params)
             data = seg.pipe(data)
             endTime = int(round(time.time() * 1000))
-            print(f&#34;{seg}Time: {(endTime - startTime)/1000} s&#34;)
+            print(f&#34;Time: {(endTime - startTime)/1000} s&#34;)
         else:
+            print(f&#34;{self}&#34;)
             data = self.pipe(data) 
             endTime = int(round(time.time() * 1000))
-            print(f&#34;{self}Time: {(endTime - startTime)/1000} s&#34;)
+            print(f&#34;Time: {(endTime - startTime)/1000} s&#34;)
         
-        return data    </code></pre>
+        return data    
+    
+    def mutate_self(self,flip_prob=0.5):
+        print(&#34;using default mutation function&#34;)
+        for keys in self.params:
+            rand_val = random.random()
+            if rand_val &lt; flip_prob:
+                # Let&#39;s mutate the algorithm
+                self.params[index] = random.choice(self.params.ranges[index])
+                
+    def algorithm_code(self):
+        &#34;&#34;&#34;Print usable code to run segmentation algorithm based on an
+         individual&#39;s genetic representation vector.&#34;&#34;&#34;
+
+        original_function = inspect.getsource(self.evaluate)
+
+        return original_function</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
@@ -422,6 +381,25 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
 </ul>
 <h3>Methods</h3>
 <dl>
+<dt id="see.base_classes.algorithm.algorithm_code"><code class="name flex">
+<span>def <span class="ident">algorithm_code</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Print usable code to run segmentation algorithm based on an
+individual's genetic representation vector.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def algorithm_code(self):
+    &#34;&#34;&#34;Print usable code to run segmentation algorithm based on an
+     individual&#39;s genetic representation vector.&#34;&#34;&#34;
+
+    original_function = inspect.getsource(self.evaluate)
+
+    return original_function</code></pre>
+</details>
+</dd>
 <dt id="see.base_classes.algorithm.checkparamindex"><code class="name flex">
 <span>def <span class="ident">checkparamindex</span></span>(<span>self)</span>
 </code></dt>
@@ -435,6 +413,24 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
     &#34;&#34;&#34;Check paramiter keys to ensure values are valid&#34;&#34;&#34;
     for myparams in self.params.pkeys:
         assert myparams in self.params, f&#34;ERROR {myparams} is not in parameter list&#34;</code></pre>
+</details>
+</dd>
+<dt id="see.base_classes.algorithm.mutate_self"><code class="name flex">
+<span>def <span class="ident">mutate_self</span></span>(<span>self, flip_prob=0.5)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mutate_self(self,flip_prob=0.5):
+    print(&#34;using default mutation function&#34;)
+    for keys in self.params:
+        rand_val = random.random()
+        if rand_val &lt; flip_prob:
+            # Let&#39;s mutate the algorithm
+            self.params[index] = random.choice(self.params.ranges[index])</code></pre>
 </details>
 </dd>
 <dt id="see.base_classes.algorithm.mutateself"><code class="name flex">
@@ -451,7 +447,7 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
     for myparam in self.params.pkeys:
         rand_val = random.random()
         if rand_val &lt; flip_prob:
-            self.params[myparam] = random.choice(eval(self.params.ranges[myparam]))
+            self.params[myparam] = random.choice(self.params.ranges[myparam])
     return self.params</code></pre>
 </details>
 </dd>
@@ -502,14 +498,16 @@ mask &ndash; resulting image mask associated with the individual (if return_mask
     # i&#39;m thinking (list, param_space and algorithm)
     startTime = int(round(time.time() * 1000))
     if params:
+        print(f&#34;{seg}&#34;)
         seg = type(self)(paramlist=params)
         data = seg.pipe(data)
         endTime = int(round(time.time() * 1000))
-        print(f&#34;{seg}Time: {(endTime - startTime)/1000} s&#34;)
+        print(f&#34;Time: {(endTime - startTime)/1000} s&#34;)
     else:
+        print(f&#34;{self}&#34;)
         data = self.pipe(data) 
         endTime = int(round(time.time() * 1000))
-        print(f&#34;{self}Time: {(endTime - startTime)/1000} s&#34;)
+        print(f&#34;Time: {(endTime - startTime)/1000} s&#34;)
     
     return data    </code></pre>
 </details>
@@ -525,10 +523,11 @@ mask &ndash; resulting image mask associated with the individual (if return_mask
 </summary>
 <pre><code class="python">def set_params(self, paramlist=None):
     if paramlist:
-        if (type(paramlist) == list):
-            self.params.fromlist(paramlist)
+        if  issubclass(type(paramlist), param_space):
+            self.params = copy.deepcopy(paramlist)
         else:
-            self.params = copy.deepcopy(paramlist)</code></pre>
+            #print(f&#34;{type(paramlist)}_paramlist={paramlist}&#34;)
+            self.params.fromlist(list(paramlist))</code></pre>
 </details>
 </dd>
 </dl>
@@ -576,9 +575,12 @@ ranges - List of possible choices for each parameter.</p></div>
 
     def addall(self,params):
         &#34;&#34;&#34;Function to add a list of paramters to the current paramter list&#34;&#34;&#34;
-        for key in params:
-            self.add(key, params.ranges[key], params.descriptions[key])
-            self[key] = params[key]
+        if issubclass(type(params), param_space):
+            for key in params:
+                self.add(key, params.ranges[key], params.descriptions[key])
+                self[key] = params[key]
+        else:
+            raise TypeError(&#39;A very specific bad thing happened.&#39;)
                             
     def printparam(self, key):
         &#34;&#34;&#34;Return description of parameter from param list.&#34;&#34;&#34;
@@ -680,9 +682,12 @@ def add(cls, key, prange, description):
 </summary>
 <pre><code class="python">def addall(self,params):
     &#34;&#34;&#34;Function to add a list of paramters to the current paramter list&#34;&#34;&#34;
-    for key in params:
-        self.add(key, params.ranges[key], params.descriptions[key])
-        self[key] = params[key]</code></pre>
+    if issubclass(type(params), param_space):
+        for key in params:
+            self.add(key, params.ranges[key], params.descriptions[key])
+            self[key] = params[key]
+    else:
+        raise TypeError(&#39;A very specific bad thing happened.&#39;)</code></pre>
 </details>
 </dd>
 <dt id="see.base_classes.param_space.fromlist"><code class="name flex">
@@ -779,15 +784,16 @@ data to this objet which is passed in as an input argument and returned as an ou
 <ul class="">
 <li><code><a title="see.base_classes.mutateAlgo" href="#see.base_classes.mutateAlgo">mutateAlgo</a></code></li>
 <li><code><a title="see.base_classes.popCounts" href="#see.base_classes.popCounts">popCounts</a></code></li>
-<li><code><a title="see.base_classes.print_best_algorithm_code" href="#see.base_classes.print_best_algorithm_code">print_best_algorithm_code</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
 <h4><code><a title="see.base_classes.algorithm" href="#see.base_classes.algorithm">algorithm</a></code></h4>
-<ul class="">
+<ul class="two-column">
+<li><code><a title="see.base_classes.algorithm.algorithm_code" href="#see.base_classes.algorithm.algorithm_code">algorithm_code</a></code></li>
 <li><code><a title="see.base_classes.algorithm.checkparamindex" href="#see.base_classes.algorithm.checkparamindex">checkparamindex</a></code></li>
+<li><code><a title="see.base_classes.algorithm.mutate_self" href="#see.base_classes.algorithm.mutate_self">mutate_self</a></code></li>
 <li><code><a title="see.base_classes.algorithm.mutateself" href="#see.base_classes.algorithm.mutateself">mutateself</a></code></li>
 <li><code><a title="see.base_classes.algorithm.pipe" href="#see.base_classes.algorithm.pipe">pipe</a></code></li>
 <li><code><a title="see.base_classes.algorithm.runAlgo" href="#see.base_classes.algorithm.runAlgo">runAlgo</a></code></li>
