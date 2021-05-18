@@ -52,6 +52,3 @@ class workflow(algorithm):
             algo.params.addall(self.params)
             data = algo.pipe(data)
         return data
-
-# PROBLEMS
-# - Next step make a funciton to add parameter spaces.
