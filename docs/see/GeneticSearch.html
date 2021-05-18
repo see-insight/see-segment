@@ -151,7 +151,7 @@ def mutate(copy_child, pos_vals, flip_prob=0.5, seed=False):
 # DO: Make a toolbox from a list of individuals
 # DO: Save a population as a list of indivudals (with fitness functions?)
 
-#TODO: change algo_instance to an algorithm class. 
+# TODO: change algo_instance to an algorithm class.
 def makeToolbox(pop_size, algo_constructor):
     &#34;&#34;&#34;Make a genetic algorithm toolbox using DEAP. The toolbox uses premade functions
      for crossover, mutation, evaluation and fitness.
@@ -287,7 +287,7 @@ class Evolver(object):
 
         self.tool.register(&#34;individual_guess&#34;,
                            initIndividual, creator.Individual)
-        
+
         self.tool.register(&#34;population_guess&#34;, initPopulation,
                            list, self.tool.individual_guess, &#34;my_guess.json&#34;)
 
@@ -315,9 +315,10 @@ class Evolver(object):
             ind.fitness.values = [ fit[0] ]
 =======
         # make copies of self.data
-        data_references = [copy.deepcopy(self.data) for i in range(0, len(tpop))]
+        data_references = [copy.deepcopy(self.data)
+                           for i in range(0, len(tpop))]
         algos = [self.algo_constructor(paramlist=list(ind)) for ind in tpop]
-        
+
         # Map the evaluation command to reference data and then to population list
         outdata = map(self.tool.evaluate, algos, data_references)
 
@@ -478,6 +479,7 @@ class Evolver(object):
 
         for cur_g in range(0, ngen+1):
 <<<<<<< HEAD
+<<<<<<< HEAD
             print(f&#34;Generation {cur_g} of population size {len(population)}&#34;)
 <<<<<<< HEAD
             
@@ -491,6 +493,10 @@ class Evolver(object):
 =======
             print(f&#34;Generation {cur_g}/{ngen} of population size {len(population)}&#34;)
 >>>>>>> Updating docs
+=======
+            print(
+                f&#34;Generation {cur_g}/{ngen} of population size {len(population)}&#34;)
+>>>>>>> Adding ColorSpace unit testing
 
 >>>>>>> Updating documentation strings
             _, population = self.popfitness(population)
@@ -887,7 +893,7 @@ or how many individuals there are (default 10)</p></div>
 
         self.tool.register(&#34;individual_guess&#34;,
                            initIndividual, creator.Individual)
-        
+
         self.tool.register(&#34;population_guess&#34;, initPopulation,
                            list, self.tool.individual_guess, &#34;my_guess.json&#34;)
 
@@ -915,9 +921,10 @@ or how many individuals there are (default 10)</p></div>
             ind.fitness.values = [ fit[0] ]
 =======
         # make copies of self.data
-        data_references = [copy.deepcopy(self.data) for i in range(0, len(tpop))]
+        data_references = [copy.deepcopy(self.data)
+                           for i in range(0, len(tpop))]
         algos = [self.algo_constructor(paramlist=list(ind)) for ind in tpop]
-        
+
         # Map the evaluation command to reference data and then to population list
         outdata = map(self.tool.evaluate, algos, data_references)
 
@@ -1078,6 +1085,7 @@ or how many individuals there are (default 10)</p></div>
 
         for cur_g in range(0, ngen+1):
 <<<<<<< HEAD
+<<<<<<< HEAD
             print(f&#34;Generation {cur_g} of population size {len(population)}&#34;)
 <<<<<<< HEAD
             
@@ -1091,6 +1099,10 @@ or how many individuals there are (default 10)</p></div>
 =======
             print(f&#34;Generation {cur_g}/{ngen} of population size {len(population)}&#34;)
 >>>>>>> Updating docs
+=======
+            print(
+                f&#34;Generation {cur_g}/{ngen} of population size {len(population)}&#34;)
+>>>>>>> Adding ColorSpace unit testing
 
 >>>>>>> Updating documentation strings
             _, population = self.popfitness(population)
@@ -1347,9 +1359,10 @@ tpop &ndash; current population</p></div>
         ind.fitness.values = [ fit[0] ]
 =======
     # make copies of self.data
-    data_references = [copy.deepcopy(self.data) for i in range(0, len(tpop))]
+    data_references = [copy.deepcopy(self.data)
+                       for i in range(0, len(tpop))]
     algos = [self.algo_constructor(paramlist=list(ind)) for ind in tpop]
-    
+
     # Map the evaluation command to reference data and then to population list
     outdata = map(self.tool.evaluate, algos, data_references)
 
@@ -1407,7 +1420,7 @@ tpop &ndash; current population</p></div>
 
     self.tool.register(&#34;individual_guess&#34;,
                        initIndividual, creator.Individual)
-    
+
     self.tool.register(&#34;population_guess&#34;, initPopulation,
                        list, self.tool.individual_guess, &#34;my_guess.json&#34;)
 
@@ -1459,6 +1472,7 @@ population &ndash; Resulting population after ngen generations.</p></div>
 
     for cur_g in range(0, ngen+1):
 <<<<<<< HEAD
+<<<<<<< HEAD
         print(f&#34;Generation {cur_g} of population size {len(population)}&#34;)
 <<<<<<< HEAD
         
@@ -1472,6 +1486,10 @@ population &ndash; Resulting population after ngen generations.</p></div>
 =======
         print(f&#34;Generation {cur_g}/{ngen} of population size {len(population)}&#34;)
 >>>>>>> Updating docs
+=======
+        print(
+            f&#34;Generation {cur_g}/{ngen} of population size {len(population)}&#34;)
+>>>>>>> Adding ColorSpace unit testing
 
 >>>>>>> Updating documentation strings
         _, population = self.popfitness(population)

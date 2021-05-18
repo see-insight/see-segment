@@ -28,6 +28,7 @@ Watch an introductory video to what SEE is, and how to use it [here](https://med
 - Nate Britton, Fall 2020
 - Nick Grabill, Summer 2020
 - Kai Pinckard, Summer 2020
+- Davin Lin, Summer 2021
 
 ## SEE-InSight Emeritus Members
 - Katrina Gensterblum, Fall 2019
