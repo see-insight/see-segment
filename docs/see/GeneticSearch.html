@@ -150,7 +150,9 @@ def mutate(copy_child, pos_vals, flip_prob=0.5, seed=False):
 
 # DO: Make a toolbox from a list of individuals
 # DO: Save a population as a list of indivudals (with fitness functions?)
-def makeToolbox(pop_size, algo_instance):
+
+#TODO: change algo_instance to an algorithm class. 
+def makeToolbox(pop_size, algo_constructor):
     &#34;&#34;&#34;Make a genetic algorithm toolbox using DEAP. The toolbox uses premade functions
      for crossover, mutation, evaluation and fitness.
 
@@ -174,14 +176,19 @@ def makeToolbox(pop_size, algo_instance):
 =======
     # toolbox.register(&#34;mutate&#34;, mutate)  # Mutation
     toolbox.register(&#34;mutate&#34;, base_classes.mutateAlgo)  # Mutation
+<<<<<<< HEAD
     toolbox.register(&#34;evaluate&#34;, algo_instance.runAlgo)  # Fitness
 >>>>>>> Updating documentation strings
+=======
+    toolbox.register(&#34;evaluate&#34;, algo_constructor.runAlgo)  # Fitness
+>>>>>>> Updating docs
     toolbox.register(&#34;select&#34;, tools.selTournament, tournsize=5)  # Selection
     toolbox.register(&#34;map&#34;, futures.map)  # So that we can use scoop
 
     # DO: May want to later do a different selection process
 
     # We choose the parameters, for the most part, random
+    algo_instance = algo_constructor()
     params = algo_instance.params
 
     for key in params.pkeys:
@@ -235,7 +242,7 @@ class Evolver(object):
 #     for key in my_p.pkeys:
 #         AllVals.append(my_p.ranges[key])
 
-    def __init__(self, algo_instance, data, pop_size=10):
+    def __init__(self, algo_constructor, data, pop_size=10):
         &#34;&#34;&#34;Set default values for the variables.
 
         Keyword arguments:
@@ -247,8 +254,8 @@ class Evolver(object):
         &#34;&#34;&#34;
         # Build Population based on size
         self.data = data
-        self.algorithm = algo_instance
-        self.tool = makeToolbox(pop_size, algo_instance)
+        self.algo_constructor = algo_constructor
+        self.tool = makeToolbox(pop_size, algo_constructor)
         self.hof = deap.tools.HallOfFame(10)
         self.best_avgs = []
         self.gen = 0
@@ -309,9 +316,10 @@ class Evolver(object):
 =======
         # make copies of self.data
         data_references = [copy.deepcopy(self.data) for i in range(0, len(tpop))]
-
+        algos = [self.algo_constructor(paramlist=list(ind)) for ind in tpop]
+        
         # Map the evaluation command to reference data and then to population list
-        outdata = map(self.tool.evaluate, data_references, tpop)
+        outdata = map(self.tool.evaluate, algos, data_references)
 
         # Loop though outputs and add them to ind.fitness so we have a complete record.
         for ind, data in zip(tpop, outdata):
@@ -401,7 +409,7 @@ class Evolver(object):
         # mutation
         for mutant in offspring:
             if random.random() &lt; self.mutpb:
-                self.tool.mutate(mutant, self.algorithm.params.pkeys, self.flip_prob)
+                self.tool.mutate(self.algo_constructor, mutant, self.flip_prob)
                 del mutant.fitness.values
 
         # new
@@ -469,6 +477,7 @@ class Evolver(object):
                 self.writepop(population, filename=f&#34;{checkpoint}&#34;)
 
         for cur_g in range(0, ngen+1):
+<<<<<<< HEAD
             print(f&#34;Generation {cur_g} of population size {len(population)}&#34;)
 <<<<<<< HEAD
             
@@ -479,6 +488,9 @@ class Evolver(object):
 
             #histogram = Segmentors.popCounts(population)
             # print(f&#34;#HIST {histogram}&#34;)
+=======
+            print(f&#34;Generation {cur_g}/{ngen} of population size {len(population)}&#34;)
+>>>>>>> Updating docs
 
 >>>>>>> Updating documentation strings
             _, population = self.popfitness(population)
@@ -493,7 +505,7 @@ class Evolver(object):
 >>>>>>> Updating documentation strings
 
             # Create a new instance from the current algorithm
-            seg = type(self.algorithm)(bestsofar)
+            seg = self.algo_constructor(bestsofar)
 
             self.data = seg.pipe(self.data)
             fitness = self.data.fitness
@@ -509,8 +521,12 @@ class Evolver(object):
             if cur_g &lt; ngen+1:          
 =======
             if cur_g &lt; ngen+1:
+<<<<<<< HEAD
 >>>>>>> Updating documentation strings
                 if bestsofar.fitness.values[0] &gt;= 0.95:
+=======
+                if bestsofar.fitness.values[0] &gt;= 20:
+>>>>>>> Updating docs
                     population = self.newpopulation()
                   # if the best fitness value is at or above the
                   # threshold of 0.95, discard the entire current
@@ -582,7 +598,7 @@ class Evolver(object):
 </details>
 </dd>
 <dt id="see.GeneticSearch.makeToolbox"><code class="name flex">
-<span>def <span class="ident">makeToolbox</span></span>(<span>pop_size, algo_instance)</span>
+<span>def <span class="ident">makeToolbox</span></span>(<span>pop_size, algo_constructor)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Make a genetic algorithm toolbox using DEAP. The toolbox uses premade functions
@@ -593,7 +609,7 @@ pop_size &ndash; The size of our population, or how many individuals we have</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def makeToolbox(pop_size, algo_instance):
+<pre><code class="python">def makeToolbox(pop_size, algo_constructor):
     &#34;&#34;&#34;Make a genetic algorithm toolbox using DEAP. The toolbox uses premade functions
      for crossover, mutation, evaluation and fitness.
 
@@ -617,14 +633,19 @@ pop_size &ndash; The size of our population, or how many individuals we have</p>
 =======
     # toolbox.register(&#34;mutate&#34;, mutate)  # Mutation
     toolbox.register(&#34;mutate&#34;, base_classes.mutateAlgo)  # Mutation
+<<<<<<< HEAD
     toolbox.register(&#34;evaluate&#34;, algo_instance.runAlgo)  # Fitness
 >>>>>>> Updating documentation strings
+=======
+    toolbox.register(&#34;evaluate&#34;, algo_constructor.runAlgo)  # Fitness
+>>>>>>> Updating docs
     toolbox.register(&#34;select&#34;, tools.selTournament, tournsize=5)  # Selection
     toolbox.register(&#34;map&#34;, futures.map)  # So that we can use scoop
 
     # DO: May want to later do a different selection process
 
     # We choose the parameters, for the most part, random
+    algo_instance = algo_constructor()
     params = algo_instance.params
 
     for key in params.pkeys:
@@ -778,7 +799,7 @@ amount of indexes to change between the two.</p></div>
 <dl>
 <dt id="see.GeneticSearch.Evolver"><code class="flex name class">
 <span>class <span class="ident">Evolver</span></span>
-<span>(</span><span>algo_instance, data, pop_size=10)</span>
+<span>(</span><span>algo_constructor, data, pop_size=10)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Perform the genetic algorithm by initializing a population and evolving it over a
@@ -821,7 +842,7 @@ or how many individuals there are (default 10)</p></div>
 #     for key in my_p.pkeys:
 #         AllVals.append(my_p.ranges[key])
 
-    def __init__(self, algo_instance, data, pop_size=10):
+    def __init__(self, algo_constructor, data, pop_size=10):
         &#34;&#34;&#34;Set default values for the variables.
 
         Keyword arguments:
@@ -833,8 +854,8 @@ or how many individuals there are (default 10)</p></div>
         &#34;&#34;&#34;
         # Build Population based on size
         self.data = data
-        self.algorithm = algo_instance
-        self.tool = makeToolbox(pop_size, algo_instance)
+        self.algo_constructor = algo_constructor
+        self.tool = makeToolbox(pop_size, algo_constructor)
         self.hof = deap.tools.HallOfFame(10)
         self.best_avgs = []
         self.gen = 0
@@ -895,9 +916,10 @@ or how many individuals there are (default 10)</p></div>
 =======
         # make copies of self.data
         data_references = [copy.deepcopy(self.data) for i in range(0, len(tpop))]
-
+        algos = [self.algo_constructor(paramlist=list(ind)) for ind in tpop]
+        
         # Map the evaluation command to reference data and then to population list
-        outdata = map(self.tool.evaluate, data_references, tpop)
+        outdata = map(self.tool.evaluate, algos, data_references)
 
         # Loop though outputs and add them to ind.fitness so we have a complete record.
         for ind, data in zip(tpop, outdata):
@@ -987,7 +1009,7 @@ or how many individuals there are (default 10)</p></div>
         # mutation
         for mutant in offspring:
             if random.random() &lt; self.mutpb:
-                self.tool.mutate(mutant, self.algorithm.params.pkeys, self.flip_prob)
+                self.tool.mutate(self.algo_constructor, mutant, self.flip_prob)
                 del mutant.fitness.values
 
         # new
@@ -1055,6 +1077,7 @@ or how many individuals there are (default 10)</p></div>
                 self.writepop(population, filename=f&#34;{checkpoint}&#34;)
 
         for cur_g in range(0, ngen+1):
+<<<<<<< HEAD
             print(f&#34;Generation {cur_g} of population size {len(population)}&#34;)
 <<<<<<< HEAD
             
@@ -1065,6 +1088,9 @@ or how many individuals there are (default 10)</p></div>
 
             #histogram = Segmentors.popCounts(population)
             # print(f&#34;#HIST {histogram}&#34;)
+=======
+            print(f&#34;Generation {cur_g}/{ngen} of population size {len(population)}&#34;)
+>>>>>>> Updating docs
 
 >>>>>>> Updating documentation strings
             _, population = self.popfitness(population)
@@ -1079,7 +1105,7 @@ or how many individuals there are (default 10)</p></div>
 >>>>>>> Updating documentation strings
 
             # Create a new instance from the current algorithm
-            seg = type(self.algorithm)(bestsofar)
+            seg = self.algo_constructor(bestsofar)
 
             self.data = seg.pipe(self.data)
             fitness = self.data.fitness
@@ -1095,8 +1121,12 @@ or how many individuals there are (default 10)</p></div>
             if cur_g &lt; ngen+1:          
 =======
             if cur_g &lt; ngen+1:
+<<<<<<< HEAD
 >>>>>>> Updating documentation strings
                 if bestsofar.fitness.values[0] &gt;= 0.95:
+=======
+                if bestsofar.fitness.values[0] &gt;= 20:
+>>>>>>> Updating docs
                     population = self.newpopulation()
                   # if the best fitness value is at or above the
                   # threshold of 0.95, discard the entire current
@@ -1214,7 +1244,7 @@ final &ndash; new population with mutated individuals.</p></div>
         # mutation
         for mutant in offspring:
             if random.random() &lt; self.mutpb:
-                self.tool.mutate(mutant, self.algorithm.params.pkeys, self.flip_prob)
+                self.tool.mutate(self.algo_constructor, mutant, self.flip_prob)
                 del mutant.fitness.values
 
         # new
@@ -1318,9 +1348,10 @@ tpop &ndash; current population</p></div>
 =======
     # make copies of self.data
     data_references = [copy.deepcopy(self.data) for i in range(0, len(tpop))]
-
+    algos = [self.algo_constructor(paramlist=list(ind)) for ind in tpop]
+    
     # Map the evaluation command to reference data and then to population list
-    outdata = map(self.tool.evaluate, data_references, tpop)
+    outdata = map(self.tool.evaluate, algos, data_references)
 
     # Loop though outputs and add them to ind.fitness so we have a complete record.
     for ind, data in zip(tpop, outdata):
@@ -1427,6 +1458,7 @@ population &ndash; Resulting population after ngen generations.</p></div>
             self.writepop(population, filename=f&#34;{checkpoint}&#34;)
 
     for cur_g in range(0, ngen+1):
+<<<<<<< HEAD
         print(f&#34;Generation {cur_g} of population size {len(population)}&#34;)
 <<<<<<< HEAD
         
@@ -1437,6 +1469,9 @@ population &ndash; Resulting population after ngen generations.</p></div>
 
         #histogram = Segmentors.popCounts(population)
         # print(f&#34;#HIST {histogram}&#34;)
+=======
+        print(f&#34;Generation {cur_g}/{ngen} of population size {len(population)}&#34;)
+>>>>>>> Updating docs
 
 >>>>>>> Updating documentation strings
         _, population = self.popfitness(population)
@@ -1451,7 +1486,7 @@ population &ndash; Resulting population after ngen generations.</p></div>
 >>>>>>> Updating documentation strings
 
         # Create a new instance from the current algorithm
-        seg = type(self.algorithm)(bestsofar)
+        seg = self.algo_constructor(bestsofar)
 
         self.data = seg.pipe(self.data)
         fitness = self.data.fitness
@@ -1467,8 +1502,12 @@ population &ndash; Resulting population after ngen generations.</p></div>
         if cur_g &lt; ngen+1:          
 =======
         if cur_g &lt; ngen+1:
+<<<<<<< HEAD
 >>>>>>> Updating documentation strings
             if bestsofar.fitness.values[0] &gt;= 0.95:
+=======
+            if bestsofar.fitness.values[0] &gt;= 20:
+>>>>>>> Updating docs
                 population = self.newpopulation()
               # if the best fitness value is at or above the
               # threshold of 0.95, discard the entire current

@@ -62,7 +62,7 @@ color_params.add(&#39;channel&#39;,
 
 
 class colorspace(algorithm):
-
+    
     def getchannel(img, colorspace, channel):
         &#34;&#34;&#34;function that returns a single channel from an image
         [&#39;RGB&#39;, ‘HSV’, ‘RGB CIE’, ‘XYZ’, ‘YUV’, ‘YIQ’, ‘YPbPr’, ‘YCbCr’, ‘YDbDr’]
@@ -122,7 +122,8 @@ class colorspace(algorithm):
             return channel
 
     def pipe(self, data):
-        data.colorspace = self.evaluate(data.img)
+        data.inputimage = data.img
+        data.img = self.evaluate(data.img)
         return data</code></pre>
 </details>
 </section>
@@ -201,7 +202,7 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class colorspace(algorithm):
-
+    
     def getchannel(img, colorspace, channel):
         &#34;&#34;&#34;function that returns a single channel from an image
         [&#39;RGB&#39;, ‘HSV’, ‘RGB CIE’, ‘XYZ’, ‘YUV’, ‘YIQ’, ‘YPbPr’, ‘YCbCr’, ‘YDbDr’]
@@ -261,7 +262,8 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
             return channel
 
     def pipe(self, data):
-        data.colorspace = self.evaluate(data.img)
+        data.inputimage = data.img
+        data.img = self.evaluate(data.img)
         return data</code></pre>
 </details>
 <h3>Ancestors</h3>
@@ -331,6 +333,7 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
 <ul class="hlist">
 <li><code><b><a title="see.base_classes.algorithm" href="base_classes.html#see.base_classes.algorithm">algorithm</a></b></code>:
 <ul class="hlist">
+<li><code><a title="see.base_classes.algorithm.algorithm_code" href="base_classes.html#see.base_classes.algorithm.algorithm_code">algorithm_code</a></code></li>
 <li><code><a title="see.base_classes.algorithm.checkparamindex" href="base_classes.html#see.base_classes.algorithm.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.base_classes.algorithm.mutateself" href="base_classes.html#see.base_classes.algorithm.mutateself">mutateself</a></code></li>
 <li><code><a title="see.base_classes.algorithm.pipe" href="base_classes.html#see.base_classes.algorithm.pipe">pipe</a></code></li>

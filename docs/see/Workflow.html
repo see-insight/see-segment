@@ -44,31 +44,42 @@ from see.base_classes import param_space, algorithm
 
 class workflow(algorithm):
 
-    algolist = []
+    worklist = []
 
-    def addalgo(self, algorithm):
-        workflow.algolist.append(algorithm)
-
-        thisalgo = algorithm()
-        self.params.addall(thisalgo.params)
-
-    def __init__(self, paramlist=None, algolist=None):
+    @classmethod
+    def addalgos(cls, algo):
+        if type(algo) == list:
+            for a in algo:
+                workflow.worklist.append(a)
+        else:  
+            workflow.worklist.append(algo)
+        
+    def __init__(self, paramlist=None):
         &#34;&#34;&#34;Generate algorithm params from parameter list.&#34;&#34;&#34;
         self.params = param_space()
-        if paramlist:
-            self.params.fromlist(paramlist)
-        if algolist:
-            for algo in algolist:
-                self.addalgo(algo)
+        self.set_params(paramlist)
+        for algo in workflow.worklist:
+            thisalgo = algo()
+            self.params.addall(thisalgo.params)
+        self.set_params(paramlist)
+
+            
+    def mutateself(self, flip_prob=0.5):
+        &#34;&#34;&#34;Mutate self and return new params.&#34;&#34;&#34;
+        print(&#34;using workflow mutate algorithm and looping over workflow&#34;)
+        for algo in workflow.worklist:
+            thisalgo = algo()
+            thisalgo.params.addall(thisalgo.params)
+            
+            thisalgo.mutateself(flip_prob=flip_prob)
+            self.params.addall(thisalgo.params)
 
     def pipe(self, data):
-        for constructor in self.algolist:
-            algo = constructor(paramlist=self.params)
+        for algo_constructor in workflow.worklist:
+            algo = algo_constructor(self.params)
+            algo.params.addall(self.params)
             data = algo.pipe(data)
-        return data
-
-# PROBLEMS
-# - Next step make a funciton to add parameter spaces.</code></pre>
+        return data</code></pre>
 </details>
 </section>
 <section>
@@ -82,7 +93,7 @@ class workflow(algorithm):
 <dl>
 <dt id="see.Workflow.workflow"><code class="flex name class">
 <span>class <span class="ident">workflow</span></span>
-<span>(</span><span>paramlist=None, algolist=None)</span>
+<span>(</span><span>paramlist=None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Base class for any image alogirthm.</p>
@@ -95,26 +106,40 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
 </summary>
 <pre><code class="python">class workflow(algorithm):
 
-    algolist = []
+    worklist = []
 
-    def addalgo(self, algorithm):
-        workflow.algolist.append(algorithm)
-
-        thisalgo = algorithm()
-        self.params.addall(thisalgo.params)
-
-    def __init__(self, paramlist=None, algolist=None):
+    @classmethod
+    def addalgos(cls, algo):
+        if type(algo) == list:
+            for a in algo:
+                workflow.worklist.append(a)
+        else:  
+            workflow.worklist.append(algo)
+        
+    def __init__(self, paramlist=None):
         &#34;&#34;&#34;Generate algorithm params from parameter list.&#34;&#34;&#34;
         self.params = param_space()
-        if paramlist:
-            self.params.fromlist(paramlist)
-        if algolist:
-            for algo in algolist:
-                self.addalgo(algo)
+        self.set_params(paramlist)
+        for algo in workflow.worklist:
+            thisalgo = algo()
+            self.params.addall(thisalgo.params)
+        self.set_params(paramlist)
+
+            
+    def mutateself(self, flip_prob=0.5):
+        &#34;&#34;&#34;Mutate self and return new params.&#34;&#34;&#34;
+        print(&#34;using workflow mutate algorithm and looping over workflow&#34;)
+        for algo in workflow.worklist:
+            thisalgo = algo()
+            thisalgo.params.addall(thisalgo.params)
+            
+            thisalgo.mutateself(flip_prob=flip_prob)
+            self.params.addall(thisalgo.params)
 
     def pipe(self, data):
-        for constructor in self.algolist:
-            algo = constructor(paramlist=self.params)
+        for algo_constructor in workflow.worklist:
+            algo = algo_constructor(self.params)
+            algo.params.addall(self.params)
             data = algo.pipe(data)
         return data</code></pre>
 </details>
@@ -124,15 +149,15 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="see.Workflow.workflow.algolist"><code class="name">var <span class="ident">algolist</span></code></dt>
+<dt id="see.Workflow.workflow.worklist"><code class="name">var <span class="ident">worklist</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 </dl>
-<h3>Methods</h3>
+<h3>Static methods</h3>
 <dl>
-<dt id="see.Workflow.workflow.addalgo"><code class="name flex">
-<span>def <span class="ident">addalgo</span></span>(<span>self, algorithm)</span>
+<dt id="see.Workflow.workflow.addalgos"><code class="name flex">
+<span>def <span class="ident">addalgos</span></span>(<span>algo)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -140,11 +165,13 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def addalgo(self, algorithm):
-    workflow.algolist.append(algorithm)
-
-    thisalgo = algorithm()
-    self.params.addall(thisalgo.params)</code></pre>
+<pre><code class="python">@classmethod
+def addalgos(cls, algo):
+    if type(algo) == list:
+        for a in algo:
+            workflow.worklist.append(a)
+    else:  
+        workflow.worklist.append(algo)</code></pre>
 </details>
 </dd>
 </dl>
@@ -152,6 +179,7 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
 <ul class="hlist">
 <li><code><b><a title="see.base_classes.algorithm" href="base_classes.html#see.base_classes.algorithm">algorithm</a></b></code>:
 <ul class="hlist">
+<li><code><a title="see.base_classes.algorithm.algorithm_code" href="base_classes.html#see.base_classes.algorithm.algorithm_code">algorithm_code</a></code></li>
 <li><code><a title="see.base_classes.algorithm.checkparamindex" href="base_classes.html#see.base_classes.algorithm.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.base_classes.algorithm.mutateself" href="base_classes.html#see.base_classes.algorithm.mutateself">mutateself</a></code></li>
 <li><code><a title="see.base_classes.algorithm.pipe" href="base_classes.html#see.base_classes.algorithm.pipe">pipe</a></code></li>
@@ -179,8 +207,8 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
 <li>
 <h4><code><a title="see.Workflow.workflow" href="#see.Workflow.workflow">workflow</a></code></h4>
 <ul class="">
-<li><code><a title="see.Workflow.workflow.addalgo" href="#see.Workflow.workflow.addalgo">addalgo</a></code></li>
-<li><code><a title="see.Workflow.workflow.algolist" href="#see.Workflow.workflow.algolist">algolist</a></code></li>
+<li><code><a title="see.Workflow.workflow.addalgos" href="#see.Workflow.workflow.addalgos">addalgos</a></code></li>
+<li><code><a title="see.Workflow.workflow.worklist" href="#see.Workflow.workflow.worklist">worklist</a></code></li>
 </ul>
 </li>
 </ul>

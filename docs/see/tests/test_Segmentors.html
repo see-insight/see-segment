@@ -34,6 +34,7 @@ import numpy as np
 from skimage import segmentation, color
 from see import Segmentors
 from see import Segment_Fitness as SSM
+from see.base_classes import pipedata
 
 # Define toy rgb and grayscale images used for testing below
 TEST_IM_COLOR = np.zeros((20, 20, 3))
@@ -82,12 +83,15 @@ output = skimage.segmentation.felzenszwalb(\n\
 def test_runAlgo():
     &#34;&#34;&#34;Unit test for runAlgo function.
      Checks to see if the output is what it&#39;s supposed to be in this case.&#34;&#34;&#34;
-    individual = Segmentors.ColorThreshold()
-    Segmentors.runAlgo(TEST_IM_COLOR, TEST_IM_COLOR[:, :, 0], individual.params.tolist())
+    individual = Segmentors.segmentor()
+    data = pipedata()
+    data.img = TEST_IM_COLOR
+    data.gmask = TEST_IM_COLOR[:, :, 0]
+    individual.runAlgo(data)
 
 def test_parameter_len():
     &#34;&#34;&#34;Unit test for parameters function. Checks formatting of parameter.&#34;&#34;&#34;
-    param = Segmentors.parameters()
+    param = Segmentors.segmentor().params
     assert len(param) &gt; 1
     
 
@@ -467,7 +471,7 @@ expected for a variety of extreme cases.</p></div>
 </summary>
 <pre><code class="python">def test_parameter_len():
     &#34;&#34;&#34;Unit test for parameters function. Checks formatting of parameter.&#34;&#34;&#34;
-    param = Segmentors.parameters()
+    param = Segmentors.segmentor().params
     assert len(param) &gt; 1</code></pre>
 </details>
 </dd>
@@ -512,8 +516,11 @@ Checks to see if the output is what it's supposed to be in this case.</p></div>
 <pre><code class="python">def test_runAlgo():
     &#34;&#34;&#34;Unit test for runAlgo function.
      Checks to see if the output is what it&#39;s supposed to be in this case.&#34;&#34;&#34;
-    individual = Segmentors.ColorThreshold()
-    Segmentors.runAlgo(TEST_IM_COLOR, TEST_IM_COLOR[:, :, 0], individual.params.tolist())</code></pre>
+    individual = Segmentors.segmentor()
+    data = pipedata()
+    data.img = TEST_IM_COLOR
+    data.gmask = TEST_IM_COLOR[:, :, 0]
+    individual.runAlgo(data)</code></pre>
 </details>
 </dd>
 </dl>

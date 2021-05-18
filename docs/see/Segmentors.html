@@ -455,8 +455,11 @@ class segmentor(algorithm):
 >>>>>>> Updating documentation strings
     def evaluate(self, img):
         &#34;&#34;&#34;Run segmentation algorithm to get inferred mask.&#34;&#34;&#34;
-        self.thisalgo = segmentor.algorithmspace[self.params[&#39;algorithm&#39;]](
-            self.params)
+        import sys
+
+        #print(f&#34;Running {self.params}&#34;)
+        sys.stdout.flush()
+        self.thisalgo = segmentor.algorithmspace[self.params[&#39;algorithm&#39;]](self.params)
         return self.thisalgo.evaluate(img)
 
 <<<<<<< HEAD
@@ -532,7 +535,10 @@ class ColorThreshold(segmentor):
         self.paramindexes = [&#34;alpha1&#34;, &#34;alpha2&#34;,
                              &#34;beta1&#34;, &#34;beta2&#34;,
                              &#34;gamma1&#34;, &#34;gamma2&#34;]
+        #print(f&#34;colorthreshold.paramlist = {paramlist}&#34;)
         self.set_params(paramlist)
+        #print(f&#34;_init_.self.params={self.params}&#34;)
+          
 
 
     def evaluate(self, img):  # XX
@@ -615,12 +621,13 @@ class TripleA (segmentor):
 
         output = None
 
+        #print(f&#34;self.params={self.params}&#34;)
         if (len(img.shape) &gt; 2):
             output = np.ones([img.shape[0], img.shape[1]])
             for dimidx in range(3):
                 pscale = np.max(img[:, :, dimidx])
-                my_mn = self.params[minlist[dimidx]] * pscale
-                my_mx = self.params[maxlist[dimidx]] * pscale
+                my_mn = float(self.params[minlist[dimidx]]) * pscale
+                my_mx = float(self.params[maxlist[dimidx]])  * pscale
 
                 if my_mn &lt; my_mx:
                     output[img[:, :, dimidx] &lt; my_mn] = 0
@@ -631,12 +638,12 @@ class TripleA (segmentor):
                     output[np.logical_and(flag1, flag2)] = 0
         else:
             pscale = np.max(img)
+            chidx = 0
             if &#34;channel&#34; in self.params:
                 chidx = self.params[&#34;channel&#34;]
-            else:
-                chidx = 0
-            my_mx = self.params[maxlist[chidx]] * pscale
-            my_mn = self.params[minlist[chidx]] * pscale
+            my_mn = float(self.params[minlist[chidx]]) * pscale
+            my_mx = float(self.params[maxlist[chidx]]) * pscale
+
 
             if my_mn &lt; my_mx:
                 output = np.ones(img.shape)
@@ -953,7 +960,6 @@ class QuickShift(segmentor):
         &#34;&#34;&#34;
 
         mindim = min(img.shape)
-
         ratio = self.params[&#34;alpha1&#34;]
         kernel_size = mindim/10*self.params[&#34;beta1&#34;]+1
         max_dist = mindim*self.params[&#34;beta2&#34;]
@@ -972,7 +978,11 @@ class QuickShift(segmentor):
             max_dist=max_dist,
             sigma=0,  # TODO this should be handeled in the preprocessing step
             random_seed=1,
+<<<<<<< HEAD
 >>>>>>> Updating documentation strings
+=======
+            convert2lab=False
+>>>>>>> Updating docs
         )
         return output
 
@@ -1746,9 +1756,13 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
 <li><code><b><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></b></code>:
 <ul class="hlist">
 <<<<<<< HEAD
+<<<<<<< HEAD
 <li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
 =======
+=======
+<li><code><a title="see.Segmentors.segmentor.algorithm_code" href="base_classes.html#see.base_classes.algorithm.algorithm_code">algorithm_code</a></code></li>
+>>>>>>> Updating docs
 <li><code><a title="see.Segmentors.segmentor.checkparamindex" href="base_classes.html#see.base_classes.algorithm.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.mutateself" href="base_classes.html#see.base_classes.algorithm.mutateself">mutateself</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.pipe" href="base_classes.html#see.base_classes.algorithm.pipe">pipe</a></code></li>
@@ -1843,7 +1857,10 @@ Assign default values to these parameters.</p></div>
         self.paramindexes = [&#34;alpha1&#34;, &#34;alpha2&#34;,
                              &#34;beta1&#34;, &#34;beta2&#34;,
                              &#34;gamma1&#34;, &#34;gamma2&#34;]
+        #print(f&#34;colorthreshold.paramlist = {paramlist}&#34;)
         self.set_params(paramlist)
+        #print(f&#34;_init_.self.params={self.params}&#34;)
+          
 
 
     def evaluate(self, img):  # XX
@@ -1890,12 +1907,13 @@ Assign default values to these parameters.</p></div>
 
         output = None
 
+        #print(f&#34;self.params={self.params}&#34;)
         if (len(img.shape) &gt; 2):
             output = np.ones([img.shape[0], img.shape[1]])
             for dimidx in range(3):
                 pscale = np.max(img[:, :, dimidx])
-                my_mn = self.params[minlist[dimidx]] * pscale
-                my_mx = self.params[maxlist[dimidx]] * pscale
+                my_mn = float(self.params[minlist[dimidx]]) * pscale
+                my_mx = float(self.params[maxlist[dimidx]])  * pscale
 
                 if my_mn &lt; my_mx:
                     output[img[:, :, dimidx] &lt; my_mn] = 0
@@ -1906,12 +1924,12 @@ Assign default values to these parameters.</p></div>
                     output[np.logical_and(flag1, flag2)] = 0
         else:
             pscale = np.max(img)
+            chidx = 0
             if &#34;channel&#34; in self.params:
                 chidx = self.params[&#34;channel&#34;]
-            else:
-                chidx = 0
-            my_mx = self.params[maxlist[chidx]] * pscale
-            my_mn = self.params[minlist[chidx]] * pscale
+            my_mn = float(self.params[minlist[chidx]]) * pscale
+            my_mx = float(self.params[maxlist[chidx]]) * pscale
+
 
             if my_mn &lt; my_mx:
                 output = np.ones(img.shape)
@@ -1987,12 +2005,13 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
 
     output = None
 
+    #print(f&#34;self.params={self.params}&#34;)
     if (len(img.shape) &gt; 2):
         output = np.ones([img.shape[0], img.shape[1]])
         for dimidx in range(3):
             pscale = np.max(img[:, :, dimidx])
-            my_mn = self.params[minlist[dimidx]] * pscale
-            my_mx = self.params[maxlist[dimidx]] * pscale
+            my_mn = float(self.params[minlist[dimidx]]) * pscale
+            my_mx = float(self.params[maxlist[dimidx]])  * pscale
 
             if my_mn &lt; my_mx:
                 output[img[:, :, dimidx] &lt; my_mn] = 0
@@ -2003,12 +2022,12 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
                 output[np.logical_and(flag1, flag2)] = 0
     else:
         pscale = np.max(img)
+        chidx = 0
         if &#34;channel&#34; in self.params:
             chidx = self.params[&#34;channel&#34;]
-        else:
-            chidx = 0
-        my_mx = self.params[maxlist[chidx]] * pscale
-        my_mn = self.params[minlist[chidx]] * pscale
+        my_mn = float(self.params[minlist[chidx]]) * pscale
+        my_mx = float(self.params[maxlist[chidx]]) * pscale
+
 
         if my_mn &lt; my_mx:
             output = np.ones(img.shape)
@@ -2027,9 +2046,13 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
 <li><code><b><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></b></code>:
 <ul class="hlist">
 <<<<<<< HEAD
+<<<<<<< HEAD
 <li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
 =======
+=======
+<li><code><a title="see.Segmentors.segmentor.algorithm_code" href="base_classes.html#see.base_classes.algorithm.algorithm_code">algorithm_code</a></code></li>
+>>>>>>> Updating docs
 <li><code><a title="see.Segmentors.segmentor.checkparamindex" href="base_classes.html#see.base_classes.algorithm.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.mutateself" href="base_classes.html#see.base_classes.algorithm.mutateself">mutateself</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.pipe" href="base_classes.html#see.base_classes.algorithm.pipe">pipe</a></code></li>
@@ -2205,9 +2228,13 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
 <li><code><b><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></b></code>:
 <ul class="hlist">
 <<<<<<< HEAD
+<<<<<<< HEAD
 <li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
 =======
+=======
+<li><code><a title="see.Segmentors.segmentor.algorithm_code" href="base_classes.html#see.base_classes.algorithm.algorithm_code">algorithm_code</a></code></li>
+>>>>>>> Updating docs
 <li><code><a title="see.Segmentors.segmentor.checkparamindex" href="base_classes.html#see.base_classes.algorithm.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.mutateself" href="base_classes.html#see.base_classes.algorithm.mutateself">mutateself</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.pipe" href="base_classes.html#see.base_classes.algorithm.pipe">pipe</a></code></li>
@@ -2425,9 +2452,13 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
 <li><code><b><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></b></code>:
 <ul class="hlist">
 <<<<<<< HEAD
+<<<<<<< HEAD
 <li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
 =======
+=======
+<li><code><a title="see.Segmentors.segmentor.algorithm_code" href="base_classes.html#see.base_classes.algorithm.algorithm_code">algorithm_code</a></code></li>
+>>>>>>> Updating docs
 <li><code><a title="see.Segmentors.segmentor.checkparamindex" href="base_classes.html#see.base_classes.algorithm.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.mutateself" href="base_classes.html#see.base_classes.algorithm.mutateself">mutateself</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.pipe" href="base_classes.html#see.base_classes.algorithm.pipe">pipe</a></code></li>
@@ -2629,9 +2660,13 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
 <li><code><b><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></b></code>:
 <ul class="hlist">
 <<<<<<< HEAD
+<<<<<<< HEAD
 <li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
 =======
+=======
+<li><code><a title="see.Segmentors.segmentor.algorithm_code" href="base_classes.html#see.base_classes.algorithm.algorithm_code">algorithm_code</a></code></li>
+>>>>>>> Updating docs
 <li><code><a title="see.Segmentors.segmentor.checkparamindex" href="base_classes.html#see.base_classes.algorithm.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.mutateself" href="base_classes.html#see.base_classes.algorithm.mutateself">mutateself</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.pipe" href="base_classes.html#see.base_classes.algorithm.pipe">pipe</a></code></li>
@@ -2720,7 +2755,6 @@ Assign default values to these parameters.</p></div>
         &#34;&#34;&#34;
 
         mindim = min(img.shape)
-
         ratio = self.params[&#34;alpha1&#34;]
         kernel_size = mindim/10*self.params[&#34;beta1&#34;]+1
         max_dist = mindim*self.params[&#34;beta2&#34;]
@@ -2739,7 +2773,11 @@ Assign default values to these parameters.</p></div>
             max_dist=max_dist,
             sigma=0,  # TODO this should be handeled in the preprocessing step
             random_seed=1,
+<<<<<<< HEAD
 >>>>>>> Updating documentation strings
+=======
+            convert2lab=False
+>>>>>>> Updating docs
         )
         return output</code></pre>
 </details>
@@ -2775,7 +2813,6 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
     &#34;&#34;&#34;
 
     mindim = min(img.shape)
-
     ratio = self.params[&#34;alpha1&#34;]
     kernel_size = mindim/10*self.params[&#34;beta1&#34;]+1
     max_dist = mindim*self.params[&#34;beta2&#34;]
@@ -2794,7 +2831,11 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
         max_dist=max_dist,
         sigma=0,  # TODO this should be handeled in the preprocessing step
         random_seed=1,
+<<<<<<< HEAD
 >>>>>>> Updating documentation strings
+=======
+        convert2lab=False
+>>>>>>> Updating docs
     )
     return output</code></pre>
 </details>
@@ -2805,9 +2846,13 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
 <li><code><b><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></b></code>:
 <ul class="hlist">
 <<<<<<< HEAD
+<<<<<<< HEAD
 <li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
 =======
+=======
+<li><code><a title="see.Segmentors.segmentor.algorithm_code" href="base_classes.html#see.base_classes.algorithm.algorithm_code">algorithm_code</a></code></li>
+>>>>>>> Updating docs
 <li><code><a title="see.Segmentors.segmentor.checkparamindex" href="base_classes.html#see.base_classes.algorithm.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.mutateself" href="base_classes.html#see.base_classes.algorithm.mutateself">mutateself</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.pipe" href="base_classes.html#see.base_classes.algorithm.pipe">pipe</a></code></li>
@@ -3008,9 +3053,13 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
 <li><code><b><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></b></code>:
 <ul class="hlist">
 <<<<<<< HEAD
+<<<<<<< HEAD
 <li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
 =======
+=======
+<li><code><a title="see.Segmentors.segmentor.algorithm_code" href="base_classes.html#see.base_classes.algorithm.algorithm_code">algorithm_code</a></code></li>
+>>>>>>> Updating docs
 <li><code><a title="see.Segmentors.segmentor.checkparamindex" href="base_classes.html#see.base_classes.algorithm.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.mutateself" href="base_classes.html#see.base_classes.algorithm.mutateself">mutateself</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.pipe" href="base_classes.html#see.base_classes.algorithm.pipe">pipe</a></code></li>
@@ -3138,10 +3187,14 @@ Assign default values to these parameters.</p></div>
 <li><code><b><a title="see.Segmentors.Slic" href="#see.Segmentors.Slic">Slic</a></b></code>:
 <ul class="hlist">
 <<<<<<< HEAD
+<<<<<<< HEAD
 <li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.evaluate" href="#see.Segmentors.segmentor.evaluate">evaluate</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
 =======
+=======
+<li><code><a title="see.Segmentors.Slic.algorithm_code" href="base_classes.html#see.base_classes.algorithm.algorithm_code">algorithm_code</a></code></li>
+>>>>>>> Updating docs
 <li><code><a title="see.Segmentors.Slic.checkparamindex" href="base_classes.html#see.base_classes.algorithm.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.Slic.evaluate" href="#see.Segmentors.Slic.evaluate">evaluate</a></code></li>
 <li><code><a title="see.Segmentors.Slic.mutateself" href="base_classes.html#see.base_classes.algorithm.mutateself">mutateself</a></code></li>
@@ -3274,9 +3327,13 @@ output &ndash; resulting segmentation mask from algorithm.</p></div>
 <li><code><b><a title="see.Segmentors.segmentor" href="#see.Segmentors.segmentor">segmentor</a></b></code>:
 <ul class="hlist">
 <<<<<<< HEAD
+<<<<<<< HEAD
 <li><code><a title="see.Segmentors.segmentor.checkparamindex" href="#see.Segmentors.segmentor.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.mutateself" href="#see.Segmentors.segmentor.mutateself">mutateself</a></code></li>
 =======
+=======
+<li><code><a title="see.Segmentors.segmentor.algorithm_code" href="base_classes.html#see.base_classes.algorithm.algorithm_code">algorithm_code</a></code></li>
+>>>>>>> Updating docs
 <li><code><a title="see.Segmentors.segmentor.checkparamindex" href="base_classes.html#see.base_classes.algorithm.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.mutateself" href="base_classes.html#see.base_classes.algorithm.mutateself">mutateself</a></code></li>
 <li><code><a title="see.Segmentors.segmentor.pipe" href="base_classes.html#see.base_classes.algorithm.pipe">pipe</a></code></li>
@@ -3638,8 +3695,11 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
 >>>>>>> Updating documentation strings
     def evaluate(self, img):
         &#34;&#34;&#34;Run segmentation algorithm to get inferred mask.&#34;&#34;&#34;
-        self.thisalgo = segmentor.algorithmspace[self.params[&#39;algorithm&#39;]](
-            self.params)
+        import sys
+
+        #print(f&#34;Running {self.params}&#34;)
+        sys.stdout.flush()
+        self.thisalgo = segmentor.algorithmspace[self.params[&#39;algorithm&#39;]](self.params)
         return self.thisalgo.evaluate(img)
 
     def pipe(self, data):
@@ -3726,8 +3786,11 @@ def addsegmentor(cls, key, seg):
 </summary>
 <pre><code class="python">def evaluate(self, img):
     &#34;&#34;&#34;Run segmentation algorithm to get inferred mask.&#34;&#34;&#34;
-    self.thisalgo = segmentor.algorithmspace[self.params[&#39;algorithm&#39;]](
-        self.params)
+    import sys
+
+    #print(f&#34;Running {self.params}&#34;)
+    sys.stdout.flush()
+    self.thisalgo = segmentor.algorithmspace[self.params[&#39;algorithm&#39;]](self.params)
     return self.thisalgo.evaluate(img)</code></pre>
 </details>
 </dd>
@@ -3754,6 +3817,7 @@ def addsegmentor(cls, key, seg):
 <ul class="hlist">
 <li><code><b><a title="see.base_classes.algorithm" href="base_classes.html#see.base_classes.algorithm">algorithm</a></b></code>:
 <ul class="hlist">
+<li><code><a title="see.base_classes.algorithm.algorithm_code" href="base_classes.html#see.base_classes.algorithm.algorithm_code">algorithm_code</a></code></li>
 <li><code><a title="see.base_classes.algorithm.checkparamindex" href="base_classes.html#see.base_classes.algorithm.checkparamindex">checkparamindex</a></code></li>
 <li><code><a title="see.base_classes.algorithm.mutateself" href="base_classes.html#see.base_classes.algorithm.mutateself">mutateself</a></code></li>
 <li><code><a title="see.base_classes.algorithm.pipe" href="base_classes.html#see.base_classes.algorithm.pipe">pipe</a></code></li>
