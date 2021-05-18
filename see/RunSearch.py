@@ -13,8 +13,16 @@ from see.Segment_Fitness import segment_fitness
 from see import base_classes 
 from see.git_version import git_version
 
-def readfpop(fpop_file):
-    fid_out= open(f"{input_file}.txt","r")
+def write_algo_vector(fpop_file, outstring):
+    with open(fpop_file, 'a') as myfile:
+        myfile.write(f'{outstring}\n')
+        
+def read_algo_vector(fpop_file):
+    inlist = []
+    with open(fpop_file,'r') as myfile:
+        for line in myfile:
+            inlist.append(eval(line))
+    return inlist
     
 def continuous_search(input_file, 
                       input_mask, 
@@ -26,7 +34,7 @@ def continuous_search(input_file,
     mydata.img = imageio.imread(input_file)
     mydata.gmask = imageio.imread(input_mask)
 
-    fid_out= open(f"{input_file}.txt","w+")
+    outfile=f"{input_file}.txt"
     
     #TODO: Read this file in and set population first
     workflow.addalgos([colorspace, segmentor, segment_fitness])
@@ -41,8 +49,7 @@ def continuous_search(input_file,
     while(best_fitness > 0.0):
         print(f"running {iteration} iteration")
         if(startfile):
-            population = my_evolver.run(ngen=1, startfile=None)
-            startfile = None
+            population = my_evolver.run(ngen=1, startfile=startfile)
         else:
             population = my_evolver.run(ngen=1)
             
@@ -58,9 +65,8 @@ def continuous_search(input_file,
             best_fitness = fitness
             print(f"\n\n\n\nIteration {iteration} Finess Improved to {fitness}")
             my_evolver.writepop(population, filename="checkpoint.pop")
-            #imageio.imwrite(best_mask_file,mask);
-            fid_out.write(f"[{iteration}, {fitness}, {params}]\n")
-            fid_out.flush(); 
+            imageio.imwrite(best_mask_file,mask);
+            write_algo_vector(fpop_file, f"[{iteration}, {fitness}, {params}]\n") 
             ###TODO Output [fitness, seg]
         iteration += 1
 
@@ -80,7 +86,7 @@ def geneticsearch_commandline():
     print('\n\n')
     
     #TODO: add this to the setup.py installer so we include the has in the install. 
-    print(f"Current Git HASH: {git_version()})
+    print(f"Current Git HASH: {git_version()}")
     
     random.seed(args.seed)
     
