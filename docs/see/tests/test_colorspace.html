@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.9.2" />
-<title>see.tests API documentation</title>
-<meta name="description" content="see-segment testing __init__.py." />
+<title>see.tests.test_colorspace API documentation</title>
+<meta name="description" content="This runs unit tests for functions that can be found in Segmentors.py." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -19,45 +19,149 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>see.tests</code></h1>
+<h1 class="title">Module <code>see.tests.test_colorspace</code></h1>
 </header>
 <section id="section-intro">
-<p>see-segment testing <strong>init</strong>.py.</p>
+<p>This runs unit tests for functions that can be found in Segmentors.py.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34;see-segment testing __init__.py.&#34;&#34;&#34;</code></pre>
+<pre><code class="python">&#34;&#34;&#34;This runs unit tests for functions that can be found in Segmentors.py.&#34;&#34;&#34;
+import sys
+import pytest
+import numpy as np
+
+def test_load_ColorSpace_Library():
+    from see import ColorSpace
+    print(ColorSpace)
+
+def test_loading_image_examples():
+    import imageio
+    img = imageio.imread(&#39;Image_data/Examples/AA_Chameleon.jpg&#39;)
+    gmask = imageio.imread(&#39;Image_data/Examples/AA_Chameleon_GT.png&#39;)
+    return img,gmask
+
+def test_make_colorspace():
+    from see import ColorSpace
+    from see import base_classes
+    cs = ColorSpace.colorspace()
+    assert issubclass(type(cs.params), dict)
+    assert issubclass(type(cs.params), base_classes.param_space)
+    assert issubclass(type(cs), base_classes.algorithm)
+    
+def test_colorspace_evaluate():
+    from see import ColorSpace
+    from see import base_classes
+    img,gmask = test_loading_image_examples()
+    cs = ColorSpace.colorspace()
+    test = cs.evaluate(img)
+
+def test_colorspace_pipe():
+    from see import ColorSpace
+    from see import base_classes
+    img,gmask = test_loading_image_examples()
+    data = base_classes.pipedata()
+    data.img = img
+    data.gmask = gmask
+    cs = ColorSpace.colorspace()    
+    data = cs.pipe(data)
+    </code></pre>
 </details>
 </section>
 <section>
-<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt><code class="name"><a title="see.tests.test_GeneticSearch" href="test_GeneticSearch.html">see.tests.test_GeneticSearch</a></code></dt>
+<dt id="see.tests.test_colorspace.test_colorspace_evaluate"><code class="name flex">
+<span>def <span class="ident">test_colorspace_evaluate</span></span>(<span>)</span>
+</code></dt>
 <dd>
-<div class="desc"><p>This runs unit tests for functions that can be found in GeneticSearch.py.</p></div>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_colorspace_evaluate():
+    from see import ColorSpace
+    from see import base_classes
+    img,gmask = test_loading_image_examples()
+    cs = ColorSpace.colorspace()
+    test = cs.evaluate(img)</code></pre>
+</details>
 </dd>
-<dt><code class="name"><a title="see.tests.test_JupyterGUI" href="test_JupyterGUI.html">see.tests.test_JupyterGUI</a></code></dt>
+<dt id="see.tests.test_colorspace.test_colorspace_pipe"><code class="name flex">
+<span>def <span class="ident">test_colorspace_pipe</span></span>(<span>)</span>
+</code></dt>
 <dd>
-<div class="desc"><p>This runs unit tests for functions that can be found in JupyterGUI.py.</p></div>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_colorspace_pipe():
+    from see import ColorSpace
+    from see import base_classes
+    img,gmask = test_loading_image_examples()
+    data = base_classes.pipedata()
+    data.img = img
+    data.gmask = gmask
+    cs = ColorSpace.colorspace()    
+    data = cs.pipe(data)</code></pre>
+</details>
 </dd>
-<dt><code class="name"><a title="see.tests.test_Segmentors" href="test_Segmentors.html">see.tests.test_Segmentors</a></code></dt>
+<dt id="see.tests.test_colorspace.test_load_ColorSpace_Library"><code class="name flex">
+<span>def <span class="ident">test_load_ColorSpace_Library</span></span>(<span>)</span>
+</code></dt>
 <dd>
-<div class="desc"><p>This runs unit tests for functions that can be found in Segmentors.py.</p></div>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_load_ColorSpace_Library():
+    from see import ColorSpace
+    print(ColorSpace)</code></pre>
+</details>
 </dd>
-<dt><code class="name"><a title="see.tests.test_colorspace" href="test_colorspace.html">see.tests.test_colorspace</a></code></dt>
+<dt id="see.tests.test_colorspace.test_loading_image_examples"><code class="name flex">
+<span>def <span class="ident">test_loading_image_examples</span></span>(<span>)</span>
+</code></dt>
 <dd>
-<div class="desc"><p>This runs unit tests for functions that can be found in Segmentors.py.</p></div>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_loading_image_examples():
+    import imageio
+    img = imageio.imread(&#39;Image_data/Examples/AA_Chameleon.jpg&#39;)
+    gmask = imageio.imread(&#39;Image_data/Examples/AA_Chameleon_GT.png&#39;)
+    return img,gmask</code></pre>
+</details>
 </dd>
-<dt><code class="name"><a title="see.tests.test_imports" href="test_imports.html">see.tests.test_imports</a></code></dt>
+<dt id="see.tests.test_colorspace.test_make_colorspace"><code class="name flex">
+<span>def <span class="ident">test_make_colorspace</span></span>(<span>)</span>
+</code></dt>
 <dd>
-<div class="desc"><p>This tests to see if the main dependencies for see can be successfully imported.</p></div>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_make_colorspace():
+    from see import ColorSpace
+    from see import base_classes
+    cs = ColorSpace.colorspace()
+    assert issubclass(type(cs.params), dict)
+    assert issubclass(type(cs.params), base_classes.param_space)
+    assert issubclass(type(cs), base_classes.algorithm)</code></pre>
+</details>
 </dd>
 </dl>
-</section>
-<section>
-</section>
-<section>
 </section>
 <section>
 </section>
@@ -70,16 +174,16 @@
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="see" href="../index.html">see</a></code></li>
+<li><code><a title="see.tests" href="index.html">see.tests</a></code></li>
 </ul>
 </li>
-<li><h3><a href="#header-submodules">Sub-modules</a></h3>
-<ul>
-<li><code><a title="see.tests.test_GeneticSearch" href="test_GeneticSearch.html">see.tests.test_GeneticSearch</a></code></li>
-<li><code><a title="see.tests.test_JupyterGUI" href="test_JupyterGUI.html">see.tests.test_JupyterGUI</a></code></li>
-<li><code><a title="see.tests.test_Segmentors" href="test_Segmentors.html">see.tests.test_Segmentors</a></code></li>
-<li><code><a title="see.tests.test_colorspace" href="test_colorspace.html">see.tests.test_colorspace</a></code></li>
-<li><code><a title="see.tests.test_imports" href="test_imports.html">see.tests.test_imports</a></code></li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="see.tests.test_colorspace.test_colorspace_evaluate" href="#see.tests.test_colorspace.test_colorspace_evaluate">test_colorspace_evaluate</a></code></li>
+<li><code><a title="see.tests.test_colorspace.test_colorspace_pipe" href="#see.tests.test_colorspace.test_colorspace_pipe">test_colorspace_pipe</a></code></li>
+<li><code><a title="see.tests.test_colorspace.test_load_ColorSpace_Library" href="#see.tests.test_colorspace.test_load_ColorSpace_Library">test_load_ColorSpace_Library</a></code></li>
+<li><code><a title="see.tests.test_colorspace.test_loading_image_examples" href="#see.tests.test_colorspace.test_loading_image_examples">test_loading_image_examples</a></code></li>
+<li><code><a title="see.tests.test_colorspace.test_make_colorspace" href="#see.tests.test_colorspace.test_make_colorspace">test_make_colorspace</a></code></li>
 </ul>
 </li>
 </ul>

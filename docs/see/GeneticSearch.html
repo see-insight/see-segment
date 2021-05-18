@@ -441,7 +441,7 @@ class Evolver(object):
                 for cur_p in range(len(population)):
                     logging.getLogger().info(population[cur_p])
             if cur_g &lt; ngen+1:
-                if bestsofar.fitness.values[0] &gt;= 20:
+                if bestsofar.fitness.values[0] &gt;= 0.95:
                     population = self.newpopulation()
                   # if the best fitness value is at or above the
                   # threshold of 0.95, discard the entire current
@@ -954,7 +954,7 @@ or how many individuals there are (default 10)</p></div>
                 for cur_p in range(len(population)):
                     logging.getLogger().info(population[cur_p])
             if cur_g &lt; ngen+1:
-                if bestsofar.fitness.values[0] &gt;= 20:
+                if bestsofar.fitness.values[0] &gt;= 0.95:
                     population = self.newpopulation()
                   # if the best fitness value is at or above the
                   # threshold of 0.95, discard the entire current
@@ -1251,7 +1251,7 @@ population &ndash; Resulting population after ngen generations.</p></div>
             for cur_p in range(len(population)):
                 logging.getLogger().info(population[cur_p])
         if cur_g &lt; ngen+1:
-            if bestsofar.fitness.values[0] &gt;= 20:
+            if bestsofar.fitness.values[0] &gt;= 0.95:
                 population = self.newpopulation()
               # if the best fitness value is at or above the
               # threshold of 0.95, discard the entire current
