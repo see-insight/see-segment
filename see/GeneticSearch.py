@@ -102,7 +102,7 @@ def mutate(copy_child, pos_vals, flip_prob=0.5, seed=False):
 # DO: Make a toolbox from a list of individuals
 # DO: Save a population as a list of indivudals (with fitness functions?)
 
-#TODO: change algo_instance to an algorithm class. 
+# TODO: change algo_instance to an algorithm class.
 def makeToolbox(pop_size, algo_constructor):
     """Make a genetic algorithm toolbox using DEAP. The toolbox uses premade functions
      for crossover, mutation, evaluation and fitness.
@@ -228,7 +228,7 @@ class Evolver(object):
 
         self.tool.register("individual_guess",
                            initIndividual, creator.Individual)
-        
+
         self.tool.register("population_guess", initPopulation,
                            list, self.tool.individual_guess, "my_guess.json")
 
@@ -247,9 +247,10 @@ class Evolver(object):
 
         """
         # make copies of self.data
-        data_references = [copy.deepcopy(self.data) for i in range(0, len(tpop))]
+        data_references = [copy.deepcopy(self.data)
+                           for i in range(0, len(tpop))]
         algos = [self.algo_constructor(paramlist=list(ind)) for ind in tpop]
-        
+
         # Map the evaluation command to reference data and then to population list
         outdata = map(self.tool.evaluate, algos, data_references)
 
@@ -388,7 +389,8 @@ class Evolver(object):
                 self.writepop(population, filename=f"{checkpoint}")
 
         for cur_g in range(0, ngen+1):
-            print(f"Generation {cur_g}/{ngen} of population size {len(population)}")
+            print(
+                f"Generation {cur_g}/{ngen} of population size {len(population)}")
 
             _, population = self.popfitness(population)
 

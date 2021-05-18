@@ -38,7 +38,8 @@ import skimage
 from skimage import color
 from see.base_classes import param_space, algorithm
 
-#TODO My guess is this algorithm is very slow.  We need to use a cache to speed it up. 
+# TODO My guess is this algorithm is very slow.  We need to use a cache to speed it up.
+
 
 class color_params(param_space):
     descriptions = dict()
@@ -62,7 +63,7 @@ color_params.add(&#39;channel&#39;,
 
 
 class colorspace(algorithm):
-    
+
     def getchannel(img, colorspace, channel):
         &#34;&#34;&#34;function that returns a single channel from an image
         [&#39;RGB&#39;, ‘HSV’, ‘RGB CIE’, ‘XYZ’, ‘YUV’, ‘YIQ’, ‘YPbPr’, ‘YCbCr’, ‘YDbDr’]
@@ -202,7 +203,7 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class colorspace(algorithm):
-    
+
     def getchannel(img, colorspace, channel):
         &#34;&#34;&#34;function that returns a single channel from an image
         [&#39;RGB&#39;, ‘HSV’, ‘RGB CIE’, ‘XYZ’, ‘YUV’, ‘YIQ’, ‘YPbPr’, ‘YCbCr’, ‘YDbDr’]

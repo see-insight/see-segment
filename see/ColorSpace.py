@@ -2,7 +2,6 @@ import copy
 import inspect
 import random
 
-from collections import OrderedDict
 import sys
 import logging
 import numpy as np
@@ -10,7 +9,8 @@ import skimage
 from skimage import color
 from see.base_classes import param_space, algorithm
 
-#TODO My guess is this algorithm is very slow.  We need to use a cache to speed it up. 
+# TODO My guess is this algorithm is very slow.  We need to use a cache to speed it up.
+
 
 class color_params(param_space):
     descriptions = dict()
@@ -34,7 +34,7 @@ color_params.add('channel',
 
 
 class colorspace(algorithm):
-    
+
     def getchannel(img, colorspace, channel):
         """function that returns a single channel from an image
         ['RGB', ‘HSV’, ‘RGB CIE’, ‘XYZ’, ‘YUV’, ‘YIQ’, ‘YPbPr’, ‘YCbCr’, ‘YDbDr’]
