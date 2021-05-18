@@ -1,3 +1,5 @@
+"""File Segment_Fitness.py."""
+
 import sys
 from skimage import color
 import numpy as np
@@ -5,9 +7,10 @@ import numpy as np
 from see.base_classes import algorithm
 
 def countMatches(inferred, ground_truth):
-    """Map the segments in the inferred segmentation mask to the ground truth segmentation
+    """Map the segments in the inferred segmentation mask to the ground truth segmentation.
+    
      mask, and record the number of pixels in each of these mappings as well as the number
-      of segments in both masks.
+     of segments in both masks.
 
     Keyword arguments:
     inferred -- Resulting segmentation mask from individual.
@@ -41,12 +44,14 @@ def countMatches(inferred, ground_truth):
     return setcounts, len(m), len(n)
 
 def countsets(setcounts):
-    """For each inferred set, find the ground truth set which it maps the most pixels
-     to. So we start from the inferred image, and map towards the ground truth image.
-      For each i_key, the g_key that it maps the most pixels to is considered True.
-       In order to see what ground truth sets have a corresponding set(s) in the inferred
-        image, we record these "true" g_keys. This number of true g_keys is the value for
-         L in our fitness function.
+    """For each inferred set, find the ground truth set it maps the most pixels to.
+    
+    So we start from the inferred image, and map towards the ground truth image.
+    For each i_key, the g_key that it maps the most pixels to is considered True.
+    In order to see what ground truth sets have a corresponding set(s) in the
+    inferred
+    image, we record these "true" g_keys. This number of true g_keys is the value for
+    L in our fitness function.
 
     Keyword arguments:
     setcounts -- Dictionary of dictionaries containing the number of pixels in
@@ -86,10 +91,12 @@ def countsets(setcounts):
 
 
 def FF_Option1(inferred, ground_truth):
-    """Compute the fitness for an individual. Takes in two images and compares
-     them according to the equation (p + 2)^log(|m - n| + 2), where p is the pixel
-      error, m is the number of segments in the inferred mask, and n is the number
-       of segments in the ground truth mask.
+    """Compute the fitness for an individual.
+    
+    Takes in two images and compares
+    them according to the equation (p + 2)^log(|m - n| + 2), where p is the pixel
+    error, m is the number of segments in the inferred mask, and n is the number
+    of segments in the ground truth mask.
 
     Keyword arguments:
     inferred -- Resulting segmentation mask from individual.
@@ -119,10 +126,12 @@ def FF_Option1(inferred, ground_truth):
 
 
 def FF_Option2a(inferred, ground_truth):
-    """Compute the fitness for an individual. Takes in two images and compares
-     them according to the equation (p + 2)^log(|m - n| + 2), where p is the pixel
-      error, m is the number of segments in the inferred mask, and n is the number
-       of segments in the ground truth mask.
+    """Compute the fitness for an individual.
+    
+    Takes in two images and compares
+    them according to the equation (p + 2)^log(|m - n| + 2), where p is the pixel
+    error, m is the number of segments in the inferred mask, and n is the number
+    of segments in the ground truth mask.
 
     Keyword arguments:
     inferred -- Resulting segmentation mask from individual.
@@ -153,10 +162,12 @@ def FF_Option2a(inferred, ground_truth):
 
 
 def FF_Option2b(inferred, ground_truth):
-    """Compute the fitness for an individual. Takes in two images and compares
-     them according to the equation (p + 2)^log(|m - n| + 2), where p is the pixel
-      error, m is the number of segments in the inferred mask, and n is the number
-       of segments in the ground truth mask.
+    """Compute the fitness for an individual.
+    
+    Takes in two images and compares
+    them according to the equation (p + 2)^log(|m - n| + 2), where p is the pixel
+    error, m is the number of segments in the inferred mask, and n is the number
+    of segments in the ground truth mask.
 
     Keyword arguments:
     inferred -- Resulting segmentation mask from individual.
@@ -187,10 +198,12 @@ def FF_Option2b(inferred, ground_truth):
 
 
 def FitnessFunction_old(inferred, ground_truth):
-    """Compute the fitness for an individual. Takes in two images and compares
-     them according to the equation (p + 2)^log(|m - n| + 2), where p is the pixel
-      error, m is the number of segments in the inferred mask, and n is the number
-       of segments in the ground truth mask.
+    """Compute the fitness for an individual.
+    
+    Takes in two images and compares
+    them according to the equation (p + 2)^log(|m - n| + 2), where p is the pixel
+    error, m is the number of segments in the inferred mask, and n is the number
+    of segments in the ground truth mask.
 
     Keyword arguments:
     inferred -- Resulting segmentation mask from individual.
@@ -228,10 +241,12 @@ def FitnessFunction_old(inferred, ground_truth):
 
 
 def FF_Normal(inferred, ground_truth):
-    """Compute the fitness for an individual. Takes in two images and compares
-     them according to the equation (p + 2)^log(|m - n| + 2), where p is the pixel
-      error, m is the number of segments in the inferred mask, and n is the number
-       of segments in the ground truth mask.
+    """Compute the fitness for an individual.
+    
+    Takes in two images and compares
+    them according to the equation (p + 2)^log(|m - n| + 2), where p is the pixel
+    error, m is the number of segments in the inferred mask, and n is the number
+    of segments in the ground truth mask.
 
     Keyword arguments:
     inferred -- Resulting segmentation mask from individual.
@@ -272,9 +287,11 @@ def FF_Normal(inferred, ground_truth):
     return [error, ]
 
 def FF_ML2DHD(inferred, ground_truth):
-    """Compute the fitness for an individual. Takes in two images and compares
-     them according to the equation (p + 2)^log(|m - n| + 2), where p is the pixel
-      error, m is the number of segments in the inferred mask, and n is the number
+    """Compute the fitness for an individual.
+    
+    Takes in two images and compares
+    them according to the equation (p + 2)^log(|m - n| + 2), where p is the pixel
+     error, m is the number of segments in the inferred mask, and n is the number
        of segments in the ground truth mask.
 
     Keyword arguments:
@@ -310,10 +327,12 @@ def FF_ML2DHD(inferred, ground_truth):
             
     return [ error, n,m]
 def FF_Hamming(inferred, ground_truth):
-    """Compute the fitness for an individual. Takes in two images and compares
-     them according to the equation (p + 2)^log(|m - n| + 2), where p is the pixel
-      error, m is the number of segments in the inferred mask, and n is the number
-       of segments in the ground truth mask.
+    """Compute the fitness for an individual.
+    
+    Takes in two images and compares
+    them according to the equation (p + 2)^log(|m - n| + 2), where p is the pixel
+    error, m is the number of segments in the inferred mask, and n is the number
+    of segments in the ground truth mask.
 
     Keyword arguments:
     inferred -- Resulting segmentation mask from individual.
@@ -341,10 +360,12 @@ def FF_Hamming(inferred, ground_truth):
             
     return [hamming/(M*N), ]
 def FF_Gamma(inferred, ground_truth):
-    """Compute the fitness for an individual. Takes in two images and compares
-     them according to the equation (p + 2)^log(|m - n| + 2), where p is the pixel
-      error, m is the number of segments in the inferred mask, and n is the number
-       of segments in the ground truth mask.
+    """Compute the fitness for an individual.
+    
+    Takes in two images and compares
+    them according to the equation (p + 2)^log(|m - n| + 2), where p is the pixel
+    error, m is the number of segments in the inferred mask, and n is the number
+    of segments in the ground truth mask.
 
     Keyword arguments:
     inferred -- Resulting segmentation mask from individual.
@@ -378,10 +399,13 @@ def FF_Gamma(inferred, ground_truth):
     return [1- gamma, ]
 
 def FF_ML2DHD(inferred, ground_truth):
-    """Compute the fitness for an individual. Takes in two images and compares
-     them according to the equation (p + 2)^log(|m - n| + 2), where p is the pixel
-      error, m is the number of segments in the inferred mask, and n is the number
-       of segments in the ground truth mask.
+    # TODO: Rename, figure out meaning of name
+    """Compute the fitness for an individual.
+    
+    Takes in two images and compares
+    them according to the equation (p + 2)^log(|m - n| + 2), where p is the pixel
+    error, m is the number of segments in the inferred mask, and n is the number
+    of segments in the ground truth mask.
 
     Keyword arguments:
     inferred -- Resulting segmentation mask from individual.
@@ -417,10 +441,13 @@ def FF_ML2DHD(inferred, ground_truth):
     return [ error, n,m]
 
 def FF_ML2DHD_V2(inferred, ground_truth):
-    """Compute the fitness for an individual. Takes in two images and compares
-     them according to the equation (p + 2)^log(|m - n| + 2), where p is the pixel
-      error, m is the number of segments in the inferred mask, and n is the number
-       of segments in the ground truth mask.
+    # TODO: Rename, figure out meaning of name
+    """Compute the fitness for an individual.
+    
+    Takes in two images and compares
+    them according to the equation (p + 2)^log(|m - n| + 2), where p is the pixel
+    error, m is the number of segments in the inferred mask, and n is the number
+    of segments in the ground truth mask.
 
     Keyword arguments:
     inferred -- Resulting segmentation mask from individual.
@@ -465,15 +492,35 @@ def FF_ML2DHD_V2(inferred, ground_truth):
 
 
 def FitnessFunction(inferred, ground_truth):
+    """Return fitness function result from inferred and ground_truth.
+    
+    Keyword arguments:
+    inferred -- Resulting segmentation mask from individual.
+    ground_truth -- Ground truth segmentation mask for training image.
+
+    Outputs:
+    error -- fitness value as float
+    best -- true mapping as dictionary
+    """
     return FF_ML2DHD_V2(inferred, ground_truth)
 
 class segment_fitness(algorithm):
+    """Contains functions to return result of fitness function.
+    
+    and run segmentation algorithm
+    """
     
     def __init__(self, paramlist=None):
         """Generate algorithm params from parameter list."""
         super(segment_fitness, self).__init__(paramlist)
         
     def evaluate(self, mask, gmask):
+        """Return result of fitness function with image and its ground truth.
+           
+        Keyword arguments: 
+        mask -- the given image
+        gmask -- the ground truth mask image
+        """        
         return FitnessFunction(mask, gmask)
         
     def pipe(self, data):
