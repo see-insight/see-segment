@@ -15,11 +15,13 @@ from see.base_classes import param_space, algorithm
 
 
 class workflow(algorithm):
+    """Class that creates a workflow for a given algorithm.""" 
 
     worklist = []
 
     @classmethod
     def addalgos(cls, algo):
+        """Add algorithms to the workflow list.""" 
         if type(algo) == list:
             for a in algo:
                 workflow.worklist.append(a)
@@ -45,8 +47,10 @@ class workflow(algorithm):
             
             thisalgo.mutateself(flip_prob=flip_prob)
             self.params.addall(thisalgo.params)
-
+            
+    
     def pipe(self, data):
+        """Return parameter data collection for workflow.""" 
         for algo_constructor in workflow.worklist:
             algo = algo_constructor(self.params)
             algo.params.addall(self.params)
