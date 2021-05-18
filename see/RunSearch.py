@@ -11,11 +11,11 @@ from see.ColorSpace import colorspace
 from see.Workflow import workflow
 from see.Segment_Fitness import segment_fitness
 from see import base_classes 
+from see.git_version import git_version
 
 def readfpop(fpop_file):
     fid_out= open(f"{input_file}.txt","r")
     
-
 def continuous_search(input_file, 
                       input_mask, 
                       startfile='',
@@ -29,8 +29,9 @@ def continuous_search(input_file,
     fid_out= open(f"{input_file}.txt","w+")
     
     #TODO: Read this file in and set population first
-    wf = workflow(algolist=[colorspace, segmentor, segment_fitness])
-
+    workflow.addalgos([colorspace, segmentor, segment_fitness])
+    wf = workflow()
+    
     #Run the search
     my_evolver = GeneticSearch.Evolver(workflow, mydata, pop_size=pop_size)
 
@@ -77,6 +78,9 @@ def geneticsearch_commandline():
     print('\n\n')
     print(args)
     print('\n\n')
+    
+    #TODO: add this to the setup.py installer so we include the has in the install. 
+    print(f"Current Git HASH: {git_version()})
     
     random.seed(args.seed)
     

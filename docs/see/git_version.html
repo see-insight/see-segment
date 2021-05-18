@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.9.2" />
-<title>see.Workflow API documentation</title>
+<title>see.git_version API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
@@ -19,67 +19,42 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>see.Workflow</code></h1>
+<h1 class="title">Module <code>see.git_version</code></h1>
 </header>
 <section id="section-intro">
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">import copy
-import inspect
-import random
+<pre><code class="python">#Code from: https://stackoverflow.com/questions/14989858/get-the-current-git-hash-in-a-python-script#21901260
 
-from collections import OrderedDict
-import sys
-import logging
-import numpy as np
-import skimage
-from skimage import color
+#Which cite&#39;s numpy setup.py
+import os
+import subprocess
 
-from see import ColorSpace, Segmentors
+# Return the git revision as a string
+def git_version():
+    def _minimal_ext_cmd(cmd):
+        # construct minimal environment
+        env = {}
+        for k in [&#39;SYSTEMROOT&#39;, &#39;PATH&#39;]:
+            v = os.environ.get(k)
+            if v is not None:
+                env[k] = v
+        # LANGUAGE is used on win32
+        env[&#39;LANGUAGE&#39;] = &#39;C&#39;
+        env[&#39;LANG&#39;] = &#39;C&#39;
+        env[&#39;LC_ALL&#39;] = &#39;C&#39;
+        out = subprocess.Popen(cmd, stdout = subprocess.PIPE, env=env).communicate()[0]
+        return out
 
-from see.base_classes import param_space, algorithm
+    try:
+        out = _minimal_ext_cmd([&#39;git&#39;, &#39;rev-parse&#39;, &#39;HEAD&#39;])
+        GIT_REVISION = out.strip().decode(&#39;ascii&#39;)
+    except OSError:
+        GIT_REVISION = &#34;Unknown&#34;
 
-
-class workflow(algorithm):
-
-    worklist = []
-
-    @classmethod
-    def addalgos(cls, algo):
-        if type(algo) == list:
-            for a in algo:
-                workflow.worklist.append(a)
-        else:  
-            workflow.worklist.append(algo)
-        
-    def __init__(self, paramlist=None):
-        &#34;&#34;&#34;Generate algorithm params from parameter list.&#34;&#34;&#34;
-        self.params = param_space()
-        self.set_params(paramlist)
-        for algo in workflow.worklist:
-            thisalgo = algo()
-            self.params.addall(thisalgo.params)
-        self.set_params(paramlist)
-
-            
-    def mutateself(self, flip_prob=0.5):
-        &#34;&#34;&#34;Mutate self and return new params.&#34;&#34;&#34;
-        print(&#34;using workflow mutate algorithm and looping over workflow&#34;)
-        for algo in workflow.worklist:
-            thisalgo = algo()
-            thisalgo.params.addall(thisalgo.params)
-            
-            thisalgo.mutateself(flip_prob=flip_prob)
-            self.params.addall(thisalgo.params)
-
-    def pipe(self, data):
-        for algo_constructor in workflow.worklist:
-            algo = algo_constructor(self.params)
-            algo.params.addall(self.params)
-            data = algo.pipe(data)
-        return data</code></pre>
+    return GIT_REVISION</code></pre>
 </details>
 </section>
 <section>
@@ -87,77 +62,10 @@ class workflow(algorithm):
 <section>
 </section>
 <section>
-</section>
-<section>
-<h2 class="section-title" id="header-classes">Classes</h2>
+<h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="see.Workflow.workflow"><code class="flex name class">
-<span>class <span class="ident">workflow</span></span>
-<span>(</span><span>paramlist=None)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Base class for any image alogirthm.</p>
-<p>Functions:
-evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
-<p>Generate algorithm params from parameter list.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class workflow(algorithm):
-
-    worklist = []
-
-    @classmethod
-    def addalgos(cls, algo):
-        if type(algo) == list:
-            for a in algo:
-                workflow.worklist.append(a)
-        else:  
-            workflow.worklist.append(algo)
-        
-    def __init__(self, paramlist=None):
-        &#34;&#34;&#34;Generate algorithm params from parameter list.&#34;&#34;&#34;
-        self.params = param_space()
-        self.set_params(paramlist)
-        for algo in workflow.worklist:
-            thisalgo = algo()
-            self.params.addall(thisalgo.params)
-        self.set_params(paramlist)
-
-            
-    def mutateself(self, flip_prob=0.5):
-        &#34;&#34;&#34;Mutate self and return new params.&#34;&#34;&#34;
-        print(&#34;using workflow mutate algorithm and looping over workflow&#34;)
-        for algo in workflow.worklist:
-            thisalgo = algo()
-            thisalgo.params.addall(thisalgo.params)
-            
-            thisalgo.mutateself(flip_prob=flip_prob)
-            self.params.addall(thisalgo.params)
-
-    def pipe(self, data):
-        for algo_constructor in workflow.worklist:
-            algo = algo_constructor(self.params)
-            algo.params.addall(self.params)
-            data = algo.pipe(data)
-        return data</code></pre>
-</details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li><a title="see.base_classes.algorithm" href="base_classes.html#see.base_classes.algorithm">algorithm</a></li>
-</ul>
-<h3>Class variables</h3>
-<dl>
-<dt id="see.Workflow.workflow.worklist"><code class="name">var <span class="ident">worklist</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-</dl>
-<h3>Static methods</h3>
-<dl>
-<dt id="see.Workflow.workflow.addalgos"><code class="name flex">
-<span>def <span class="ident">addalgos</span></span>(<span>algo)</span>
+<dt id="see.git_version.git_version"><code class="name flex">
+<span>def <span class="ident">git_version</span></span>(<span>)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -165,30 +73,33 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">@classmethod
-def addalgos(cls, algo):
-    if type(algo) == list:
-        for a in algo:
-            workflow.worklist.append(a)
-    else:  
-        workflow.worklist.append(algo)</code></pre>
+<pre><code class="python">def git_version():
+    def _minimal_ext_cmd(cmd):
+        # construct minimal environment
+        env = {}
+        for k in [&#39;SYSTEMROOT&#39;, &#39;PATH&#39;]:
+            v = os.environ.get(k)
+            if v is not None:
+                env[k] = v
+        # LANGUAGE is used on win32
+        env[&#39;LANGUAGE&#39;] = &#39;C&#39;
+        env[&#39;LANG&#39;] = &#39;C&#39;
+        env[&#39;LC_ALL&#39;] = &#39;C&#39;
+        out = subprocess.Popen(cmd, stdout = subprocess.PIPE, env=env).communicate()[0]
+        return out
+
+    try:
+        out = _minimal_ext_cmd([&#39;git&#39;, &#39;rev-parse&#39;, &#39;HEAD&#39;])
+        GIT_REVISION = out.strip().decode(&#39;ascii&#39;)
+    except OSError:
+        GIT_REVISION = &#34;Unknown&#34;
+
+    return GIT_REVISION</code></pre>
 </details>
 </dd>
 </dl>
-<h3>Inherited members</h3>
-<ul class="hlist">
-<li><code><b><a title="see.base_classes.algorithm" href="base_classes.html#see.base_classes.algorithm">algorithm</a></b></code>:
-<ul class="hlist">
-<li><code><a title="see.base_classes.algorithm.algorithm_code" href="base_classes.html#see.base_classes.algorithm.algorithm_code">algorithm_code</a></code></li>
-<li><code><a title="see.base_classes.algorithm.checkparamindex" href="base_classes.html#see.base_classes.algorithm.checkparamindex">checkparamindex</a></code></li>
-<li><code><a title="see.base_classes.algorithm.mutateself" href="base_classes.html#see.base_classes.algorithm.mutateself">mutateself</a></code></li>
-<li><code><a title="see.base_classes.algorithm.pipe" href="base_classes.html#see.base_classes.algorithm.pipe">pipe</a></code></li>
-<li><code><a title="see.base_classes.algorithm.runAlgo" href="base_classes.html#see.base_classes.algorithm.runAlgo">runAlgo</a></code></li>
-</ul>
-</li>
-</ul>
-</dd>
-</dl>
+</section>
+<section>
 </section>
 </article>
 <nav id="sidebar">
@@ -202,15 +113,9 @@ def addalgos(cls, algo):
 <li><code><a title="see" href="index.html">see</a></code></li>
 </ul>
 </li>
-<li><h3><a href="#header-classes">Classes</a></h3>
-<ul>
-<li>
-<h4><code><a title="see.Workflow.workflow" href="#see.Workflow.workflow">workflow</a></code></h4>
+<li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="see.Workflow.workflow.addalgos" href="#see.Workflow.workflow.addalgos">addalgos</a></code></li>
-<li><code><a title="see.Workflow.workflow.worklist" href="#see.Workflow.workflow.worklist">worklist</a></code></li>
-</ul>
-</li>
+<li><code><a title="see.git_version.git_version" href="#see.git_version.git_version">git_version</a></code></li>
 </ul>
 </li>
 </ul>
