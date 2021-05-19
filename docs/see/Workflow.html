@@ -28,36 +28,23 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;File Workflow.py.&#34;&#34;&#34;
-import copy
-import inspect
-import random
-
-from collections import OrderedDict
-import sys
-import logging
-import numpy as np
-import skimage
-from skimage import color
-
-from see import ColorSpace, Segmentors
-
 from see.base_classes import param_space, algorithm
 
 
 class workflow(algorithm):
-    &#34;&#34;&#34;Class that creates a workflow for a given algorithm.&#34;&#34;&#34; 
+    &#34;&#34;&#34;Class that creates a workflow for a given algorithm.&#34;&#34;&#34;
 
     worklist = []
 
     @classmethod
-    def addalgos(cls, algo):
-        &#34;&#34;&#34;Add algorithms to the workflow list.&#34;&#34;&#34; 
-        if type(algo) == list:
-            for a in algo:
-                workflow.worklist.append(a)
-        else:  
-            workflow.worklist.append(algo)
-        
+    def addalgos(cls, algo_list):
+        &#34;&#34;&#34;Add algorithms to the workflow list.&#34;&#34;&#34;
+        if isinstance(algo_list) == list:
+            for algo in algo_list:
+                workflow.worklist.append(algo)
+        else:
+            workflow.worklist.append(algo_list)
+
     def __init__(self, paramlist=None):
         &#34;&#34;&#34;Generate algorithm params from parameter list.&#34;&#34;&#34;
         self.params = param_space()
@@ -67,20 +54,18 @@ class workflow(algorithm):
             self.params.addall(thisalgo.params)
         self.set_params(paramlist)
 
-            
     def mutateself(self, flip_prob=0.5):
         &#34;&#34;&#34;Mutate self and return new params.&#34;&#34;&#34;
         print(&#34;using workflow mutate algorithm and looping over workflow&#34;)
         for algo in workflow.worklist:
             thisalgo = algo()
             thisalgo.params.addall(thisalgo.params)
-            
+
             thisalgo.mutateself(flip_prob=flip_prob)
             self.params.addall(thisalgo.params)
-            
-    
+
     def pipe(self, data):
-        &#34;&#34;&#34;Return parameter data collection for workflow.&#34;&#34;&#34; 
+        &#34;&#34;&#34;Return parameter data collection for workflow.&#34;&#34;&#34;
         for algo_constructor in workflow.worklist:
             algo = algo_constructor(self.params)
             algo.params.addall(self.params)
@@ -109,19 +94,19 @@ class workflow(algorithm):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class workflow(algorithm):
-    &#34;&#34;&#34;Class that creates a workflow for a given algorithm.&#34;&#34;&#34; 
+    &#34;&#34;&#34;Class that creates a workflow for a given algorithm.&#34;&#34;&#34;
 
     worklist = []
 
     @classmethod
-    def addalgos(cls, algo):
-        &#34;&#34;&#34;Add algorithms to the workflow list.&#34;&#34;&#34; 
-        if type(algo) == list:
-            for a in algo:
-                workflow.worklist.append(a)
-        else:  
-            workflow.worklist.append(algo)
-        
+    def addalgos(cls, algo_list):
+        &#34;&#34;&#34;Add algorithms to the workflow list.&#34;&#34;&#34;
+        if isinstance(algo_list) == list:
+            for algo in algo_list:
+                workflow.worklist.append(algo)
+        else:
+            workflow.worklist.append(algo_list)
+
     def __init__(self, paramlist=None):
         &#34;&#34;&#34;Generate algorithm params from parameter list.&#34;&#34;&#34;
         self.params = param_space()
@@ -131,20 +116,18 @@ class workflow(algorithm):
             self.params.addall(thisalgo.params)
         self.set_params(paramlist)
 
-            
     def mutateself(self, flip_prob=0.5):
         &#34;&#34;&#34;Mutate self and return new params.&#34;&#34;&#34;
         print(&#34;using workflow mutate algorithm and looping over workflow&#34;)
         for algo in workflow.worklist:
             thisalgo = algo()
             thisalgo.params.addall(thisalgo.params)
-            
+
             thisalgo.mutateself(flip_prob=flip_prob)
             self.params.addall(thisalgo.params)
-            
-    
+
     def pipe(self, data):
-        &#34;&#34;&#34;Return parameter data collection for workflow.&#34;&#34;&#34; 
+        &#34;&#34;&#34;Return parameter data collection for workflow.&#34;&#34;&#34;
         for algo_constructor in workflow.worklist:
             algo = algo_constructor(self.params)
             algo.params.addall(self.params)
@@ -165,7 +148,7 @@ class workflow(algorithm):
 <h3>Static methods</h3>
 <dl>
 <dt id="see.Workflow.workflow.addalgos"><code class="name flex">
-<span>def <span class="ident">addalgos</span></span>(<span>algo)</span>
+<span>def <span class="ident">addalgos</span></span>(<span>algo_list)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Add algorithms to the workflow list.</p></div>
@@ -174,13 +157,13 @@ class workflow(algorithm):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@classmethod
-def addalgos(cls, algo):
-    &#34;&#34;&#34;Add algorithms to the workflow list.&#34;&#34;&#34; 
-    if type(algo) == list:
-        for a in algo:
-            workflow.worklist.append(a)
-    else:  
-        workflow.worklist.append(algo)</code></pre>
+def addalgos(cls, algo_list):
+    &#34;&#34;&#34;Add algorithms to the workflow list.&#34;&#34;&#34;
+    if isinstance(algo_list) == list:
+        for algo in algo_list:
+            workflow.worklist.append(algo)
+    else:
+        workflow.worklist.append(algo_list)</code></pre>
 </details>
 </dd>
 </dl>
@@ -196,7 +179,7 @@ def addalgos(cls, algo):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def pipe(self, data):
-    &#34;&#34;&#34;Return parameter data collection for workflow.&#34;&#34;&#34; 
+    &#34;&#34;&#34;Return parameter data collection for workflow.&#34;&#34;&#34;
     for algo_constructor in workflow.worklist:
         algo = algo_constructor(self.params)
         algo.params.addall(self.params)
