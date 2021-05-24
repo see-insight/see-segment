@@ -1,8 +1,6 @@
 """This runs unit tests for functions that can be found in Segmentors.py."""
-import sys
-import pytest
 import numpy as np
-from skimage import segmentation, color
+from skimage import segmentation
 from see import Segmentors
 from see import Segment_Fitness as SSM
 from see.base_classes import pipedata
@@ -32,7 +30,7 @@ TEST_IM_GRAY = TEST_IM_COLOR[:, :, 0]
 # )\n"
 #     assert Segmentors.print_best_algorithm_code(individual) == print_statement
 
-def test_runAlgo():
+def test_run_algo():
     """Unit test for runAlgo function.
      Checks to see if the output is what it's supposed to be in this case."""
     individual = Segmentors.segmentor()
@@ -50,7 +48,7 @@ def test_parameter_len():
 
 # TODO Add colorthreshold test.
 
-def test_Felzenszwalb():
+def test_felzenszwalb():
     """Unit test for Felzenszwalb method. Checks if evaluate function output\
      is the same as manually running the skimage function."""
     fb1 = Segmentors.Felzenszwalb()
@@ -66,7 +64,7 @@ def test_Felzenszwalb():
     assert out1.all() == out2.all()
 
 
-def test_Slic():
+def test_slic():
     """Unit test for Slic method. Checks if evaluate function output\
      is the same as manually running the skimage function."""
     sc1 = Segmentors.Slic()
@@ -128,7 +126,7 @@ def test_Slic():
 #                 segmentation.inverse_gaussian_gradient(TEST_IM_GRAY, 0.2, 0.3), iterations=10,\
 #                 init_level_set='checkerboard', smoothing=5, threshold='auto', balloon=10).all()
 
-def test_countMatches():
+def test_count_matches():
     """Unit test for countMatches function. Checks output is as
      expected for a variety of extreme cases."""
     # create test image

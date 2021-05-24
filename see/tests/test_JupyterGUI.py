@@ -1,5 +1,4 @@
 """This runs unit tests for functions that can be found in JupyterGUI.py."""
-import pytest
 import numpy as np
 from see import JupyterGUI
 
