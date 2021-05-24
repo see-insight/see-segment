@@ -18,6 +18,7 @@ from see.base_classes import param_space, algorithm
 
 # "yeah"
 
+
 class seg_params(param_space):
     descriptions = dict()
     ranges = dict()
@@ -95,15 +96,16 @@ class segmentor(algorithm):
         self.params['max_iter'] = 10
         self.set_params(paramlist)
 
-        
     # TODO use name to build a dictionary to use as a chache
+
     def evaluate(self, img):
         """Run segmentation algorithm to get inferred mask."""
         import sys
 
         #print(f"Running {self.params}")
         sys.stdout.flush()
-        self.thisalgo = segmentor.algorithmspace[self.params['algorithm']](self.params)
+        self.thisalgo = segmentor.algorithmspace[self.params['algorithm']](
+            self.params)
         return self.thisalgo.evaluate(img)
 
     def pipe(self, data):
@@ -158,9 +160,7 @@ class ColorThreshold(segmentor):
                              "gamma1", "gamma2"]
         #print(f"colorthreshold.paramlist = {paramlist}")
         self.set_params(paramlist)
-        #print(f"_init_.self.params={self.params}")
-          
-
+        # print(f"_init_.self.params={self.params}")
 
     def evaluate(self, img):  # XX
         """Evaluate segmentation algorithm on training image.
@@ -177,13 +177,13 @@ class ColorThreshold(segmentor):
 
         output = None
 
-        #print(f"self.params={self.params}")
+        # print(f"self.params={self.params}")
         if (len(img.shape) > 2):
             output = np.ones([img.shape[0], img.shape[1]])
             for dimidx in range(3):
                 pscale = np.max(img[:, :, dimidx])
                 my_mn = float(self.params[minlist[dimidx]]) * pscale
-                my_mx = float(self.params[maxlist[dimidx]])  * pscale
+                my_mx = float(self.params[maxlist[dimidx]]) * pscale
 
                 if my_mn < my_mx:
                     output[img[:, :, dimidx] < my_mn] = 0
@@ -199,7 +199,6 @@ class ColorThreshold(segmentor):
                 chidx = self.params["channel"]
             my_mn = float(self.params[minlist[chidx]]) * pscale
             my_mx = float(self.params[maxlist[chidx]]) * pscale
-
 
             if my_mn < my_mx:
                 output = np.ones(img.shape)
@@ -248,7 +247,7 @@ class Felzenszwalb(segmentor):
         self.params["beta1"] = 0.92
         self.paramindexes = ["alpha1", "alpha2", "beta1"]
         self.set_params(paramlist)
-                
+
     def evaluate(self, img):
         """Evaluate segmentation algorithm on training image.
 
@@ -352,7 +351,7 @@ class Slic(segmentor):
         self.paramindexes = ["n_segments", "alpha1", "beta1", "max_iter"]
         self.slico = False
         self.set_params(paramlist)
-                
+
     def evaluate(self, img):
         """Evaluate segmentation algorithm on training image.
 
@@ -431,6 +430,7 @@ class SlicO(Slic):
         super(SlicO, self).__init__(paramlist)
         self.slico = True
         self.set_params(paramlist)
+
 
 segmentor.addsegmentor('SlicO', SlicO)
 
@@ -525,7 +525,7 @@ class Watershed(segmentor):
         self.params["alpha1"] = 0.66
         self.paramindexes = ["alpha1"]
         self.set_params(paramlist)
-                
+
     def evaluate(self, img):
         """Evaluate segmentation algorithm on training image.
 

@@ -1,10 +1,12 @@
-#Code from: https://stackoverflow.com/questions/14989858/get-the-current-git-hash-in-a-python-script#21901260
+# Code from: https://stackoverflow.com/questions/14989858/get-the-current-git-hash-in-a-python-script#21901260
 
-#Which cite's numpy setup.py
+# Which cite's numpy setup.py
 import os
 import subprocess
 
 # Return the git revision as a string
+
+
 def git_version():
     def _minimal_ext_cmd(cmd):
         # construct minimal environment
@@ -17,7 +19,8 @@ def git_version():
         env['LANGUAGE'] = 'C'
         env['LANG'] = 'C'
         env['LC_ALL'] = 'C'
-        out = subprocess.Popen(cmd, stdout = subprocess.PIPE, env=env).communicate()[0]
+        out = subprocess.Popen(
+            cmd, stdout=subprocess.PIPE, env=env).communicate()[0]
         return out
 
     try:
