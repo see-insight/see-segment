@@ -10,7 +10,7 @@ class workflow(algorithm):
     @classmethod
     def addalgos(cls, algo_list):
         """Add algorithms to the workflow list."""
-        if isinstance(algo_list) == list:
+        if isinstance(algo_list,list):
             for algo in algo_list:
                 workflow.worklist.append(algo)
         else:
