@@ -54,7 +54,7 @@ def continuous_search(input_file,
             best_fitness = fitness
             print(f"\n\n\n\nIteration {iteration} Finess Improved to {fitness}")
             my_evolver.writepop(population, filename="checkpoint.pop")
-            imageio.imwrite(best_mask_file,mask);
+            imageio.imwrite(best_mask_file,mydata.mask);
             write_algo_vector(fpop_file, f"[{iteration}, {fitness}, {params}]\n") 
             ###TODO Output [fitness, seg]
         iteration += 1
