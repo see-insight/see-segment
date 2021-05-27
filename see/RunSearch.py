@@ -12,21 +12,10 @@ from see.Workflow import workflow
 from see.Segment_Fitness import segment_fitness
 from see import base_classes 
 from see.git_version import git_version
-
-def write_algo_vector(fpop_file, outstring):
-    with open(fpop_file, 'a') as myfile:
-        myfile.write(f'{outstring}\n')
-        
-def read_algo_vector(fpop_file):
-    inlist = []
-    with open(fpop_file,'r') as myfile:
-        for line in myfile:
-            inlist.append(eval(line))
-    return inlist
     
 def continuous_search(input_file, 
                       input_mask, 
-                      startfile='',
+                      startfile=None,
                       checkpoint='checkpoint.txt',
                       best_mask_file="temp_mask.png", 
                       pop_size=10):
@@ -65,8 +54,8 @@ def continuous_search(input_file,
             best_fitness = fitness
             print(f"\n\n\n\nIteration {iteration} Finess Improved to {fitness}")
             my_evolver.writepop(population, filename="checkpoint.pop")
-            imageio.imwrite(best_mask_file,mask);
-            write_algo_vector(fpop_file, f"[{iteration}, {fitness}, {params}]\n") 
+            imageio.imwrite(best_mask_file,mydata.mask);
+            GeneticSearch.write_algo_vector(fpop_file, f"[{iteration}, {fitness}, {params}]\n") 
             ###TODO Output [fitness, seg]
         iteration += 1
 
@@ -81,7 +70,6 @@ def geneticsearch_commandline():
     parser.add_argument('--seed', type=int,default=1, help='Input seed (integer)') 
     args = parser.parse_args()
     
-    print("HELLO WORLD DIRK")
     print('\n\n')
     print(args)
     print('\n\n')
