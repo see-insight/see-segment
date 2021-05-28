@@ -53,9 +53,8 @@ def continuous_search(input_file,
         if (fitness < best_fitness):
             best_fitness = fitness
             print(f"\n\n\n\nIteration {iteration} Finess Improved to {fitness}")
-            my_evolver.writepop(population, filename="checkpoint.pop")
-            imageio.imwrite(best_mask_file,mydata.mask);
-            GeneticSearch.write_algo_vector(fpop_file, f"[{iteration}, {fitness}, {params}]\n") 
+            imageio.imwrite(f"{input_mask}_bestsofar.png",mydata.mask);
+            GeneticSearch.write_algo_vector(f"{input_file}.txt", f"{iteration}, {fitness}, {params}\n") 
             ###TODO Output [fitness, seg]
         iteration += 1
 
@@ -66,7 +65,6 @@ def geneticsearch_commandline():
 
     parser.add_argument('input_file', help=' input image')
     parser.add_argument('input_mask', help=' input Ground Truthe Mask')
-    parser.add_argument('start_pop', nargs='?', help=' Population File used in transfer learning')
     parser.add_argument('--seed', type=int,default=1, help='Input seed (integer)') 
     args = parser.parse_args()
     
@@ -79,7 +77,7 @@ def geneticsearch_commandline():
     
     random.seed(args.seed)
     
-    continuous_search(args.input_file, args.input_mask, args.start_pop);
+    continuous_search(args.input_file, args.input_mask);
 
 #     #Multilabel Array Example
 #     img = imageio.imread(args.input_file)
