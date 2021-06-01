@@ -1,6 +1,8 @@
 """Classifer algorithm library designed to classify images with a searchable parameter space.
  This libary actually does not incode the search code itself, instead it just defines
-  the search parameters and the evaluation funtions."""
+  the search parameters and the evaluation funtions. In other words, the following classes
+  are wrappers of the scikit-learn classifiers that whose parameters can be used in the
+  Genetic Search algorithm."""
 
 import numpy as np
 #import sklearn
