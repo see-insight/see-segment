@@ -756,9 +756,9 @@ class MorphGeodesicActiveContour(segmentor):
     # Abbrevieation for algorithm = AC
 
     def __init__(self, paramlist=None):
-    """Get parameters from parameter list that are used in segmentation algorithm.
-    Assign default values to these parameters.
-    """
+        """Get parameters from parameter list that are used in segmentation algorithm.
+        Assign default values to these parameters.
+        """
         super(MorphGeodesicActiveContour, self).__init__(paramlist)
         if not paramlist:
             self.params["algorithm"] = "MorphGeodesicActiveContour"
