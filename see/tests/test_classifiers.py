@@ -139,6 +139,8 @@ def test_decision_tree():
 
 # TODO: This test fails. I think it is because the algorithm
 # has a randomness to it.
+
+
 def test_random_forest():
     """Unit test for Decision Tree classifier algorithm.
     Check if evaluate function output is same as it would be
@@ -181,6 +183,8 @@ def test_random_forest():
 
 # TODO: This test fails. I think it is because the algorithm
 # has a randomness to it.
+
+
 def test_mlp():
     """Unit test for Decision Tree classifier algorithm.
     Check if evaluate function output is same as it would be
