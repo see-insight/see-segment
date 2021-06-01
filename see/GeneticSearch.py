@@ -7,6 +7,7 @@ import copy
 import json
 import logging
 from shutil import copyfile
+from pathlib import Path
 
 import deap
 from deap import base
@@ -17,8 +18,9 @@ from scoop import futures
 from see import base_classes
 
 
-# TODO Change algoirthm and algo_instance to be more clear.  use consistant naming.
 
+# TODO Change algoirthm and algo_instance to be more clear.  use consistant naming.
+    
 
 def twoPointCopy(np1, np2, seed=False):
     """Execute a crossover between two numpy arrays of the same length."""
@@ -163,6 +165,26 @@ def initPopulation(pcls, ind_init, filename):
     return pcls(ind_init(c) for c in contents)
 
 
+##### FILE I/O #####
+#TODO Think about moving this to another file?
+
+#TODO make it so we can read from json, pickle or text.
+def write_algo_vector(fpop_file, outstring):
+    """Write Text output"""
+    print(f"Writing in {fpop_file}")
+    with open(fpop_file, 'a') as myfile:
+        myfile.write(f'{outstring}\n')
+        
+def read_algo_vector(fpop_file):
+    """Read Text output"""
+    print(f"Reading in {fpop_file}")
+    inlist = []
+    with open(fpop_file,'r') as myfile:
+        for line in myfile:
+            inlist.append(eval(line))
+    return inlist
+
+
 class Evolver(object):
     """Perform the genetic algorithm by initializing a population and evolving it over a
      specified number of generations to find the optimal algorithm and parameters for the problem.
@@ -201,7 +223,24 @@ class Evolver(object):
         self.best_avgs = []
         self.gen = 0
         self.cxpb, self.mutpb, self.flip_prob = 0.9, 0.9, 0.9
+        
+    #TODO add some checking to make sure lists are the right size and type
+    #TODO think about how we want to add in fitness to these?
+    def copy_individual(self,fromlist):
+        new_individual = self.tool.individual()
+        for index in range(len(new_individual)):
+            new_individual[index] = fromlist[index]
+        return new_individual
 
+    #TODO add some checking (see next comment)
+    def copy_pop_list(self, tpop):
+        new_tpop = []
+        for individual in tpop:
+            new_tpop.append(self.copy_individual(individual))
+        return new_tpop
+    
+
+        
     def newpopulation(self):
         """Initialize a new population."""
         return self.tool.population()
@@ -222,6 +261,13 @@ class Evolver(object):
     def readpop(self, filename='test.json'):
         """Read in existing population from "filename"."""
 
+        filen = Path(filename)
+        
+        if filen.suffix == ".txt":
+            list_of_lists = read_algo_vector(filen)
+            tpop = self.copy_pop_list(list_of_lists)
+            return tpop
+         
         logging.getLogger().info(f"Reading population from {filename}")
         self.tool.register("population_read", initPopulation,
                            list, creator.Individual, filename)
