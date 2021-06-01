@@ -1,3 +1,6 @@
+
+"""File RunSearch.py, runs genetic search continuously."""
+
 import argparse
 import sys
 import matplotlib.pylab as plt
@@ -12,6 +15,22 @@ from see.Workflow import workflow
 from see.Segment_Fitness import segment_fitness
 from see import base_classes 
 from see.git_version import git_version
+<<<<<<< HEAD
+=======
+
+def write_algo_vector(fpop_file, outstring):
+    """Write list of algorithm parameters to string."""
+    with open(fpop_file, 'a') as myfile:
+        myfile.write(f'{outstring}\n')
+        
+def read_algo_vector(fpop_file):
+    """Create list of algorithm parameters for each iteration."""
+    inlist = []
+    with open(fpop_file,'r') as myfile:
+        for line in myfile:
+            inlist.append(eval(line))
+    return inlist
+>>>>>>> nate-docs2
     
 def continuous_search(input_file, 
                       input_mask, 
@@ -19,6 +38,13 @@ def continuous_search(input_file,
                       checkpoint='checkpoint.txt',
                       best_mask_file="temp_mask.png", 
                       pop_size=10):
+    """Run genetic search continuously.
+    
+    input_file: the original image
+    input_mask: the ground truth mask for the image
+    pop_size: the size of the population
+    Runs indefinitely unless a perfect value (0.0) is reached.
+    """
     mydata = base_classes.pipedata()
     mydata.img = imageio.imread(input_file)
     mydata.gmask = imageio.imread(input_mask)
@@ -60,8 +86,10 @@ def continuous_search(input_file,
         iteration += 1
 
 def geneticsearch_commandline():
-    """Rename Instructor notebook using git and fix all
-    student links in files."""
+    """Rename Instructor notebook using git.
+    
+    Fix all student links in files.
+    """
     parser = argparse.ArgumentParser(description='Run Genetic Search on Workflow')
 
     parser.add_argument('input_file', help=' input image')

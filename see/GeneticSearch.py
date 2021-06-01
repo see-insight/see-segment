@@ -408,7 +408,7 @@ class Evolver(object):
 
     def run(self, ngen=10, population=None, startfile=None, checkpoint=None, cp_freq=1):
         """Run the genetic algorithm, updating the population over ngen number of generations.
-
+        
         Keywork arguments:
         ngen -- number of generations to run the genetic algorithm.
         startfile -- File containing existing population (default None)
@@ -416,9 +416,7 @@ class Evolver(object):
 
         Output:
         population -- Resulting population after ngen generations.
-
         """
-
         if startfile:
             try:
                 print(f"Reading in {startfile}")
