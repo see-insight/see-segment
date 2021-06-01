@@ -37,6 +37,6 @@ test:
 	pytest -v $(MODULENAME) 
     
 demo:
-	seesearch ./Image_data/Examples/Chameleon.jpg ./Image_data/Examples/Chameleon_GT.png
+	seesearch ./Image_data/Examples/AA_Chameleon.jpg ./Image_data/Examples/AA_Chameleon_GT.png
 
 .PHONY: init docs lint test 
