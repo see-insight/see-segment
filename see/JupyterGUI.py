@@ -61,7 +61,7 @@ def pickimage(folder='Image_data/Examples/'):
     masklist = []
     for file in allfiles:
         if file.suffix == ".jpg" or file.suffix == ".jpeg" or file.suffix == ".JPEG" or file.suffix == ".png":
-            if not "_GT" in file.name:
+            if "_GT" not in file.name:
                 filelist.append(file)
                 mask = directory.glob(f"{file.stem}_GT*")
                 for m in mask:
@@ -204,8 +204,9 @@ def colorwidget(img, paramlist=None):
         thislist = seg.params.ranges[ppp]
         name = ppp
         current_value = seg.params[ppp]
-        if not current_value in thislist:
-            # TODO: We should find the min distance between current_value and this list and use that instead.
+        if current_value not in thislist:
+            # TODO: We should find the min distance between current_value and
+            # this list and use that instead.
             current_value = thislist[0]
 
         thiswidg = widgets.SelectionSlider(options=tuple(thislist),
@@ -273,8 +274,9 @@ def segmentwidget(img, params=None, alg=None):
         thislist = seg.params.ranges[ppp]
         name = ppp
         current_value = seg.params[ppp]
-        if not current_value in thislist:
-            # TODO: We should find the min distance between current_value and this list and use that instead.
+        if current_value not in thislist:
+            # TODO: We should find the min distance between current_value and
+            # this list and use that instead.
             current_value = thislist[0]
 
         thiswidg = widgets.SelectionSlider(options=tuple(thislist),

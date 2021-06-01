@@ -88,7 +88,7 @@ def countsets(setcounts):
         # best[i_key] = g_key
         best[i_key] = mx_key  # record "true" mapping
     L = len(L_sets)
-    return total-p, L, best
+    return total - p, L, best
 
 
 def FF_Option1(inferred, ground_truth):
@@ -121,7 +121,7 @@ def FF_Option1(inferred, ground_truth):
 
     # print(setcounts)
     p, L, _ = countsets(setcounts)
-    error = L*(p + 2)
+    error = L * (p + 2)
 
     return [error, ]
 
@@ -157,7 +157,7 @@ def FF_Option2a(inferred, ground_truth):
     # print(setcounts)
     p, L, _ = countsets(setcounts)
 
-    error = (p+2)**(np.abs(m-n))
+    error = (p + 2)**(np.abs(m - n))
 
     return [error, ]
 
@@ -193,7 +193,7 @@ def FF_Option2b(inferred, ground_truth):
     # print(setcounts)
     p, L, _ = countsets(setcounts)
 
-    error = (p+2)**(np.abs(m-n)+1)
+    error = (p + 2)**(np.abs(m - n) + 1)
 
     return [error, ]
 
@@ -274,9 +274,9 @@ def FF_Normal(inferred, ground_truth):
     p, L, _ = countsets(setcounts)
 
     # Normalize:
-    p = p/tot_num_pixels
-    m = m/tot_num_pixels
-    n = n/tot_num_pixels
+    p = p / tot_num_pixels
+    m = m / tot_num_pixels
+    n = n / tot_num_pixels
 
     error = (p + 2) ** np.log(abs(m - n) + 2)  # / (L >= n)
     # error = (repeat_count + 2)**(abs(m - n)+1)
@@ -323,7 +323,7 @@ def FF_ML2DHD(inferred, ground_truth):
     # print(setcounts)
     p, L, _ = countsets(setcounts)
 
-    error = (p+np.abs(n-m))/(N*M)
+    error = (p + np.abs(n - m)) / (N * M)
 
     return [error, n, m]
 
@@ -359,7 +359,7 @@ def FF_Hamming(inferred, ground_truth):
         for c in range(N):
             hamming += ground_truth[r, c] != inferred[r, c]
 
-    return [hamming/(M*N), ]
+    return [hamming / (M * N), ]
 
 
 def FF_Gamma(inferred, ground_truth):
@@ -391,13 +391,13 @@ def FF_Gamma(inferred, ground_truth):
     M = ground_truth.shape[0]
     N = ground_truth.shape[1]
 
-    def f(u, v): return u+v-(2*u*v)
+    def f(u, v): return u + v - (2 * u * v)
     hamming = 0
     for r in range(M):
         for c in range(N):
             hamming += ground_truth[r, c] != inferred[r, c]
 
-    gamma = np.abs(1-(2*hamming/(M*N)))
+    gamma = np.abs(1 - (2 * hamming / (M * N)))
 
     return [1 - gamma, ]
 
@@ -439,7 +439,7 @@ def FF_ML2DHD(inferred, ground_truth):
     # print(setcounts)
     p, L, _ = countsets(setcounts)
 
-    error = p/TP+np.abs(n-m)/TP
+    error = p / TP + np.abs(n - m) / TP
 
     return [error, n, m]
 
@@ -490,7 +490,8 @@ def FF_ML2DHD_V2(inferred, ground_truth):
         #print(f"trivial solution")
         error = 1
     else:
-        error = (p/TP+np.abs(n-m)/(n+m))**(1-np.abs(n-m)/(n+m))
+        error = (p / TP + np.abs(n - m) / (n + m)
+                 )**(1 - np.abs(n - m) / (n + m))
 
     return [error, n, m]
 
@@ -522,7 +523,7 @@ class segment_fitness(algorithm):
     def evaluate(self, mask, gmask):
         """Return result of fitness function with image and its ground truth.
 
-        Keyword arguments: 
+        Keyword arguments:
         mask -- the given image
         gmask -- the ground truth mask image
         """

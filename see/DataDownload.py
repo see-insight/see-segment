@@ -25,8 +25,8 @@ DefaultFolder = './'
 
 
 def readpgm(name):
-    """The ground truth data is in ascii P2 pgm binary files.  
-    OpenCV can read these files in but it would be much easier 
+    """The ground truth data is in ascii P2 pgm binary files.
+    OpenCV can read these files in but it would be much easier
     to just convert them to more common pgm binary format (P5)."""
     with open(name, encoding="utf8", errors='ignore') as f:
         lines = f.readlines()
@@ -52,30 +52,34 @@ def readpgm(name):
     return img
 
 
-def downloadKOMATSUNA(filenames=['rgbd_plant.zip', 'rgbd_label.zip'],
-                      folder=f'{DefaultFolder}KOMATSUNA/',
-                      urls=['http://limu.ait.kyushu-u.ac.jp/~agri/komatsuna/rgbd_plant.zip',
-                            'http://limu.ait.kyushu-u.ac.jp/~agri/komatsuna/rgbd_label.zip'],
-                      datafolder=DefaultFolder,
-                      force=True):
+def downloadKOMATSUNA(
+        filenames=[
+            'rgbd_plant.zip',
+            'rgbd_label.zip'],
+    folder=f'{DefaultFolder}KOMATSUNA/',
+    urls=[
+            'http://limu.ait.kyushu-u.ac.jp/~agri/komatsuna/rgbd_plant.zip',
+            'http://limu.ait.kyushu-u.ac.jp/~agri/komatsuna/rgbd_label.zip'],
+        datafolder=DefaultFolder,
+        force=True):
     """The KOMATSUNA plant dataset is a multisegmentation dataset avaliable at http://limu.ait.kyushu-u.ac.jp/~agri/komatsuna/"""
 
     if not os.path.exists(folder):
         os.makedirs(folder)
-        print("Directory ", folder,  " Created ")
+        print("Directory ", folder, " Created ")
     else:
-        print("Directory ", folder,  " already exists")
+        print("Directory ", folder, " already exists")
 
     for filename, url in zip(filenames, urls):
-        zfile = Path(folder+filename)
+        zfile = Path(folder + filename)
         if not zfile.is_file() or force:
             print(f"Downloading {filename} from {url}")
-            urlretrieve(url, folder+filename)
+            urlretrieve(url, folder + filename)
         else:
             print(f"File {filename} already exists")
 
         print(f"Unzipping {filename}")
-        with zipfile.ZipFile(folder+filename, 'r') as zip_ref:
+        with zipfile.ZipFile(folder + filename, 'r') as zip_ref:
             zip_ref.extractall(folder)
 
         print(f"Download and Convert of {filename} Complete")
@@ -89,17 +93,17 @@ def downloadSky(filename='sky.zip',
 
     if not os.path.exists(folder):
         os.makedirs(folder)
-        print("Directory ", folder,  " Created ")
+        print("Directory ", folder, " Created ")
     else:
-        print("Directory ", folder,  " already exists")
+        print("Directory ", folder, " already exists")
 
-    zfile = Path(folder+filename)
+    zfile = Path(folder + filename)
     if not zfile.is_file() or force:
         print(f"Downloading {filename} from {url}")
-        urlretrieve(url, folder+filename)
+        urlretrieve(url, folder + filename)
 
     print(f"Unzipping {filename}")
-    with zipfile.ZipFile(folder+filename, 'r') as zip_ref:
+    with zipfile.ZipFile(folder + filename, 'r') as zip_ref:
         zip_ref.extractall(folder)
 
     print(f"Converting files in {folder}")
@@ -115,24 +119,25 @@ def downloadSky(filename='sky.zip',
     print(f"Download and Convert Complete")
 
 
-def downloadCOSKEL(filename='SKEL_v1.1.zip',
-                   folder=f'{DefaultFolder}',
-                   url='https://github.com/jkoteswarrao/Object-Co-skeletonization-with-Co-segmentation/raw/master/CO-SKEL_v1.1.zip',
-                   datafolder=DefaultFolder,
-                   force=True):
+def downloadCOSKEL(
+        filename='SKEL_v1.1.zip',
+        folder=f'{DefaultFolder}',
+        url='https://github.com/jkoteswarrao/Object-Co-skeletonization-with-Co-segmentation/raw/master/CO-SKEL_v1.1.zip',
+        datafolder=DefaultFolder,
+        force=True):
     if not os.path.exists(folder):
         os.makedirs(folder)
-        print("Directory ", folder,  " Created ")
+        print("Directory ", folder, " Created ")
     else:
-        print("Directory ", folder,  " already exists")
+        print("Directory ", folder, " already exists")
 
-    zfile = Path(folder+filename)
+    zfile = Path(folder + filename)
     if not zfile.is_file() or force:
         print(f"Downloading {filename} from {url}")
-        urlretrieve(url, folder+filename)
+        urlretrieve(url, folder + filename)
 
     print(f"Unzipping {filename}")
-    with zipfile.ZipFile(folder+filename, 'r') as zip_ref:
+    with zipfile.ZipFile(folder + filename, 'r') as zip_ref:
         zip_ref.extractall(folder)
 
     print(f"Download and Convert Complete")
@@ -145,8 +150,7 @@ def getSkyFolderLists(outputfolder='', folder=DefaultFolder):
     maskfolder = f"{folder}/sky/groundtruth/"
 
     #print(f"{imagefolder} {maskfolder}")
-    imagenames = glob.glob(f'{imagefolder}/*.jpg')
-    imagenames.sort()
+    imagenames = sorted(glob.glob(f'{imagefolder}/*.jpg'))
     masknames = []
     outputnames = []
     for index, name in enumerate(imagenames):
@@ -165,8 +169,7 @@ def getKomatsunaFolderLists(outputfolder='', folder=DefaultFolder):
     imagefolder = f"{folder}/KOMATSUNA/rgbd_plant/"
     maskfolder = f"{folder}/KOMATSUNA/rgbd_label/"
 
-    imagenames = glob.glob(f'{imagefolder}*.png')
-    imagenames.sort()
+    imagenames = sorted(glob.glob(f'{imagefolder}*.png'))
     masknames = []
     outputnames = []
     for index, name in enumerate(imagenames):
@@ -185,8 +188,7 @@ def getCOSKELFolderlists(outputfolder='output/', folder=DefaultFolder):
     imagefolder = Path(f"{folder}/CO-SKEL_v1.1/images/")
     maskfolder = Path(f"{folder}/CO-SKEL_v1.1/GT_masks/")
 
-    imagePATHnames = list(Path(f'{imagefolder}').rglob('*.jpg'))
-    imagePATHnames.sort()
+    imagePATHnames = sorted(Path(f'{imagefolder}').rglob('*.jpg'))
     imagenames = []
     masknames = []
     outputnames = []
@@ -205,8 +207,8 @@ def getCOSKELFolderlists(outputfolder='output/', folder=DefaultFolder):
 
 def getBMCVFolderLists(outputfolder=''):
     pth = pathlib.Path(__file__).parent.absolute()
-    imagefolder = str(pth)+"/../Image_data/BMCV/"
-    maskfolder = str(pth)+"/../Image_data/BMCV/"
+    imagefolder = str(pth) + "/../Image_data/BMCV/"
+    maskfolder = str(pth) + "/../Image_data/BMCV/"
 
     imagenames = []
     masknames = []

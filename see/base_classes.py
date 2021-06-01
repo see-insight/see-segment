@@ -28,7 +28,7 @@ class param_space(dict):
 
     @classmethod
     def add(cls, key, prange, description):
-        """This is a class function which adds in parameters. 
+        """This is a class function which adds in parameters.
 
         Inputs:
             key - the paramter name
@@ -37,7 +37,7 @@ class param_space(dict):
         """
         cls.descriptions[key] = description
         cls.ranges[key] = prange
-        if not key in cls.pkeys:
+        if key not in cls.pkeys:
             cls.pkeys.append(key)
 
     def addall(self, params):

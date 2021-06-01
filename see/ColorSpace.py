@@ -1,15 +1,9 @@
-import copy
-import inspect
-import random
-
-import sys
-import logging
 import numpy as np
-import skimage
 from skimage import color
 from see.base_classes import param_space, algorithm
 
-# TODO My guess is this algorithm is very slow.  We need to use a cache to speed it up.
+# TODO My guess is this algorithm is very slow.  We need to use a cache to
+# speed it up.
 
 
 class color_params(param_space):
@@ -18,11 +12,19 @@ class color_params(param_space):
     pkeys = []
 
 
-color_params.add('colorspace',
-                 ['RGB', 'HSV', 'RGB CIE', 'XYZ', 'YUV',
-                     'YIQ', 'YPbPr', 'YCbCr', 'YDbDr'],
-                 "Pick a colorspace [‘RGB’, ‘HSV’, ‘RGB CIE’, ‘XYZ’, ‘YUV’, ‘YIQ’, ‘YPbPr’, ‘YCbCr’, ‘YDbDr’]"
-                 )
+color_params.add(
+    'colorspace',
+    [
+        'RGB',
+        'HSV',
+        'RGB CIE',
+        'XYZ',
+        'YUV',
+        'YIQ',
+        'YPbPr',
+        'YCbCr',
+        'YDbDr'],
+    "Pick a colorspace [‘RGB’, ‘HSV’, ‘RGB CIE’, ‘XYZ’, ‘YUV’, ‘YIQ’, ‘YPbPr’, ‘YCbCr’, ‘YDbDr’]")
 color_params.add('multichannel',
                  [True, False],
                  "True/False parameter"
@@ -39,8 +41,8 @@ class colorspace(algorithm):
         """function that returns a single channel from an image
         ['RGB', ‘HSV’, ‘RGB CIE’, ‘XYZ’, ‘YUV’, ‘YIQ’, ‘YPbPr’, ‘YCbCr’, ‘YDbDr’]
         """
-        dimention = 3
-        if (len(img.shape) == 2):
+
+        if len(img.shape) == 2:
             c_img = img.copy()
             img = np.zeros([c_img.shape[0], c_img.shape[1], 3])
             img[:, :, 0] = c_img
@@ -48,13 +50,14 @@ class colorspace(algorithm):
             img[:, :, 2] = c_img
             return [img, c_img, 1]
 
-        if(colorspace == 'RGB'):
+        if colorspace == 'RGB':
             return [img, img[:, :, channel], 3]
         else:
             space = color.convert_colorspace(img, 'RGB', colorspace)
             return [space, space[:, :, channel], 3]
 
-    # TODO Update to allow paramlist to be either a list or the parameters class
+    # TODO Update to allow paramlist to be either a list or the parameters
+    # class
     def __init__(self, paramlist=None):
         """Generate algorithm params from parameter list."""
         # init_params()
@@ -65,7 +68,7 @@ class colorspace(algorithm):
 
         self.chache = dict()
         if paramlist:
-            if (type(paramlist) == list):
+            if isinstance(paramlist, list):
                 self.params.fromlist(paramlist)
             else:
                 self.params = paramlist

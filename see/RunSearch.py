@@ -1,9 +1,9 @@
 import argparse
 import sys
+import random
 import matplotlib.pylab as plt
 import imageio
 from see import GeneticSearch, Segmentors
-import random
 
 
 from see.Segmentors import segmentor
@@ -12,9 +12,10 @@ from see.Workflow import workflow
 from see.Segment_Fitness import segment_fitness
 from see import base_classes
 from see.git_version import git_version
-    
-def continuous_search(input_file, 
-                      input_mask, 
+
+
+def continuous_search(input_file,
+                      input_mask,
                       startfile=None,
                       checkpoint='checkpoint.txt',
                       best_mask_file="temp_mask.png",
@@ -35,9 +36,9 @@ def continuous_search(input_file,
     best_fitness = 2.0
     iteration = 0
 
-    while(best_fitness > 0.0):
+    while best_fitness > 0.0:
         print(f"running {iteration} iteration")
-        if(startfile):
+        if startfile:
             population = my_evolver.run(ngen=1, startfile=startfile)
         else:
             population = my_evolver.run(ngen=1)
@@ -50,14 +51,15 @@ def continuous_search(input_file,
         mydata = seg.pipe(mydata)
 
         fitness = mydata.fitness
-        if (fitness < best_fitness):
+        if fitness < best_fitness:
             best_fitness = fitness
             print(
                 f"\n\n\n\nIteration {iteration} Finess Improved to {fitness}")
             my_evolver.writepop(population, filename="checkpoint.pop")
-            imageio.imwrite(best_mask_file,mydata.mask);
-            GeneticSearch.write_algo_vector(fpop_file, f"[{iteration}, {fitness}, {params}]\n") 
-            ###TODO Output [fitness, seg]
+            imageio.imwrite(best_mask_file, mydata.mask)
+            GeneticSearch.write_algo_vector(
+                fpop_file, f"[{iteration}, {fitness}, {params}]\n")
+            # TODO Output [fitness, seg]
         iteration += 1
 
 
@@ -74,12 +76,13 @@ def geneticsearch_commandline():
     parser.add_argument('--seed', type=int, default=1,
                         help='Input seed (integer)')
     args = parser.parse_args()
-    
+
     print('\n\n')
     print(args)
     print('\n\n')
 
-    # TODO: add this to the setup.py installer so we include the has in the install.
+    # TODO: add this to the setup.py installer so we include the has in the
+    # install.
     print(f"Current Git HASH: {git_version()}")
 
     random.seed(args.seed)

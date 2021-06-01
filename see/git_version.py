@@ -1,4 +1,5 @@
-# Code from: https://stackoverflow.com/questions/14989858/get-the-current-git-hash-in-a-python-script#21901260
+# Code from:
+# https://stackoverflow.com/questions/14989858/get-the-current-git-hash-in-a-python-script#21901260
 
 # Which cite's numpy setup.py
 import os
