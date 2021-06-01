@@ -12,6 +12,8 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier as kNearestNeighbors
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+from sklearn.ensemble import RandomForestClassifier
 
 from see.base_classes import param_space, algorithm
 
@@ -159,7 +161,7 @@ class DecisionTreeClassifier(Classifier):
         self.set_params(paramlist)
 
     def evaluate(self, dataset):
-        """The evaluate function for K Nearest-Neighbors"""
+        """The evaluate function for Decision Trees."""
 
         h = self.params["h"]  # step size in the mesh
 
@@ -187,3 +189,93 @@ class DecisionTreeClassifier(Classifier):
 
 
 Classifier.add_classifier('Decision Tree', DecisionTreeClassifier)
+
+
+class RandomForestContainer(Classifier):
+    """Perform Random Forest classification algorithm."""
+
+    def __init__(self, paramlist=None):
+        super().__init__()
+        self.params = ClassifierParams()
+
+        self.params["h"] = .02
+        self.params["max_depth"] = 5
+        self.params["n_estimators"] = 10
+        self.params["max_features"] = 1
+        self.set_params(paramlist)
+
+    def evaluate(self, dataset):
+        """The evaluate function for Decision Trees."""
+
+        h = self.params["h"]  # step size in the mesh
+
+        clf = RandomForestClassifier(
+            max_depth=self.params["max_depth"],
+            n_estimators=self.params["n_estimators"],
+            max_features=self.params["max_features"])
+        X, y = dataset
+        X = StandardScaler().fit_transform(X)
+
+        # TODO: test_size and random_state are hard-coded
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=.4, random_state=42)
+
+        clf.fit(X_train, y_train)
+        score = clf.score(X_test, y_test)
+
+        # TODO: Generating the mesh grid can be a Class method
+        x_min, x_max = X[:, 0].min() - .5, X[:, 0].max() + .5
+        y_min, y_max = X[:, 1].min() - .5, X[:, 1].max() + .5
+        xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
+                             np.arange(y_min, y_max, h))
+
+        Z = clf.predict_proba(np.c_[xx.ravel(), yy.ravel()])[:, 1]
+        Z = Z.reshape(xx.shape)
+
+        return [Z, score]
+
+
+Classifier.add_classifier('Random Forest', RandomForestContainer)
+
+
+class MLPContainer(Classifier):
+    """Perform MLP Neural Network classification algorithm."""
+
+    def __init__(self, paramlist=None):
+        super().__init__()
+        self.params = ClassifierParams()
+
+        self.params["h"] = .02
+        self.params["max_iter"] = 1000
+        self.params["alpha"] = 1
+        self.set_params(paramlist)
+
+    def evaluate(self, dataset):
+        """The evaluate function for MLP."""
+
+        h = self.params["h"]  # step size in the mesh
+
+        clf = MLPClassifier(alpha=1, max_iter=1000)
+        X, y = dataset
+        X = StandardScaler().fit_transform(X)
+
+        # TODO: test_size and random_state are hard-coded
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=.4, random_state=42)
+
+        clf.fit(X_train, y_train)
+        score = clf.score(X_test, y_test)
+
+        # TODO: Generating the mesh grid can be a Class method
+        x_min, x_max = X[:, 0].min() - .5, X[:, 0].max() + .5
+        y_min, y_max = X[:, 1].min() - .5, X[:, 1].max() + .5
+        xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
+                             np.arange(y_min, y_max, h))
+
+        Z = clf.predict_proba(np.c_[xx.ravel(), yy.ravel()])[:, 1]
+        Z = Z.reshape(xx.shape)
+
+        return [Z, score]
+
+
+Classifier.add_classifier('MLP Neural Network', MLPContainer)
