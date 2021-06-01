@@ -15,8 +15,6 @@ from see.Workflow import workflow
 from see.Segment_Fitness import segment_fitness
 from see import base_classes 
 from see.git_version import git_version
-<<<<<<< HEAD
-=======
 
 def write_algo_vector(fpop_file, outstring):
     """Write list of algorithm parameters to string."""
@@ -30,7 +28,6 @@ def read_algo_vector(fpop_file):
         for line in myfile:
             inlist.append(eval(line))
     return inlist
->>>>>>> nate-docs2
     
 def continuous_search(input_file, 
                       input_mask, 
