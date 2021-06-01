@@ -6,6 +6,7 @@ import subprocess
 
 # Return the git revision as a string
 def git_version():
+"""Return git revision as a string."""
     def _minimal_ext_cmd(cmd):
         # construct minimal environment
         env = {}
