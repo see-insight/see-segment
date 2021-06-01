@@ -1,7 +1,11 @@
-"""This produces a GUI that allows users to switch between segmentation
- algorithms and alter the parameters manually using a slider. It shows two images,
-  one with the original image with the resulting mask and one with the original image
-   with the negative of the resulting mask."""
+"""Produces a GUI.
+
+Allows users to switch between segmentation
+algorithms and alter the parameters manually using a slider. It shows two images,
+one with the original image with the resulting mask and one with the original image
+with the negative of the resulting mask.
+"""
+
 import matplotlib.pylab as plt
 import ipywidgets as widgets
 from IPython.display import display, clear_output
@@ -51,7 +55,8 @@ def show_segment(img, mask):
 
 
 def pickimage(folder='Image_data/Examples/'):
-    # def pickimage(
+    """Choose image from available set of images."""
+    #def pickimage(
 
     directory = Path(folder)
 
@@ -96,6 +101,7 @@ def pickimage(folder='Image_data/Examples/'):
 
 
 def picksegment(algorithms):
+    """Provide capabilities for user to choose a segmentation."""
     w = widgets.Dropdown(
         options=algorithms,
         value=algorithms[0],
@@ -124,7 +130,7 @@ def picksegment(algorithms):
 
 
 def showimage(img, ax=None, color='RGB', multichannel=True, channel=2):
-
+    """Display image as part of GUI."""
     if not ax:
         fig = plt.figure()
         ax = fig.gca()
@@ -191,6 +197,7 @@ def showimage(img, ax=None, color='RGB', multichannel=True, channel=2):
 
 
 def colorwidget(img, paramlist=None):
+    """Display info to user on colorspace if paramlist is not empty."""
     if paramlist:
         seg = colorspace(paramlist=paramlist)
     else:
@@ -247,6 +254,7 @@ def colorwidget(img, paramlist=None):
 
 def segmentwidget(img, params=None, alg=None):
     """Generate GUI. Produce slider for each parameter for the current segmentor.
+    
      Show both options for the masked image.
 
     Keyword arguments:
@@ -291,7 +299,8 @@ def segmentwidget(img, params=None, alg=None):
         widglist.append(thiswidg)
         widg[ppp] = thiswidg
 
-    def func(**kwargs):
+    
+    def func(**kwargs): 
         """Find mask and fitness for current algorithm. Show masked image."""
         print(seg.params["algorithm"])
         for k in kwargs:
