@@ -52,9 +52,8 @@ class colorspace(algorithm):
 
         if colorspace == 'RGB':
             return [img, img[:, :, channel], 3]
-        else:
-            space = color.convert_colorspace(img, 'RGB', colorspace)
-            return [space, space[:, :, channel], 3]
+        space = color.convert_colorspace(img, 'RGB', colorspace)
+        return [space, space[:, :, channel], 3]
 
     # TODO Update to allow paramlist to be either a list or the parameters
     # class
@@ -88,13 +87,10 @@ class colorspace(algorithm):
         if len(img.shape) > 2:
             multichannel = False
 
-        [img, channel, dimention] = colorspace.getchannel(
+        [img, channel, _] = colorspace.getchannel(
             img, self.params['colorspace'], self.params['channel'])
 
-        if multichannel:
-            return img
-        else:
-            return channel
+        return img if multichannel else channel
 
     def pipe(self, data):
         data.inputimage = data.img

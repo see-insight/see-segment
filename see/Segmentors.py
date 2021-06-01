@@ -2,10 +2,6 @@
  This libary actually does not incode the search code itself, instead it just defines
   the search parameters and the evaluation funtions."""
 
-import copy
-import inspect
-import random
-
 from collections import OrderedDict
 import sys
 import logging
@@ -100,7 +96,6 @@ class segmentor(algorithm):
 
     def evaluate(self, img):
         """Run segmentation algorithm to get inferred mask."""
-        import sys
 
         #print(f"Running {self.params}")
         sys.stdout.flush()

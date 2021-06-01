@@ -10,8 +10,6 @@ class pipedata(object):
     store output data from a wide variety of algorithms. Most algorithms in the pipe jsut add
     data to this objet which is passed in as an input argument and returned as an output argument.
     """
-    pass
-
 
 class param_space(dict):
     """Construct an parameter dictionary that represents the search space.
