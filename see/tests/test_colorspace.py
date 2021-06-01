@@ -27,7 +27,6 @@ def test_make_colorspace():
 def test_colorspace_evaluate():
     """Unit test for evaluate function."""
     from see import ColorSpace
-    from see import base_classes
     img, gmask = test_loading_image_examples()
     cs = ColorSpace.colorspace()
     test = cs.evaluate(img)
