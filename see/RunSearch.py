@@ -83,7 +83,7 @@ def continuous_search(input_file,
             seg = workflow(paramlist=best_so_far)
             mydata = seg.pipe(mydata)
             imageio.imwrite(mask_file,mydata.mask);
-            write_vector(f"{outfile}", f"[{iteration}, {fitness}, {best_so_far}]\n") 
+            write_vector(f"{outfile}", f"[{iteration}, {fitness}, {best_so_far}]") 
         iteration += 1
 
 def geneticsearch_commandline():
