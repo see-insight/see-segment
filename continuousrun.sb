@@ -20,6 +20,12 @@ MINE=`head -n $SLURM_ARRAY_TASK_ID ${SLURM_JOB_ID}.txt | tail -n 1`
 
 echo seesearch seed=${SLURM_JOB_ID} $MINE
 rm ${SLURM_JOB_ID}.txt
-seesearch --seed ${SLURM_JOB_ID} $MINE
+seesearch --seed ${SLURM_JOB_ID} $MINE &
+export PID=$!
+
+sleep 85800 
+kill $PID 
+
+sbatch --array=${SLURM_ARRAY_TASK_ID} continuousrun.sb 
 
 echo "FINNISHED RUNNING SCRIPT"
