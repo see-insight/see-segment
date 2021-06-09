@@ -756,8 +756,9 @@ class MorphGeodesicActiveContour(segmentor):
     # Abbrevieation for algorithm = AC
 
     def __init__(self, paramlist=None):
-        """Get parameters from parameter list that are used in segmentation algorithm.
-         Assign default values to these parameters."""
+    """Get parameters from parameter list that are used in segmentation algorithm.
+    Assign default values to these parameters.
+    """
         super(MorphGeodesicActiveContour, self).__init__(paramlist)
         if not paramlist:
             self.params["algorithm"] = "MorphGeodesicActiveContour"
@@ -783,7 +784,6 @@ class MorphGeodesicActiveContour(segmentor):
         output -- resulting segmentation mask from algorithm.
 
         """
-
         # TODO We may want to move this? We need a number 1-4 smoothing iterations
         smoothing = int(self.params["alpha1"]*4)
         balloon = (self.params["alpha2"]*100)-50

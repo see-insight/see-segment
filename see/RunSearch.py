@@ -1,3 +1,6 @@
+
+"""File RunSearch.py, runs genetic search continuously."""
+
 import argparse
 import sys
 import matplotlib.pylab as plt
@@ -12,24 +15,36 @@ from see.Workflow import workflow
 from see.Segment_Fitness import segment_fitness
 from see import base_classes 
 from see.git_version import git_version
+<<<<<<< HEAD
+=======
 
 def write_algo_vector(fpop_file, outstring):
+    """Write list of algorithm parameters to string."""
     with open(fpop_file, 'a') as myfile:
         myfile.write(f'{outstring}\n')
         
 def read_algo_vector(fpop_file):
+    """Create list of algorithm parameters for each iteration."""
     inlist = []
     with open(fpop_file,'r') as myfile:
         for line in myfile:
             inlist.append(eval(line))
     return inlist
+>>>>>>> nate-docs2
     
 def continuous_search(input_file, 
                       input_mask, 
-                      startfile='',
+                      startfile=None,
                       checkpoint='checkpoint.txt',
                       best_mask_file="temp_mask.png", 
                       pop_size=10):
+    """Run genetic search continuously.
+    
+    input_file: the original image
+    input_mask: the ground truth mask for the image
+    pop_size: the size of the population
+    Runs indefinitely unless a perfect value (0.0) is reached.
+    """
     mydata = base_classes.pipedata()
     mydata.img = imageio.imread(input_file)
     mydata.gmask = imageio.imread(input_mask)
@@ -65,14 +80,16 @@ def continuous_search(input_file,
             best_fitness = fitness
             print(f"\n\n\n\nIteration {iteration} Finess Improved to {fitness}")
             my_evolver.writepop(population, filename="checkpoint.pop")
-            imageio.imwrite(best_mask_file,mask);
-            write_algo_vector(fpop_file, f"[{iteration}, {fitness}, {params}]\n") 
+            imageio.imwrite(best_mask_file,mydata.mask);
+            GeneticSearch.write_algo_vector(fpop_file, f"[{iteration}, {fitness}, {params}]\n") 
             ###TODO Output [fitness, seg]
         iteration += 1
 
 def geneticsearch_commandline():
-    """Rename Instructor notebook using git and fix all
-    student links in files."""
+    """Rename Instructor notebook using git.
+    
+    Fix all student links in files.
+    """
     parser = argparse.ArgumentParser(description='Run Genetic Search on Workflow')
 
     parser.add_argument('input_file', help=' input image')
@@ -81,7 +98,6 @@ def geneticsearch_commandline():
     parser.add_argument('--seed', type=int,default=1, help='Input seed (integer)') 
     args = parser.parse_args()
     
-    print("HELLO WORLD DIRK")
     print('\n\n')
     print(args)
     print('\n\n')
