@@ -52,9 +52,6 @@ ClassifierParams.add("n_neighbors",
                      [i for i in range(1, 1001)],
                      'Number of neighbors to use')
 
-ClassifierParams.add("max_features",
-                     [i for i in range(1, 1001)],
-                     'The number of features to consider when looking for the best split')
 
 class Classifier(algorithm):
     """Base class for classifier classes defined below.
@@ -138,7 +135,11 @@ class KNeighborsClassifier(Classifier):
         num_samples = len(testing_set.y)
         # TODO n_neighbors must be <= number of samples
         # Modulo might not be the best way to do this.
-        clf = kNearestNeighbors(n_neighbors=((self.params["n_neighbors"] % num_samples)) + 1)
+        neighbors_param = self.params["n_neighbors"]
+        print("N NEIGHBORS", neighbors_param)
+        param_in_range = (neighbors_param <= num_samples) and (neighbors_param > 0)
+        print("PARAM IN RANGE", param_in_range)
+        clf = kNearestNeighbors(n_neighbors=(neighbors_param if param_in_range else (neighbors_param % num_samples + 1)))
         clf.fit(training_set.X, training_set.y)
         return clf.predict(testing_set.X)
 
@@ -178,28 +179,20 @@ class RandomForestContainer(Classifier):
         self.params["algorithm"] = "Random Forest"
         self.params["max_depth"] = 5
         self.params["n_estimators"] = 10
-        self.params["max_features"] = 1
         self.set_params(paramlist)
 
     def evaluate(self, training_set, testing_set):
         """The evaluate function for Decision Trees."""
-        # TODO: sometimes num_features = 0, which seems strange.
-        num_features = len(np.unique(np.array(testing_set.y)))
-        print("num_features", num_features)
-        print("max_features", (0 if (num_features == 0) else (self.params["max_features"] % num_features) + 1))
+        
         clf = RandomForestClassifier(
             max_depth=self.params["max_depth"],
-            n_estimators=self.params["n_estimators"],
-            max_features=(0 if (num_features == 0) else (self.params["max_features"] % num_features) + 1))
-        # TODO: max_features must be bewteen 0 and number of features.
-        # Modulo might not be the best way to do this.
+            n_estimators=self.params["n_estimators"])
 
         clf.fit(training_set.X, training_set.y)
         return clf.predict(testing_set.X)
 
 
 Classifier.add_classifier('Random Forest', RandomForestContainer)
-
 
 class MLPContainer(Classifier):
     """Perform MLP Neural Network classification algorithm."""
