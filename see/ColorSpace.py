@@ -1,7 +1,7 @@
 """ColorSpace.py file."""
 
 from skimage import color
-from base_classes import param_space, algorithm
+from see.base_classes import param_space, algorithm
 import copy
 import inspect
 import random
@@ -48,7 +48,7 @@ color_params.add('channel',
 
 
 class colorspace(algorithm):
-       """Class colorspace."""
+    """colorspace."""
         
     def getchannel(img, colorspace, channel):
         """Function that returns a single channel from an image.

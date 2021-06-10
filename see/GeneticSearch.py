@@ -241,7 +241,7 @@ class Evolver(object):
 
     # TODO add some checking (see next comment)
     def copy_pop_list(self, tpop):
-    """Copy population list to new list"""
+        """Copy population list to new list"""
         new_tpop = []
         for individual in tpop:
             new_tpop.append(self.copy_individual(individual))
@@ -447,20 +447,20 @@ class Evolver(object):
             population = self.newpopulation()
             if checkpoint:
                 self.writepop(population, filename=f"{checkpoint}")
+        else:
+            print(f"Using existing population")
 
-        for cur_g in range(0, ngen + 1):
-            print(
-                f"Generation {cur_g}/{ngen} of population size {len(population)}")
+        for cur_g in range(0, ngen+1):
+            print(f"Generation {cur_g}/{ngen} of population size {len(population)}")
 
             _, population = self.popfitness(population)
 
             bestsofar = self.hof[0]
 
             # Create a new instance from the current algorithm
-            seg = self.algo_constructor(bestsofar)
-
-            self.data = seg.pipe(self.data)
-            fitness = self.data.fitness
+            # seg = self.algo_constructor(bestsofar)
+            # self.data = seg.pipe(self.data)
+            fitness = bestsofar.fitness.values[0]
             print(f"#BEST [{fitness},  {bestsofar}]")
 
             if checkpoint and cur_g % cp_freq == 0:
@@ -469,8 +469,10 @@ class Evolver(object):
                 self.writepop(population, filename=f"{checkpoint}")
                 for cur_p in range(len(population)):
                     logging.getLogger().info(population[cur_p])
-            if cur_g < ngen + 1:
+
+            if cur_g < ngen+1:
                 if bestsofar.fitness.values[0] >= 0.95:
+                    print("Bestsofar not good enough (>=0.95) restarting population")
                     population = self.newpopulation()
                   # if the best fitness value is at or above the
                   # threshold of 0.95, discard the entire current
@@ -480,6 +482,7 @@ class Evolver(object):
                   # as mutate arguments
                   # should have same result as self.new_population()
                 else:
+                    print("Mutating Population")
                     population = self.mutate(population)
                   # if the best fitness value is below this threshold,
                   # proceed as normal, mutating the current population

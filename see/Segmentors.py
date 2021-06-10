@@ -12,9 +12,7 @@ import skimage
 from skimage import segmentation
 from skimage import color
 
-#from see.base_classes import param_space, algorithm
-from base_classes import param_space, algorithm
-# "yeah"
+from see.base_classes import param_space, algorithm
 
 
 class seg_params(param_space):
