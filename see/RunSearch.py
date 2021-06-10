@@ -1,5 +1,9 @@
+
+"""File RunSearch.py, runs genetic search continuously."""
+
 import argparse
 import sys
+import random
 import matplotlib.pylab as plt
 import imageio
 from see import GeneticSearch, Segmentors
@@ -10,7 +14,7 @@ from see.Segmentors import segmentor
 from see.ColorSpace import colorspace
 from see.Workflow import workflow
 from see.Segment_Fitness import segment_fitness
-from see import base_classes 
+from see import base_classes
 from see.git_version import git_version
 
 def read_pop(filename):
@@ -32,15 +36,36 @@ def write_vector(fpop_file, outstring):
     with open(fpop_file, 'a') as myfile:
         myfile.write(f'{outstring}\n')
 
+=======
+def write_algo_vector(fpop_file, outstring):
+    """Write list of algorithm parameters to string."""
+    with open(fpop_file, 'a') as myfile:
+        myfile.write(f'{outstring}\n')
+        
+def read_algo_vector(fpop_file):
+    """Create list of algorithm parameters for each iteration."""
+    inlist = []
+    with open(fpop_file,'r') as myfile:
+        for line in myfile:
+            inlist.append(eval(line))
+    return inlist
+    
 def continuous_search(input_file, 
                       input_mask, 
                       startfile=None,
                       checkpoint='checkpoint.txt',
+                      best_mask_file="temp_mask.png",
                       pop_size=10):
+    """Run genetic search continuously.
+    
+    input_file: the original image
+    input_mask: the ground truth mask for the image
+    pop_size: the size of the population
+    Runs indefinitely unless a perfect value (0.0) is reached.
+    """
     mydata = base_classes.pipedata()
     mydata.img = imageio.imread(input_file)
     mydata.gmask = imageio.imread(input_mask)
-
 
     pname = Path(input_file)
     outfile=pname.parent.joinpath(f"_{pname.stem}.txt")
@@ -67,8 +92,8 @@ def continuous_search(input_file,
         print(f"######### Done importing previous list {best_fitness}")
 
     iteration = 0
- 
-    while(best_fitness > 0.0):
+
+    while best_fitness > 0.0:
         print(f"running {iteration} iteration")
         population = my_evolver.run(ngen=1,population=population)
             
@@ -86,23 +111,27 @@ def continuous_search(input_file,
             write_vector(f"{outfile}", f"[{iteration}, {fitness}, {best_so_far}]") 
         iteration += 1
 
+
 def geneticsearch_commandline():
-    """Rename Instructor notebook using git and fix all
-    student links in files."""
+    """Rename Instructor notebook using git.
+    
+    Fix all student links in files.
+    """
     parser = argparse.ArgumentParser(description='Run Genetic Search on Workflow')
 
     parser.add_argument('input_file', help=' input image')
     parser.add_argument('input_mask', help=' input Ground Truthe Mask')
     parser.add_argument('--seed', type=int,default=1, help='Input seed (integer)') 
     args = parser.parse_args()
-    
+
     print('\n\n')
     print(args)
     print('\n\n')
-    
-    #TODO: add this to the setup.py installer so we include the has in the install. 
+
+    # TODO: add this to the setup.py installer so we include the has in the
+    # install.
     print(f"Current Git HASH: {git_version()}")
-    
+
     random.seed(args.seed)
     
     continuous_search(args.input_file, args.input_mask);
