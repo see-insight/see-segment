@@ -27,12 +27,34 @@ class ClassifierParams(param_space):
 ClassifierParams.add('algorithm',
                      [],
                      "string code for the algorithm")
+
+# TODO: Many of these parameters' ranges were set arbitrarily.
+# The max_param were especially arbitrary as some of the documentation
+# do not give a suggested range.
+
 ClassifierParams.add("max_iter",
                      [i for i in range(1, 1001)],
                      'Number of iterations for the algorithm')
+
 ClassifierParams.add("alpha",
                      [float(i)/10000 for i in range(1, 10000)],
                      'regularization parameter')
+
+ClassifierParams.add("max_depth",
+                     [i for i in range(1, 1001)],
+                     'Maximum depth of tree')
+
+ClassifierParams.add("n_estimators",
+                     [i for i in range(1, 1001)],
+                     'Number of trees in the forest')
+
+ClassifierParams.add("n_neighbors",
+                     [i for i in range(1, 1001)],
+                     'Number of neighbors to use')
+
+ClassifierParams.add("max_features",
+                     [i for i in range(1, 1001)],
+                     'The number of features to consider when looking for the best split')
 
 class Classifier(algorithm):
     """Base class for classifier classes defined below.
@@ -51,14 +73,19 @@ class Classifier(algorithm):
         self.params["algorithm"] = "MLP Neural Network"
         self.params["max_iter"] = 200
         self.params["alpha"] = 0.0001
+        self.params["max_depth"] = 1
+        self.params["n_estimators"] = 100
+        self.params["n_neighbors"] = 5
+        self.params["max_features"] = 1
+        
         self.set_params(paramlist)
 
     # Input: labelled dataset
     # Output: Tuple with prediction probabilities, score
     def evaluate(self, training_set, testing_set):
         """Instance evaluate method. Needs to be overridden by subclasses."""
-        print("WARNING: Default evaluation uses ", self.params["algorithm"])
-        return testing_set.y
+        self.thisalgo = Classifier.algorithmspace[self.params['algorithm']](self.params)
+        return self.thisalgo.evaluate(training_set, testing_set)
 
     def pipe(self, data):
         print(data)
@@ -84,6 +111,7 @@ class GaussianNBClassifier(Classifier):
 
     def evaluate(self, training_set, testing_set):
         """The evaluate function for Gaussian Naive Bayes"""
+        print("HHHH RUNNING EVAL FOR GNB")
         clf = GaussianNB()
         clf.fit(training_set.X, training_set.y)
         return clf.predict(testing_set.X)
@@ -100,13 +128,17 @@ class KNeighborsClassifier(Classifier):
         self.params = ClassifierParams()
         self.params["algorithm"] = "K Nearest Neighbors"
 
-        self.params["k"] = 3
+        self.params["n_neighbors"] = 3
         self.set_params(paramlist)
 
     def evaluate(self, training_set, testing_set):
         """The evaluate function for K Nearest-Nei3ghbors"""
+        print("RUNNING EVAL FOR KNN")
 
-        clf = kNearestNeighbors(k=self.params["k"])
+        num_samples = len(testing_set.y)
+        # TODO n_neighbors must be <= number of samples
+        # Modulo might not be the best way to do this.
+        clf = kNearestNeighbors(n_neighbors=((self.params["n_neighbors"] % num_samples)) + 1)
         clf.fit(training_set.X, training_set.y)
         return clf.predict(testing_set.X)
 
@@ -151,11 +183,16 @@ class RandomForestContainer(Classifier):
 
     def evaluate(self, training_set, testing_set):
         """The evaluate function for Decision Trees."""
-
+        # TODO: sometimes num_features = 0, which seems strange.
+        num_features = len(np.unique(np.array(testing_set.y)))
+        print("num_features", num_features)
+        print("max_features", (0 if (num_features == 0) else (self.params["max_features"] % num_features) + 1))
         clf = RandomForestClassifier(
             max_depth=self.params["max_depth"],
             n_estimators=self.params["n_estimators"],
-            max_features=self.params["max_features"])
+            max_features=(0 if (num_features == 0) else (self.params["max_features"] % num_features) + 1))
+        # TODO: max_features must be bewteen 0 and number of features.
+        # Modulo might not be the best way to do this.
 
         clf.fit(training_set.X, training_set.y)
         return clf.predict(testing_set.X)
