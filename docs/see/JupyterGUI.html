@@ -5,9 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.9.2" />
 <title>see.JupyterGUI API documentation</title>
-<meta name="description" content="This produces a GUI that allows users to switch between segmentation
-algorithms and alter the parameters manually using a slider. It shows two
-…" />
+<meta name="description" content="Produces a GUI …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -24,7 +22,8 @@ algorithms and alter the parameters manually using a slider. It shows two
 <h1 class="title">Module <code>see.JupyterGUI</code></h1>
 </header>
 <section id="section-intro">
-<p>This produces a GUI that allows users to switch between segmentation
+<p>Produces a GUI.</p>
+<p>Allows users to switch between segmentation
 algorithms and alter the parameters manually using a slider. It shows two images,
 one with the original image with the resulting mask and one with the original image
 with the negative of the resulting mask.</p>
@@ -32,10 +31,14 @@ with the negative of the resulting mask.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34;This produces a GUI that allows users to switch between segmentation
- algorithms and alter the parameters manually using a slider. It shows two images,
-  one with the original image with the resulting mask and one with the original image
-   with the negative of the resulting mask.&#34;&#34;&#34;
+<pre><code class="python">&#34;&#34;&#34;Produces a GUI.
+
+Allows users to switch between segmentation
+algorithms and alter the parameters manually using a slider. It shows two images,
+one with the original image with the resulting mask and one with the original image
+with the negative of the resulting mask.
+&#34;&#34;&#34;
+
 import matplotlib.pylab as plt
 import ipywidgets as widgets
 from IPython.display import display, clear_output
@@ -45,6 +48,7 @@ from see.ColorSpace import colorspace
 import imageio
 import numpy as np
 
+
 def showtwo(img, img2):
     &#34;&#34;&#34;Show two images side by side.&#34;&#34;&#34;
     fig = plt.figure(figsize=(20, 20))
@@ -53,6 +57,7 @@ def showtwo(img, img2):
     my_ax = fig.add_subplot(1, 2, 2)
     my_ax.imshow(img2)
     return fig
+
 
 def showthree(img, img1, img2):
     &#34;&#34;&#34;Show three images side by side.&#34;&#34;&#34;
@@ -64,6 +69,7 @@ def showthree(img, img1, img2):
     my_ax = fig.add_subplot(1, 3, 3)
     my_ax.imshow(img2)
     return fig
+
 
 def show_segment(img, mask):
     &#34;&#34;&#34;Show both options for segmenting using the current mask.
@@ -80,7 +86,9 @@ def show_segment(img, mask):
     fig = showtwo(im1, im2)
     return fig
 
+
 def pickimage(folder=&#39;Image_data/Examples/&#39;):
+    &#34;&#34;&#34;Choose image from available set of images.&#34;&#34;&#34;
     #def pickimage(
 
     directory = Path(folder)
@@ -90,13 +98,13 @@ def pickimage(folder=&#39;Image_data/Examples/&#39;):
     filelist = []
     masklist = []
     for file in allfiles:
-        if file.suffix ==&#34;.jpg&#34; or file.suffix ==&#34;.jpeg&#34; or file.suffix ==&#34;.JPEG&#34; or file.suffix ==&#34;.png&#34;:
-            if not &#34;_GT&#34; in file.name:
+        if file.suffix == &#34;.jpg&#34; or file.suffix == &#34;.jpeg&#34; or file.suffix == &#34;.JPEG&#34; or file.suffix == &#34;.png&#34;:
+            if &#34;_GT&#34; not in file.name:
                 filelist.append(file)
                 mask = directory.glob(f&#34;{file.stem}_GT*&#34;)
                 for m in mask:
                     masklist.append(m)
-    
+
     w = widgets.Dropdown(
         options=filelist,
         value=filelist[0],
@@ -104,18 +112,18 @@ def pickimage(folder=&#39;Image_data/Examples/&#39;):
     )
 
     def update(w):
-        clear_output(wait=True) # Clear output for dynamic display
+        clear_output(wait=True)  # Clear output for dynamic display
         display(w)
         w.img = imageio.imread(w.value)
         index = filelist.index(w.value)
         w.gmask = imageio.imread(masklist[index])
         if len(w.gmask.shape) &gt; 2:
-            w.gmask = w.gmask[:,:,0]
+            w.gmask = w.gmask[:, :, 0]
         fig = showtwo(w.img, w.gmask)
         print(f&#34;import imageio&#34;)
         print(f&#34;img = imageio.imread(\&#39;{w.value}\&#39;)&#34;)
         print(f&#34;gmask = imageio.imread(\&#39;{masklist[index]}\&#39;)&#34;)
-        
+
     def on_change(change):
         if change[&#39;type&#39;] == &#39;change&#39; and change[&#39;name&#39;] == &#39;value&#39;:
             update(w)
@@ -125,8 +133,8 @@ def pickimage(folder=&#39;Image_data/Examples/&#39;):
     return w
 
 
-
 def picksegment(algorithms):
+    &#34;&#34;&#34;Provide capabilities for user to choose a segmentation.&#34;&#34;&#34;
     w = widgets.Dropdown(
         options=algorithms,
         value=algorithms[0],
@@ -135,7 +143,7 @@ def picksegment(algorithms):
 
     def on_change(change):
         if change[&#39;type&#39;] == &#39;change&#39; and change[&#39;name&#39;] == &#39;value&#39;:
-            clear_output(wait=True) # Clear output for dynamic display
+            clear_output(wait=True)  # Clear output for dynamic display
             display(w)
             print(segmentor.algorithmspace[change[&#39;new&#39;]].__doc__)
             print(f&#34;\nsegmentor_name=\&#39;{w.value}\&#39;&#34;)
@@ -147,79 +155,82 @@ def picksegment(algorithms):
     return w
 
 
-#TODO: add more color representations in the output
+# TODO: add more color representations in the output
 &#34;&#34;&#34;
 &#39;Accent&#39;, &#39;Accent_r&#39;, &#39;Blues&#39;, &#39;Blues_r&#39;, &#39;BrBG&#39;, &#39;BrBG_r&#39;, &#39;BuGn&#39;, &#39;BuGn_r&#39;, &#39;BuPu&#39;, &#39;BuPu_r&#39;, &#39;CMRmap&#39;, &#39;CMRmap_r&#39;, &#39;Dark2&#39;, &#39;Dark2_r&#39;, &#39;GnBu&#39;, &#39;GnBu_r&#39;, &#39;Greens&#39;, &#39;Greens_r&#39;, &#39;Greys&#39;, &#39;Greys_r&#39;, &#39;OrRd&#39;, &#39;OrRd_r&#39;, &#39;Oranges&#39;, &#39;Oranges_r&#39;, &#39;PRGn&#39;, &#39;PRGn_r&#39;, &#39;Paired&#39;, &#39;Paired_r&#39;, &#39;Pastel1&#39;, &#39;Pastel1_r&#39;, &#39;Pastel2&#39;, &#39;Pastel2_r&#39;, &#39;PiYG&#39;, &#39;PiYG_r&#39;, &#39;PuBu&#39;, &#39;PuBuGn&#39;, &#39;PuBuGn_r&#39;, &#39;PuBu_r&#39;, &#39;PuOr&#39;, &#39;PuOr_r&#39;, &#39;PuRd&#39;, &#39;PuRd_r&#39;, &#39;Purples&#39;, &#39;Purples_r&#39;, &#39;RdBu&#39;, &#39;RdBu_r&#39;, &#39;RdGy&#39;, &#39;RdGy_r&#39;, &#39;RdPu&#39;, &#39;RdPu_r&#39;, &#39;RdYlBu&#39;, &#39;RdYlBu_r&#39;, &#39;RdYlGn&#39;, &#39;RdYlGn_r&#39;, &#39;Reds&#39;, &#39;Reds_r&#39;, &#39;Set1&#39;, &#39;Set1_r&#39;, &#39;Set2&#39;, &#39;Set2_r&#39;, &#39;Set3&#39;, &#39;Set3_r&#39;, &#39;Spectral&#39;, &#39;Spectral_r&#39;, &#39;Wistia&#39;, &#39;Wistia_r&#39;, &#39;YlGn&#39;, &#39;YlGnBu&#39;, &#39;YlGnBu_r&#39;, &#39;YlGn_r&#39;, &#39;YlOrBr&#39;, &#39;YlOrBr_r&#39;, &#39;YlOrRd&#39;, &#39;YlOrRd_r&#39;, &#39;afmhot&#39;, &#39;afmhot_r&#39;, &#39;autumn&#39;, &#39;autumn_r&#39;, &#39;binary&#39;, &#39;binary_r&#39;, &#39;bone&#39;, &#39;bone_r&#39;, &#39;brg&#39;, &#39;brg_r&#39;, &#39;bwr&#39;, &#39;bwr_r&#39;, &#39;cividis&#39;, &#39;cividis_r&#39;, &#39;cool&#39;, &#39;cool_r&#39;, &#39;coolwarm&#39;, &#39;coolwarm_r&#39;, &#39;copper&#39;, &#39;copper_r&#39;, &#39;cubehelix&#39;, &#39;cubehelix_r&#39;, &#39;flag&#39;, &#39;flag_r&#39;, &#39;gist_earth&#39;, &#39;gist_earth_r&#39;, &#39;gist_gray&#39;, &#39;gist_gray_r&#39;, &#39;gist_heat&#39;, &#39;gist_heat_r&#39;, &#39;gist_ncar&#39;, &#39;gist_ncar_r&#39;, &#39;gist_rainbow&#39;, &#39;gist_rainbow_r&#39;, &#39;gist_stern&#39;, &#39;gist_stern_r&#39;, &#39;gist_yarg&#39;, &#39;gist_yarg_r&#39;, &#39;gnuplot&#39;, &#39;gnuplot2&#39;, &#39;gnuplot2_r&#39;, &#39;gnuplot_r&#39;, &#39;gray&#39;, &#39;gray_r&#39;, &#39;hot&#39;, &#39;hot_r&#39;, &#39;hsv&#39;, &#39;hsv_r&#39;, &#39;inferno&#39;, &#39;inferno_r&#39;, &#39;jet&#39;, &#39;jet_r&#39;, &#39;magma&#39;, &#39;magma_r&#39;, &#39;nipy_spectral&#39;, &#39;nipy_spectral_r&#39;, &#39;ocean&#39;, &#39;ocean_r&#39;, &#39;pink&#39;, &#39;pink_r&#39;, &#39;plasma&#39;, &#39;plasma_r&#39;, &#39;prism&#39;, &#39;prism_r&#39;, &#39;rainbow&#39;, &#39;rainbow_r&#39;, &#39;seismic&#39;, &#39;seismic_r&#39;, &#39;spring&#39;, &#39;spring_r&#39;, &#39;summer&#39;, &#39;summer_r&#39;, &#39;tab10&#39;, &#39;tab10_r&#39;, &#39;tab20&#39;, &#39;tab20_r&#39;, &#39;tab20b&#39;, &#39;tab20b_r&#39;, &#39;tab20c&#39;, &#39;tab20c_r&#39;, &#39;terrain&#39;, &#39;terrain_r&#39;, &#39;turbo&#39;, &#39;turbo_r&#39;, &#39;twilight&#39;, &#39;twilight_r&#39;, &#39;twilight_shifted&#39;, &#39;twilight_shifted_r&#39;, &#39;viridis&#39;, &#39;viridis_r&#39;, &#39;winter&#39;, &#39;winter_r&#39;
 &#34;&#34;&#34;
 &#34;&#34;&#34;https://matplotlib.org/stable/tutorials/colors/colormaps.html&#34;&#34;&#34;
-    
+
+
 def showimage(img, ax=None, color=&#39;RGB&#39;, multichannel=True, channel=2):
-    
+    &#34;&#34;&#34;Display image as part of GUI.&#34;&#34;&#34;
     if not ax:
         fig = plt.figure()
-        ax=fig.gca()
-        
+        ax = fig.gca()
+
     if len(img.shape) == 2:
-        multichannel=False
-    
-    if multichannel:    
-        if color==&#39;RGB&#39;:
+        multichannel = False
+
+    if multichannel:
+        if color == &#39;RGB&#39;:
             ax.imshow(img)
             return
-        elif color==&#39;‘HSV&#39;:
+        elif color == &#39;‘HSV&#39;:
             pass
-        elif color==&#39;RGB CIE&#39;:
-            pass        
-        elif color==&#39;XYZ&#39;:
-            pass        
-        elif color==&#39;YUV&#39;:
+        elif color == &#39;RGB CIE&#39;:
             pass
-        elif color==&#39;YIQ&#39;:
+        elif color == &#39;XYZ&#39;:
             pass
-        elif color==&#39;YPbPr&#39;:
+        elif color == &#39;YUV&#39;:
             pass
-        elif color==&#39;YCbCr&#39;:
+        elif color == &#39;YIQ&#39;:
             pass
-        elif color==&#39;YDbDr&#39;:
-            pass   
-        ax.imshow(img,cmap=&#39;gray&#39;)
+        elif color == &#39;YPbPr&#39;:
+            pass
+        elif color == &#39;YCbCr&#39;:
+            pass
+        elif color == &#39;YDbDr&#39;:
+            pass
+        ax.imshow(img, cmap=&#39;gray&#39;)
     else:
         print(f&#39;singlechannel {color} {channel}&#39;)
-        if len(img.shape) == 2: 
-            single_channel=img
+        if len(img.shape) == 2:
+            single_channel = img
         else:
-            single_channel=img[:,:,channel]
-        
-        if color==&#39;RGB&#39;:
+            single_channel = img[:, :, channel]
+
+        if color == &#39;RGB&#39;:
             c_im = np.ubyte(np.zeros([img.shape[0], img.shape[1], 3]))
-            c_im[:,:,channel] = single_channel;
-            ax.imshow(c_im);
+            c_im[:, :, channel] = single_channel
+            ax.imshow(c_im)
             return
-        elif color==&#39;HSV&#39;:
+        elif color == &#39;HSV&#39;:
             print(&#39;HSV&#39;)
-            if channel==0:
-                ax.imshow(single_channel,cmap=&#39;hsv&#39;)
+            if channel == 0:
+                ax.imshow(single_channel, cmap=&#39;hsv&#39;)
                 return
-            elif channel==2:
-                ax.imshow(single_channel,cmap=&#39;gray&#39;)
+            elif channel == 2:
+                ax.imshow(single_channel, cmap=&#39;gray&#39;)
                 return
-        elif color==&#39;RGB CIE&#39;:
-            pass        
-        elif color==&#39;XYZ&#39;:
-            pass        
-        elif color==&#39;YUV&#39;:
+        elif color == &#39;RGB CIE&#39;:
             pass
-        elif color==&#39;YIQ&#39;:
+        elif color == &#39;XYZ&#39;:
             pass
-        elif color==&#39;YPbPr&#39;:
+        elif color == &#39;YUV&#39;:
             pass
-        elif color==&#39;YCbCr&#39;:
+        elif color == &#39;YIQ&#39;:
             pass
-        elif color==&#39;YDbDr&#39;:
-            pass  
+        elif color == &#39;YPbPr&#39;:
+            pass
+        elif color == &#39;YCbCr&#39;:
+            pass
+        elif color == &#39;YDbDr&#39;:
+            pass
         ax.imshow(single_channel)
-    
+
+
 def colorwidget(img, paramlist=None):
+    &#34;&#34;&#34;Display info to user on colorspace if paramlist is not empty.&#34;&#34;&#34;
     if paramlist:
         seg = colorspace(paramlist=paramlist)
     else:
@@ -233,10 +244,11 @@ def colorwidget(img, paramlist=None):
         thislist = seg.params.ranges[ppp]
         name = ppp
         current_value = seg.params[ppp]
-        if not current_value in thislist:
-            #TODO: We should find the min distance between current_value and this list and use that instead.
+        if current_value not in thislist:
+            # TODO: We should find the min distance between current_value and
+            # this list and use that instead.
             current_value = thislist[0]
-            
+
         thiswidg = widgets.SelectionSlider(options=tuple(thislist),
                                            disabled=False,
                                            description=name,
@@ -244,38 +256,38 @@ def colorwidget(img, paramlist=None):
                                            continuous_update=False,
                                            orientation=&#39;horizontal&#39;,
                                            readout=True
-                                          )
+                                           )
 
         widglist.append(thiswidg)
         widg[ppp] = thiswidg
 
-    
     def func(**kwargs):
         &#34;&#34;&#34;Find mask and fitness for current algorithm. Show masked image.&#34;&#34;&#34;
         for k in kwargs:
             seg.params[k] = kwargs[k]
         colorspace = seg.evaluate(img)
-        
+
         #fit = Segmentors.FitnessFunction(mask, gmask)
         fig = showtwo(img, colorspace)
-        showimage(img, ax=fig.gca(), 
-                  color=seg.params[&#39;colorspace&#39;], 
-                  multichannel=seg.params[&#39;multichannel&#39;], 
+        showimage(img, ax=fig.gca(),
+                  color=seg.params[&#39;colorspace&#39;],
+                  multichannel=seg.params[&#39;multichannel&#39;],
                   channel=seg.params[&#39;channel&#39;])
-        # I like the idea of printing the sharepython but it should be below the figures. 
-        #print(seg.sharepython(img))
+        # I like the idea of printing the sharepython but it should be below the figures.
+        # print(seg.sharepython(img))
 #         plt.title(&#39;Fitness Value: &#39; + str(fit[0]))
 
-    
     layout = widgets.Layout(grid_template_columns=&#39;1fr 1fr 1fr&#39;)
     u_i = widgets.GridBox(widglist, layout=layout)
     out = widgets.interactive_output(func, widg)
     display(u_i, out)
-    
-    return seg.params    
+
+    return seg.params
+
 
 def segmentwidget(img, params=None, alg=None):
     &#34;&#34;&#34;Generate GUI. Produce slider for each parameter for the current segmentor.
+    
      Show both options for the masked image.
 
     Keyword arguments:
@@ -287,7 +299,7 @@ def segmentwidget(img, params=None, alg=None):
     &#34;&#34;&#34;
     if params:
         if alg:
-            params[&#39;algorithm&#39;] = alg;
+            params[&#39;algorithm&#39;] = alg
         seg = segmentor.algoFromParams(params)
     else:
         if alg:
@@ -303,10 +315,11 @@ def segmentwidget(img, params=None, alg=None):
         thislist = seg.params.ranges[ppp]
         name = ppp
         current_value = seg.params[ppp]
-        if not current_value in thislist:
-            #TODO: We should find the min distance between current_value and this list and use that instead.
+        if current_value not in thislist:
+            # TODO: We should find the min distance between current_value and
+            # this list and use that instead.
             current_value = thislist[0]
-            
+
         thiswidg = widgets.SelectionSlider(options=tuple(thislist),
                                            disabled=False,
                                            description=name,
@@ -314,13 +327,13 @@ def segmentwidget(img, params=None, alg=None):
                                            continuous_update=False,
                                            orientation=&#39;horizontal&#39;,
                                            readout=True
-                                          )
+                                           )
 
         widglist.append(thiswidg)
         widg[ppp] = thiswidg
 
     
-    def func(**kwargs):
+    def func(**kwargs): 
         &#34;&#34;&#34;Find mask and fitness for current algorithm. Show masked image.&#34;&#34;&#34;
         print(seg.params[&#34;algorithm&#34;])
         for k in kwargs:
@@ -328,16 +341,15 @@ def segmentwidget(img, params=None, alg=None):
         mask = seg.evaluate(img)
         #fit = Segmentors.FitnessFunction(mask, gmask)
         fig = showtwo(img, mask)
-        # I like the idea of printing the sharepython but it should be below the figures. 
-        #print(seg.sharepython(img))
+        # I like the idea of printing the sharepython but it should be below the figures.
+        # print(seg.sharepython(img))
 #         plt.title(&#39;Fitness Value: &#39; + str(fit[0]))
 
-    
     layout = widgets.Layout(grid_template_columns=&#39;1fr 1fr 1fr&#39;)
     u_i = widgets.GridBox(widglist, layout=layout)
     out = widgets.interactive_output(func, widg)
     display(u_i, out)
-    
+
     return seg.params</code></pre>
 </details>
 </section>
@@ -352,12 +364,13 @@ def segmentwidget(img, params=None, alg=None):
 <span>def <span class="ident">colorwidget</span></span>(<span>img, paramlist=None)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Display info to user on colorspace if paramlist is not empty.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def colorwidget(img, paramlist=None):
+    &#34;&#34;&#34;Display info to user on colorspace if paramlist is not empty.&#34;&#34;&#34;
     if paramlist:
         seg = colorspace(paramlist=paramlist)
     else:
@@ -371,10 +384,11 @@ def segmentwidget(img, params=None, alg=None):
         thislist = seg.params.ranges[ppp]
         name = ppp
         current_value = seg.params[ppp]
-        if not current_value in thislist:
-            #TODO: We should find the min distance between current_value and this list and use that instead.
+        if current_value not in thislist:
+            # TODO: We should find the min distance between current_value and
+            # this list and use that instead.
             current_value = thislist[0]
-            
+
         thiswidg = widgets.SelectionSlider(options=tuple(thislist),
                                            disabled=False,
                                            description=name,
@@ -382,47 +396,46 @@ def segmentwidget(img, params=None, alg=None):
                                            continuous_update=False,
                                            orientation=&#39;horizontal&#39;,
                                            readout=True
-                                          )
+                                           )
 
         widglist.append(thiswidg)
         widg[ppp] = thiswidg
 
-    
     def func(**kwargs):
         &#34;&#34;&#34;Find mask and fitness for current algorithm. Show masked image.&#34;&#34;&#34;
         for k in kwargs:
             seg.params[k] = kwargs[k]
         colorspace = seg.evaluate(img)
-        
+
         #fit = Segmentors.FitnessFunction(mask, gmask)
         fig = showtwo(img, colorspace)
-        showimage(img, ax=fig.gca(), 
-                  color=seg.params[&#39;colorspace&#39;], 
-                  multichannel=seg.params[&#39;multichannel&#39;], 
+        showimage(img, ax=fig.gca(),
+                  color=seg.params[&#39;colorspace&#39;],
+                  multichannel=seg.params[&#39;multichannel&#39;],
                   channel=seg.params[&#39;channel&#39;])
-        # I like the idea of printing the sharepython but it should be below the figures. 
-        #print(seg.sharepython(img))
+        # I like the idea of printing the sharepython but it should be below the figures.
+        # print(seg.sharepython(img))
 #         plt.title(&#39;Fitness Value: &#39; + str(fit[0]))
 
-    
     layout = widgets.Layout(grid_template_columns=&#39;1fr 1fr 1fr&#39;)
     u_i = widgets.GridBox(widglist, layout=layout)
     out = widgets.interactive_output(func, widg)
     display(u_i, out)
-    
-    return seg.params    </code></pre>
+
+    return seg.params</code></pre>
 </details>
 </dd>
 <dt id="see.JupyterGUI.pickimage"><code class="name flex">
 <span>def <span class="ident">pickimage</span></span>(<span>folder='Image_data/Examples/')</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Choose image from available set of images.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def pickimage(folder=&#39;Image_data/Examples/&#39;):
+    &#34;&#34;&#34;Choose image from available set of images.&#34;&#34;&#34;
     #def pickimage(
 
     directory = Path(folder)
@@ -432,13 +445,13 @@ def segmentwidget(img, params=None, alg=None):
     filelist = []
     masklist = []
     for file in allfiles:
-        if file.suffix ==&#34;.jpg&#34; or file.suffix ==&#34;.jpeg&#34; or file.suffix ==&#34;.JPEG&#34; or file.suffix ==&#34;.png&#34;:
-            if not &#34;_GT&#34; in file.name:
+        if file.suffix == &#34;.jpg&#34; or file.suffix == &#34;.jpeg&#34; or file.suffix == &#34;.JPEG&#34; or file.suffix == &#34;.png&#34;:
+            if &#34;_GT&#34; not in file.name:
                 filelist.append(file)
                 mask = directory.glob(f&#34;{file.stem}_GT*&#34;)
                 for m in mask:
                     masklist.append(m)
-    
+
     w = widgets.Dropdown(
         options=filelist,
         value=filelist[0],
@@ -446,18 +459,18 @@ def segmentwidget(img, params=None, alg=None):
     )
 
     def update(w):
-        clear_output(wait=True) # Clear output for dynamic display
+        clear_output(wait=True)  # Clear output for dynamic display
         display(w)
         w.img = imageio.imread(w.value)
         index = filelist.index(w.value)
         w.gmask = imageio.imread(masklist[index])
         if len(w.gmask.shape) &gt; 2:
-            w.gmask = w.gmask[:,:,0]
+            w.gmask = w.gmask[:, :, 0]
         fig = showtwo(w.img, w.gmask)
         print(f&#34;import imageio&#34;)
         print(f&#34;img = imageio.imread(\&#39;{w.value}\&#39;)&#34;)
         print(f&#34;gmask = imageio.imread(\&#39;{masklist[index]}\&#39;)&#34;)
-        
+
     def on_change(change):
         if change[&#39;type&#39;] == &#39;change&#39; and change[&#39;name&#39;] == &#39;value&#39;:
             update(w)
@@ -471,12 +484,13 @@ def segmentwidget(img, params=None, alg=None):
 <span>def <span class="ident">picksegment</span></span>(<span>algorithms)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Provide capabilities for user to choose a segmentation.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def picksegment(algorithms):
+    &#34;&#34;&#34;Provide capabilities for user to choose a segmentation.&#34;&#34;&#34;
     w = widgets.Dropdown(
         options=algorithms,
         value=algorithms[0],
@@ -485,7 +499,7 @@ def segmentwidget(img, params=None, alg=None):
 
     def on_change(change):
         if change[&#39;type&#39;] == &#39;change&#39; and change[&#39;name&#39;] == &#39;value&#39;:
-            clear_output(wait=True) # Clear output for dynamic display
+            clear_output(wait=True)  # Clear output for dynamic display
             display(w)
             print(segmentor.algorithmspace[change[&#39;new&#39;]].__doc__)
             print(f&#34;\nsegmentor_name=\&#39;{w.value}\&#39;&#34;)
@@ -501,8 +515,8 @@ def segmentwidget(img, params=None, alg=None):
 <span>def <span class="ident">segmentwidget</span></span>(<span>img, params=None, alg=None)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Generate GUI. Produce slider for each parameter for the current segmentor.
-Show both options for the masked image.</p>
+<div class="desc"><p>Generate GUI. Produce slider for each parameter for the current segmentor.</p>
+<p>Show both options for the masked image.</p>
 <p>Keyword arguments:
 img &ndash; original image
 gmask &ndash; ground truth segmentation mask for the image
@@ -514,6 +528,7 @@ alg &ndash; algorithm to search parameters over</p></div>
 </summary>
 <pre><code class="python">def segmentwidget(img, params=None, alg=None):
     &#34;&#34;&#34;Generate GUI. Produce slider for each parameter for the current segmentor.
+    
      Show both options for the masked image.
 
     Keyword arguments:
@@ -525,7 +540,7 @@ alg &ndash; algorithm to search parameters over</p></div>
     &#34;&#34;&#34;
     if params:
         if alg:
-            params[&#39;algorithm&#39;] = alg;
+            params[&#39;algorithm&#39;] = alg
         seg = segmentor.algoFromParams(params)
     else:
         if alg:
@@ -541,10 +556,11 @@ alg &ndash; algorithm to search parameters over</p></div>
         thislist = seg.params.ranges[ppp]
         name = ppp
         current_value = seg.params[ppp]
-        if not current_value in thislist:
-            #TODO: We should find the min distance between current_value and this list and use that instead.
+        if current_value not in thislist:
+            # TODO: We should find the min distance between current_value and
+            # this list and use that instead.
             current_value = thislist[0]
-            
+
         thiswidg = widgets.SelectionSlider(options=tuple(thislist),
                                            disabled=False,
                                            description=name,
@@ -552,13 +568,13 @@ alg &ndash; algorithm to search parameters over</p></div>
                                            continuous_update=False,
                                            orientation=&#39;horizontal&#39;,
                                            readout=True
-                                          )
+                                           )
 
         widglist.append(thiswidg)
         widg[ppp] = thiswidg
 
     
-    def func(**kwargs):
+    def func(**kwargs): 
         &#34;&#34;&#34;Find mask and fitness for current algorithm. Show masked image.&#34;&#34;&#34;
         print(seg.params[&#34;algorithm&#34;])
         for k in kwargs:
@@ -566,16 +582,15 @@ alg &ndash; algorithm to search parameters over</p></div>
         mask = seg.evaluate(img)
         #fit = Segmentors.FitnessFunction(mask, gmask)
         fig = showtwo(img, mask)
-        # I like the idea of printing the sharepython but it should be below the figures. 
-        #print(seg.sharepython(img))
+        # I like the idea of printing the sharepython but it should be below the figures.
+        # print(seg.sharepython(img))
 #         plt.title(&#39;Fitness Value: &#39; + str(fit[0]))
 
-    
     layout = widgets.Layout(grid_template_columns=&#39;1fr 1fr 1fr&#39;)
     u_i = widgets.GridBox(widglist, layout=layout)
     out = widgets.interactive_output(func, widg)
     display(u_i, out)
-    
+
     return seg.params</code></pre>
 </details>
 </dd>
@@ -611,75 +626,75 @@ mask &ndash; resulting mask from segmentor</p></div>
 <span>def <span class="ident">showimage</span></span>(<span>img, ax=None, color='RGB', multichannel=True, channel=2)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Display image as part of GUI.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def showimage(img, ax=None, color=&#39;RGB&#39;, multichannel=True, channel=2):
-    
+    &#34;&#34;&#34;Display image as part of GUI.&#34;&#34;&#34;
     if not ax:
         fig = plt.figure()
-        ax=fig.gca()
-        
+        ax = fig.gca()
+
     if len(img.shape) == 2:
-        multichannel=False
-    
-    if multichannel:    
-        if color==&#39;RGB&#39;:
+        multichannel = False
+
+    if multichannel:
+        if color == &#39;RGB&#39;:
             ax.imshow(img)
             return
-        elif color==&#39;‘HSV&#39;:
+        elif color == &#39;‘HSV&#39;:
             pass
-        elif color==&#39;RGB CIE&#39;:
-            pass        
-        elif color==&#39;XYZ&#39;:
-            pass        
-        elif color==&#39;YUV&#39;:
+        elif color == &#39;RGB CIE&#39;:
             pass
-        elif color==&#39;YIQ&#39;:
+        elif color == &#39;XYZ&#39;:
             pass
-        elif color==&#39;YPbPr&#39;:
+        elif color == &#39;YUV&#39;:
             pass
-        elif color==&#39;YCbCr&#39;:
+        elif color == &#39;YIQ&#39;:
             pass
-        elif color==&#39;YDbDr&#39;:
-            pass   
-        ax.imshow(img,cmap=&#39;gray&#39;)
+        elif color == &#39;YPbPr&#39;:
+            pass
+        elif color == &#39;YCbCr&#39;:
+            pass
+        elif color == &#39;YDbDr&#39;:
+            pass
+        ax.imshow(img, cmap=&#39;gray&#39;)
     else:
         print(f&#39;singlechannel {color} {channel}&#39;)
-        if len(img.shape) == 2: 
-            single_channel=img
+        if len(img.shape) == 2:
+            single_channel = img
         else:
-            single_channel=img[:,:,channel]
-        
-        if color==&#39;RGB&#39;:
+            single_channel = img[:, :, channel]
+
+        if color == &#39;RGB&#39;:
             c_im = np.ubyte(np.zeros([img.shape[0], img.shape[1], 3]))
-            c_im[:,:,channel] = single_channel;
-            ax.imshow(c_im);
+            c_im[:, :, channel] = single_channel
+            ax.imshow(c_im)
             return
-        elif color==&#39;HSV&#39;:
+        elif color == &#39;HSV&#39;:
             print(&#39;HSV&#39;)
-            if channel==0:
-                ax.imshow(single_channel,cmap=&#39;hsv&#39;)
+            if channel == 0:
+                ax.imshow(single_channel, cmap=&#39;hsv&#39;)
                 return
-            elif channel==2:
-                ax.imshow(single_channel,cmap=&#39;gray&#39;)
+            elif channel == 2:
+                ax.imshow(single_channel, cmap=&#39;gray&#39;)
                 return
-        elif color==&#39;RGB CIE&#39;:
-            pass        
-        elif color==&#39;XYZ&#39;:
-            pass        
-        elif color==&#39;YUV&#39;:
+        elif color == &#39;RGB CIE&#39;:
             pass
-        elif color==&#39;YIQ&#39;:
+        elif color == &#39;XYZ&#39;:
             pass
-        elif color==&#39;YPbPr&#39;:
+        elif color == &#39;YUV&#39;:
             pass
-        elif color==&#39;YCbCr&#39;:
+        elif color == &#39;YIQ&#39;:
             pass
-        elif color==&#39;YDbDr&#39;:
-            pass  
+        elif color == &#39;YPbPr&#39;:
+            pass
+        elif color == &#39;YCbCr&#39;:
+            pass
+        elif color == &#39;YDbDr&#39;:
+            pass
         ax.imshow(single_channel)</code></pre>
 </details>
 </dd>

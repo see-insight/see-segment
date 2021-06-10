@@ -29,8 +29,8 @@
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Download common and publicly avaliable segmentation datasets along with mask images.&#34;&#34;&#34;
 
-##TODO remove import os in favor of pathlib
-##TODO Path.mkdir(mode=0o777, parents=False, exist_ok=False
+# TODO remove import os in favor of pathlib
+# TODO Path.mkdir(mode=0o777, parents=False, exist_ok=False
 
 
 import argparse
@@ -50,12 +50,16 @@ import pathlib
 import numpy as np
 import matplotlib.pyplot as plt
 
-DefaultFolder=&#39;./&#39;
+DefaultFolder = &#39;./&#39;
+
 
 def readpgm(name):
-    &#34;&#34;&#34;The ground truth data is in ascii P2 pgm binary files.  
+    &#34;&#34;&#34;Read PGM files.
+    
+    The ground truth data is in ascii P2 pgm binary files.  
     OpenCV can read these files in but it would be much easier 
-    to just convert them to more common pgm binary format (P5).&#34;&#34;&#34;
+    to just convert them to more common pgm binary format (P5).
+    &#34;&#34;&#34;
     with open(name, encoding=&#34;utf8&#34;, errors=&#39;ignore&#39;) as f:
         lines = f.readlines()
 
@@ -73,105 +77,113 @@ def readpgm(name):
         data = []
         for line in lines[1:]:
             data.extend([int(c) for c in line.split()])
-        img = np.reshape(np.array(data[3:]),(data[1],data[0]))
+        img = np.reshape(np.array(data[3:]), (data[1], data[0]))
     else:
         print(&#39;Trying to read as P5 PGM file&#39;)
         img = imageio.imread(name)
     return img
 
-def downloadKOMATSUNA(filenames= [&#39;rgbd_plant.zip&#39;, &#39;rgbd_label.zip&#39;],
-                      folder = f&#39;{DefaultFolder}KOMATSUNA/&#39;,
-                      urls = [&#39;http://limu.ait.kyushu-u.ac.jp/~agri/komatsuna/rgbd_plant.zip&#39;,
-                              &#39;http://limu.ait.kyushu-u.ac.jp/~agri/komatsuna/rgbd_label.zip&#39;],
-                      datafolder=DefaultFolder,
-                      force=True):
+def downloadKOMATSUNA(
+        filenames=[
+            &#39;rgbd_plant.zip&#39;,
+            &#39;rgbd_label.zip&#39;],
+    folder=f&#39;{DefaultFolder}KOMATSUNA/&#39;,
+    urls=[
+            &#39;http://limu.ait.kyushu-u.ac.jp/~agri/komatsuna/rgbd_plant.zip&#39;,
+            &#39;http://limu.ait.kyushu-u.ac.jp/~agri/komatsuna/rgbd_label.zip&#39;],
+        datafolder=DefaultFolder,
+        force=True):
     &#34;&#34;&#34;The KOMATSUNA plant dataset is a multisegmentation dataset avaliable at http://limu.ait.kyushu-u.ac.jp/~agri/komatsuna/&#34;&#34;&#34;
-    
+
     if not os.path.exists(folder):
         os.makedirs(folder)
-        print(&#34;Directory &#34; , folder ,  &#34; Created &#34;)
-    else:    
-        print(&#34;Directory &#34; , folder ,  &#34; already exists&#34;)    
-    
-    for filename,url in zip(filenames, urls):
-        zfile = Path(folder+filename)
+        print(&#34;Directory &#34;, folder, &#34; Created &#34;)
+    else:
+        print(&#34;Directory &#34;, folder, &#34; already exists&#34;)
+
+    for filename, url in zip(filenames, urls):
+        zfile = Path(folder + filename)
         if not zfile.is_file() or force:
             print(f&#34;Downloading {filename} from {url}&#34;)
-            urlretrieve(url,folder+filename)
+            urlretrieve(url, folder + filename)
         else:
             print(f&#34;File {filename} already exists&#34;)
 
         print(f&#34;Unzipping {filename}&#34;)
-        with zipfile.ZipFile(folder+filename, &#39;r&#39;) as zip_ref:
+        with zipfile.ZipFile(folder + filename, &#39;r&#39;) as zip_ref:
             zip_ref.extractall(folder)
 
         print(f&#34;Download and Convert of {filename} Complete&#34;)
 
-def downloadSky(filename = &#39;sky.zip&#39;, 
-                    folder = DefaultFolder, 
-                    url = &#39;https://www.ime.usp.br/~eduardob/datasets/sky/sky.zip&#39;,
-                    force=True):
+def downloadSky(filename=&#39;sky.zip&#39;,
+                folder=DefaultFolder,
+                url=&#39;https://www.ime.usp.br/~eduardob/datasets/sky/sky.zip&#39;,
+                force=True):
     &#34;&#34;&#34;The sky dataset is a binary dataset avaliable at https://www.ime.usp.br/~eduardob/datasets/sky/&#34;&#34;&#34;
-    
+
     if not os.path.exists(folder):
         os.makedirs(folder)
-        print(&#34;Directory &#34; , folder ,  &#34; Created &#34;)
-    else:    
-        print(&#34;Directory &#34; , folder ,  &#34; already exists&#34;)    
-    
-    zfile = Path(folder+filename)
+        print(&#34;Directory &#34;, folder, &#34; Created &#34;)
+    else:
+        print(&#34;Directory &#34;, folder, &#34; already exists&#34;)
+
+    zfile = Path(folder + filename)
     if not zfile.is_file() or force:
         print(f&#34;Downloading {filename} from {url}&#34;)
-        urlretrieve(url,folder+filename)
+        urlretrieve(url, folder + filename)
 
     print(f&#34;Unzipping {filename}&#34;)
-    with zipfile.ZipFile(folder+filename, &#39;r&#39;) as zip_ref:
+    with zipfile.ZipFile(folder + filename, &#39;r&#39;) as zip_ref:
         zip_ref.extractall(folder)
-    
+
     print(f&#34;Converting files in {folder}&#34;)
     images, masks, outputs = getSkyFolderLists()
-    
+
     print(images)
     for i in masks:
         print(f&#34;{i}&#34;)
         img = readpgm(i)
         img.astype(np.uint8)
-        imageio.imsave(i,img)
-        
+        imageio.imsave(i, img)
+
     print(f&#34;Download and Convert Complete&#34;)
 
-def downloadCOSKEL(filename= &#39;SKEL_v1.1.zip&#39;,
-                   folder = f&#39;{DefaultFolder}&#39;,
-                   url = &#39;https://github.com/jkoteswarrao/Object-Co-skeletonization-with-Co-segmentation/raw/master/CO-SKEL_v1.1.zip&#39;,
-                   datafolder=DefaultFolder,
-                   force=True):
+def downloadCOSKEL(
+        filename=&#39;SKEL_v1.1.zip&#39;,
+        folder=f&#39;{DefaultFolder}&#39;,
+        url=&#39;https://github.com/jkoteswarrao/Object-Co-skeletonization-with-Co-segmentation/raw/master/CO-SKEL_v1.1.zip&#39;,
+        datafolder=DefaultFolder,
+        force=True):
+    &#34;&#34;&#34;Download COSKEL.&#34;&#34;&#34;  
     if not os.path.exists(folder):
         os.makedirs(folder)
-        print(&#34;Directory &#34; , folder ,  &#34; Created &#34;)
+        print(&#34;Directory &#34;, folder, &#34; Created &#34;)
     else:
-        print(&#34;Directory &#34; , folder ,  &#34; already exists&#34;)
+        print(&#34;Directory &#34;, folder, &#34; already exists&#34;)
 
-    zfile = Path(folder+filename)
+    zfile = Path(folder + filename)
     if not zfile.is_file() or force:
         print(f&#34;Downloading {filename} from {url}&#34;)
-        urlretrieve(url,folder+filename)
+        urlretrieve(url, folder + filename)
 
     print(f&#34;Unzipping {filename}&#34;)
-    with zipfile.ZipFile(folder+filename, &#39;r&#39;) as zip_ref:
+    with zipfile.ZipFile(folder + filename, &#39;r&#39;) as zip_ref:
         zip_ref.extractall(folder)
 
     print(f&#34;Download and Convert Complete&#34;)
-    
-    
+
+
 def getSkyFolderLists(outputfolder=&#39;&#39;, folder=DefaultFolder):
-    &#39;&#39;&#39;The Sky data has some odd filenames. This figures it out and creates
-    Three lists for image, mask and output data.&#39;&#39;&#39;
+    &#34;&#34;&#34;Get Sky folder lists.
+    
+    The Sky data has some odd filenames. This figures it out and creates
+    Three lists for image, mask and output data.
+    &#34;&#34;&#34;    
     imagefolder = f&#34;{folder}/sky/data/&#34;
     maskfolder = f&#34;{folder}/sky/groundtruth/&#34;
 
     #print(f&#34;{imagefolder} {maskfolder}&#34;)
-    imagenames = glob.glob(f&#39;{imagefolder}/*.jpg&#39;)
-    imagenames.sort()
+    imagenames = sorted(glob.glob(f&#39;{imagefolder}/*.jpg&#39;))
     masknames = []
     outputnames = []
     for index, name in enumerate(imagenames):
@@ -180,17 +192,16 @@ def getSkyFolderLists(outputfolder=&#39;&#39;, folder=DefaultFolder):
         label = f&#34;{image_id}_gt.pgm&#34;
         masknames.append(f&#34;{maskfolder}/{label}&#34;)
         outputnames.append(f&#34;{outputfolder}{label}&#34;)
-        #print(f&#34;{label}&#34;)
+        # print(f&#34;{label}&#34;)
     return imagenames, masknames, outputnames
 
-def getKomatsunaFolderLists(outputfolder=&#39;&#39;, folder=DefaultFolder):
-    &#39;&#39;&#39;This downloads the KOMATSUNA dataset.&#39;&#39;&#39;
 
+def getKomatsunaFolderLists(outputfolder=&#39;&#39;, folder=DefaultFolder):
+    &#34;&#34;&#34;Download the KOMATSUNA dataset.&#34;&#34;&#34;
     imagefolder = f&#34;{folder}/KOMATSUNA/rgbd_plant/&#34;
     maskfolder = f&#34;{folder}/KOMATSUNA/rgbd_label/&#34;
 
-    imagenames = glob.glob(f&#39;{imagefolder}*.png&#39;)
-    imagenames.sort()
+    imagenames = sorted(glob.glob(f&#39;{imagefolder}*.png&#39;))
     masknames = []
     outputnames = []
     for index, name in enumerate(imagenames):
@@ -199,36 +210,41 @@ def getKomatsunaFolderLists(outputfolder=&#39;&#39;, folder=DefaultFolder):
         label = f&#34;label_{image_id}.png&#34;
         masknames.append(f&#34;{maskfolder}{label}&#34;)
         outputnames.append(f&#34;{outputfolder}{label}&#34;)
-        #print(f&#34;{label}&#34;)
+        # print(f&#34;{label}&#34;)
     return imagenames, masknames, outputnames
 
+
 def getCOSKELFolderlists(outputfolder=&#39;output/&#39;, folder=DefaultFolder):
-    &#39;&#39;&#39;The Sky data has some odd filenames. This figures it out and creates
-    Three lists for image, mask and output data.&#39;&#39;&#39;
+    &#34;&#34;&#34;Get COSKEL folder lists.
+    
+    The Sky data has some odd filenames. This figures it out and creates
+    Three lists for image, mask and output data.
+    &#34;&#34;&#34;   
     imagefolder = Path(f&#34;{folder}/CO-SKEL_v1.1/images/&#34;)
     maskfolder = Path(f&#34;{folder}/CO-SKEL_v1.1/GT_masks/&#34;)
 
-    imagePATHnames = list(Path(f&#39;{imagefolder}&#39;).rglob(&#39;*.jpg&#39;));
-    imagePATHnames.sort()
+    imagePATHnames = sorted(Path(f&#39;{imagefolder}&#39;).rglob(&#39;*.jpg&#39;))
     imagenames = []
     masknames = []
     outputnames = []
     for index, file in enumerate(imagePATHnames):
         imagenames.append(str(file))
-        #print(str(file))
-        #print(imagefolder)
+        # print(str(file))
+        # print(imagefolder)
         filename = str(file).replace(str(imagefolder), &#39;&#39;)
         name = filename[:-4]
         masknames.append(f&#34;{maskfolder}{name}.png&#34;)
         outputnames.append(f&#34;{outputfolder}{name}.png&#34;)
-        #print(f&#34;{filename}&#34;)
+        # print(f&#34;{filename}&#34;)
 
     return imagenames, masknames, outputnames
-    
+
+
 def getBMCVFolderLists(outputfolder=&#39;&#39;):
+    &#34;&#34;&#34;Obtain and return the names of the images, masks, and outputs.&#34;&#34;&#34;
     pth = pathlib.Path(__file__).parent.absolute()
-    imagefolder = str(pth)+&#34;/../Image_data/BMCV/&#34;
-    maskfolder = str(pth)+&#34;/../Image_data/BMCV/&#34;
+    imagefolder = str(pth) + &#34;/../Image_data/BMCV/&#34;
+    maskfolder = str(pth) + &#34;/../Image_data/BMCV/&#34;
 
     imagenames = []
     masknames = []
@@ -250,25 +266,29 @@ def getBMCVFolderLists(outputfolder=&#39;&#39;):
 
 
 if __name__ == &#34;__main__&#34;:
-    
+
     parser = argparse.ArgumentParser(description=&#39;Download Image Data&#39;)
-    parser.add_argument(&#39;-f&#39;, &#39;--folder&#39;, default=&#39;./Image_data&#39;, help=&#34;Image data folder name&#34;)
-    parser.add_argument(&#39;-P&#39;, &#39;--Plant&#39;, action=&#39;store_false&#39;, help=&#34;Use Sky Data&#34;)
-    parser.add_argument(&#39;-S&#39;, &#39;--Sky&#39;, action=&#39;store_false&#39;, help=&#34;Use Sky Data&#34;)
-    parser.add_argument(&#39;-C&#39;, &#39;--COSKEL&#39;, action=&#39;store_false&#39;, help=&#34;Use COSKEL Data&#34;)
-  
-    #Parsing Inputs
+    parser.add_argument(&#39;-f&#39;, &#39;--folder&#39;, default=&#39;./Image_data&#39;,
+                        help=&#34;Image data folder name&#34;)
+    parser.add_argument(
+        &#39;-P&#39;, &#39;--Plant&#39;, action=&#39;store_false&#39;, help=&#34;Use Sky Data&#34;)
+    parser.add_argument(&#39;-S&#39;, &#39;--Sky&#39;, action=&#39;store_false&#39;,
+                        help=&#34;Use Sky Data&#34;)
+    parser.add_argument(
+        &#39;-C&#39;, &#39;--COSKEL&#39;, action=&#39;store_false&#39;, help=&#34;Use COSKEL Data&#34;)
+
+    # Parsing Inputs
     args = parser.parse_args()
     print(args)
-    
+
     DefaultFolder = args.folder
-    
+
     if args.Plant:
         downloadKOMATSUNA(force=False)
 
     if args.Sky:
         downloadSky(force=False)
-    
+
     if args.COSKEL:
         downloadCOSKEL(force=False)</code></pre>
 </details>
@@ -284,29 +304,31 @@ if __name__ == &#34;__main__&#34;:
 <span>def <span class="ident">downloadCOSKEL</span></span>(<span>filename='SKEL_v1.1.zip', folder='./', url='https://github.com/jkoteswarrao/Object-Co-skeletonization-with-Co-segmentation/raw/master/CO-SKEL_v1.1.zip', datafolder='./', force=True)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Download COSKEL.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def downloadCOSKEL(filename= &#39;SKEL_v1.1.zip&#39;,
-                   folder = f&#39;{DefaultFolder}&#39;,
-                   url = &#39;https://github.com/jkoteswarrao/Object-Co-skeletonization-with-Co-segmentation/raw/master/CO-SKEL_v1.1.zip&#39;,
-                   datafolder=DefaultFolder,
-                   force=True):
+<pre><code class="python">def downloadCOSKEL(
+        filename=&#39;SKEL_v1.1.zip&#39;,
+        folder=f&#39;{DefaultFolder}&#39;,
+        url=&#39;https://github.com/jkoteswarrao/Object-Co-skeletonization-with-Co-segmentation/raw/master/CO-SKEL_v1.1.zip&#39;,
+        datafolder=DefaultFolder,
+        force=True):
+    &#34;&#34;&#34;Download COSKEL.&#34;&#34;&#34;  
     if not os.path.exists(folder):
         os.makedirs(folder)
-        print(&#34;Directory &#34; , folder ,  &#34; Created &#34;)
+        print(&#34;Directory &#34;, folder, &#34; Created &#34;)
     else:
-        print(&#34;Directory &#34; , folder ,  &#34; already exists&#34;)
+        print(&#34;Directory &#34;, folder, &#34; already exists&#34;)
 
-    zfile = Path(folder+filename)
+    zfile = Path(folder + filename)
     if not zfile.is_file() or force:
         print(f&#34;Downloading {filename} from {url}&#34;)
-        urlretrieve(url,folder+filename)
+        urlretrieve(url, folder + filename)
 
     print(f&#34;Unzipping {filename}&#34;)
-    with zipfile.ZipFile(folder+filename, &#39;r&#39;) as zip_ref:
+    with zipfile.ZipFile(folder + filename, &#39;r&#39;) as zip_ref:
         zip_ref.extractall(folder)
 
     print(f&#34;Download and Convert Complete&#34;)</code></pre>
@@ -321,30 +343,34 @@ if __name__ == &#34;__main__&#34;:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def downloadKOMATSUNA(filenames= [&#39;rgbd_plant.zip&#39;, &#39;rgbd_label.zip&#39;],
-                      folder = f&#39;{DefaultFolder}KOMATSUNA/&#39;,
-                      urls = [&#39;http://limu.ait.kyushu-u.ac.jp/~agri/komatsuna/rgbd_plant.zip&#39;,
-                              &#39;http://limu.ait.kyushu-u.ac.jp/~agri/komatsuna/rgbd_label.zip&#39;],
-                      datafolder=DefaultFolder,
-                      force=True):
+<pre><code class="python">def downloadKOMATSUNA(
+        filenames=[
+            &#39;rgbd_plant.zip&#39;,
+            &#39;rgbd_label.zip&#39;],
+    folder=f&#39;{DefaultFolder}KOMATSUNA/&#39;,
+    urls=[
+            &#39;http://limu.ait.kyushu-u.ac.jp/~agri/komatsuna/rgbd_plant.zip&#39;,
+            &#39;http://limu.ait.kyushu-u.ac.jp/~agri/komatsuna/rgbd_label.zip&#39;],
+        datafolder=DefaultFolder,
+        force=True):
     &#34;&#34;&#34;The KOMATSUNA plant dataset is a multisegmentation dataset avaliable at http://limu.ait.kyushu-u.ac.jp/~agri/komatsuna/&#34;&#34;&#34;
-    
+
     if not os.path.exists(folder):
         os.makedirs(folder)
-        print(&#34;Directory &#34; , folder ,  &#34; Created &#34;)
-    else:    
-        print(&#34;Directory &#34; , folder ,  &#34; already exists&#34;)    
-    
-    for filename,url in zip(filenames, urls):
-        zfile = Path(folder+filename)
+        print(&#34;Directory &#34;, folder, &#34; Created &#34;)
+    else:
+        print(&#34;Directory &#34;, folder, &#34; already exists&#34;)
+
+    for filename, url in zip(filenames, urls):
+        zfile = Path(folder + filename)
         if not zfile.is_file() or force:
             print(f&#34;Downloading {filename} from {url}&#34;)
-            urlretrieve(url,folder+filename)
+            urlretrieve(url, folder + filename)
         else:
             print(f&#34;File {filename} already exists&#34;)
 
         print(f&#34;Unzipping {filename}&#34;)
-        with zipfile.ZipFile(folder+filename, &#39;r&#39;) as zip_ref:
+        with zipfile.ZipFile(folder + filename, &#39;r&#39;) as zip_ref:
             zip_ref.extractall(folder)
 
         print(f&#34;Download and Convert of {filename} Complete&#34;)</code></pre>
@@ -359,37 +385,37 @@ if __name__ == &#34;__main__&#34;:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def downloadSky(filename = &#39;sky.zip&#39;, 
-                    folder = DefaultFolder, 
-                    url = &#39;https://www.ime.usp.br/~eduardob/datasets/sky/sky.zip&#39;,
-                    force=True):
+<pre><code class="python">def downloadSky(filename=&#39;sky.zip&#39;,
+                folder=DefaultFolder,
+                url=&#39;https://www.ime.usp.br/~eduardob/datasets/sky/sky.zip&#39;,
+                force=True):
     &#34;&#34;&#34;The sky dataset is a binary dataset avaliable at https://www.ime.usp.br/~eduardob/datasets/sky/&#34;&#34;&#34;
-    
+
     if not os.path.exists(folder):
         os.makedirs(folder)
-        print(&#34;Directory &#34; , folder ,  &#34; Created &#34;)
-    else:    
-        print(&#34;Directory &#34; , folder ,  &#34; already exists&#34;)    
-    
-    zfile = Path(folder+filename)
+        print(&#34;Directory &#34;, folder, &#34; Created &#34;)
+    else:
+        print(&#34;Directory &#34;, folder, &#34; already exists&#34;)
+
+    zfile = Path(folder + filename)
     if not zfile.is_file() or force:
         print(f&#34;Downloading {filename} from {url}&#34;)
-        urlretrieve(url,folder+filename)
+        urlretrieve(url, folder + filename)
 
     print(f&#34;Unzipping {filename}&#34;)
-    with zipfile.ZipFile(folder+filename, &#39;r&#39;) as zip_ref:
+    with zipfile.ZipFile(folder + filename, &#39;r&#39;) as zip_ref:
         zip_ref.extractall(folder)
-    
+
     print(f&#34;Converting files in {folder}&#34;)
     images, masks, outputs = getSkyFolderLists()
-    
+
     print(images)
     for i in masks:
         print(f&#34;{i}&#34;)
         img = readpgm(i)
         img.astype(np.uint8)
-        imageio.imsave(i,img)
-        
+        imageio.imsave(i, img)
+
     print(f&#34;Download and Convert Complete&#34;)</code></pre>
 </details>
 </dd>
@@ -397,15 +423,16 @@ if __name__ == &#34;__main__&#34;:
 <span>def <span class="ident">getBMCVFolderLists</span></span>(<span>outputfolder='')</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Obtain and return the names of the images, masks, and outputs.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def getBMCVFolderLists(outputfolder=&#39;&#39;):
+    &#34;&#34;&#34;Obtain and return the names of the images, masks, and outputs.&#34;&#34;&#34;
     pth = pathlib.Path(__file__).parent.absolute()
-    imagefolder = str(pth)+&#34;/../Image_data/BMCV/&#34;
-    maskfolder = str(pth)+&#34;/../Image_data/BMCV/&#34;
+    imagefolder = str(pth) + &#34;/../Image_data/BMCV/&#34;
+    maskfolder = str(pth) + &#34;/../Image_data/BMCV/&#34;
 
     imagenames = []
     masknames = []
@@ -430,32 +457,35 @@ if __name__ == &#34;__main__&#34;:
 <span>def <span class="ident">getCOSKELFolderlists</span></span>(<span>outputfolder='output/', folder='./')</span>
 </code></dt>
 <dd>
-<div class="desc"><p>The Sky data has some odd filenames. This figures it out and creates
+<div class="desc"><p>Get COSKEL folder lists.</p>
+<p>The Sky data has some odd filenames. This figures it out and creates
 Three lists for image, mask and output data.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def getCOSKELFolderlists(outputfolder=&#39;output/&#39;, folder=DefaultFolder):
-    &#39;&#39;&#39;The Sky data has some odd filenames. This figures it out and creates
-    Three lists for image, mask and output data.&#39;&#39;&#39;
+    &#34;&#34;&#34;Get COSKEL folder lists.
+    
+    The Sky data has some odd filenames. This figures it out and creates
+    Three lists for image, mask and output data.
+    &#34;&#34;&#34;   
     imagefolder = Path(f&#34;{folder}/CO-SKEL_v1.1/images/&#34;)
     maskfolder = Path(f&#34;{folder}/CO-SKEL_v1.1/GT_masks/&#34;)
 
-    imagePATHnames = list(Path(f&#39;{imagefolder}&#39;).rglob(&#39;*.jpg&#39;));
-    imagePATHnames.sort()
+    imagePATHnames = sorted(Path(f&#39;{imagefolder}&#39;).rglob(&#39;*.jpg&#39;))
     imagenames = []
     masknames = []
     outputnames = []
     for index, file in enumerate(imagePATHnames):
         imagenames.append(str(file))
-        #print(str(file))
-        #print(imagefolder)
+        # print(str(file))
+        # print(imagefolder)
         filename = str(file).replace(str(imagefolder), &#39;&#39;)
         name = filename[:-4]
         masknames.append(f&#34;{maskfolder}{name}.png&#34;)
         outputnames.append(f&#34;{outputfolder}{name}.png&#34;)
-        #print(f&#34;{filename}&#34;)
+        # print(f&#34;{filename}&#34;)
 
     return imagenames, masknames, outputnames</code></pre>
 </details>
@@ -464,19 +494,17 @@ Three lists for image, mask and output data.</p></div>
 <span>def <span class="ident">getKomatsunaFolderLists</span></span>(<span>outputfolder='', folder='./')</span>
 </code></dt>
 <dd>
-<div class="desc"><p>This downloads the KOMATSUNA dataset.</p></div>
+<div class="desc"><p>Download the KOMATSUNA dataset.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def getKomatsunaFolderLists(outputfolder=&#39;&#39;, folder=DefaultFolder):
-    &#39;&#39;&#39;This downloads the KOMATSUNA dataset.&#39;&#39;&#39;
-
+    &#34;&#34;&#34;Download the KOMATSUNA dataset.&#34;&#34;&#34;
     imagefolder = f&#34;{folder}/KOMATSUNA/rgbd_plant/&#34;
     maskfolder = f&#34;{folder}/KOMATSUNA/rgbd_label/&#34;
 
-    imagenames = glob.glob(f&#39;{imagefolder}*.png&#39;)
-    imagenames.sort()
+    imagenames = sorted(glob.glob(f&#39;{imagefolder}*.png&#39;))
     masknames = []
     outputnames = []
     for index, name in enumerate(imagenames):
@@ -485,7 +513,7 @@ Three lists for image, mask and output data.</p></div>
         label = f&#34;label_{image_id}.png&#34;
         masknames.append(f&#34;{maskfolder}{label}&#34;)
         outputnames.append(f&#34;{outputfolder}{label}&#34;)
-        #print(f&#34;{label}&#34;)
+        # print(f&#34;{label}&#34;)
     return imagenames, masknames, outputnames</code></pre>
 </details>
 </dd>
@@ -493,21 +521,24 @@ Three lists for image, mask and output data.</p></div>
 <span>def <span class="ident">getSkyFolderLists</span></span>(<span>outputfolder='', folder='./')</span>
 </code></dt>
 <dd>
-<div class="desc"><p>The Sky data has some odd filenames. This figures it out and creates
+<div class="desc"><p>Get Sky folder lists.</p>
+<p>The Sky data has some odd filenames. This figures it out and creates
 Three lists for image, mask and output data.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def getSkyFolderLists(outputfolder=&#39;&#39;, folder=DefaultFolder):
-    &#39;&#39;&#39;The Sky data has some odd filenames. This figures it out and creates
-    Three lists for image, mask and output data.&#39;&#39;&#39;
+    &#34;&#34;&#34;Get Sky folder lists.
+    
+    The Sky data has some odd filenames. This figures it out and creates
+    Three lists for image, mask and output data.
+    &#34;&#34;&#34;    
     imagefolder = f&#34;{folder}/sky/data/&#34;
     maskfolder = f&#34;{folder}/sky/groundtruth/&#34;
 
     #print(f&#34;{imagefolder} {maskfolder}&#34;)
-    imagenames = glob.glob(f&#39;{imagefolder}/*.jpg&#39;)
-    imagenames.sort()
+    imagenames = sorted(glob.glob(f&#39;{imagefolder}/*.jpg&#39;))
     masknames = []
     outputnames = []
     for index, name in enumerate(imagenames):
@@ -516,7 +547,7 @@ Three lists for image, mask and output data.</p></div>
         label = f&#34;{image_id}_gt.pgm&#34;
         masknames.append(f&#34;{maskfolder}/{label}&#34;)
         outputnames.append(f&#34;{outputfolder}{label}&#34;)
-        #print(f&#34;{label}&#34;)
+        # print(f&#34;{label}&#34;)
     return imagenames, masknames, outputnames</code></pre>
 </details>
 </dd>
@@ -524,7 +555,8 @@ Three lists for image, mask and output data.</p></div>
 <span>def <span class="ident">readpgm</span></span>(<span>name)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>The ground truth data is in ascii P2 pgm binary files.<br>
+<div class="desc"><p>Read PGM files.</p>
+<p>The ground truth data is in ascii P2 pgm binary files.<br>
 OpenCV can read these files in but it would be much easier
 to just convert them to more common pgm binary format (P5).</p></div>
 <details class="source">
@@ -532,9 +564,12 @@ to just convert them to more common pgm binary format (P5).</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def readpgm(name):
-    &#34;&#34;&#34;The ground truth data is in ascii P2 pgm binary files.  
+    &#34;&#34;&#34;Read PGM files.
+    
+    The ground truth data is in ascii P2 pgm binary files.  
     OpenCV can read these files in but it would be much easier 
-    to just convert them to more common pgm binary format (P5).&#34;&#34;&#34;
+    to just convert them to more common pgm binary format (P5).
+    &#34;&#34;&#34;
     with open(name, encoding=&#34;utf8&#34;, errors=&#39;ignore&#39;) as f:
         lines = f.readlines()
 
@@ -552,7 +587,7 @@ to just convert them to more common pgm binary format (P5).</p></div>
         data = []
         for line in lines[1:]:
             data.extend([int(c) for c in line.split()])
-        img = np.reshape(np.array(data[3:]),(data[1],data[0]))
+        img = np.reshape(np.array(data[3:]), (data[1], data[0]))
     else:
         print(&#39;Trying to read as P5 PGM file&#39;)
         img = imageio.imread(name)

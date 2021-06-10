@@ -29,16 +29,21 @@
 </summary>
 <pre><code class="python">&#34;&#34;&#34;The base_classes module is used for the rest of the image grammar to set up base classes.&#34;&#34;&#34;
 import copy
-import time    
+import time
 import random
 import inspect
 
+
 class pipedata(object):
-    &#34;&#34;&#34;The pipedata is just an instance of a basic python object. It is used to dynamically
+    &#34;&#34;&#34;
+    The pipedata is just an instance of a basic python object.
+    
+    It is used to dynamically
     store output data from a wide variety of algorithms. Most algorithms in the pipe jsut add
     data to this objet which is passed in as an input argument and returned as an output argument.
     &#34;&#34;&#34;
     pass
+
 
 class param_space(dict):
     &#34;&#34;&#34;Construct an parameter dictionary that represents the search space.
@@ -48,15 +53,14 @@ class param_space(dict):
         descriptions - Descriptions of the parameters
         ranges - List of possible choices for each parameter.
     &#34;&#34;&#34;
-    
+
     descriptions = dict()
     ranges = dict()
     pkeys = []
-    
+
     @classmethod
     def add(cls, key, prange, description):
-        &#34;&#34;&#34;This is a class function which adds in parameters. 
-        
+        &#34;&#34;&#34;Add in parameters.
         Inputs:
             key - the paramter name
             prange - the parameter range
@@ -64,28 +68,29 @@ class param_space(dict):
         &#34;&#34;&#34;
         cls.descriptions[key] = description
         cls.ranges[key] = prange
-        if not key in cls.pkeys:
+        if key not in cls.pkeys:
             cls.pkeys.append(key)
 
+
     def addall(self,params):
-        &#34;&#34;&#34;Function to add a list of paramters to the current paramter list&#34;&#34;&#34;
+        &#34;&#34;&#34;Add a list of paramters to the current paramter list.&#34;&#34;&#34;
         if issubclass(type(params), param_space):
             for key in params:
                 self.add(key, params.ranges[key], params.descriptions[key])
                 self[key] = params[key]
         else:
             raise TypeError(&#39;A very specific bad thing happened.&#39;)
-                            
+
     def printparam(self, key):
-        &#34;&#34;&#34;Return description of parameter from param list.&#34;&#34;&#34;
-        
+        &#34;&#34;&#34;Return description of parameter from param list.&#34;&#34;&#34;      
+
         outstring = f&#34;{key}={self[key]}\n\t{self.descriptions[key]}&#34;
-        
+
         if len(self.ranges) &lt; 10:
             outstring += &#34;\n\t{self.ranges[key]}\n\n&#34;
         else:
             outstring += &#34;\n\t{self.ranges[key][:2]}...{self.ranges[key][-2:]}\n\n&#34;
-        
+
         return outstring
 
 #     def __str__(self):
@@ -108,42 +113,45 @@ class param_space(dict):
         for index, key in enumerate(self.pkeys):
             self[key] = individual[index]
 
+
 class algorithm(object):
     &#34;&#34;&#34;Base class for any image alogirthm.
-    
+
     Functions:
     evaluate -- Run segmentation algorithm to get inferred mask.
 
     &#34;&#34;&#34;
-    
+
     def __init__(self, paramlist=None):
         &#34;&#34;&#34;Generate algorithm params from parameter list.&#34;&#34;&#34;
         self.params = param_space()
         self.set_params(paramlist)
-    
+
     def set_params(self, paramlist=None):
+        &#34;&#34;&#34;Set parameters from parameter list.&#34;&#34;&#34;
         if paramlist:
-            if  issubclass(type(paramlist), param_space):
+            if issubclass(type(paramlist), param_space):
                 self.params = copy.deepcopy(paramlist)
             else:
-                #print(f&#34;{type(paramlist)}_paramlist={paramlist}&#34;)
+                # print(f&#34;{type(paramlist)}_paramlist={paramlist}&#34;)
                 self.params.fromlist(list(paramlist))
-        #TODO Comment this back in
-        #self.checkparamindex()
-        
+        # TODO Comment this back in
+        # self.checkparamindex()
+
     def checkparamindex(self):
-        &#34;&#34;&#34;Check paramiter keys to ensure values are valid&#34;&#34;&#34;
+        &#34;&#34;&#34;Check paramiter keys to ensure values are valid.&#34;&#34;&#34;
         for myparams in self.params.pkeys:
             assert myparams in self.params, f&#34;ERROR {myparams} is not in parameter list&#34;
-             
+
     def mutateself(self, flip_prob=0.5):
         &#34;&#34;&#34;Mutate self and return new params.&#34;&#34;&#34;
         for myparam in self.params.pkeys:
             rand_val = random.random()
             if rand_val &lt; flip_prob:
-                self.params[myparam] = random.choice(self.params.ranges[myparam])
+                self.params[myparam] = random.choice(
+                    self.params.ranges[myparam])
         return self.params
-    
+
     def pipe(self, data):
         &#34;&#34;&#34;Run segmentation algorithm to get inferred mask.&#34;&#34;&#34;
         print(&#34;WARNING: Default Pipe, doing nothing\n&#34;)
@@ -166,10 +174,10 @@ class algorithm(object):
         Output:
         fitness -- resulting fitness value for the individual
         mask -- resulting image mask associated with the individual (if return_mask=True)
-
         &#34;&#34;&#34;
 
         #TODO make this funciton more flexible and allow multiple types of params 
+
         # i&#39;m thinking (list, param_space and algorithm)
         startTime = int(round(time.time() * 1000))
         if params:
@@ -180,40 +188,50 @@ class algorithm(object):
             print(f&#34;Time: {(endTime - startTime)/1000} s&#34;)
         else:
             print(f&#34;{self}&#34;)
-            data = self.pipe(data) 
+            data = self.pipe(data)
             endTime = int(round(time.time() * 1000))
             print(f&#34;Time: {(endTime - startTime)/1000} s&#34;)
         
         return data    
     
     def mutate_self(self,flip_prob=0.5):
+        &#34;&#34;&#34;Mutate self.
+        
+        Mutate algorithm if random value is
+        less than 0.5.
+        &#34;&#34;&#34;      
+
         print(&#34;using default mutation function&#34;)
         for keys in self.params:
             rand_val = random.random()
             if rand_val &lt; flip_prob:
                 # Let&#39;s mutate the algorithm
                 self.params[index] = random.choice(self.params.ranges[index])
-                
-    def algorithm_code(self):
-        &#34;&#34;&#34;Print usable code to run segmentation algorithm based on an
-         individual&#39;s genetic representation vector.&#34;&#34;&#34;
 
+    def algorithm_code(self):
+        &#34;&#34;&#34;Print usable code to run segmentation algorithm.
+        
+        Based on an
+        individual&#39;s genetic representation vector.
+        &#34;&#34;&#34;
         original_function = inspect.getsource(self.evaluate)
 
         return original_function
+
 
 def mutateAlgo(algorithm, paramlist, flip_prob=0.5):
     &#34;&#34;&#34;Generate an offspring based on current individual.&#34;&#34;&#34;
     child = algorithm(paramlist=paramlist)
     child.mutateself(flip_prob=flip_prob)
     return child
-   
+
+
 def popCounts(pop):
-    &#34;&#34;&#34;Count the number of each algorihtm in a population&#34;&#34;&#34;
+    &#34;&#34;&#34;Count the number of each algorihtm in a population.&#34;&#34;&#34;
     algorithms = seg_params.ranges[&#34;algorithm&#34;]
-    counts = {a:0 for a in algorithms}
+    counts = {a: 0 for a in algorithms}
     for p in pop:
-        #print(p[0])
+        # print(p[0])
         counts[p[0]] += 1
     return counts</code></pre>
 </details>
@@ -245,17 +263,17 @@ def popCounts(pop):
 <span>def <span class="ident">popCounts</span></span>(<span>pop)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Count the number of each algorihtm in a population</p></div>
+<div class="desc"><p>Count the number of each algorihtm in a population.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def popCounts(pop):
-    &#34;&#34;&#34;Count the number of each algorihtm in a population&#34;&#34;&#34;
+    &#34;&#34;&#34;Count the number of each algorihtm in a population.&#34;&#34;&#34;
     algorithms = seg_params.ranges[&#34;algorithm&#34;]
-    counts = {a:0 for a in algorithms}
+    counts = {a: 0 for a in algorithms}
     for p in pop:
-        #print(p[0])
+        # print(p[0])
         counts[p[0]] += 1
     return counts</code></pre>
 </details>
@@ -280,40 +298,42 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
 </summary>
 <pre><code class="python">class algorithm(object):
     &#34;&#34;&#34;Base class for any image alogirthm.
-    
+
     Functions:
     evaluate -- Run segmentation algorithm to get inferred mask.
 
     &#34;&#34;&#34;
-    
+
     def __init__(self, paramlist=None):
         &#34;&#34;&#34;Generate algorithm params from parameter list.&#34;&#34;&#34;
         self.params = param_space()
         self.set_params(paramlist)
-    
+
     def set_params(self, paramlist=None):
+        &#34;&#34;&#34;Set parameters from parameter list.&#34;&#34;&#34;
         if paramlist:
-            if  issubclass(type(paramlist), param_space):
+            if issubclass(type(paramlist), param_space):
                 self.params = copy.deepcopy(paramlist)
             else:
-                #print(f&#34;{type(paramlist)}_paramlist={paramlist}&#34;)
+                # print(f&#34;{type(paramlist)}_paramlist={paramlist}&#34;)
                 self.params.fromlist(list(paramlist))
-        #TODO Comment this back in
-        #self.checkparamindex()
-        
+        # TODO Comment this back in
+        # self.checkparamindex()
+
     def checkparamindex(self):
-        &#34;&#34;&#34;Check paramiter keys to ensure values are valid&#34;&#34;&#34;
+        &#34;&#34;&#34;Check paramiter keys to ensure values are valid.&#34;&#34;&#34;
         for myparams in self.params.pkeys:
             assert myparams in self.params, f&#34;ERROR {myparams} is not in parameter list&#34;
-             
+
     def mutateself(self, flip_prob=0.5):
         &#34;&#34;&#34;Mutate self and return new params.&#34;&#34;&#34;
         for myparam in self.params.pkeys:
             rand_val = random.random()
             if rand_val &lt; flip_prob:
-                self.params[myparam] = random.choice(self.params.ranges[myparam])
+                self.params[myparam] = random.choice(
+                    self.params.ranges[myparam])
         return self.params
-    
+
     def pipe(self, data):
         &#34;&#34;&#34;Run segmentation algorithm to get inferred mask.&#34;&#34;&#34;
         print(&#34;WARNING: Default Pipe, doing nothing\n&#34;)
@@ -336,10 +356,10 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
         Output:
         fitness -- resulting fitness value for the individual
         mask -- resulting image mask associated with the individual (if return_mask=True)
-
         &#34;&#34;&#34;
 
         #TODO make this funciton more flexible and allow multiple types of params 
+
         # i&#39;m thinking (list, param_space and algorithm)
         startTime = int(round(time.time() * 1000))
         if params:
@@ -350,24 +370,32 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
             print(f&#34;Time: {(endTime - startTime)/1000} s&#34;)
         else:
             print(f&#34;{self}&#34;)
-            data = self.pipe(data) 
+            data = self.pipe(data)
             endTime = int(round(time.time() * 1000))
             print(f&#34;Time: {(endTime - startTime)/1000} s&#34;)
         
         return data    
     
     def mutate_self(self,flip_prob=0.5):
+        &#34;&#34;&#34;Mutate self.
+        
+        Mutate algorithm if random value is
+        less than 0.5.
+        &#34;&#34;&#34;      
+
         print(&#34;using default mutation function&#34;)
         for keys in self.params:
             rand_val = random.random()
             if rand_val &lt; flip_prob:
                 # Let&#39;s mutate the algorithm
                 self.params[index] = random.choice(self.params.ranges[index])
-                
-    def algorithm_code(self):
-        &#34;&#34;&#34;Print usable code to run segmentation algorithm based on an
-         individual&#39;s genetic representation vector.&#34;&#34;&#34;
 
+    def algorithm_code(self):
+        &#34;&#34;&#34;Print usable code to run segmentation algorithm.
+        
+        Based on an
+        individual&#39;s genetic representation vector.
+        &#34;&#34;&#34;
         original_function = inspect.getsource(self.evaluate)
 
         return original_function</code></pre>
@@ -385,16 +413,19 @@ evaluate &ndash; Run segmentation algorithm to get inferred mask.</p>
 <span>def <span class="ident">algorithm_code</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Print usable code to run segmentation algorithm based on an
+<div class="desc"><p>Print usable code to run segmentation algorithm.</p>
+<p>Based on an
 individual's genetic representation vector.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def algorithm_code(self):
-    &#34;&#34;&#34;Print usable code to run segmentation algorithm based on an
-     individual&#39;s genetic representation vector.&#34;&#34;&#34;
-
+    &#34;&#34;&#34;Print usable code to run segmentation algorithm.
+    
+    Based on an
+    individual&#39;s genetic representation vector.
+    &#34;&#34;&#34;
     original_function = inspect.getsource(self.evaluate)
 
     return original_function</code></pre>
@@ -404,13 +435,13 @@ individual's genetic representation vector.</p></div>
 <span>def <span class="ident">checkparamindex</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Check paramiter keys to ensure values are valid</p></div>
+<div class="desc"><p>Check paramiter keys to ensure values are valid.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def checkparamindex(self):
-    &#34;&#34;&#34;Check paramiter keys to ensure values are valid&#34;&#34;&#34;
+    &#34;&#34;&#34;Check paramiter keys to ensure values are valid.&#34;&#34;&#34;
     for myparams in self.params.pkeys:
         assert myparams in self.params, f&#34;ERROR {myparams} is not in parameter list&#34;</code></pre>
 </details>
@@ -419,12 +450,20 @@ individual's genetic representation vector.</p></div>
 <span>def <span class="ident">mutate_self</span></span>(<span>self, flip_prob=0.5)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Mutate self.</p>
+<p>Mutate algorithm if random value is
+less than 0.5.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def mutate_self(self,flip_prob=0.5):
+    &#34;&#34;&#34;Mutate self.
+    
+    Mutate algorithm if random value is
+    less than 0.5.
+    &#34;&#34;&#34;      
+
     print(&#34;using default mutation function&#34;)
     for keys in self.params:
         rand_val = random.random()
@@ -447,7 +486,8 @@ individual's genetic representation vector.</p></div>
     for myparam in self.params.pkeys:
         rand_val = random.random()
         if rand_val &lt; flip_prob:
-            self.params[myparam] = random.choice(self.params.ranges[myparam])
+            self.params[myparam] = random.choice(
+                self.params.ranges[myparam])
     return self.params</code></pre>
 </details>
 </dd>
@@ -491,10 +531,10 @@ mask &ndash; resulting image mask associated with the individual (if return_mask
     Output:
     fitness -- resulting fitness value for the individual
     mask -- resulting image mask associated with the individual (if return_mask=True)
-
     &#34;&#34;&#34;
 
     #TODO make this funciton more flexible and allow multiple types of params 
+
     # i&#39;m thinking (list, param_space and algorithm)
     startTime = int(round(time.time() * 1000))
     if params:
@@ -505,7 +545,7 @@ mask &ndash; resulting image mask associated with the individual (if return_mask
         print(f&#34;Time: {(endTime - startTime)/1000} s&#34;)
     else:
         print(f&#34;{self}&#34;)
-        data = self.pipe(data) 
+        data = self.pipe(data)
         endTime = int(round(time.time() * 1000))
         print(f&#34;Time: {(endTime - startTime)/1000} s&#34;)
     
@@ -516,17 +556,18 @@ mask &ndash; resulting image mask associated with the individual (if return_mask
 <span>def <span class="ident">set_params</span></span>(<span>self, paramlist=None)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Set parameters from parameter list.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def set_params(self, paramlist=None):
+    &#34;&#34;&#34;Set parameters from parameter list.&#34;&#34;&#34;
     if paramlist:
-        if  issubclass(type(paramlist), param_space):
+        if issubclass(type(paramlist), param_space):
             self.params = copy.deepcopy(paramlist)
         else:
-            #print(f&#34;{type(paramlist)}_paramlist={paramlist}&#34;)
+            # print(f&#34;{type(paramlist)}_paramlist={paramlist}&#34;)
             self.params.fromlist(list(paramlist))</code></pre>
 </details>
 </dd>
@@ -554,15 +595,14 @@ ranges - List of possible choices for each parameter.</p></div>
         descriptions - Descriptions of the parameters
         ranges - List of possible choices for each parameter.
     &#34;&#34;&#34;
-    
+
     descriptions = dict()
     ranges = dict()
     pkeys = []
-    
+
     @classmethod
     def add(cls, key, prange, description):
-        &#34;&#34;&#34;This is a class function which adds in parameters. 
-        
+        &#34;&#34;&#34;Add in parameters.
         Inputs:
             key - the paramter name
             prange - the parameter range
@@ -570,28 +610,29 @@ ranges - List of possible choices for each parameter.</p></div>
         &#34;&#34;&#34;
         cls.descriptions[key] = description
         cls.ranges[key] = prange
-        if not key in cls.pkeys:
+        if key not in cls.pkeys:
             cls.pkeys.append(key)
 
+
     def addall(self,params):
-        &#34;&#34;&#34;Function to add a list of paramters to the current paramter list&#34;&#34;&#34;
+        &#34;&#34;&#34;Add a list of paramters to the current paramter list.&#34;&#34;&#34;
         if issubclass(type(params), param_space):
             for key in params:
                 self.add(key, params.ranges[key], params.descriptions[key])
                 self[key] = params[key]
         else:
             raise TypeError(&#39;A very specific bad thing happened.&#39;)
-                            
+
     def printparam(self, key):
-        &#34;&#34;&#34;Return description of parameter from param list.&#34;&#34;&#34;
-        
+        &#34;&#34;&#34;Return description of parameter from param list.&#34;&#34;&#34;      
+
         outstring = f&#34;{key}={self[key]}\n\t{self.descriptions[key]}&#34;
-        
+
         if len(self.ranges) &lt; 10:
             outstring += &#34;\n\t{self.ranges[key]}\n\n&#34;
         else:
             outstring += &#34;\n\t{self.ranges[key][:2]}...{self.ranges[key][-2:]}\n\n&#34;
-        
+
         return outstring
 
 #     def __str__(self):
@@ -644,7 +685,7 @@ ranges - List of possible choices for each parameter.</p></div>
 <span>def <span class="ident">add</span></span>(<span>key, prange, description)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>This is a class function which adds in parameters. </p>
+<div class="desc"><p>Add in parameters.</p>
 <h2 id="inputs">Inputs</h2>
 <p>key - the paramter name
 prange - the parameter range
@@ -655,8 +696,7 @@ description - the description of the parameter</p></div>
 </summary>
 <pre><code class="python">@classmethod
 def add(cls, key, prange, description):
-    &#34;&#34;&#34;This is a class function which adds in parameters. 
-    
+    &#34;&#34;&#34;Add in parameters.
     Inputs:
         key - the paramter name
         prange - the parameter range
@@ -664,7 +704,7 @@ def add(cls, key, prange, description):
     &#34;&#34;&#34;
     cls.descriptions[key] = description
     cls.ranges[key] = prange
-    if not key in cls.pkeys:
+    if key not in cls.pkeys:
         cls.pkeys.append(key)</code></pre>
 </details>
 </dd>
@@ -675,13 +715,13 @@ def add(cls, key, prange, description):
 <span>def <span class="ident">addall</span></span>(<span>self, params)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Function to add a list of paramters to the current paramter list</p></div>
+<div class="desc"><p>Add a list of paramters to the current paramter list.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def addall(self,params):
-    &#34;&#34;&#34;Function to add a list of paramters to the current paramter list&#34;&#34;&#34;
+    &#34;&#34;&#34;Add a list of paramters to the current paramter list.&#34;&#34;&#34;
     if issubclass(type(params), param_space):
         for key in params:
             self.add(key, params.ranges[key], params.descriptions[key])
@@ -716,15 +756,15 @@ def add(cls, key, prange, description):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def printparam(self, key):
-    &#34;&#34;&#34;Return description of parameter from param list.&#34;&#34;&#34;
-    
+    &#34;&#34;&#34;Return description of parameter from param list.&#34;&#34;&#34;      
+
     outstring = f&#34;{key}={self[key]}\n\t{self.descriptions[key]}&#34;
-    
+
     if len(self.ranges) &lt; 10:
         outstring += &#34;\n\t{self.ranges[key]}\n\n&#34;
     else:
         outstring += &#34;\n\t{self.ranges[key][:2]}...{self.ranges[key][-2:]}\n\n&#34;
-    
+
     return outstring</code></pre>
 </details>
 </dd>
@@ -751,7 +791,8 @@ def add(cls, key, prange, description):
 <span>class <span class="ident">pipedata</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>The pipedata is just an instance of a basic python object. It is used to dynamically
+<div class="desc"><p>The pipedata is just an instance of a basic python object.</p>
+<p>It is used to dynamically
 store output data from a wide variety of algorithms. Most algorithms in the pipe jsut add
 data to this objet which is passed in as an input argument and returned as an output argument.</p></div>
 <details class="source">
@@ -759,7 +800,10 @@ data to this objet which is passed in as an input argument and returned as an ou
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class pipedata(object):
-    &#34;&#34;&#34;The pipedata is just an instance of a basic python object. It is used to dynamically
+    &#34;&#34;&#34;
+    The pipedata is just an instance of a basic python object.
+    
+    It is used to dynamically
     store output data from a wide variety of algorithms. Most algorithms in the pipe jsut add
     data to this objet which is passed in as an input argument and returned as an output argument.
     &#34;&#34;&#34;
