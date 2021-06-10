@@ -73,7 +73,6 @@ class Classifier(algorithm):
         self.params["max_depth"] = 1
         self.params["n_estimators"] = 100
         self.params["n_neighbors"] = 5
-        self.params["max_features"] = 1
         
         self.set_params(paramlist)
 
