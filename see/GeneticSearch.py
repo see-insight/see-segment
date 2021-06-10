@@ -241,7 +241,7 @@ class Evolver(object):
 
     # TODO add some checking (see next comment)
     def copy_pop_list(self, tpop):
-    """Copy population list to new list"""
+        """Copy population list to new list"""
         new_tpop = []
         for individual in tpop:
             new_tpop.append(self.copy_individual(individual))
