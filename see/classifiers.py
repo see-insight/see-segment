@@ -58,7 +58,7 @@ class Classifier(algorithm):
     def evaluate(self, training_set, testing_set):
         """Instance evaluate method. Needs to be overridden by subclasses."""
         print("WARNING: Default evaluation uses ", self.params["algorithm"])
-        return testing_set
+        return testing_set.y
 
     def pipe(self, data):
         print(data)
