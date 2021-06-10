@@ -1,8 +1,9 @@
 """The base_classes module is used for the rest of the image grammar to set up base classes."""
 import copy
-import time    
+import time
 import random
 import inspect
+
 
 class pipedata(object):
     """
@@ -12,8 +13,8 @@ class pipedata(object):
     store output data from a wide variety of algorithms. Most algorithms in the pipe jsut add
     data to this objet which is passed in as an input argument and returned as an output argument.
     """
-    
     pass
+
 
 class param_space(dict):
     """Construct an parameter dictionary that represents the search space.
@@ -23,15 +24,14 @@ class param_space(dict):
         descriptions - Descriptions of the parameters
         ranges - List of possible choices for each parameter.
     """
-    
+
     descriptions = dict()
     ranges = dict()
     pkeys = []
-    
+
     @classmethod
     def add(cls, key, prange, description):
         """Add in parameters.
-        
         Inputs:
             key - the paramter name
             prange - the parameter range
@@ -39,8 +39,9 @@ class param_space(dict):
         """
         cls.descriptions[key] = description
         cls.ranges[key] = prange
-        if not key in cls.pkeys:
+        if key not in cls.pkeys:
             cls.pkeys.append(key)
+
 
     def addall(self,params):
         """Add a list of paramters to the current paramter list."""
@@ -50,16 +51,17 @@ class param_space(dict):
                 self[key] = params[key]
         else:
             raise TypeError('A very specific bad thing happened.')
-                            
+
     def printparam(self, key):
         """Return description of parameter from param list."""      
+
         outstring = f"{key}={self[key]}\n\t{self.descriptions[key]}"
-        
+
         if len(self.ranges) < 10:
             outstring += "\n\t{self.ranges[key]}\n\n"
         else:
             outstring += "\n\t{self.ranges[key][:2]}...{self.ranges[key][-2:]}\n\n"
-        
+
         return outstring
 
 #     def __str__(self):
@@ -82,43 +84,45 @@ class param_space(dict):
         for index, key in enumerate(self.pkeys):
             self[key] = individual[index]
 
+
 class algorithm(object):
     """Base class for any image alogirthm.
-    
+
     Functions:
     evaluate -- Run segmentation algorithm to get inferred mask.
 
     """
-    
+
     def __init__(self, paramlist=None):
         """Generate algorithm params from parameter list."""
         self.params = param_space()
         self.set_params(paramlist)
-    
+
     def set_params(self, paramlist=None):
         """Set parameters from parameter list."""
         if paramlist:
-            if  issubclass(type(paramlist), param_space):
+            if issubclass(type(paramlist), param_space):
                 self.params = copy.deepcopy(paramlist)
             else:
-                #print(f"{type(paramlist)}_paramlist={paramlist}")
+                # print(f"{type(paramlist)}_paramlist={paramlist}")
                 self.params.fromlist(list(paramlist))
-        #TODO Comment this back in
-        #self.checkparamindex()
-        
+        # TODO Comment this back in
+        # self.checkparamindex()
+
     def checkparamindex(self):
         """Check paramiter keys to ensure values are valid."""
         for myparams in self.params.pkeys:
             assert myparams in self.params, f"ERROR {myparams} is not in parameter list"
-             
+
     def mutateself(self, flip_prob=0.5):
         """Mutate self and return new params."""
         for myparam in self.params.pkeys:
             rand_val = random.random()
             if rand_val < flip_prob:
-                self.params[myparam] = random.choice(self.params.ranges[myparam])
+                self.params[myparam] = random.choice(
+                    self.params.ranges[myparam])
         return self.params
-    
+
     def pipe(self, data):
         """Run segmentation algorithm to get inferred mask."""
         print("WARNING: Default Pipe, doing nothing\n")
@@ -142,7 +146,9 @@ class algorithm(object):
         fitness -- resulting fitness value for the individual
         mask -- resulting image mask associated with the individual (if return_mask=True)
         """
+
         #TODO make this funciton more flexible and allow multiple types of params 
+
         # i'm thinking (list, param_space and algorithm)
         startTime = int(round(time.time() * 1000))
         if params:
@@ -153,7 +159,7 @@ class algorithm(object):
             print(f"Time: {(endTime - startTime)/1000} s")
         else:
             print(f"{self}")
-            data = self.pipe(data) 
+            data = self.pipe(data)
             endTime = int(round(time.time() * 1000))
             print(f"Time: {(endTime - startTime)/1000} s")
         
@@ -165,13 +171,14 @@ class algorithm(object):
         Mutate algorithm if random value is
         less than 0.5.
         """      
+
         print("using default mutation function")
         for keys in self.params:
             rand_val = random.random()
             if rand_val < flip_prob:
                 # Let's mutate the algorithm
                 self.params[index] = random.choice(self.params.ranges[index])
-                
+
     def algorithm_code(self):
         """Print usable code to run segmentation algorithm.
         
@@ -182,17 +189,19 @@ class algorithm(object):
 
         return original_function
 
+
 def mutateAlgo(algorithm, paramlist, flip_prob=0.5):
     """Generate an offspring based on current individual."""
     child = algorithm(paramlist=paramlist)
     child.mutateself(flip_prob=flip_prob)
     return child
-   
+
+
 def popCounts(pop):
     """Count the number of each algorihtm in a population."""
     algorithms = seg_params.ranges["algorithm"]
-    counts = {a:0 for a in algorithms}
+    counts = {a: 0 for a in algorithms}
     for p in pop:
-        #print(p[0])
+        # print(p[0])
         counts[p[0]] += 1
     return counts
