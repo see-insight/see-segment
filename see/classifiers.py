@@ -131,7 +131,7 @@ class KNeighborsClassifier(Classifier):
         """The evaluate function for K Nearest-Nei3ghbors"""
         print("RUNNING EVAL FOR KNN")
 
-        num_samples = len(testing_set.y)
+        num_samples = len(training_set.X)
         # TODO n_neighbors must be <= number of samples
         # Modulo might not be the best way to do this.
         neighbors_param = self.params["n_neighbors"]
