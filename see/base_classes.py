@@ -5,10 +5,14 @@ import random
 import inspect
 
 class pipedata(object):
-    """The pipedata is just an instance of a basic python object. It is used to dynamically
+    """
+    The pipedata is just an instance of a basic python object.
+    
+    It is used to dynamically
     store output data from a wide variety of algorithms. Most algorithms in the pipe jsut add
     data to this objet which is passed in as an input argument and returned as an output argument.
     """
+    
     pass
 
 class param_space(dict):
@@ -26,7 +30,7 @@ class param_space(dict):
     
     @classmethod
     def add(cls, key, prange, description):
-        """This is a class function which adds in parameters. 
+        """Add in parameters.
         
         Inputs:
             key - the paramter name
@@ -39,7 +43,7 @@ class param_space(dict):
             cls.pkeys.append(key)
 
     def addall(self,params):
-        """Function to add a list of paramters to the current paramter list"""
+        """Add a list of paramters to the current paramter list."""
         if issubclass(type(params), param_space):
             for key in params:
                 self.add(key, params.ranges[key], params.descriptions[key])
@@ -48,8 +52,7 @@ class param_space(dict):
             raise TypeError('A very specific bad thing happened.')
                             
     def printparam(self, key):
-        """Return description of parameter from param list."""
-        
+        """Return description of parameter from param list."""      
         outstring = f"{key}={self[key]}\n\t{self.descriptions[key]}"
         
         if len(self.ranges) < 10:
@@ -93,6 +96,7 @@ class algorithm(object):
         self.set_params(paramlist)
     
     def set_params(self, paramlist=None):
+        """Set parameters from parameter list."""
         if paramlist:
             if  issubclass(type(paramlist), param_space):
                 self.params = copy.deepcopy(paramlist)
@@ -103,7 +107,7 @@ class algorithm(object):
         #self.checkparamindex()
         
     def checkparamindex(self):
-        """Check paramiter keys to ensure values are valid"""
+        """Check paramiter keys to ensure values are valid."""
         for myparams in self.params.pkeys:
             assert myparams in self.params, f"ERROR {myparams} is not in parameter list"
              
@@ -137,9 +141,7 @@ class algorithm(object):
         Output:
         fitness -- resulting fitness value for the individual
         mask -- resulting image mask associated with the individual (if return_mask=True)
-
         """
-
         #TODO make this funciton more flexible and allow multiple types of params 
         # i'm thinking (list, param_space and algorithm)
         startTime = int(round(time.time() * 1000))
@@ -158,6 +160,11 @@ class algorithm(object):
         return data    
     
     def mutate_self(self,flip_prob=0.5):
+        """Mutate self.
+        
+        Mutate algorithm if random value is
+        less than 0.5.
+        """      
         print("using default mutation function")
         for keys in self.params:
             rand_val = random.random()
@@ -166,9 +173,11 @@ class algorithm(object):
                 self.params[index] = random.choice(self.params.ranges[index])
                 
     def algorithm_code(self):
-        """Print usable code to run segmentation algorithm based on an
-         individual's genetic representation vector."""
-
+        """Print usable code to run segmentation algorithm.
+        
+        Based on an
+        individual's genetic representation vector.
+        """
         original_function = inspect.getsource(self.evaluate)
 
         return original_function
@@ -180,7 +189,7 @@ def mutateAlgo(algorithm, paramlist, flip_prob=0.5):
     return child
    
 def popCounts(pop):
-    """Count the number of each algorihtm in a population"""
+    """Count the number of each algorihtm in a population."""
     algorithms = seg_params.ranges["algorithm"]
     counts = {a:0 for a in algorithms}
     for p in pop:

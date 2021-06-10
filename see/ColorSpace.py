@@ -1,3 +1,7 @@
+"""ColorSpace.py file."""
+
+from skimage import color
+from base_classes import param_space, algorithm
 import copy
 import inspect
 import random
@@ -6,13 +10,13 @@ import sys
 import logging
 import numpy as np
 import skimage
-from skimage import color
-from see.base_classes import param_space, algorithm
 
 # TODO My guess is this algorithm is very slow.  We need to use a cache to speed it up.
 
 
 class color_params(param_space):
+    """Class color_params."""
+    
     descriptions = dict()
     ranges = dict()
     pkeys = []
@@ -34,9 +38,10 @@ color_params.add('channel',
 
 
 class colorspace(algorithm):
-
+       """Class colorspace."""
+        
     def getchannel(img, colorspace, channel):
-        """function that returns a single channel from an image
+        """Function that returns a single channel from an image.
         ['RGB', ‘HSV’, ‘RGB CIE’, ‘XYZ’, ‘YUV’, ‘YIQ’, ‘YPbPr’, ‘YCbCr’, ‘YDbDr’]
         """
         dimention = 3
@@ -79,7 +84,6 @@ class colorspace(algorithm):
     # TODO use name to build a dictionary to use as a chache
     def evaluate(self, img, name=None):
         """Run segmentation algorithm to get inferred mask."""
-
         multichannel = self.params['multichannel']
 
         if len(img.shape) > 2:
@@ -94,6 +98,7 @@ class colorspace(algorithm):
             return channel
 
     def pipe(self, data):
+        """Set inputimage and img to evaluated data images."""
         data.inputimage = data.img
         data.img = self.evaluate(data.img)
         return data

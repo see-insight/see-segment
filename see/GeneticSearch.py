@@ -1,5 +1,7 @@
-"""Using the specified search space and fitness function defined in 'Algorithm' this runs
- the genetic algorithm over that space. Best individuals are stored in the hall of fame (hof)."""
+"""Using the specified search space and fitness function defined in 'Algorithm'. 
+This runs
+the genetic algorithm over that space. Best individuals are stored in the hall of fame (hof).
+"""
 
 import random
 import copy
@@ -40,8 +42,11 @@ def twoPointCopy(np1, np2, seed=False):
 
 
 def skimageCrossRandom(np1, np2, seed=False):
-    """Execute a crossover between two arrays (np1 and np2) picking a random
-     amount of indexes to change between the two."""
+    """Execute a crossover.
+    
+    Between two arrays (np1 and np2) picking a random
+    amount of indexes to change between the two.
+    """
     if seed == True:
         random.seed(0)
     # DO: Only change values associated with algorithm
@@ -227,6 +232,7 @@ class Evolver(object):
     #TODO add some checking to make sure lists are the right size and type
     #TODO think about how we want to add in fitness to these?
     def copy_individual(self,fromlist):
+        """Return individual from list of individuals"""
         new_individual = self.tool.individual()
         for index in range(len(new_individual)):
             new_individual[index] = fromlist[index]
@@ -234,6 +240,7 @@ class Evolver(object):
 
     #TODO add some checking (see next comment)
     def copy_pop_list(self, tpop):
+    """Copy population list to new list"""
         new_tpop = []
         for individual in tpop:
             new_tpop.append(self.copy_individual(individual))
@@ -260,7 +267,6 @@ class Evolver(object):
 
     def readpop(self, filename='test.json'):
         """Read in existing population from "filename"."""
-
         filen = Path(filename)
         
         if filen.suffix == ".txt":
@@ -281,8 +287,10 @@ class Evolver(object):
         return self.tool.population_read()
 
     def popfitness(self, tpop):
-        """Calculate the fitness values for the population, and log general statistics about these
-         values. Uses hall of fame (hof) to keep track of top 10 individuals.
+        """Calculate the fitness values for the population.
+        
+        Also,log general statistics about these
+        values. Uses hall of fame (hof) to keep track of top 10 individuals.
 
         Keyword arguments:
         tpop -- current population
@@ -343,7 +351,7 @@ class Evolver(object):
         Output:
         final -- new population with mutated individuals.
 
-       """
+        """
         # Calculate next population
 
         # TODO: There is an error here. We need to make sure the best hof is included?

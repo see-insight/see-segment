@@ -24,9 +24,12 @@ import matplotlib.pyplot as plt
 DefaultFolder='./'
 
 def readpgm(name):
-    """The ground truth data is in ascii P2 pgm binary files.  
+    """Read PGM files.
+    
+    The ground truth data is in ascii P2 pgm binary files.  
     OpenCV can read these files in but it would be much easier 
-    to just convert them to more common pgm binary format (P5)."""
+    to just convert them to more common pgm binary format (P5).
+    """
     with open(name, encoding="utf8", errors='ignore') as f:
         lines = f.readlines()
 
@@ -56,8 +59,12 @@ def downloadKOMATSUNA(filenames= ['rgbd_plant.zip', 'rgbd_label.zip'],
                               'http://limu.ait.kyushu-u.ac.jp/~agri/komatsuna/rgbd_label.zip'],
                       datafolder=DefaultFolder,
                       force=True):
-    """The KOMATSUNA plant dataset is a multisegmentation dataset avaliable at http://limu.ait.kyushu-u.ac.jp/~agri/komatsuna/"""
+    """
+    Download Komatsuna.
     
+    The KOMATSUNA plant dataset is a multisegmentation dataset avaliable at 
+    http://limu.ait.kyushu-u.ac.jp/~agri/komatsuna/   
+    """
     if not os.path.exists(folder):
         os.makedirs(folder)
         print("Directory " , folder ,  " Created ")
@@ -82,8 +89,11 @@ def downloadSky(filename = 'sky.zip',
                     folder = DefaultFolder, 
                     url = 'https://www.ime.usp.br/~eduardob/datasets/sky/sky.zip',
                     force=True):
-    """The sky dataset is a binary dataset avaliable at https://www.ime.usp.br/~eduardob/datasets/sky/"""
+    """Download sky.
     
+    The sky dataset is a binary dataset available
+    at https://www.ime.usp.br/~eduardob/datasets/sky/
+    """
     if not os.path.exists(folder):
         os.makedirs(folder)
         print("Directory " , folder ,  " Created ")
@@ -116,6 +126,7 @@ def downloadCOSKEL(filename= 'SKEL_v1.1.zip',
                    url = 'https://github.com/jkoteswarrao/Object-Co-skeletonization-with-Co-segmentation/raw/master/CO-SKEL_v1.1.zip',
                    datafolder=DefaultFolder,
                    force=True):
+    """Download COSKEL."""  
     if not os.path.exists(folder):
         os.makedirs(folder)
         print("Directory " , folder ,  " Created ")
@@ -135,8 +146,11 @@ def downloadCOSKEL(filename= 'SKEL_v1.1.zip',
     
     
 def getSkyFolderLists(outputfolder='', folder=DefaultFolder):
-    '''The Sky data has some odd filenames. This figures it out and creates
-    Three lists for image, mask and output data.'''
+    """Get Sky folder lists.
+    
+    The Sky data has some odd filenames. This figures it out and creates
+    Three lists for image, mask and output data.
+    """    
     imagefolder = f"{folder}/sky/data/"
     maskfolder = f"{folder}/sky/groundtruth/"
 
@@ -155,8 +169,7 @@ def getSkyFolderLists(outputfolder='', folder=DefaultFolder):
     return imagenames, masknames, outputnames
 
 def getKomatsunaFolderLists(outputfolder='', folder=DefaultFolder):
-    '''This downloads the KOMATSUNA dataset.'''
-
+    """Download the KOMATSUNA dataset."""
     imagefolder = f"{folder}/KOMATSUNA/rgbd_plant/"
     maskfolder = f"{folder}/KOMATSUNA/rgbd_label/"
 
@@ -174,8 +187,11 @@ def getKomatsunaFolderLists(outputfolder='', folder=DefaultFolder):
     return imagenames, masknames, outputnames
 
 def getCOSKELFolderlists(outputfolder='output/', folder=DefaultFolder):
-    '''The Sky data has some odd filenames. This figures it out and creates
-    Three lists for image, mask and output data.'''
+    """Get COSKEL folder lists.
+    
+    The Sky data has some odd filenames. This figures it out and creates
+    Three lists for image, mask and output data.
+    """   
     imagefolder = Path(f"{folder}/CO-SKEL_v1.1/images/")
     maskfolder = Path(f"{folder}/CO-SKEL_v1.1/GT_masks/")
 
@@ -197,6 +213,7 @@ def getCOSKELFolderlists(outputfolder='output/', folder=DefaultFolder):
     return imagenames, masknames, outputnames
     
 def getBMCVFolderLists(outputfolder=''):
+    """Obtain and return the names of the images, masks, and outputs."""
     pth = pathlib.Path(__file__).parent.absolute()
     imagefolder = str(pth)+"/../Image_data/BMCV/"
     maskfolder = str(pth)+"/../Image_data/BMCV/"

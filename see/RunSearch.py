@@ -9,14 +9,24 @@ from see import GeneticSearch, Segmentors
 import random
 
 
-from see.Segmentors import segmentor
-from see.ColorSpace import colorspace
-from see.Workflow import workflow
-from see.Segment_Fitness import segment_fitness
-from see import base_classes 
-from see.git_version import git_version
-<<<<<<< HEAD
-=======
+# from see.Segmentors import segmentor
+# from see.ColorSpace import colorspace
+# from see.Workflow import workflow
+# from see.Segment_Fitness import segment_fitness
+# from see import base_classes 
+# from see.git_version import git_version
+
+from Segmentors import segmentor
+from ColorSpace import colorspace
+from Workflow import workflow
+from Segment_Fitness import segment_fitness
+#from see 
+import base_classes 
+from git_version import git_version
+
+
+#<<<<<<< HEAD
+#=======
 
 def write_algo_vector(fpop_file, outstring):
     """Write list of algorithm parameters to string."""
@@ -30,7 +40,7 @@ def read_algo_vector(fpop_file):
         for line in myfile:
             inlist.append(eval(line))
     return inlist
->>>>>>> nate-docs2
+#>>>>>>> nate-docs2
     
 def continuous_search(input_file, 
                       input_mask, 
@@ -78,7 +88,7 @@ def continuous_search(input_file,
         fitness = mydata.fitness
         if (fitness < best_fitness):
             best_fitness = fitness
-            print(f"\n\n\n\nIteration {iteration} Finess Improved to {fitness}")
+            print(f"\n\n\n\nIteration {iteration} Fitness Improved to {fitness}")
             my_evolver.writepop(population, filename="checkpoint.pop")
             imageio.imwrite(best_mask_file,mydata.mask);
             GeneticSearch.write_algo_vector(fpop_file, f"[{iteration}, {fitness}, {params}]\n") 
