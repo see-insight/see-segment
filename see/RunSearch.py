@@ -8,7 +8,6 @@ import matplotlib.pylab as plt
 import imageio
 from see import GeneticSearch, Segmentors
 
-
 from see.Segmentors import segmentor
 from see.ColorSpace import colorspace
 from see.Workflow import workflow
@@ -75,8 +74,7 @@ def continuous_search(input_file,
         fitness = mydata.fitness
         if fitness < best_fitness:
             best_fitness = fitness
-            print(
-                f"\n\n\n\nIteration {iteration} Finess Improved to {fitness}")
+            print(f"\n\n\n\nIteration {iteration} Fitness Improved to {fitness}")
             my_evolver.writepop(population, filename="checkpoint.pop")
             imageio.imwrite(best_mask_file, mydata.mask)
             GeneticSearch.write_algo_vector(

@@ -25,9 +25,12 @@ DefaultFolder = './'
 
 
 def readpgm(name):
-    """The ground truth data is in ascii P2 pgm binary files.
-    OpenCV can read these files in but it would be much easier
-    to just convert them to more common pgm binary format (P5)."""
+    """Read PGM files.
+    
+    The ground truth data is in ascii P2 pgm binary files.  
+    OpenCV can read these files in but it would be much easier 
+    to just convert them to more common pgm binary format (P5).
+    """
     with open(name, encoding="utf8", errors='ignore') as f:
         lines = f.readlines()
 
@@ -50,7 +53,6 @@ def readpgm(name):
         print('Trying to read as P5 PGM file')
         img = imageio.imread(name)
     return img
-
 
 def downloadKOMATSUNA(
         filenames=[
@@ -83,7 +85,6 @@ def downloadKOMATSUNA(
             zip_ref.extractall(folder)
 
         print(f"Download and Convert of {filename} Complete")
-
 
 def downloadSky(filename='sky.zip',
                 folder=DefaultFolder,
@@ -118,13 +119,13 @@ def downloadSky(filename='sky.zip',
 
     print(f"Download and Convert Complete")
 
-
 def downloadCOSKEL(
         filename='SKEL_v1.1.zip',
         folder=f'{DefaultFolder}',
         url='https://github.com/jkoteswarrao/Object-Co-skeletonization-with-Co-segmentation/raw/master/CO-SKEL_v1.1.zip',
         datafolder=DefaultFolder,
         force=True):
+    """Download COSKEL."""  
     if not os.path.exists(folder):
         os.makedirs(folder)
         print("Directory ", folder, " Created ")
@@ -144,8 +145,11 @@ def downloadCOSKEL(
 
 
 def getSkyFolderLists(outputfolder='', folder=DefaultFolder):
-    '''The Sky data has some odd filenames. This figures it out and creates
-    Three lists for image, mask and output data.'''
+    """Get Sky folder lists.
+    
+    The Sky data has some odd filenames. This figures it out and creates
+    Three lists for image, mask and output data.
+    """    
     imagefolder = f"{folder}/sky/data/"
     maskfolder = f"{folder}/sky/groundtruth/"
 
@@ -164,8 +168,7 @@ def getSkyFolderLists(outputfolder='', folder=DefaultFolder):
 
 
 def getKomatsunaFolderLists(outputfolder='', folder=DefaultFolder):
-    '''This downloads the KOMATSUNA dataset.'''
-
+    """Download the KOMATSUNA dataset."""
     imagefolder = f"{folder}/KOMATSUNA/rgbd_plant/"
     maskfolder = f"{folder}/KOMATSUNA/rgbd_label/"
 
@@ -183,8 +186,11 @@ def getKomatsunaFolderLists(outputfolder='', folder=DefaultFolder):
 
 
 def getCOSKELFolderlists(outputfolder='output/', folder=DefaultFolder):
-    '''The Sky data has some odd filenames. This figures it out and creates
-    Three lists for image, mask and output data.'''
+    """Get COSKEL folder lists.
+    
+    The Sky data has some odd filenames. This figures it out and creates
+    Three lists for image, mask and output data.
+    """   
     imagefolder = Path(f"{folder}/CO-SKEL_v1.1/images/")
     maskfolder = Path(f"{folder}/CO-SKEL_v1.1/GT_masks/")
 
@@ -206,6 +212,7 @@ def getCOSKELFolderlists(outputfolder='output/', folder=DefaultFolder):
 
 
 def getBMCVFolderLists(outputfolder=''):
+    """Obtain and return the names of the images, masks, and outputs."""
     pth = pathlib.Path(__file__).parent.absolute()
     imagefolder = str(pth) + "/../Image_data/BMCV/"
     maskfolder = str(pth) + "/../Image_data/BMCV/"

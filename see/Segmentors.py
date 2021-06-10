@@ -1,6 +1,8 @@
 """Segmentor algorithm library designed to segment images with a searchable parameter space.
- This libary actually does not incode the search code itself, instead it just defines
-  the search parameters and the evaluation funtions."""
+
+This libary actually does not incode the search code itself, instead it just defines
+the search parameters and the evaluation funtions.
+"""
 
 from collections import OrderedDict
 import sys
@@ -10,12 +12,14 @@ import skimage
 from skimage import segmentation
 from skimage import color
 
-from see.base_classes import param_space, algorithm
-
+#from see.base_classes import param_space, algorithm
+from base_classes import param_space, algorithm
 # "yeah"
 
 
 class seg_params(param_space):
+    """Create and add parameters to data structures."""
+    
     descriptions = dict()
     ranges = dict()
     pkeys = []
@@ -104,17 +108,19 @@ class segmentor(algorithm):
         return self.thisalgo.evaluate(img)
 
     def pipe(self, data):
+        """Set data.mask to an evaluated image."""
         data.mask = self.evaluate(data.img)
         return data
 
     @classmethod
     def addsegmentor(cls, key, seg):
+        """Add a segmentor."""
         seg_params.ranges['algorithm'].append(key)
         cls.algorithmspace[key] = seg
 
 
 class ColorThreshold(segmentor):
-    """ColorThreshold
+    """ColorThreshold.
 
     Peform Color Thresholding segmentation algorithm. Segments parts of the image
     based on the numerical values for the respective channel.
@@ -140,7 +146,9 @@ class ColorThreshold(segmentor):
 
     def __init__(self, paramlist=None):
         """Get parameters from parameter list that are used in segmentation algorithm.
-         Assign default values to these parameters."""
+        
+        Assign default values to these parameters.
+        """
         self.params = seg_params()
 
         self.params["algorithm"] = "ColorThreshold"
@@ -210,8 +218,10 @@ segmentor.addsegmentor('ColorThreshold', ColorThreshold)
 
 
 class Felzenszwalb(segmentor):
-    """Perform Felzenszwalb segmentation algorithm. The felzenszwalb algorithms computes a
-    graph based on the segmentation. Produces an oversegmentation of the multichannel using
+    """Perform Felzenszwalb segmentation algorithm.
+    
+    The felzenszwalb algorithms computes a 
+    graph based on the segmentation. Produces an oversegmentation of the multichannel using 
     min-span tree. Returns an integer mask indicating the segment labels.
 
     Note: a colorspace of 'HSV' and a channel of 2 is a grayscale image.
@@ -234,7 +244,9 @@ class Felzenszwalb(segmentor):
 
     def __init__(self, paramlist=None):
         """Get parameters from parameter list that are used in segmentation algorithm.
-         Assign default values to these parameters."""
+        
+        Assign default values to these parameters.
+        """
         super(Felzenszwalb, self).__init__(paramlist)
         self.params["algorithm"] = "Felzenszwalb"
         self.params["alpha2"] = 0.984
@@ -254,7 +266,7 @@ class Felzenszwalb(segmentor):
 
         """
 
-        scale = self.params["alpha2"] * 1000
+        scale = self.params["alpha2"]*1000
         sigma = self.params["alpha1"]
         min_size = int(self.params["beta1"] * 100)
 
@@ -307,8 +319,10 @@ segmentor.addsegmentor('Felzenszwalb', Felzenszwalb)
 
 
 class Slic(segmentor):
-    """Perform the Slic segmentation algorithm. Segments k-means clustering in Color space
-     (x, y, z). Returns a 2D or 3D array of labels.
+    """Perform the Slic segmentation algorithm.
+    
+    Segments k-means clustering in Color space
+    (x, y, z). Returns a 2D or 3D array of labels.
 
     Parameters:
     image -- ndarray, input image
@@ -327,16 +341,16 @@ class Slic(segmentor):
 
     enforce_connectivity
 
-   https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.slic
+    https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.slic
 
-   https://www.pyimagesearch.com/2014/07/28/a-slic-superpixel-tutorial-using-python/
-
-
+    https://www.pyimagesearch.com/2014/07/28/a-slic-superpixel-tutorial-using-python/
     """
-
+    
     def __init__(self, paramlist=None):
         """Get parameters from parameter list that are used in segmentation algorithm.
-         Assign default values to these parameters."""
+        
+        Assign default values to these parameters.
+        """
         super(Slic, self).__init__(paramlist)
         self.params["algorithm"] = "Slic"
         self.params["n_segments"] = 5
@@ -352,14 +366,12 @@ class Slic(segmentor):
 
         Keyword arguments:
         img -- Original training image.
-
         Output:
         output -- resulting segmentation mask from algorithm.
-
         """
 
-        compactness = 10**(self.params["beta1"] * 3 - 3)
-        n_segments = self.params["n_segments"] + 1
+        compactness = 10**(self.params["beta1"]*3-3)
+        n_segments = self.params["n_segments"]+1
         max_iter = self.params["max_iter"]
         if len(img.shape) > 2:
             output = skimage.segmentation.slic(
@@ -393,8 +405,10 @@ segmentor.addsegmentor('Slic', Slic)
 
 
 class SlicO(Slic):
-    """Perform the SlicO segmentation algorithm. Segments k-means clustering in Color space
-     (x, y, z). Returns a 2D or 3D array of labels.
+    """Perform the SlicO segmentation algorithm.
+    
+    Segments k-means clustering in Color space
+    (x, y, z). Returns a 2D or 3D array of labels.
 
     Parameters:
     image -- ndarray, input image
@@ -422,7 +436,9 @@ class SlicO(Slic):
 
     def __init__(self, paramlist=None):
         """Get parameters from parameter list that are used in segmentation algorithm.
-         Assign default values to these parameters."""
+        
+        Assign default values to these parameters.
+        """
         super(SlicO, self).__init__(paramlist)
         self.slico = True
         self.set_params(paramlist)
@@ -435,9 +451,10 @@ segmentor.addsegmentor('SlicO', SlicO)
 
 
 class QuickShift(segmentor):
-    """Perform the Quick Shift segmentation algorithm. Segments images with quickshift
-     clustering in Color (x,y) space. Returns ndarray segmentation mask of the labels.
-
+    """Perform the Quick Shift segmentation algorithm.
+    
+    Segments images with quickshift
+    clustering in Color (x,y) space. Returns ndarray segmentation mask of the labels.
     Parameters:
     image -- ndarray, input image
     ratio -- float, balances color-space proximity & image-space
@@ -448,14 +465,14 @@ class QuickShift(segmentor):
     sigma -- float, Width of Guassian smoothing as preprocessing.
         Zero means no smoothing
     random_seed -- int, Random seed used for breacking ties.
-
     https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.quickshift
-
     """
 
     def __init__(self, paramlist=None):
         """Get parameters from parameter list that are used in segmentation algorithm.
-         Assign default values to these parameters."""
+        
+        Assign default values to these parameters.
+        """
         super(QuickShift, self).__init__(paramlist)
         self.params["algorithm"] = "QuickShift"
         self.params["alpha1"] = 0.5
@@ -472,9 +489,7 @@ class QuickShift(segmentor):
 
         Output:
         output -- resulting segmentation mask from algorithm.
-
         """
-
         mindim = min(img.shape)
         ratio = self.params["alpha1"]
         kernel_size = mindim / 10 * self.params["beta1"] + 1
@@ -498,25 +513,25 @@ segmentor.addsegmentor('QuickShift', QuickShift)
 
 class Watershed(segmentor):
     """Perform the Watershed segmentation algorithm. Uses user-markers.
-     treats markers as basins and 'floods' them. Especially good if overlapping objects.
-      Returns a labeled image ndarray.
-
+    
+    treats markers as basins and 'floods' them. Especially good if overlapping objects.
+    Returns a labeled image ndarray.
     Parameters:
     image -- ndarray, input array
     compactness -- float, compactness of the basins. Higher values
         make more regularly-shaped basin.
-
     https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.watershed
-
     """
-
+    
     # Not using connectivity, markers, or offset params as arrays would
     # expand the search space too much.
     # abbreviation for algorithm = WS
 
     def __init__(self, paramlist=None):
         """Get parameters from parameter list that are used in segmentation algorithm.
-         Assign default values to these parameters."""
+        
+        Assign default values to these parameters.
+        """
         super(Watershed, self).__init__(paramlist)
         self.params["algorithm"] = "Watershed"
         self.params["alpha1"] = 0.66
@@ -528,16 +543,10 @@ class Watershed(segmentor):
 
         Keyword arguments:
         img -- Original training image.
-
         Output:
         output -- resulting segmentation mask from algorithm.
-
-
-
         """
-
-        compactness = self.params["alpha1"] * 3
-
+        compactness = self.params["alpha1"]*3
         output = skimage.segmentation.watershed(
             img, markers=None, compactness=compactness
         )
@@ -550,9 +559,10 @@ segmentor.addsegmentor('Watershed', Watershed)
 
 
 class Chan_Vese(segmentor):
-    """Peform Chan Vese segmentation algorithm. ONLY GRAYSCALE. Segments objects
-     without clear boundaries. Returns segmentation array of algorithm.
-
+    """Peform Chan Vese segmentation algorithm. ONLY GRAYSCALE.
+    
+    Segments objects
+    without clear boundaries. Returns segmentation array of algorithm.
     Parameters:
     image -- ndarray grayscale image to be segmented
     mu -- float, 'edge length' weight parameter. Higher mu vals make a
@@ -577,7 +587,9 @@ class Chan_Vese(segmentor):
 
     def __init__(self, paramlist=None):
         """Get parameters from parameter list that are used in segmentation algorithm.
-         Assign default values to these parameters."""
+        
+        Assign default values to these parameters.
+        """
         super(Chan_Vese, self).__init__(paramlist)
         self.params["algorithm"] = "Chan_Vese"
         self.params["alpha1"] = 1
@@ -600,9 +612,7 @@ class Chan_Vese(segmentor):
 
         Output:
         output -- resulting segmentation mask from algorithm.
-
         """
-
         # TODO I think this should be between zero and one.
         mu = self.params["alpha1"] * 2
         # TODO Not sure about the range of these. Previous was (10,20)
@@ -639,9 +649,10 @@ segmentor.addsegmentor('Chan_Vese', Chan_Vese)
 
 class Morphological_Chan_Vese(segmentor):
     """Peform Morphological Chan Vese segmentation algorithm.
-     ONLY WORKS ON GRAYSCALE. Active contours without edges. Can be used to
-      segment images/volumes without good borders. Required that the inside of
-       the object looks different than outside (color, shade, darker).
+    
+    ONLY WORKS ON GRAYSCALE. Active contours without edges. Can be used to
+    segment images/volumes without good borders. Required that the inside of
+    the object looks different than outside (color, shade, darker).
 
     Parameters:
     image -- ndarray of grayscale image
@@ -666,7 +677,9 @@ class Morphological_Chan_Vese(segmentor):
 
     def __init__(self, paramlist=None):
         """Get parameters from parameter list that are used in segmentation algorithm.
-         Assign default values to these parameters."""
+        
+        Assign default values to these parameters.
+        """
         super(Morphological_Chan_Vese, self).__init__(paramlist)
         if not paramlist:
             self.params["algorithm"] = "Morphological_Chan_Vese"
@@ -683,18 +696,15 @@ class Morphological_Chan_Vese(segmentor):
 
     def evaluate(self, img):
         """Evaluate segmentation algorithm on training image.
-
+        
         Keyword arguments:
         img -- Original training image.
-
         Output:
         output -- resulting segmentation mask from algorithm.
-
         """
 
-        # TODO We may want to move this? We need a number 1-4 smoothing
-        # iterations
-        smoothing = int(self.params["alpha1"] * 4)
+        smoothing = int(self.params["alpha1"]*4)
+        # TODO We may want to move this? We need a number 1-4 smoothing iterations
 
         # TODO Not sure about the range of these. Previous was (10,20)
         lambda1 = self.params["beta1"]
@@ -725,11 +735,13 @@ segmentor.addsegmentor('Morphological_Chan_Vese', Morphological_Chan_Vese)
 
 
 class MorphGeodesicActiveContour(segmentor):
-    """Peform Morphological Geodesic Active Contour segmentation algorithm. Uses
-     an image from inverse_gaussian_gradient in order to segment object with visible,
-      but noisy/broken borders. inverse_gaussian_gradient computes the magnitude of
-       the gradients in an image. Returns a preprocessed image suitable for above function.
-        Returns ndarray of segmented image.
+    """Peform Morphological Geodesic Active Contour segmentation algorithm.
+    
+    Uses
+    an image from inverse_gaussian_gradient in order to segment object with visible,
+    but noisy/broken borders. inverse_gaussian_gradient computes the magnitude of
+    the gradients in an image. Returns a preprocessed image suitable for above function.
+    Returns ndarray of segmented image.
 
     Parameters:
     gimage -- array, preprocessed image to be segmented.
@@ -757,7 +769,9 @@ class MorphGeodesicActiveContour(segmentor):
 
     def __init__(self, paramlist=None):
         """Get parameters from parameter list that are used in segmentation algorithm.
+
         Assign default values to these parameters.
+
         """
         super(MorphGeodesicActiveContour, self).__init__(paramlist)
         if not paramlist:
