@@ -36,7 +36,6 @@ def write_vector(fpop_file, outstring):
     with open(fpop_file, 'a') as myfile:
         myfile.write(f'{outstring}\n')
 
-=======
 def write_algo_vector(fpop_file, outstring):
     """Write list of algorithm parameters to string."""
     with open(fpop_file, 'a') as myfile:

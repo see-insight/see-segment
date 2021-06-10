@@ -28,45 +28,49 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;This runs unit tests for functions that can be found in Segmentors.py.&#34;&#34;&#34;
-import sys
-import pytest
-import numpy as np
 
-def test_load_ColorSpace_Library():
+def test_load_color_space_library():
+    &#34;&#34;&#34;Unit test for importing ColorSpace module.&#34;&#34;&#34;
     from see import ColorSpace
     print(ColorSpace)
 
+
 def test_loading_image_examples():
+    &#34;&#34;&#34;Unit test for loading images.&#34;&#34;&#34;
     import imageio
     img = imageio.imread(&#39;Image_data/Examples/AA_Chameleon.jpg&#39;)
     gmask = imageio.imread(&#39;Image_data/Examples/AA_Chameleon_GT.png&#39;)
-    return img,gmask
+    return img, gmask
+
 
 def test_make_colorspace():
+    &#34;&#34;&#34;Unit test for properly creating a ColorSpace instance.&#34;&#34;&#34;
     from see import ColorSpace
     from see import base_classes
     cs = ColorSpace.colorspace()
     assert issubclass(type(cs.params), dict)
     assert issubclass(type(cs.params), base_classes.param_space)
     assert issubclass(type(cs), base_classes.algorithm)
-    
+
+
 def test_colorspace_evaluate():
+    &#34;&#34;&#34;Unit test for evaluate function.&#34;&#34;&#34;
     from see import ColorSpace
-    from see import base_classes
-    img,gmask = test_loading_image_examples()
+    img, gmask = test_loading_image_examples()
     cs = ColorSpace.colorspace()
     test = cs.evaluate(img)
 
+
 def test_colorspace_pipe():
+    &#34;&#34;&#34;Unit test for pipe function.&#34;&#34;&#34;
     from see import ColorSpace
     from see import base_classes
-    img,gmask = test_loading_image_examples()
+    img, gmask = test_loading_image_examples()
     data = base_classes.pipedata()
     data.img = img
     data.gmask = gmask
-    cs = ColorSpace.colorspace()    
-    data = cs.pipe(data)
-    </code></pre>
+    cs = ColorSpace.colorspace()
+    data = cs.pipe(data)</code></pre>
 </details>
 </section>
 <section>
@@ -80,15 +84,15 @@ def test_colorspace_pipe():
 <span>def <span class="ident">test_colorspace_evaluate</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Unit test for evaluate function.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_colorspace_evaluate():
+    &#34;&#34;&#34;Unit test for evaluate function.&#34;&#34;&#34;
     from see import ColorSpace
-    from see import base_classes
-    img,gmask = test_loading_image_examples()
+    img, gmask = test_loading_image_examples()
     cs = ColorSpace.colorspace()
     test = cs.evaluate(img)</code></pre>
 </details>
@@ -97,32 +101,34 @@ def test_colorspace_pipe():
 <span>def <span class="ident">test_colorspace_pipe</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Unit test for pipe function.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_colorspace_pipe():
+    &#34;&#34;&#34;Unit test for pipe function.&#34;&#34;&#34;
     from see import ColorSpace
     from see import base_classes
-    img,gmask = test_loading_image_examples()
+    img, gmask = test_loading_image_examples()
     data = base_classes.pipedata()
     data.img = img
     data.gmask = gmask
-    cs = ColorSpace.colorspace()    
+    cs = ColorSpace.colorspace()
     data = cs.pipe(data)</code></pre>
 </details>
 </dd>
-<dt id="see.tests.test_colorspace.test_load_ColorSpace_Library"><code class="name flex">
-<span>def <span class="ident">test_load_ColorSpace_Library</span></span>(<span>)</span>
+<dt id="see.tests.test_colorspace.test_load_color_space_library"><code class="name flex">
+<span>def <span class="ident">test_load_color_space_library</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Unit test for importing ColorSpace module.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def test_load_ColorSpace_Library():
+<pre><code class="python">def test_load_color_space_library():
+    &#34;&#34;&#34;Unit test for importing ColorSpace module.&#34;&#34;&#34;
     from see import ColorSpace
     print(ColorSpace)</code></pre>
 </details>
@@ -131,28 +137,30 @@ def test_colorspace_pipe():
 <span>def <span class="ident">test_loading_image_examples</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Unit test for loading images.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_loading_image_examples():
+    &#34;&#34;&#34;Unit test for loading images.&#34;&#34;&#34;
     import imageio
     img = imageio.imread(&#39;Image_data/Examples/AA_Chameleon.jpg&#39;)
     gmask = imageio.imread(&#39;Image_data/Examples/AA_Chameleon_GT.png&#39;)
-    return img,gmask</code></pre>
+    return img, gmask</code></pre>
 </details>
 </dd>
 <dt id="see.tests.test_colorspace.test_make_colorspace"><code class="name flex">
 <span>def <span class="ident">test_make_colorspace</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Unit test for properly creating a ColorSpace instance.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_make_colorspace():
+    &#34;&#34;&#34;Unit test for properly creating a ColorSpace instance.&#34;&#34;&#34;
     from see import ColorSpace
     from see import base_classes
     cs = ColorSpace.colorspace()
@@ -181,7 +189,7 @@ def test_colorspace_pipe():
 <ul class="">
 <li><code><a title="see.tests.test_colorspace.test_colorspace_evaluate" href="#see.tests.test_colorspace.test_colorspace_evaluate">test_colorspace_evaluate</a></code></li>
 <li><code><a title="see.tests.test_colorspace.test_colorspace_pipe" href="#see.tests.test_colorspace.test_colorspace_pipe">test_colorspace_pipe</a></code></li>
-<li><code><a title="see.tests.test_colorspace.test_load_ColorSpace_Library" href="#see.tests.test_colorspace.test_load_ColorSpace_Library">test_load_ColorSpace_Library</a></code></li>
+<li><code><a title="see.tests.test_colorspace.test_load_color_space_library" href="#see.tests.test_colorspace.test_load_color_space_library">test_load_color_space_library</a></code></li>
 <li><code><a title="see.tests.test_colorspace.test_loading_image_examples" href="#see.tests.test_colorspace.test_loading_image_examples">test_loading_image_examples</a></code></li>
 <li><code><a title="see.tests.test_colorspace.test_make_colorspace" href="#see.tests.test_colorspace.test_make_colorspace">test_make_colorspace</a></code></li>
 </ul>

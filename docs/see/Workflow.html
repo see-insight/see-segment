@@ -39,7 +39,7 @@ class workflow(algorithm):
     @classmethod
     def addalgos(cls, algo_list):
         &#34;&#34;&#34;Add algorithms to the workflow list.&#34;&#34;&#34;
-        if isinstance(algo_list) == list:
+        if isinstance(algo_list, list):
             for algo in algo_list:
                 workflow.worklist.append(algo)
         else:
@@ -101,7 +101,7 @@ class workflow(algorithm):
     @classmethod
     def addalgos(cls, algo_list):
         &#34;&#34;&#34;Add algorithms to the workflow list.&#34;&#34;&#34;
-        if isinstance(algo_list) == list:
+        if isinstance(algo_list, list):
             for algo in algo_list:
                 workflow.worklist.append(algo)
         else:
@@ -159,7 +159,7 @@ class workflow(algorithm):
 <pre><code class="python">@classmethod
 def addalgos(cls, algo_list):
     &#34;&#34;&#34;Add algorithms to the workflow list.&#34;&#34;&#34;
-    if isinstance(algo_list) == list:
+    if isinstance(algo_list, list):
         for algo in algo_list:
             workflow.worklist.append(algo)
     else:
@@ -194,8 +194,10 @@ def addalgos(cls, algo_list):
 <ul class="hlist">
 <li><code><a title="see.base_classes.algorithm.algorithm_code" href="base_classes.html#see.base_classes.algorithm.algorithm_code">algorithm_code</a></code></li>
 <li><code><a title="see.base_classes.algorithm.checkparamindex" href="base_classes.html#see.base_classes.algorithm.checkparamindex">checkparamindex</a></code></li>
+<li><code><a title="see.base_classes.algorithm.mutate_self" href="base_classes.html#see.base_classes.algorithm.mutate_self">mutate_self</a></code></li>
 <li><code><a title="see.base_classes.algorithm.mutateself" href="base_classes.html#see.base_classes.algorithm.mutateself">mutateself</a></code></li>
 <li><code><a title="see.base_classes.algorithm.runAlgo" href="base_classes.html#see.base_classes.algorithm.runAlgo">runAlgo</a></code></li>
+<li><code><a title="see.base_classes.algorithm.set_params" href="base_classes.html#see.base_classes.algorithm.set_params">set_params</a></code></li>
 </ul>
 </li>
 </ul>

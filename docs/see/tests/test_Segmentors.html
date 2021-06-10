@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.9.2" />
-<title>see.tests.test_Segmentors API documentation</title>
+<title>see.tests.test_segmentors API documentation</title>
 <meta name="description" content="This runs unit tests for functions that can be found in Segmentors.py." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
@@ -19,7 +19,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>see.tests.test_Segmentors</code></h1>
+<h1 class="title">Module <code>see.tests.test_segmentors</code></h1>
 </header>
 <section id="section-intro">
 <p>This runs unit tests for functions that can be found in Segmentors.py.</p>
@@ -28,10 +28,8 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;This runs unit tests for functions that can be found in Segmentors.py.&#34;&#34;&#34;
-import sys
-import pytest
 import numpy as np
-from skimage import segmentation, color
+from skimage import segmentation
 from see import Segmentors
 from see import Segment_Fitness as SSM
 from see.base_classes import pipedata
@@ -42,7 +40,7 @@ TEST_IM_COLOR[4:10, 4:10, :] = 1.0
 TEST_IM_GRAY = TEST_IM_COLOR[:, :, 0]
 
 
-#TODO: Need new print best algorithm tests.
+# TODO: Need new print best algorithm tests.
 # I don&#39;t like this because our output string will be differnet each time.
 # def test_print_best_algorithm_code():
 #     &#34;&#34;&#34;Unit test for print_best_algorithm_code function.
@@ -60,8 +58,8 @@ TEST_IM_GRAY = TEST_IM_COLOR[:, :, 0]
 #     multichannel=multichannel,\n\
 # )\n&#34;
 #     assert Segmentors.print_best_algorithm_code(individual) == print_statement
-    
-def test_runAlgo():
+
+def test_run_algo():
     &#34;&#34;&#34;Unit test for runAlgo function.
      Checks to see if the output is what it&#39;s supposed to be in this case.&#34;&#34;&#34;
     individual = Segmentors.segmentor()
@@ -70,37 +68,41 @@ def test_runAlgo():
     data.gmask = TEST_IM_COLOR[:, :, 0]
     individual.runAlgo(data)
 
+
 def test_parameter_len():
     &#34;&#34;&#34;Unit test for parameters function. Checks formatting of parameter.&#34;&#34;&#34;
     param = Segmentors.segmentor().params
     assert len(param) &gt; 1
-    
 
-#TODO Add colorthreshold test.
-    
-def test_Felzenszwalb():
+
+# TODO Add colorthreshold test.
+
+def test_felzenszwalb():
     &#34;&#34;&#34;Unit test for Felzenszwalb method. Checks if evaluate function output\
      is the same as manually running the skimage function.&#34;&#34;&#34;
     fb1 = Segmentors.Felzenszwalb()
-    
+
     out1 = fb1.evaluate(TEST_IM_COLOR)
-    out2 = segmentation.felzenszwalb(TEST_IM_COLOR, 984, 0.09, 92, multichannel=True)
-    assert out1.all() == out2.all()
-    
-    out1 = fb1.evaluate(TEST_IM_GRAY)
-    out2 = segmentation.felzenszwalb(TEST_IM_GRAY, 984, 0.09, 92, multichannel=True)
+    out2 = segmentation.felzenszwalb(
+        TEST_IM_COLOR, 984, 0.09, 92, multichannel=True)
     assert out1.all() == out2.all()
 
-def test_Slic():
+    out1 = fb1.evaluate(TEST_IM_GRAY)
+    out2 = segmentation.felzenszwalb(
+        TEST_IM_GRAY, 984, 0.09, 92, multichannel=True)
+    assert out1.all() == out2.all()
+
+
+def test_slic():
     &#34;&#34;&#34;Unit test for Slic method. Checks if evaluate function output\
      is the same as manually running the skimage function.&#34;&#34;&#34;
     sc1 = Segmentors.Slic()
-    assert sc1.evaluate(TEST_IM_COLOR).all() == segmentation.slic(\
-                TEST_IM_COLOR, n_segments=5, compactness=5, max_iter=3, \
-                sigma=5, convert2lab=True, multichannel=True).all()
-    assert sc1.evaluate(TEST_IM_GRAY).all() == segmentation.slic(\
-                TEST_IM_GRAY, n_segments=5, compactness=5, max_iter=3, \
-                sigma=5, convert2lab=True, multichannel=False).all()
+    assert sc1.evaluate(TEST_IM_COLOR).all() == segmentation.slic(
+        TEST_IM_COLOR, n_segments=5, compactness=5, max_iter=3,
+        sigma=5, convert2lab=True, multichannel=True).all()
+    assert sc1.evaluate(TEST_IM_GRAY).all() == segmentation.slic(
+        TEST_IM_GRAY, n_segments=5, compactness=5, max_iter=3,
+        sigma=5, convert2lab=True, multichannel=False).all()
 
 # def test_QuickShift():
 #     &#34;&#34;&#34;Unit test for QuickShift method. Checks if evaluate function output\
@@ -153,7 +155,7 @@ def test_Slic():
 #                 segmentation.inverse_gaussian_gradient(TEST_IM_GRAY, 0.2, 0.3), iterations=10,\
 #                 init_level_set=&#39;checkerboard&#39;, smoothing=5, threshold=&#39;auto&#39;, balloon=10).all()
 
-def test_countMatches():
+def test_count_matches():
     &#34;&#34;&#34;Unit test for countMatches function. Checks output is as
      expected for a variety of extreme cases.&#34;&#34;&#34;
     # create test image
@@ -163,42 +165,45 @@ def test_countMatches():
     inferred[4:10, 4:6] = 1
     inferred[4:10, 6:10] = 2
     assert SSM.countMatches(inferred, ground_truth) ==\
-     ({0.0: {0.0: 364}, 1.0: {1.0: 12}, 2.0: {1.0: 24}}, 3, 2)
+        ({0.0: {0.0: 364}, 1.0: {1.0: 12}, 2.0: {1.0: 24}}, 3, 2)
 
     inferred = np.zeros((20, 20))
     inferred[4:10, 3:6] = 1
     inferred[4:10, 6:10] = 2
     assert SSM.countMatches(inferred, ground_truth) ==\
-     ({0.0: {0.0: 358}, 1.0: {0.0: 6, 1.0: 12}, 2.0: {1.0: 24}}, 3, 2)
+        ({0.0: {0.0: 358}, 1.0: {0.0: 6, 1.0: 12}, 2.0: {1.0: 24}}, 3, 2)
 
     inferred = np.zeros((20, 20))
     inferred[4:10, 3:6] = 1
     inferred[4:10, 6:10] = 2
     inferred[3:5, 3:6] = 3
     assert SSM.countMatches(inferred, ground_truth) ==\
-     ({0.0: {0.0: 355}, 3.0: {0.0: 4, 1.0: 2}, 2.0: {1.0: 24}, 1.0: {0.0: 5, 1.0: 10}}, 4, 2)
+        ({0.0: {0.0: 355}, 3.0: {0.0: 4, 1.0: 2},
+         2.0: {1.0: 24}, 1.0: {0.0: 5, 1.0: 10}}, 4, 2)
 
     inferred = np.zeros((20, 20))
-    assert SSM.countMatches(inferred, ground_truth) == ({0.0: {0.0: 364, 1.0: 36}}, 1, 2)
+    assert SSM.countMatches(inferred, ground_truth) == (
+        {0.0: {0.0: 364, 1.0: 36}}, 1, 2)
 
     inferred = np.zeros((20, 20))
     inferred[1:19, 1:19] = 1
     assert SSM.countMatches(inferred, ground_truth) ==\
-     ({0.0: {0.0: 76}, 1.0: {0.0: 288, 1.0: 36}}, 2, 2)
+        ({0.0: {0.0: 76}, 1.0: {0.0: 288, 1.0: 36}}, 2, 2)
+
 
 def test_countsets():
     &#34;&#34;&#34;Unit test for countsets function. Checks output is as
      expected for a variety of extreme cases.&#34;&#34;&#34;
     assert SSM.countsets({0.0: {0.0: 364}, 1.0: {1.0: 12}, 2.0: {1.0: 24}}) ==\
-     (0, 2, {0.0: 0.0, 1.0: 1.0, 2.0: 1.0})
+        (0, 2, {0.0: 0.0, 1.0: 1.0, 2.0: 1.0})
     assert SSM.countsets({0.0: {0.0: 358}, 1.0: {0.0: 6, 1.0: 12}, 2.0: {1.0: 24}}) ==\
-     (6, 2, {0.0: 0.0, 1.0: 1.0, 2.0: 1.0})
-    assert SSM.countsets({0.0: {0.0: 355}, 3.0: {0.0: 4, 1.0: 2}, 2.0: {1.0: 24},\
-     1.0: {0.0: 5, 1.0: 10}}) == (7, 2, {0.0: 0.0, 3.0: 0.0, 2.0: 1.0, 1.0: 1.0})
+        (6, 2, {0.0: 0.0, 1.0: 1.0, 2.0: 1.0})
+    assert SSM.countsets({0.0: {0.0: 355}, 3.0: {0.0: 4, 1.0: 2}, 2.0: {1.0: 24},
+                          1.0: {0.0: 5, 1.0: 10}}) == (7, 2, {0.0: 0.0, 3.0: 0.0, 2.0: 1.0, 1.0: 1.0})
     assert SSM.countsets({0.0: {0.0: 364, 1.0: 36}}) ==\
-     (36, 1, {0.0: 0.0})
+        (36, 1, {0.0: 0.0})
     assert SSM.countsets({0.0: {0.0: 76}, 1.0: {0.0: 288, 1.0: 36}}) ==\
-     (36, 1, {0.0: 0.0, 1.0: 0.0})</code></pre>
+        (36, 1, {0.0: 0.0, 1.0: 0.0})</code></pre>
 </details>
 </section>
 <section>
@@ -208,54 +213,8 @@ def test_countsets():
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="see.tests.test_Segmentors.test_Felzenszwalb"><code class="name flex">
-<span>def <span class="ident">test_Felzenszwalb</span></span>(<span>)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Unit test for Felzenszwalb method. Checks if evaluate function output
-is the same as manually running the skimage function.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def test_Felzenszwalb():
-    &#34;&#34;&#34;Unit test for Felzenszwalb method. Checks if evaluate function output\
-     is the same as manually running the skimage function.&#34;&#34;&#34;
-    fb1 = Segmentors.Felzenszwalb()
-    
-    out1 = fb1.evaluate(TEST_IM_COLOR)
-    out2 = segmentation.felzenszwalb(TEST_IM_COLOR, 984, 0.09, 92, multichannel=True)
-    assert out1.all() == out2.all()
-    
-    out1 = fb1.evaluate(TEST_IM_GRAY)
-    out2 = segmentation.felzenszwalb(TEST_IM_GRAY, 984, 0.09, 92, multichannel=True)
-    assert out1.all() == out2.all()</code></pre>
-</details>
-</dd>
-<dt id="see.tests.test_Segmentors.test_Slic"><code class="name flex">
-<span>def <span class="ident">test_Slic</span></span>(<span>)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Unit test for Slic method. Checks if evaluate function output
-is the same as manually running the skimage function.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def test_Slic():
-    &#34;&#34;&#34;Unit test for Slic method. Checks if evaluate function output\
-     is the same as manually running the skimage function.&#34;&#34;&#34;
-    sc1 = Segmentors.Slic()
-    assert sc1.evaluate(TEST_IM_COLOR).all() == segmentation.slic(\
-                TEST_IM_COLOR, n_segments=5, compactness=5, max_iter=3, \
-                sigma=5, convert2lab=True, multichannel=True).all()
-    assert sc1.evaluate(TEST_IM_GRAY).all() == segmentation.slic(\
-                TEST_IM_GRAY, n_segments=5, compactness=5, max_iter=3, \
-                sigma=5, convert2lab=True, multichannel=False).all()</code></pre>
-</details>
-</dd>
-<dt id="see.tests.test_Segmentors.test_countMatches"><code class="name flex">
-<span>def <span class="ident">test_countMatches</span></span>(<span>)</span>
+<dt id="see.tests.test_segmentors.test_count_matches"><code class="name flex">
+<span>def <span class="ident">test_count_matches</span></span>(<span>)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Unit test for countMatches function. Checks output is as
@@ -264,7 +223,7 @@ expected for a variety of extreme cases.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def test_countMatches():
+<pre><code class="python">def test_count_matches():
     &#34;&#34;&#34;Unit test for countMatches function. Checks output is as
      expected for a variety of extreme cases.&#34;&#34;&#34;
     # create test image
@@ -274,31 +233,33 @@ expected for a variety of extreme cases.</p></div>
     inferred[4:10, 4:6] = 1
     inferred[4:10, 6:10] = 2
     assert SSM.countMatches(inferred, ground_truth) ==\
-     ({0.0: {0.0: 364}, 1.0: {1.0: 12}, 2.0: {1.0: 24}}, 3, 2)
+        ({0.0: {0.0: 364}, 1.0: {1.0: 12}, 2.0: {1.0: 24}}, 3, 2)
 
     inferred = np.zeros((20, 20))
     inferred[4:10, 3:6] = 1
     inferred[4:10, 6:10] = 2
     assert SSM.countMatches(inferred, ground_truth) ==\
-     ({0.0: {0.0: 358}, 1.0: {0.0: 6, 1.0: 12}, 2.0: {1.0: 24}}, 3, 2)
+        ({0.0: {0.0: 358}, 1.0: {0.0: 6, 1.0: 12}, 2.0: {1.0: 24}}, 3, 2)
 
     inferred = np.zeros((20, 20))
     inferred[4:10, 3:6] = 1
     inferred[4:10, 6:10] = 2
     inferred[3:5, 3:6] = 3
     assert SSM.countMatches(inferred, ground_truth) ==\
-     ({0.0: {0.0: 355}, 3.0: {0.0: 4, 1.0: 2}, 2.0: {1.0: 24}, 1.0: {0.0: 5, 1.0: 10}}, 4, 2)
+        ({0.0: {0.0: 355}, 3.0: {0.0: 4, 1.0: 2},
+         2.0: {1.0: 24}, 1.0: {0.0: 5, 1.0: 10}}, 4, 2)
 
     inferred = np.zeros((20, 20))
-    assert SSM.countMatches(inferred, ground_truth) == ({0.0: {0.0: 364, 1.0: 36}}, 1, 2)
+    assert SSM.countMatches(inferred, ground_truth) == (
+        {0.0: {0.0: 364, 1.0: 36}}, 1, 2)
 
     inferred = np.zeros((20, 20))
     inferred[1:19, 1:19] = 1
     assert SSM.countMatches(inferred, ground_truth) ==\
-     ({0.0: {0.0: 76}, 1.0: {0.0: 288, 1.0: 36}}, 2, 2)</code></pre>
+        ({0.0: {0.0: 76}, 1.0: {0.0: 288, 1.0: 36}}, 2, 2)</code></pre>
 </details>
 </dd>
-<dt id="see.tests.test_Segmentors.test_countsets"><code class="name flex">
+<dt id="see.tests.test_segmentors.test_countsets"><code class="name flex">
 <span>def <span class="ident">test_countsets</span></span>(<span>)</span>
 </code></dt>
 <dd>
@@ -312,18 +273,44 @@ expected for a variety of extreme cases.</p></div>
     &#34;&#34;&#34;Unit test for countsets function. Checks output is as
      expected for a variety of extreme cases.&#34;&#34;&#34;
     assert SSM.countsets({0.0: {0.0: 364}, 1.0: {1.0: 12}, 2.0: {1.0: 24}}) ==\
-     (0, 2, {0.0: 0.0, 1.0: 1.0, 2.0: 1.0})
+        (0, 2, {0.0: 0.0, 1.0: 1.0, 2.0: 1.0})
     assert SSM.countsets({0.0: {0.0: 358}, 1.0: {0.0: 6, 1.0: 12}, 2.0: {1.0: 24}}) ==\
-     (6, 2, {0.0: 0.0, 1.0: 1.0, 2.0: 1.0})
-    assert SSM.countsets({0.0: {0.0: 355}, 3.0: {0.0: 4, 1.0: 2}, 2.0: {1.0: 24},\
-     1.0: {0.0: 5, 1.0: 10}}) == (7, 2, {0.0: 0.0, 3.0: 0.0, 2.0: 1.0, 1.0: 1.0})
+        (6, 2, {0.0: 0.0, 1.0: 1.0, 2.0: 1.0})
+    assert SSM.countsets({0.0: {0.0: 355}, 3.0: {0.0: 4, 1.0: 2}, 2.0: {1.0: 24},
+                          1.0: {0.0: 5, 1.0: 10}}) == (7, 2, {0.0: 0.0, 3.0: 0.0, 2.0: 1.0, 1.0: 1.0})
     assert SSM.countsets({0.0: {0.0: 364, 1.0: 36}}) ==\
-     (36, 1, {0.0: 0.0})
+        (36, 1, {0.0: 0.0})
     assert SSM.countsets({0.0: {0.0: 76}, 1.0: {0.0: 288, 1.0: 36}}) ==\
-     (36, 1, {0.0: 0.0, 1.0: 0.0})</code></pre>
+        (36, 1, {0.0: 0.0, 1.0: 0.0})</code></pre>
 </details>
 </dd>
-<dt id="see.tests.test_Segmentors.test_parameter_len"><code class="name flex">
+<dt id="see.tests.test_segmentors.test_felzenszwalb"><code class="name flex">
+<span>def <span class="ident">test_felzenszwalb</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Unit test for Felzenszwalb method. Checks if evaluate function output
+is the same as manually running the skimage function.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_felzenszwalb():
+    &#34;&#34;&#34;Unit test for Felzenszwalb method. Checks if evaluate function output\
+     is the same as manually running the skimage function.&#34;&#34;&#34;
+    fb1 = Segmentors.Felzenszwalb()
+
+    out1 = fb1.evaluate(TEST_IM_COLOR)
+    out2 = segmentation.felzenszwalb(
+        TEST_IM_COLOR, 984, 0.09, 92, multichannel=True)
+    assert out1.all() == out2.all()
+
+    out1 = fb1.evaluate(TEST_IM_GRAY)
+    out2 = segmentation.felzenszwalb(
+        TEST_IM_GRAY, 984, 0.09, 92, multichannel=True)
+    assert out1.all() == out2.all()</code></pre>
+</details>
+</dd>
+<dt id="see.tests.test_segmentors.test_parameter_len"><code class="name flex">
 <span>def <span class="ident">test_parameter_len</span></span>(<span>)</span>
 </code></dt>
 <dd>
@@ -338,8 +325,8 @@ expected for a variety of extreme cases.</p></div>
     assert len(param) &gt; 1</code></pre>
 </details>
 </dd>
-<dt id="see.tests.test_Segmentors.test_runAlgo"><code class="name flex">
-<span>def <span class="ident">test_runAlgo</span></span>(<span>)</span>
+<dt id="see.tests.test_segmentors.test_run_algo"><code class="name flex">
+<span>def <span class="ident">test_run_algo</span></span>(<span>)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Unit test for runAlgo function.
@@ -348,7 +335,7 @@ Checks to see if the output is what it's supposed to be in this case.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def test_runAlgo():
+<pre><code class="python">def test_run_algo():
     &#34;&#34;&#34;Unit test for runAlgo function.
      Checks to see if the output is what it&#39;s supposed to be in this case.&#34;&#34;&#34;
     individual = Segmentors.segmentor()
@@ -356,6 +343,28 @@ Checks to see if the output is what it's supposed to be in this case.</p></div>
     data.img = TEST_IM_COLOR
     data.gmask = TEST_IM_COLOR[:, :, 0]
     individual.runAlgo(data)</code></pre>
+</details>
+</dd>
+<dt id="see.tests.test_segmentors.test_slic"><code class="name flex">
+<span>def <span class="ident">test_slic</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Unit test for Slic method. Checks if evaluate function output
+is the same as manually running the skimage function.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_slic():
+    &#34;&#34;&#34;Unit test for Slic method. Checks if evaluate function output\
+     is the same as manually running the skimage function.&#34;&#34;&#34;
+    sc1 = Segmentors.Slic()
+    assert sc1.evaluate(TEST_IM_COLOR).all() == segmentation.slic(
+        TEST_IM_COLOR, n_segments=5, compactness=5, max_iter=3,
+        sigma=5, convert2lab=True, multichannel=True).all()
+    assert sc1.evaluate(TEST_IM_GRAY).all() == segmentation.slic(
+        TEST_IM_GRAY, n_segments=5, compactness=5, max_iter=3,
+        sigma=5, convert2lab=True, multichannel=False).all()</code></pre>
 </details>
 </dd>
 </dl>
@@ -376,12 +385,12 @@ Checks to see if the output is what it's supposed to be in this case.</p></div>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="two-column">
-<li><code><a title="see.tests.test_Segmentors.test_Felzenszwalb" href="#see.tests.test_Segmentors.test_Felzenszwalb">test_Felzenszwalb</a></code></li>
-<li><code><a title="see.tests.test_Segmentors.test_Slic" href="#see.tests.test_Segmentors.test_Slic">test_Slic</a></code></li>
-<li><code><a title="see.tests.test_Segmentors.test_countMatches" href="#see.tests.test_Segmentors.test_countMatches">test_countMatches</a></code></li>
-<li><code><a title="see.tests.test_Segmentors.test_countsets" href="#see.tests.test_Segmentors.test_countsets">test_countsets</a></code></li>
-<li><code><a title="see.tests.test_Segmentors.test_parameter_len" href="#see.tests.test_Segmentors.test_parameter_len">test_parameter_len</a></code></li>
-<li><code><a title="see.tests.test_Segmentors.test_runAlgo" href="#see.tests.test_Segmentors.test_runAlgo">test_runAlgo</a></code></li>
+<li><code><a title="see.tests.test_segmentors.test_count_matches" href="#see.tests.test_segmentors.test_count_matches">test_count_matches</a></code></li>
+<li><code><a title="see.tests.test_segmentors.test_countsets" href="#see.tests.test_segmentors.test_countsets">test_countsets</a></code></li>
+<li><code><a title="see.tests.test_segmentors.test_felzenszwalb" href="#see.tests.test_segmentors.test_felzenszwalb">test_felzenszwalb</a></code></li>
+<li><code><a title="see.tests.test_segmentors.test_parameter_len" href="#see.tests.test_segmentors.test_parameter_len">test_parameter_len</a></code></li>
+<li><code><a title="see.tests.test_segmentors.test_run_algo" href="#see.tests.test_segmentors.test_run_algo">test_run_algo</a></code></li>
+<li><code><a title="see.tests.test_segmentors.test_slic" href="#see.tests.test_segmentors.test_slic">test_slic</a></code></li>
 </ul>
 </li>
 </ul>
