@@ -15,7 +15,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import RandomForestClassifier
 
-from see.base_classes import param_space, algorithm
+from see.base_classes import param_space, algorithm, pipedata
 
 class ClassifierParams(param_space):
     """Parameter space for classifiers
@@ -86,7 +86,13 @@ class Classifier(algorithm):
     def pipe(self, data):
         print(data)
         self.thisalgo = Classifier.algorithmspace[self.params['algorithm']](self.params)
-        data.predictions = self.evaluate(data.training_set, data.testing_set)
+        is_data_k_folds = data.k_folds
+        if(is_data_k_folds):
+            training_folds = data.training_folds
+            testing_folds = data.testing_folds
+            data.predictions = list(map(self.evaluate, training_folds, testing_folds))
+        else:
+            data.predictions = self.evaluate(data.training_set, data.testing_set)
         return data
 
     @classmethod
