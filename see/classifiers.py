@@ -63,7 +63,7 @@ class Classifier(algorithm):
 
     algorithmspace = dict()
 
-    def __init__(self, paramlist=None):
+    def __init__(self, paramlist=None, paramindexes=[]):
         """Generate algorithm params from parameter list."""
         super().__init__()
         self.params = ClassifierParams()
@@ -73,7 +73,7 @@ class Classifier(algorithm):
         self.params["max_depth"] = 1
         self.params["n_estimators"] = 100
         self.params["n_neighbors"] = 5
-        
+        self.paramindexes = paramindexes
         self.set_params(paramlist)
 
     # Input: labelled dataset
@@ -107,13 +107,15 @@ class GaussianNBClassifier(Classifier):
 
     def __init__(self, paramlist=None):
         """Gaussian Naive Bayes has no parameters in the example."""
-        super().__init__(paramlist)
+        
+        super(GaussianNBClassifier, self).__init__(paramlist)
+
         self.params["algorithm"] = "Gaussian Naive Bayes"
-        self.params = ClassifierParams()
+        self.set_params(paramlist)
 
     def evaluate(self, training_set, testing_set):
         """The evaluate function for Gaussian Naive Bayes"""
-        print("HHHH RUNNING EVAL FOR GNB")
+        print("RUNNING EVAL FOR GNB")
         clf = GaussianNB()
         clf.fit(training_set.X, training_set.y)
         return clf.predict(testing_set.X)
@@ -127,9 +129,8 @@ class KNeighborsClassifier(Classifier):
 
     def __init__(self, paramlist=None):
         super().__init__()
-        self.params = ClassifierParams()
+        
         self.params["algorithm"] = "K Nearest Neighbors"
-
         self.params["n_neighbors"] = 3
         self.set_params(paramlist)
 
@@ -141,9 +142,7 @@ class KNeighborsClassifier(Classifier):
         # TODO n_neighbors must be <= number of samples
         # Modulo might not be the best way to do this.
         neighbors_param = self.params["n_neighbors"]
-        print("N NEIGHBORS", neighbors_param)
         param_in_range = (neighbors_param <= num_samples) and (neighbors_param > 0)
-        print("PARAM IN RANGE", param_in_range)
         clf = kNearestNeighbors(n_neighbors=(neighbors_param if param_in_range else (neighbors_param % num_samples + 1)))
         clf.fit(training_set.X, training_set.y)
         return clf.predict(testing_set.X)
@@ -156,8 +155,7 @@ class DecisionTreeClassifier(Classifier):
     """Perform Decision Tree classification algorithm."""
 
     def __init__(self, paramlist=None):
-        super().__init__()
-        self.params = ClassifierParams()
+        super(DecisionTreeClassifier, self).__init__()
 
         self.params["algorithm"] = "Decision Tree"
         self.params["max_depth"] = 5
@@ -178,8 +176,7 @@ class RandomForestContainer(Classifier):
     """Perform Random Forest classification algorithm."""
 
     def __init__(self, paramlist=None):
-        super().__init__()
-        self.params = ClassifierParams()
+        super(RandomForestContainer, self).__init__()
 
         self.params["algorithm"] = "Random Forest"
         self.params["max_depth"] = 5
@@ -203,8 +200,7 @@ class MLPContainer(Classifier):
     """Perform MLP Neural Network classification algorithm."""
 
     def __init__(self, paramlist=None):
-        super().__init__()
-        self.params = ClassifierParams()
+        super(MLPContainer, self).__init__()
 
         self.params["algorithm"] = "MLP Neural Network"
         self.params["max_iter"] = 1000

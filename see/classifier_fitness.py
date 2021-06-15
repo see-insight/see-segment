@@ -13,8 +13,8 @@ class ClassifierFitness(algorithm):
         super(ClassifierFitness, self).__init__(paramlist)
 
     def evaluate(self, predictions, targets):
-        print("predictions", predictions)
-        print("targets", targets)
+        #print("predictions", predictions)
+        #print("targets", targets)
         length = len(predictions)
         #print("length", length)
         return float(length - np.sum(predictions == targets))/ length
