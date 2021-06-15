@@ -211,7 +211,7 @@ class Evolver(object):
 #     for key in my_p.pkeys:
 #         AllVals.append(my_p.ranges[key])
 
-    def __init__(self, algo_constructor, data, pop_size=10):
+    def __init__(self, algo_constructor, data, pop_size=10, hof_size=10):
         """Set default values for the variables.
 
         Keyword arguments:
@@ -225,7 +225,7 @@ class Evolver(object):
         self.data = data
         self.algo_constructor = algo_constructor
         self.tool = makeToolbox(pop_size, algo_constructor)
-        self.hof = deap.tools.HallOfFame(10)
+        self.hof = deap.tools.HallOfFame(hof_size)
         self.best_avgs = []
         self.gen = 0
         self.cxpb, self.mutpb, self.flip_prob = 0.9, 0.9, 0.9
