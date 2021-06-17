@@ -9,6 +9,7 @@ dependencies:
   - pdoc3
   - numpy
   - matplotlib
+  - pandas
   - scikit-image
   - scikit-learn
   - pip:
