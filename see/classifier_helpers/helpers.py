@@ -3,7 +3,7 @@ from see.base_classes import pipedata
 from sklearn.model_selection import train_test_split, KFold
 from sklearn.preprocessing import StandardScaler
 
-def generate_train_test_set(X, y, random_state=21):
+def generate_train_test_set(X, y, random_state=42):
     """
     Split data into training and testing sets
     """

@@ -14,6 +14,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.gaussian_process import GaussianProcessClassifier
+from sklearn.gaussian_process.kernels import RBF
 
 from see.base_classes import param_space, algorithm, pipedata
 
@@ -33,25 +35,28 @@ ClassifierParams.add('algorithm',
 # do not give a suggested range.
 
 ClassifierParams.add("max_iter",
-                     [i for i in range(1, 1001)],
+                     [i for i in range(1, 101)],
                      'Number of iterations for the algorithm')
 
 ClassifierParams.add("alpha",
-                     [float(i)/10000 for i in range(1, 10000)],
+                     [float(i)/1000 for i in range(1, 1000)],
                      'regularization parameter')
 
 ClassifierParams.add("max_depth",
-                     [i for i in range(1, 1001)],
+                     [i for i in range(1, 10)],
                      'Maximum depth of tree')
 
 ClassifierParams.add("n_estimators",
-                     [i for i in range(1, 1001)],
+                     [i for i in range(1, 10)],
                      'Number of trees in the forest')
 
 ClassifierParams.add("n_neighbors",
-                     [i for i in range(1, 1001)],
+                     [i for i in range(1, 10)],
                      'Number of neighbors to use')
 
+ClassifierParams.add("length_scale",
+                     [float(i)/10 for i in range(1, 10)],
+                     'The length scale of the kernel.')
 
 class Classifier(algorithm):
     """Base class for classifier classes defined below.
@@ -73,6 +78,7 @@ class Classifier(algorithm):
         self.params["max_depth"] = 1
         self.params["n_estimators"] = 100
         self.params["n_neighbors"] = 5
+        self.params["length_scale"] = 1.0
         self.paramindexes = paramindexes
         self.set_params(paramlist)
 
@@ -218,3 +224,24 @@ class MLPContainer(Classifier):
 
 
 Classifier.add_classifier('MLP Neural Network', MLPContainer)
+
+class GaussianProcessContainer(Classifier):
+    """Perform Guassian Process classification algorithm."""
+
+    def __init__(self, paramlist=None):
+        super(GaussianProcessContainer, self).__init__()
+
+        self.params["algorithm"] = "Gaussian Process"
+        self.params["length_scale"] = 1.0
+        self.set_params(paramlist)
+
+    def evaluate(self, training_set, testing_set):
+        """The evaluate function for Gaussian Process."""
+
+        clf = GaussianProcessClassifier(1.0 * RBF(self.params["length_scale"]))
+
+        clf.fit(training_set.X, training_set.y)
+
+        return clf.predict(testing_set.X)
+
+Classifier.add_classifier('Gaussian Process', GaussianProcessContainer)
