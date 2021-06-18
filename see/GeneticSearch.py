@@ -422,7 +422,9 @@ class Evolver(object):
             population=None,
             startfile=None,
             checkpoint=None,
-            cp_freq=1):
+            cp_freq=1,
+            print_fitness_to_file=False,
+            print_fitness_filename=None):
         """Run the genetic algorithm, updating the population over ngen number of generations.
         
         Keywork arguments:
@@ -450,6 +452,15 @@ class Evolver(object):
         else:
             print(f"Using existing population")
 
+        if print_fitness_to_file:
+            # Check parameters consistency
+            if not print_fitness_filename:
+                # TODO: How do you raise errors?
+                print("ERROR: Filename for fitness values was not provided.")
+                raise
+            else:
+                 fitness_file = open(print_fitness_filename, "w")
+        
         for cur_g in range(0, ngen+1):
             print(f"Generation {cur_g}/{ngen} of population size {len(population)}")
 
@@ -483,6 +494,9 @@ class Evolver(object):
                   # should have same result as self.new_population()
                 else:
                     print("Mutating Population")
+                    if print_fitness_to_file:
+                        fitness_file.write("{},{}\n".format(cur_g, fitness))
+
                     population = self.mutate(population)
                   # if the best fitness value is below this threshold,
                   # proceed as normal, mutating the current population
@@ -494,4 +508,8 @@ class Evolver(object):
             self.writepop(population, filename=f"{checkpoint}")
             for cur_p in range(len(population)):
                 logging.getLogger().info(population[cur_p])
+
+        if print_fitness_to_file:
+             fitness_file.close()
+        
         return population
