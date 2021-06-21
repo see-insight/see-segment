@@ -53,7 +53,8 @@ moons_ds.X, moons_ds.y = make_moons(noise=0.3, random_state=0)
 # Circles
 circles_ds = pipedata()
 circles_ds.name = "Circles"
-circles_ds.X, circles_ds.y = make_circles(noise=0.2, factor=0.5, random_state=1)
+circles_ds.X, circles_ds.y = make_circles(
+    noise=0.2, factor=0.5, random_state=1)
 
 # Linearly Seperable dataset
 lin_ds = pipedata()
@@ -73,12 +74,16 @@ for ds in datasets:
 
 # Split datasets into training, testing, and validation sets
 for i, ds in enumerate(datasets):
-    temp = helpers.generate_train_test_set(ds.X, ds.y)
-    validation_sets.append(temp.testing_set)
-    datasets[i] = helpers.generate_train_test_set(
-        temp.training_set.X, temp.training_set.y
-    )
+    #temp = helpers.generate_train_test_set(ds.X, ds.y)
+    # validation_sets.append(temp.testing_set)
+    # datasets[i] = helpers.generate_train_test_set(
+    #    temp.training_set.X, temp.training_set.y
+    # )
+    datasets[i] = helpers.generate_train_test_set(ds.X, ds.y)
     datasets[i].name = ds.name
+    temp = helpers.generate_train_test_set(ds.X, ds.y, random_state=21)
+    validation_sets.append(temp)
+
 
 NUM_GENERATIONS = args.num_gen
 POP_SIZE = args.pop_size
@@ -89,8 +94,30 @@ for ds in datasets:
     my_evolver = GeneticSearch.Evolver(workflow, ds, pop_size=POP_SIZE)
     my_evolver.run(
         ngen=NUM_GENERATIONS,
-        print_fitness_to_file=True,
-        print_fitness_filename="{}_fitness_{}.csv".format(ds.name, args.filename_tail),
+        # print_fitness_to_file=True,
+        print_fitness_to_file=False,
+        print_fitness_filename="{}_fitness_{}.csv".format(
+            ds.name, args.filename_tail),
     )
     # Store the best solution found for each dataset
     hof_per_dataset.append(my_evolver.hof)
+
+top_n = 5
+for i, hof in enumerate(hof_per_dataset):
+    top_inds = hof[:top_n]
+    print('----------------\n')
+    for ind in top_inds:
+        # Initialize classifier
+        algo_name = ind[0]
+        param_list = ind
+
+        training_set = validation_sets[i].training_set
+        testing_set = validation_sets[i].testing_set
+
+        clf = Classifier.algorithmspace[algo_name](param_list)
+
+        predictions = clf.evaluate(training_set, testing_set)
+
+        score = ClassifierFitness().evaluate(predictions, testing_set.y)
+
+        print('|{}|{}|'.format(ind.fitness.values[0], score))
