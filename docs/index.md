@@ -31,8 +31,8 @@ Watch an introductory video to what SEE is, and how to use it [here](https://med
 - Kai Pinckard, Summer 2020
 - Alexander Eboru, Summer 2021
 - Davin Lin, Summer 2021
-- Diamaris Rodriguez, Summer 2021
-- Emmaline Burleson, Summer 2021
+- Diamaris González, Summer 2021
+- Emmaline Arter, Summer 2021
 - Raymond Lesiyon, Summer 2021
 
 ## SEE-InSight Emeritus Members
