@@ -11,9 +11,8 @@ from sklearn.tree import DecisionTreeClassifier as DecisionTree
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier as kNearestNeighbors
 from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier, GradientBoostingClassifier, AdaBoostClassifier
 from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.gaussian_process.kernels import RBF
 
@@ -47,7 +46,7 @@ ClassifierParams.add("max_depth",
                      'Maximum depth of tree')
 
 ClassifierParams.add("n_estimators",
-                     [i for i in range(1, 10)],
+                     [i for i in range(1, 100)],
                      'Number of trees in the forest')
 
 ClassifierParams.add("n_neighbors",
@@ -57,6 +56,10 @@ ClassifierParams.add("n_neighbors",
 ClassifierParams.add("length_scale",
                      [float(i)/10 for i in range(1, 10)],
                      'The length scale of the kernel.')
+
+ClassifierParams.add("learning_rate",
+                     [float(i)/10 for i in range(1, 10)],
+                     'The learning rate')
 
 class Classifier(algorithm):
     """Base class for classifier classes defined below.
@@ -79,6 +82,8 @@ class Classifier(algorithm):
         self.params["n_estimators"] = 100
         self.params["n_neighbors"] = 5
         self.params["length_scale"] = 1.0
+        self.params["learning_rate"] = 0.1
+
         self.paramindexes = paramindexes
         self.set_params(paramlist)
 
@@ -245,3 +250,69 @@ class GaussianProcessContainer(Classifier):
         return clf.predict(testing_set.X)
 
 Classifier.add_classifier('Gaussian Process', GaussianProcessContainer)
+
+class ExtraTreesContainer(Classifier):
+    """Perform Guassian Process classification algorithm."""
+
+    def __init__(self, paramlist=None):
+        super(ExtraTreesContainer, self).__init__()
+
+        self.params["algorithm"] = "Extra Trees"
+        self.params["n_estimators"] = 100
+        self.params["max_depth"] = 5
+        self.set_params(paramlist)
+
+    def evaluate(self, training_set, testing_set):
+        """The evaluate function for Extra Trees."""
+
+        clf = ExtraTreesClassifier(n_estimators=self.params["n_estimators"], max_depth=self.params["max_depth"])
+
+        clf.fit(training_set.X, training_set.y)
+
+        return clf.predict(testing_set.X)
+
+Classifier.add_classifier('Extra Trees', ExtraTreesContainer)
+
+class GradientBoostingContainer(Classifier):
+    """Perform Gradient Boosting classification algorithm."""
+
+    def __init__(self, paramlist=None):
+        super(GradientBoostingContainer, self).__init__()
+
+        self.params["algorithm"] = "Gradient Boosting"
+        self.params["n_estimators"] = 100
+        self.params["learning_rate"] = 0.1
+        self.set_params(paramlist)
+
+    def evaluate(self, training_set, testing_set):
+        """The evaluate function for Gradient Boosting."""
+
+        clf = GradientBoostingClassifier(n_estimators=self.params["n_estimators"], learning_rate=self.params["learning_rate"])
+
+        clf.fit(training_set.X, training_set.y)
+
+        return clf.predict(testing_set.X)
+
+Classifier.add_classifier('Gradient Boosting', GradientBoostingContainer)
+
+class AdaBoostContainer(Classifier):
+    """Perform Gradient Boosting classification algorithm."""
+
+    def __init__(self, paramlist=None):
+        super(GradientBoostingContainer, self).__init__()
+
+        self.params["algorithm"] = "Ada Boost"
+        self.params["n_estimators"] = 50
+        self.params["learning_rate"] = 1
+        self.set_params(paramlist)
+
+    def evaluate(self, training_set, testing_set):
+        """The evaluate function for Ada Boost."""
+
+        clf = GradientBoostingClassifier(n_estimators=self.params["n_estimators"], learning_rate=self.params["learning_rate"])
+
+        clf.fit(training_set.X, training_set.y)
+
+        return clf.predict(testing_set.X)
+
+Classifier.add_classifier('Ada Boost', AdaBoostContainer)
