@@ -29,7 +29,7 @@ Watch an introductory video to what SEE is, and how to use it [here](https://med
 - Nate Britton, Fall 2020
 - Nick Grabill, Summer 2020
 - Kai Pinckard, Summer 2020
-- Alexander Eboru, Summer 2021
+- Eboru Alexander, Summer 2021
 - Davin Lin, Summer 2021
 - Diamaris González, Summer 2021
 - Emmaline Arter, Summer 2021
