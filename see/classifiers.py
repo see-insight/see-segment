@@ -324,10 +324,10 @@ Classifier.add_classifier("Gradient Boosting", GradientBoostingContainer)
 
 
 class AdaBoostContainer(Classifier):
-    """Perform Gradient Boosting classification algorithm."""
+    """Perform Ada Boost classification algorithm."""
 
     def __init__(self, paramlist=None):
-        super(GradientBoostingContainer, self).__init__()
+        super(AdaBoostContainer, self).__init__()
 
         self.params["algorithm"] = "Ada Boost"
         self.params["n_estimators"] = 50
