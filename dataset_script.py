@@ -81,7 +81,7 @@ for i, ds in enumerate(datasets):
     # )
     datasets[i] = helpers.generate_train_test_set(ds.X, ds.y)
     datasets[i].name = ds.name
-    temp = helpers.generate_train_test_set(ds.X, ds.y, random_state=21)
+    temp = helpers.generate_train_test_set(ds.X, ds.y, random_state=31)
     validation_sets.append(temp)
 
 
@@ -95,7 +95,7 @@ for ds in datasets:
     my_evolver.run(
         ngen=NUM_GENERATIONS,
         # print_fitness_to_file=True,
-        print_fitness_to_file=False,
+        print_fitness_to_file=True,
         print_fitness_filename="{}_fitness_{}.csv".format(
             ds.name, args.filename_tail),
     )
