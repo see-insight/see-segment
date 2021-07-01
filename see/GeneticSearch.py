@@ -423,8 +423,10 @@ class Evolver(object):
             startfile=None,
             checkpoint=None,
             cp_freq=1,
-            print_fitness_to_file=False,
-            print_fitness_filename=None):
+            output_best_hof_fitness_to_file=False,
+            output_filename=None,
+            line_template=None
+    ):
         """Run the genetic algorithm, updating the population over ngen number of generations.
         
         Keywork arguments:
@@ -452,14 +454,14 @@ class Evolver(object):
         else:
             print(f"Using existing population")
 
-        if print_fitness_to_file:
+        if output_best_hof_fitness_to_file:
             # Check parameters consistency
-            if not print_fitness_filename:
+            if not output_filename:
                 # TODO: How do you raise errors?
                 print("ERROR: Filename for fitness values was not provided.")
                 raise
             else:
-                 fitness_file = open(print_fitness_filename, "w")
+                 fitness_file = open(output_filename, "a")
         
         for cur_g in range(0, ngen+1):
             print(f"Generation {cur_g}/{ngen} of population size {len(population)}")
@@ -494,8 +496,9 @@ class Evolver(object):
                   # should have same result as self.new_population()
                 else:
                     print("Mutating Population")
-                    if print_fitness_to_file:
-                        fitness_file.write("{},{}\n".format(cur_g, fitness))
+                    if output_best_hof_fitness_to_file:
+                        line = line_template or "{},{}\n"
+                        fitness_file.write(line_template.format(cur_g, fitness))
 
                     population = self.mutate(population)
                   # if the best fitness value is below this threshold,
@@ -509,7 +512,7 @@ class Evolver(object):
             for cur_p in range(len(population)):
                 logging.getLogger().info(population[cur_p])
 
-        if print_fitness_to_file:
+        if output_best_hof_fitness_to_file:
              fitness_file.close()
         
         return population

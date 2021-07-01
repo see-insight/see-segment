@@ -135,7 +135,6 @@ class GaussianNBClassifier(Classifier):
 
     def evaluate(self, training_set, testing_set):
         """The evaluate function for Gaussian Naive Bayes"""
-        print("RUNNING EVAL FOR GNB")
         clf = GaussianNB()
         clf.fit(training_set.X, training_set.y)
         return clf.predict(testing_set.X)
@@ -156,7 +155,6 @@ class KNeighborsClassifier(Classifier):
 
     def evaluate(self, training_set, testing_set):
         """The evaluate function for K Nearest-Nei3ghbors"""
-        print("RUNNING EVAL FOR KNN")
 
         num_samples = len(training_set.X)
         # TODO n_neighbors must be <= number of samples
