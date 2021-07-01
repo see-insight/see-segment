@@ -1,0 +1,16 @@
+#!/bin/bash
+#SBATCH --array=1-10
+#SBATCH --time=00:10:00
+#SBATCH --mem=4gb
+
+# Load module and initalize environment
+module load conda
+conda activate ./envs
+
+echo "Job $SLURM_JOB_ID"
+echo "Number $SLURM_ARRAY_TASK_ID"
+
+# run python script with array task id
+python dataset_script.py --filename-tail="$SLURM_JOB_ID_$SLURM_ARRAY_TASK_ID"
+
+echo "FINNISHED RUNNING SCRIPT"
