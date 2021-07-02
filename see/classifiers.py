@@ -9,6 +9,7 @@ import numpy as np
 # import sklearn
 
 from sklearn.tree import DecisionTreeClassifier as DecisionTree
+from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier as kNearestNeighbors
 from sklearn.preprocessing import StandardScaler
@@ -22,10 +23,8 @@ from sklearn.ensemble import (
 from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.gaussian_process.kernels import RBF
 from sklearn.svm import SVC
-from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
-
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticDiscriminantAnalysis
 from see.base_classes import param_space, algorithm, pipedata
-
 
 class ClassifierParams(param_space):
     """Parameter space for classifiers"""
@@ -45,13 +44,13 @@ class ClassifierParams(param_space):
         """Sets parameter space to
         use the tutorial space"""
         # TODO: does nothing; same as default space might not need it...
-        cls.empty_space()
         cls.use_default_space()
         return 0
 
     @classmethod
     def use_default_space(cls):
-        
+        cls.empty_space()
+
         cls.add("algorithm", [], "string code for the algorithm")
 
         # TODO: Many of these parameters' ranges were set arbitrarily.
@@ -175,6 +174,27 @@ class Classifier(algorithm):
         cls.add_classifier("K Nearest Neighbors", KNeighborsClassifier)
         cls.add_classifier("MLP Neural Network", MLPContainer)
         cls.add_classifier("Quadratic Discriminant Analysis", QDAContainer)
+        cls.add_classifier("Random Forest", RandomForestContainer)
+        cls.add_classifier("SVC", SVCContainer)
+
+    @classmethod
+    def use_dhahri_space(cls):
+        """Sets algorithm and parameter space to
+        match the search space use in Dhahri 2019"""
+        # maybe.....this is fine as long as the parameter space tightens???
+        # TODO: does nothing
+        # TODO: might need to shrink parameterspace to match those
+        # needed for the tutorial space...
+        ClassifierParams.use_default_space()
+        cls.algorithmspace = dict()
+        cls.add_classifier("Ada Boost", AdaBoostContainer)
+        cls.add_classifier("Decision Tree", DecisionTreeClassifier)
+        cls.add_classifier("Extra Trees", ExtraTreesContainer)
+        cls.add_classifier("Gaussian Naive Bayes", GaussianNBClassifier)
+        cls.add_classifier("Gradient Boosting", GradientBoostingContainer)
+        cls.add_classifier("Linear Discriminant Analysis", LDAContainer)
+        cls.add_classifier("Logistic Regression", LogisticRegressionContainer)
+        cls.add_classifier("K Nearest Neighbors", KNeighborsClassifier)
         cls.add_classifier("Random Forest", RandomForestContainer)
         cls.add_classifier("SVC", SVCContainer)
 
@@ -454,3 +474,49 @@ class QDAContainer(Classifier):
 
 
 Classifier.add_classifier("Quadratic Discriminant Analysis", QDAContainer)
+
+class LDAContainer(Classifier):
+    """Perform LDA classification algorithm."""
+
+    def __init__(self, paramlist=None):
+        super(LDAContainer, self).__init__()
+
+        self.params["algorithm"] = "Linear Discriminant Analysis"
+
+        self.set_params(paramlist)
+
+    def evaluate(self, training_set, testing_set):
+        """The evaluate function for Linear Discriminant Analysis."""
+
+        clf = LinearDiscriminantAnalysis()
+
+        clf.fit(training_set.X, training_set.y)
+
+        return clf.predict(testing_set.X)
+
+
+Classifier.add_classifier("Linear Discriminant Analysis", LDAContainer)
+
+class LogisticRegressionContainer(Classifier):
+    """Perform Logistic Regression classification algorithm."""
+
+    def __init__(self, paramlist=None):
+        super(LogisticRegressionContainer, self).__init__()
+
+        self.params["algorithm"] = "Logistic Regression"
+        self.params["C"] = 1
+        self.params["max_iter"] = 100
+        
+        self.set_params(paramlist)
+
+    def evaluate(self, training_set, testing_set):
+        """The evaluate function for Logistic Regression."""
+
+        clf = LogisticRegression(C=self.params["C"], max_iter=self.params["max_iter"])
+
+        clf.fit(training_set.X, training_set.y)
+
+        return clf.predict(testing_set.X)
+
+
+Classifier.add_classifier("Logistic Regression", LogisticRegressionContainer)
