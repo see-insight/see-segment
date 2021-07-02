@@ -21,52 +21,86 @@ from sklearn.ensemble import (
 )
 from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.gaussian_process.kernels import RBF
+from sklearn.svm import SVC
+from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 
 from see.base_classes import param_space, algorithm, pipedata
 
 
 class ClassifierParams(param_space):
-    """Parameter space for classifiers
-    """
+    """Parameter space for classifiers"""
 
     descriptions = dict()
     ranges = dict()
+    pkeys = []
+    
+    @classmethod
+    def empty_space(cls):
+        cls.descriptions = dict()
+        cls.ranges = dict()
+        cls.pkeys = []
 
+    @classmethod
+    def use_tutorial_space(cls):
+        """Sets parameter space to
+        use the tutorial space"""
+        # TODO: does nothing; same as default space might not need it...
+        cls.empty_space()
+        cls.use_default_space()
+        return 0
 
-ClassifierParams.add("algorithm", [], "string code for the algorithm")
+    @classmethod
+    def use_default_space(cls):
+        
+        cls.add("algorithm", [], "string code for the algorithm")
 
-# TODO: Many of these parameters' ranges were set arbitrarily.
-# The max_param were especially arbitrary as some of the documentation
-# do not give a suggested range.
+        # TODO: Many of these parameters' ranges were set arbitrarily.
+        # The max_param were especially arbitrary as some of the documentation
+        # do not give a suggested range.
 
-ClassifierParams.add(
-    "max_iter", [i for i in range(1, 101)], "Number of iterations for the algorithm"
-)
+        cls.add(
+            "max_iter", [i for i in range(1, 101)], "Number of iterations for the algorithm"
+        )
 
-ClassifierParams.add(
-    "alpha", [float(i) / 1000 for i in range(1, 1000)], "regularization parameter"
-)
+        cls.add(
+            "alpha", [float(i) / 1000 for i in range(1, 1000)], "regularization parameter"
+        )
 
-ClassifierParams.add("max_depth", [i for i in range(1, 10)], "Maximum depth of tree")
+        cls.add("max_depth", [i for i in range(1, 10)], "Maximum depth of tree")
 
-ClassifierParams.add(
-    "n_estimators", [i for i in range(1, 100)], "Number of trees in the forest"
-)
+        cls.add(
+            "n_estimators", [i for i in range(1, 100)], "Number of trees in the forest"
+        )
 
-ClassifierParams.add(
-    "n_neighbors", [i for i in range(1, 10)], "Number of neighbors to use"
-)
+        cls.add(
+            "n_neighbors", [i for i in range(1, 10)], "Number of neighbors to use"
+        )
 
-ClassifierParams.add(
-    "length_scale",
-    [float(i) / 10 for i in range(1, 10)],
-    "The length scale of the kernel.",
-)
+        cls.add(
+            "length_scale",
+            [float(i) / 10 for i in range(1, 10)],
+            "The length scale of the kernel.",
+        )
 
-ClassifierParams.add(
-    "learning_rate", [float(i) / 10 for i in range(1, 10)], "The learning rate"
-)
+        cls.add(
+            "learning_rate", [float(i) / 10 for i in range(1, 10)], "The learning rate"
+        )
 
+        cls.add(
+            "C", [float(i) / 10 for i in range(1, 20)], "The regularization parameter"
+        )
+
+        cls.add( # omitt "precomputed" kernel as human intervention is needed...
+            "kernel", ["linear", "poly", "rbf", "sigmoid"], "The kernel for SVC"
+        )
+
+        cls.add(
+            "gamma",
+            ["scale", "auto"],  # Todo: this might need to be a mix of strings and floats....
+            "The kernel coefficient for for ‘rbf’, ‘poly’ and ‘sigmoid’ kernels.",
+        )
+
+ClassifierParams.use_default_space()
 
 class Classifier(algorithm):
     """Base class for classifier classes defined below.
@@ -92,6 +126,9 @@ class Classifier(algorithm):
         self.params["n_neighbors"] = 5
         self.params["length_scale"] = 1.0
         self.params["learning_rate"] = 0.1
+        self.params["kernel"] = "rbf"
+        self.params["C"] = 1
+        self.params["gamma"] = "scale"
 
         self.paramindexes = paramindexes
         self.set_params(paramlist)
@@ -120,6 +157,26 @@ class Classifier(algorithm):
         """Adds the classifier to the algorithm space."""
         ClassifierParams.ranges["algorithm"].append(key)
         cls.algorithmspace[key] = classifier
+
+    @classmethod
+    def use_tutorial_space(cls):
+        """Sets algorithm and parameter space to
+        use the tutorial space"""
+        # maybe.....this is fine as long as the parameter space tightens???
+        # TODO: does nothing
+        # TODO: might need to shrink parameterspace to match those
+        # needed for the tutorial space...
+        ClassifierParams.use_tutorial_space()
+        cls.algorithmspace = dict()
+        cls.add_classifier("Ada Boost", AdaBoostContainer)
+        cls.add_classifier("Decision Tree", DecisionTreeClassifier)
+        cls.add_classifier("Gaussian Naive Bayes", GaussianNBClassifier)
+        cls.add_classifier("Gaussian Process", GaussianProcessContainer)
+        cls.add_classifier("K Nearest Neighbors", KNeighborsClassifier)
+        cls.add_classifier("MLP Neural Network", MLPContainer)
+        cls.add_classifier("Quadratic Discriminant Analysis", QDAContainer)
+        cls.add_classifier("Random Forest", RandomForestContainer)
+        cls.add_classifier("SVC", SVCContainer)
 
 
 class GaussianNBClassifier(Classifier):
@@ -346,3 +403,54 @@ class AdaBoostContainer(Classifier):
 
 
 Classifier.add_classifier("Ada Boost", AdaBoostContainer)
+
+
+class SVCContainer(Classifier):
+    """Perform SVC classification algorithm."""
+
+    def __init__(self, paramlist=None):
+        super(SVCContainer, self).__init__()
+
+        self.params["algorithm"] = "SVC"
+        self.params["kernel"] = "rbf"
+        self.params["C"] = 1
+        self.params["gamma"] = "scale"
+
+        self.set_params(paramlist)
+
+    def evaluate(self, training_set, testing_set):
+        """The evaluate function for SVC Boost."""
+
+        clf = SVC(
+            kernel=self.params["kernel"], C=self.params["C"], gamma=self.params["gamma"]
+        )
+
+        clf.fit(training_set.X, training_set.y)
+
+        return clf.predict(testing_set.X)
+
+
+Classifier.add_classifier("SVC", SVCContainer)
+
+
+class QDAContainer(Classifier):
+    """Perform QDA classification algorithm."""
+
+    def __init__(self, paramlist=None):
+        super(QDAContainer, self).__init__()
+
+        self.params["algorithm"] = "Quadratic Discriminant Analysis"
+
+        self.set_params(paramlist)
+
+    def evaluate(self, training_set, testing_set):
+        """The evaluate function for Quadratic Discriminant Analysis."""
+
+        clf = QuadraticDiscriminantAnalysis()
+
+        clf.fit(training_set.X, training_set.y)
+
+        return clf.predict(testing_set.X)
+
+
+Classifier.add_classifier("Quadratic Discriminant Analysis", QDAContainer)
