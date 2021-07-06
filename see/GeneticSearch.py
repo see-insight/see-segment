@@ -26,8 +26,8 @@ from see import base_classes
 
 def twoPointCopy(np1, np2, seed=False):
     """Execute a crossover between two numpy arrays of the same length."""
-    if seed:
-        random.seed(0)
+    #if seed:
+    #    random.seed(0)
     assert len(np1) == len(np2)
     size = len(np1)
     point1 = random.randint(1, size)
@@ -47,8 +47,8 @@ def skimageCrossRandom(np1, np2, seed=False):
     Between two arrays (np1 and np2) picking a random
     amount of indexes to change between the two.
     """
-    if seed == True:
-        random.seed(0)
+    #if seed == True:
+    #    random.seed(0)
     # DO: Only change values associated with algorithm
     assert len(np1) == len(np2)
     # The number of places that we'll cross

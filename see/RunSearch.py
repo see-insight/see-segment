@@ -130,7 +130,7 @@ def geneticsearch_commandline():
     # TODO: add this to the setup.py installer so we include the has in the
     # install.
     print(f"Current Git HASH: {git_version()}")
-
+    print(f"Setting SEED to {args.seed}")
     random.seed(args.seed)
     
     continuous_search(args.input_file, args.input_mask);
