@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split, KFold
 from sklearn.preprocessing import StandardScaler
 
 
-def generate_train_test_set(X, y, random_state=42):
+def generate_train_test_set(X, y, random_state=42, test_size=.4):
     """
     Split data into training and testing sets
     """
@@ -14,7 +14,7 @@ def generate_train_test_set(X, y, random_state=42):
     testing_set = pipedata()
 
     X_train, X_test, y_train, y_test = \
-        train_test_split(X, y, test_size=.4, random_state=random_state)
+        train_test_split(X, y, test_size=test_size, random_state=random_state)
 
     training_set.X = X_train
     training_set.y = y_train
