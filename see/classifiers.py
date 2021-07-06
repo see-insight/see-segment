@@ -86,11 +86,11 @@ class ClassifierParams(param_space):
         )
 
         cls.add(
-            "C", [float(i) / 10 for i in range(1, 20)], "The regularization parameter"
-        )
-
-        cls.add( # omitt "precomputed" kernel as human intervention is needed...
             "kernel", ["linear", "poly", "rbf", "sigmoid"], "The kernel for SVC"
+        )
+        
+        cls.add(
+            "C", [float(i) / 10 for i in range(1, 20)], "The regularization parameter"
         )
 
         cls.add(
@@ -440,7 +440,6 @@ class SVCContainer(Classifier):
 
     def evaluate(self, training_set, testing_set):
         """The evaluate function for SVC Boost."""
-
         clf = SVC(
             kernel=self.params["kernel"], C=self.params["C"], gamma=self.params["gamma"]
         )
