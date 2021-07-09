@@ -2,7 +2,6 @@
 The purpose of this script is to run collect data on the performance of
 SEE-Classify applied to the Sklearn tutorial on Classification Algorithms
 linked here: https://scikit-learn.org/stable/auto_examples/classification/plot_classifier_comparison.html.
-This script will generate a CSV file, where each line contains the following information:
 
 <trial-number>,<generation-number>,<best-hof-fitness>
 
@@ -33,12 +32,6 @@ parser.add_argument(
     default="moons",
     choices=possible_dataset_names,
     help="Name of the dataset to generate data for (default: moons)",
-)
-
-parser.add_argument(
-    "--filename-tail",
-    default="0",
-    help="tail to add to the end of the filenames generated (default: <filename>_0.csv)",
 )
 
 parser.add_argument(
@@ -118,50 +111,21 @@ X = StandardScaler().fit_transform(X)
 
 # Split data into training and testing sets and
 # create a dataset object that can be fed into the pipeline
-temp = helpers.generate_train_test_set(X, y)
-testing_set = temp.testing_set
-pipeline_dataset = helpers.generate_train_test_set(
-    temp.training_set.X, temp.training_set.y, test_size=0.25
-)
+pipeline_dataset = helpers.generate_train_test_set(X, y)
 
 NUM_GENERATIONS = args.num_gen
 NUM_TRIALS = args.num_trials
 POP_SIZE = args.pop_size
 
 print("Running {} Dataset".format(ds_name))
-# best_algo_fitness = []
+print("GA running for {} generations with population size of {}".format(NUM_GENERATIONS, POP_SIZE))
+print("Size of dataset: {}".format(len(X)))
+print("Size of training set: {}".format(len(pipeline_dataset.training_set.y)))
+print("Size of testing set: {}".format(len(pipeline_dataset.testing_set.y)))
+
 for i in range(NUM_TRIALS):
     print("Running trial number {}".format(i))
     my_evolver = GeneticSearch.Evolver(workflow, pipeline_dataset, pop_size=POP_SIZE)
     my_evolver.run(
         ngen=NUM_GENERATIONS,
-        line_template="{trial_num},{},{}\n".format("{}", "{}", trial_num=i),
-        output_best_hof_fitness_to_file=True,
-        output_filename="{}_fitness_{}.csv".format(ds_name, args.filename_tail),
     )
-    # best_algo_fitness.append([my_evolver.hof[0].fitness.values[0], my_evolver.hof[0]])
-    # Evaluate performance of hall of fame over testing set.
-    for j, ind in enumerate(my_evolver.hof):
-        algo_name = ind[0]
-        param_list = ind
-
-        clf = Classifier.algorithmspace[algo_name](param_list)
-
-        # Reform training set
-        training_set = pipedata()
-        training_set.X = np.concatenate((pipeline_dataset.training_set.X, pipeline_dataset.testing_set.X), axis=0)
-        training_set.y = np.concatenate((pipeline_dataset.training_set.y, pipeline_dataset.testing_set.y), axis=0)
-        print(len(testing_set.X))
-        predictions = clf.evaluate(training_set, testing_set)
-
-        score = ClassifierFitness().evaluate(predictions, testing_set.y)
-        print(
-            "# Evaluation TEST for trial={},individual={},score={}".format(i, j, score)
-        )
-
-# best_algo_fitness = np.array(best_algo_fitness)
-# print(best_algo_fitness)
-# print(best_algo_fitness[:,0])
-# print("Average fitness: {} ".format(sum(best_algo_fitness[:,0])/NUM_TRIALS))
-# print("Min fitness: {} ".format(min(best_algo_fitness[:,0])))
-# print("Max fitness: {} ".format(max(best_algo_fitness[:,0])))
