@@ -10,6 +10,7 @@ import json
 import logging
 from shutil import copyfile
 from pathlib import Path
+import numpy as np
 
 import deap
 from deap import base
@@ -36,8 +37,10 @@ def twoPointCopy(np1, np2, seed=False):
         point2 += 1
     else:  # Swap the two points
         point1, point2 = point2, point1
-    np1[point1:point2], np2[point1:point2] = np2[point1:point2].copy(
-    ), np1[point1:point2].copy()
+    np1[point1:point2], np2[point1:point2] = (
+        np2[point1:point2].copy(),
+        np1[point1:point2].copy(),
+    )
     return np1, np2
 
 
@@ -88,8 +91,8 @@ def mutate(copy_child, pos_vals, flip_prob=0.5, seed=False):
         # Let's mutate
         child[0] = random.choice(pos_vals[0])
     # Now let's get the indexes (parameters) related to that value
-    #switcher = AlgoHelp().algoIndexes()
-    #indexes = switcher.get(child[0])
+    # switcher = AlgoHelp().algoIndexes()
+    # indexes = switcher.get(child[0])
 
     for index in range(len(pos_vals)):
         rand_val = random.random()
@@ -147,12 +150,12 @@ def makeToolbox(pop_size, algo_constructor):
         func_seq.append(getattr(toolbox, key))
 
     # Here we populate our individual with all of the parameters
-    toolbox.register("individual", tools.initCycle,
-                     creator.Individual, func_seq, n=1)
+    toolbox.register("individual", tools.initCycle, creator.Individual, func_seq, n=1)
 
     # And we make our population
-    toolbox.register("population", tools.initRepeat,
-                     list, toolbox.individual, n=pop_size)
+    toolbox.register(
+        "population", tools.initRepeat, list, toolbox.individual, n=pop_size
+    )
 
     return toolbox
 
@@ -177,15 +180,15 @@ def initPopulation(pcls, ind_init, filename):
 def write_algo_vector(fpop_file, outstring):
     """Write Text output"""
     print(f"Writing in {fpop_file}")
-    with open(fpop_file, 'a') as myfile:
-        myfile.write(f'{outstring}\n')
+    with open(fpop_file, "a") as myfile:
+        myfile.write(f"{outstring}\n")
 
 
 def read_algo_vector(fpop_file):
     """Read Text output"""
     print(f"Reading in {fpop_file}")
     inlist = []
-    with open(fpop_file, 'r') as myfile:
+    with open(fpop_file, "r") as myfile:
         for line in myfile:
             inlist.append(eval(line))
     return inlist
@@ -206,10 +209,10 @@ class Evolver(object):
 
     """
 
-#     AllVals = []
-# #     my_p=param_space
-#     for key in my_p.pkeys:
-#         AllVals.append(my_p.ranges[key])
+    #     AllVals = []
+    # #     my_p=param_space
+    #     for key in my_p.pkeys:
+    #         AllVals.append(my_p.ranges[key])
 
     def __init__(self, algo_constructor, data, pop_size=10, hof_size=10):
         """Set default values for the variables.
@@ -229,10 +232,10 @@ class Evolver(object):
         self.best_avgs = []
         self.gen = 0
         self.cxpb, self.mutpb, self.flip_prob = 0.9, 0.9, 0.9
-        
-    #TODO add some checking to make sure lists are the right size and type
-    #TODO think about how we want to add in fitness to these?
-    def copy_individual(self,fromlist):
+
+    # TODO add some checking to make sure lists are the right size and type
+    # TODO think about how we want to add in fitness to these?
+    def copy_individual(self, fromlist):
         """Return individual from list of individuals"""
         new_individual = self.tool.individual()
         for index in range(len(new_individual)):
@@ -251,7 +254,7 @@ class Evolver(object):
         """Initialize a new population."""
         return self.tool.population()
 
-    def writepop(self, tpop, filename='test.json'):
+    def writepop(self, tpop, filename="test.json"):
         """Record the population in the file "filename".
 
         Keyword arguments:
@@ -261,10 +264,10 @@ class Evolver(object):
 
         """
         logging.getLogger().info(f"Writting population to {filename}")
-        with open(filename, 'w') as outfile:
+        with open(filename, "w") as outfile:
             json.dump(tpop, outfile)
 
-    def readpop(self, filename='test.json'):
+    def readpop(self, filename="test.json"):
         """Read in existing population from "filename"."""
         filen = Path(filename)
 
@@ -274,14 +277,19 @@ class Evolver(object):
             return tpop
 
         logging.getLogger().info(f"Reading population from {filename}")
-        self.tool.register("population_read", initPopulation,
-                           list, creator.Individual, filename)
+        self.tool.register(
+            "population_read", initPopulation, list, creator.Individual, filename
+        )
 
-        self.tool.register("individual_guess",
-                           initIndividual, creator.Individual)
+        self.tool.register("individual_guess", initIndividual, creator.Individual)
 
-        self.tool.register("population_guess", initPopulation,
-                           list, self.tool.individual_guess, "my_guess.json")
+        self.tool.register(
+            "population_guess",
+            initPopulation,
+            list,
+            self.tool.individual_guess,
+            "my_guess.json",
+        )
 
         return self.tool.population_read()
 
@@ -300,8 +308,7 @@ class Evolver(object):
 
         """
         # make copies of self.data
-        data_references = [copy.deepcopy(self.data)
-                           for i in range(0, len(tpop))]
+        data_references = [copy.deepcopy(self.data) for i in range(0, len(tpop))]
         algos = [self.algo_constructor(paramlist=list(ind)) for ind in tpop]
 
         # Map the evaluation command to reference data and then to population
@@ -317,7 +324,7 @@ class Evolver(object):
 
         self.hof.update(tpop)
 
-        #Algo = AlgorithmSpace(AlgoParams)
+        # Algo = AlgorithmSpace(AlgoParams)
 
         # Evaluating the new population
         leng = len(tpop)
@@ -331,7 +338,7 @@ class Evolver(object):
         logging.getLogger().info(f" Avg: {mean}")
         logging.getLogger().info(f" Std: {stdev}")
         logging.getLogger().info(f" Size: {leng}")
-        #logging.info(" Time: ", time.time() - initTime)
+        # logging.info(" Time: ", time.time() - initTime)
         logging.getLogger().info(f"Best Fitness: {self.hof[0].fitness.values}")
         logging.getLogger().info(f"{self.hof[0]}")
         # Did we improve the population?
@@ -365,11 +372,11 @@ class Evolver(object):
         var = min(var, len(self.hof))
         ran = my_sz - top - var
 
-#         print(f"pop[0:{top}:{var}:{ran}]")
-#         print(f"pop[0:{top}:{top+var}:{my_sz}]")
+        #         print(f"pop[0:{top}:{var}:{ran}]")
+        #         print(f"pop[0:{top}:{top+var}:{my_sz}]")
 
-#         offspring = self.tool.select(tpop, var)
-#         offspring = list(map(self.tool.clone, offspring))  # original code
+        #         offspring = self.tool.select(tpop, var)
+        #         offspring = list(map(self.tool.clone, offspring))  # original code
 
         offspring = copy.deepcopy(list(self.hof))
 
@@ -390,18 +397,18 @@ class Evolver(object):
                 del mutant.fitness.values
 
         # new
-        #population = self.newpopulation()
+        # population = self.newpopulation()
         pop = self.tool.population()
 
         final = pop[0:ran]
-        #print(f"pop size should be {len(final)}")
+        # print(f"pop size should be {len(final)}")
         final += self.hof[0:top]
-        #print(f"pop size should be {len(final)}")
+        # print(f"pop size should be {len(final)}")
         final += offspring[0:var]
-        #print(f"pop size should be {len(final)}")
+        # print(f"pop size should be {len(final)}")
 
         # print(f"pop[0:{top}:{var}:{ran}]")
-        #print(f"pop size should be {len(final)}")
+        # print(f"pop size should be {len(final)}")
 
         # Replacing the old population
         return final
@@ -417,15 +424,13 @@ class Evolver(object):
         return self.mutate(tpop)
 
     def run(
-            self,
-            ngen=10,
-            population=None,
-            startfile=None,
-            checkpoint=None,
-            cp_freq=1,
-            output_best_hof_fitness_to_file=False,
-            output_filename=None,
-            line_template=None
+        self,
+        ngen=10,
+        population=None,
+        startfile=None,
+        checkpoint=None,
+        cp_freq=1,
+        print_raw_data=False,
     ):
         """Run the genetic algorithm, updating the population over ngen number of generations.
         
@@ -454,16 +459,7 @@ class Evolver(object):
         else:
             print(f"Using existing population")
 
-        if output_best_hof_fitness_to_file:
-            # Check parameters consistency
-            if not output_filename:
-                # TODO: How do you raise errors?
-                print("ERROR: Filename for fitness values was not provided.")
-                raise
-            else:
-                 fitness_file = open(output_filename, "a")
-        
-        for cur_g in range(0, ngen+1):
+        for cur_g in range(0, ngen + 1):
             print(f"Generation {cur_g}/{ngen} of population size {len(population)}")
 
             _, population = self.popfitness(population)
@@ -483,27 +479,45 @@ class Evolver(object):
                 for cur_p in range(len(population)):
                     logging.getLogger().info(population[cur_p])
 
-            if cur_g < ngen+1:
+            if cur_g < ngen + 1:
+                if print_raw_data:
+                    # The delimiters used are:
+                    # | to separate column names from values
+                    # ; to separate values from each other
+                    
+                    # We want to print out the algorithm vector so that we can rebuild it
+                    # later from a string. Python lists are printed out as [val_1, val_2,..., val_n].
+                    # Hence we do use ';', rather than ',' and ' ' as official delimiters that will be
+                    # used in post-processing.
+                    
+                    for idx, ind in enumerate(self.hof):
+                        print(
+                            f"# GEN HOF_index fitness ind|{cur_g};{idx};{ind.fitness.values[0]};{ind}"
+                        )
+
+                    # Print population data
+                    for idx, ind in enumerate(population):
+                        print(
+                            f"# GEN population_index fitness ind|{cur_g};{idx};{ind.fitness.values[0]};{ind}"
+                        )
+
                 if bestsofar.fitness.values[0] >= 0.95:
                     print("Bestsofar not good enough (>=0.95) restarting population")
                     population = self.newpopulation()
-                  # if the best fitness value is at or above the
-                  # threshold of 0.95, discard the entire current
-                  # population and randomly select a new population
-                  # for the next generation
-                  # note: setting keep_prob = 0 and mutate_prob = 1
-                  # as mutate arguments
-                  # should have same result as self.new_population()
+                # if the best fitness value is at or above the
+                # threshold of 0.95, discard the entire current
+                # population and randomly select a new population
+                # for the next generation
+                # note: setting keep_prob = 0 and mutate_prob = 1
+                # as mutate arguments
+                # should have same result as self.new_population()
                 else:
                     print("Mutating Population")
-                    if output_best_hof_fitness_to_file:
-                        line = line_template or "{},{}\n"
-                        fitness_file.write(line_template.format(cur_g, fitness))
 
                     population = self.mutate(population)
-                  # if the best fitness value is below this threshold,
-                  # proceed as normal, mutating the current population
-                  # to get the next generation
+                # if the best fitness value is below this threshold,
+                # proceed as normal, mutating the current population
+                # to get the next generation
 
         if checkpoint:
             print(f"Writing Checkpoint file - {checkpoint}")
@@ -512,7 +526,4 @@ class Evolver(object):
             for cur_p in range(len(population)):
                 logging.getLogger().info(population[cur_p])
 
-        if output_best_hof_fitness_to_file:
-             fitness_file.close()
-        
         return population
