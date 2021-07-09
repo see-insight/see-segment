@@ -26,12 +26,6 @@ from see.Workflow import workflow
 parser = argparse.ArgumentParser(description="Create some csv data files.")
 
 parser.add_argument(
-    "--filename-tail",
-    default="0",
-    help="tail to add to the end of the filenames generated (default: <filename>_0.csv)",
-)
-
-parser.add_argument(
     "--num-gen",
     default=10,
     type=int,
@@ -104,19 +98,42 @@ X_features = combined_features.fit(X, y).transform(X)
 
 # Split data into training and testing sets and
 # create a dataset object that can be fed into the pipeline
-pipeline_dataset = helpers.generate_train_test_set(X_features, y)
+temp = helpers.generate_train_test_set(X_features, y, test_size=0.4)
+testing_set = temp.testing_set
+pipeline_dataset = helpers.generate_train_test_set(temp.training_set.X, temp.training_set.y, test_size=0.25)
 
 NUM_GENERATIONS = args.num_gen
 NUM_TRIALS = args.num_trials
 POP_SIZE = args.pop_size
 
+# TODO...use cross-validation...because the paper uses cross-validation...
 print("Running {} Dataset".format("Dhahri 2019"))
+print("GA running for {} generations with population size of {}".format(NUM_GENERATIONS, POP_SIZE))
+print("Size of dataset: {}".format(len(X)))
+print("Size of training set: {}".format(len(pipeline_dataset.training_set.X)))
+print("Size of validation set: {}".format(len(pipeline_dataset.testing_set.X)))
+print("Size of testing set: {}".format(len(testing_set.X)))
+
 for i in range(NUM_TRIALS):
     print("Running trial number {}".format(i))
     my_evolver = GeneticSearch.Evolver(workflow, pipeline_dataset, pop_size=POP_SIZE)
     my_evolver.run(
-        ngen=NUM_GENERATIONS,
-        line_template="{trial_num},{},{}\n".format("{}", "{}", trial_num=i),
-        output_best_hof_fitness_to_file=True,
-        output_filename="{}_fitness_{}.csv".format("dhahri_2019", args.filename_tail),
+        ngen=NUM_GENERATIONS
     )
+    # Evaluate performance of hall of fame over testing set.
+    for j, ind in enumerate(my_evolver.hof):
+        algo_name = ind[0]
+        param_list = ind
+
+        clf = Classifier.algorithmspace[algo_name](param_list)
+
+        # Reform training set
+        training_set = pipedata()
+        training_set.X = np.concatenate((pipeline_dataset.training_set.X, pipeline_dataset.testing_set.X), axis=0)
+        training_set.y = np.concatenate((pipeline_dataset.training_set.y, pipeline_dataset.testing_set.y), axis=0)
+        predictions = clf.evaluate(training_set, testing_set)
+
+        score = ClassifierFitness().evaluate(predictions, testing_set.y)
+        print(
+            "# Evaluation TEST for {trial},{individual},{score}".format(trial=i, individual=j, score=score)
+        )
