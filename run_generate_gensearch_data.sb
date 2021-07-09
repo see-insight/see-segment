@@ -1,16 +1,58 @@
 #!/bin/bash
-#SBATCH --array=1-10
-#SBATCH --time=00:10:00
+#SBATCH --array=0-2
+#SBATCH --time=04:30:00
 #SBATCH --mem=4gb
 
 # Load module and initalize environment
 module load conda
 conda activate ./envs
 
+while getopts m: flag
+do
+    case "${flag}" in
+        m) mode=${OPTARG};;
+    esac
+done
+
+echo "TIME START"
+date
+
 echo "Job $SLURM_JOB_ID"
 echo "Number $SLURM_ARRAY_TASK_ID"
 
-# run python script with array task id
-python dataset_script.py --filename-tail="$SLURM_JOB_ID_$SLURM_ARRAY_TASK_ID"
+num_gen=100
+pop_size=10
+
+echo "Running GA for ${num_gen} generations with a population size of ${pop_size}"
+
+# Run script
+case $mode in
+    "sklearn") 
+	ds_names=("moons" "circles" "linearly_separable")
+	ds_name="${ds_names[$SLURM_ARRAY_TASK_ID]}"
+	echo "Running ${ds_name} dataset"
+	python run_see_classify_sklearn_toy.py --dataset-name=${ds_name} --pop-size=${pop_size} --num-gen=${num_gen} > $SLURM_JOB_ID.txt
+    ;;
+    "dhahri")
+	ds_name="Dhahri 2019"
+	echo "Running ${ds_name} dataset"
+	python run_see_classify_dhahri.py --pop-size=${pop_size} --num-gen=${num_gen} > $SLURM_JOB_ID.txt
+    ;;
+    *)
+	echo "Unknown mode"
+	echo "Possible modes (-m) are (sklearn, dhahri)"
+	echo "EXITING"
+	exit 1
+    ;;
+esac
+
+# extract hof data
+grep "# GEN HOF_index" $SLURM_JOB_ID.txt | cut -d '|' -f2 > ${ds_name}_hof_${num_gen}_${pop_size}_${SLURM_JOB_ID}.csv
+
+# extract population data
+grep "# GEN population_index" $SLURM_JOB_ID.txt | cut -d '|' -f2 > ${ds_name}_population_${num_gen}_${pop_size}_${SLURM_JOB_ID}.csv
+
+echo "TIME END"
+date
 
 echo "FINNISHED RUNNING SCRIPT"
