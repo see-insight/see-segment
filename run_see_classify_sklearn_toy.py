@@ -128,4 +128,5 @@ for i in range(NUM_TRIALS):
     my_evolver = GeneticSearch.Evolver(workflow, pipeline_dataset, pop_size=POP_SIZE)
     my_evolver.run(
         ngen=NUM_GENERATIONS,
+	print_raw_data=True
     )

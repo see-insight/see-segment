@@ -118,7 +118,8 @@ for i in range(NUM_TRIALS):
     print("Running trial number {}".format(i))
     my_evolver = GeneticSearch.Evolver(workflow, pipeline_dataset, pop_size=POP_SIZE)
     my_evolver.run(
-        ngen=NUM_GENERATIONS
+        ngen=NUM_GENERATIONS,
+	print_raw_data=True
     )
     # Evaluate performance of hall of fame over testing set.
     for j, ind in enumerate(my_evolver.hof):
