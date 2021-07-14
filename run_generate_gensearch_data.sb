@@ -7,10 +7,17 @@
 module load conda
 conda activate ./envs
 
-while getopts m: flag
+num_gen=100
+pop_size=10
+
+# TODO http://mywiki.wooledge.org/BashFAQ/035
+# Provide long commandline arguments
+while getopts ":m:n:p:" flag;
 do
     case "${flag}" in
         m) mode=${OPTARG};;
+        n) num_gen=${OPTARG};;
+        p) pop_size=${OPTARG};;
     esac
 done
 
@@ -20,9 +27,8 @@ date
 echo "Job $SLURM_JOB_ID"
 echo "Number $SLURM_ARRAY_TASK_ID"
 
-num_gen=100
-pop_size=10
 
+echo "mode=${mode}"
 echo "Running GA for ${num_gen} generations with a population size of ${pop_size}"
 
 # Run script
@@ -34,7 +40,7 @@ case $mode in
 	python run_see_classify_sklearn_toy.py --dataset-name=${ds_name} --pop-size=${pop_size} --num-gen=${num_gen} > $SLURM_JOB_ID.txt
     ;;
     "dhahri")
-	ds_name="Dhahri 2019"
+	ds_name="dhahri_2019"
 	echo "Running ${ds_name} dataset"
 	python run_see_classify_dhahri.py --pop-size=${pop_size} --num-gen=${num_gen} > $SLURM_JOB_ID.txt
     ;;
@@ -47,10 +53,10 @@ case $mode in
 esac
 
 # extract hof data
-grep "# GEN HOF_index" $SLURM_JOB_ID.txt | cut -d '|' -f2 > ${ds_name}_hof_${num_gen}_${pop_size}_${SLURM_JOB_ID}.csv
+grep "# GEN HOF_index" $SLURM_JOB_ID.txt | cut -d '|' -f2 > "${ds_name}_hof_${num_gen}_${pop_size}_${SLURM_JOB_ID}.csv"
 
 # extract population data
-grep "# GEN population_index" $SLURM_JOB_ID.txt | cut -d '|' -f2 > ${ds_name}_population_${num_gen}_${pop_size}_${SLURM_JOB_ID}.csv
+grep "# GEN population_index" $SLURM_JOB_ID.txt | cut -d '|' -f2 > "${ds_name}_population_${num_gen}_${pop_size}_${SLURM_JOB_ID}.csv"
 
 echo "TIME END"
 date

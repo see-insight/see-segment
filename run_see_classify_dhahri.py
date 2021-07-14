@@ -94,12 +94,14 @@ pca = PCA(n_components=12)
 combined_features = FeatureUnion([("pca", pca)])
 
 # Use combined features to transform dataset:
-X_features = combined_features.fit(X, y).transform(X)
+#X_features = combined_features.fit(X, y).transform(X)
+X_features = X
 
 # Split data into training and testing sets and
 # create a dataset object that can be fed into the pipeline
-temp = helpers.generate_train_test_set(X_features, y, test_size=0.4)
-testing_set = temp.testing_set
+# A train-test-valid split of 60-20-20
+temp = helpers.generate_train_test_set(X_features, y, test_size=0.2)
+validation_set = temp.testing_set
 pipeline_dataset = helpers.generate_train_test_set(temp.training_set.X, temp.training_set.y, test_size=0.25)
 
 NUM_GENERATIONS = args.num_gen
@@ -111,8 +113,9 @@ print("Running {} Dataset".format("Dhahri 2019"))
 print("GA running for {} generations with population size of {}".format(NUM_GENERATIONS, POP_SIZE))
 print("Size of dataset: {}".format(len(X)))
 print("Size of training set: {}".format(len(pipeline_dataset.training_set.X)))
-print("Size of validation set: {}".format(len(pipeline_dataset.testing_set.X)))
-print("Size of testing set: {}".format(len(testing_set.X)))
+print("Size of testing set: {}".format(len(pipeline_dataset.testing_set.X)))
+print("Size of validation set: {}".format(len(validation_set.X)))
+print("PCA turned off")
 
 for i in range(NUM_TRIALS):
     print("Running trial number {}".format(i))
@@ -121,20 +124,3 @@ for i in range(NUM_TRIALS):
         ngen=NUM_GENERATIONS,
 	print_raw_data=True
     )
-    # Evaluate performance of hall of fame over testing set.
-    for j, ind in enumerate(my_evolver.hof):
-        algo_name = ind[0]
-        param_list = ind
-
-        clf = Classifier.algorithmspace[algo_name](param_list)
-
-        # Reform training set
-        training_set = pipedata()
-        training_set.X = np.concatenate((pipeline_dataset.training_set.X, pipeline_dataset.testing_set.X), axis=0)
-        training_set.y = np.concatenate((pipeline_dataset.training_set.y, pipeline_dataset.testing_set.y), axis=0)
-        predictions = clf.evaluate(training_set, testing_set)
-
-        score = ClassifierFitness().evaluate(predictions, testing_set.y)
-        print(
-            "# Evaluation TEST for {trial},{individual},{score}".format(trial=i, individual=j, score=score)
-        )
