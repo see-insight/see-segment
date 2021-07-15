@@ -88,21 +88,24 @@ from sklearn.pipeline import FeatureUnion
 from sklearn.decomposition import PCA
 
 # Table 1 suggests using 12 components for GAs
+#pca = PCA(n_components=12, svd_solver='randomized')
 pca = PCA(n_components=12)
+#print("Using auto svd_solver in PCA")
 
 # Use feature union in case we want to combine multiple feature selections later
 combined_features = FeatureUnion([("pca", pca)])
 
 # Use combined features to transform dataset:
-#X_features = combined_features.fit(X, y).transform(X)
-X_features = X
+X_features = combined_features.fit(X, y).transform(X)
+#X_features = X
 
 # Split data into training and testing sets and
 # create a dataset object that can be fed into the pipeline
 # A train-test-valid split of 60-20-20
 temp = helpers.generate_train_test_set(X_features, y, test_size=0.2)
 validation_set = temp.testing_set
-pipeline_dataset = helpers.generate_train_test_set(temp.training_set.X, temp.training_set.y, test_size=0.25)
+pipeline_dataset = helpers.generate_train_test_set(temp.training_set.X, temp.training_set.y, test_size=0.25, random_state=900)
+print('Pipeline random_state = 900')
 
 NUM_GENERATIONS = args.num_gen
 NUM_TRIALS = args.num_trials
@@ -115,7 +118,6 @@ print("Size of dataset: {}".format(len(X)))
 print("Size of training set: {}".format(len(pipeline_dataset.training_set.X)))
 print("Size of testing set: {}".format(len(pipeline_dataset.testing_set.X)))
 print("Size of validation set: {}".format(len(validation_set.X)))
-print("PCA turned off")
 
 for i in range(NUM_TRIALS):
     print("Running trial number {}".format(i))
