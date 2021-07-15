@@ -27,8 +27,8 @@ from see import base_classes
 
 def twoPointCopy(np1, np2, seed=False):
     """Execute a crossover between two numpy arrays of the same length."""
-    if seed:
-        random.seed(0)
+#     if seed:
+#         random.seed(0)
     assert len(np1) == len(np2)
     size = len(np1)
     point1 = random.randint(1, size)
@@ -50,8 +50,8 @@ def skimageCrossRandom(np1, np2, seed=False):
     Between two arrays (np1 and np2) picking a random
     amount of indexes to change between the two.
     """
-    if seed == True:
-        random.seed(0)
+#     if seed == True:
+#         random.seed(0)
     # DO: Only change values associated with algorithm
     assert len(np1) == len(np2)
     # The number of places that we'll cross
@@ -378,6 +378,9 @@ class Evolver(object):
         #         offspring = self.tool.select(tpop, var)
         #         offspring = list(map(self.tool.clone, offspring))  # original code
 
+        # Strange that we are using the best-so-far to generate the next 
+        # population. Shouldn't we be using a selection from the current population
+        # to generate the next population?
         offspring = copy.deepcopy(list(self.hof))
 
         # crossover
