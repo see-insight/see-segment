@@ -58,7 +58,7 @@ class ClassifierParams(param_space):
         # do not give a suggested range.
 
         cls.add(
-            "max_iter", [i for i in range(1, 101)], "Number of iterations for the algorithm"
+            "max_iter", [i for i in range(1, 1001)], "Number of iterations for the algorithm"
         )
 
         cls.add(
