@@ -11,7 +11,7 @@ import numpy as np
 from sklearn.tree import DecisionTreeClassifier as DecisionTree
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
-from sklearn.neighbors import KNeighborsClassifier as kNearestNeighbors
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import (
@@ -23,8 +23,15 @@ from sklearn.ensemble import (
 from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.gaussian_process.kernels import RBF
 from sklearn.svm import SVC
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticDiscriminantAnalysis
+from sklearn.discriminant_analysis import (
+    LinearDiscriminantAnalysis,
+    QuadraticDiscriminantAnalysis,
+)
+
+from abc import ABC, abstractmethod
+
 from see.base_classes import param_space, algorithm, pipedata
+
 
 class ClassifierParams(param_space):
     """Parameter space for classifiers"""
@@ -32,7 +39,7 @@ class ClassifierParams(param_space):
     descriptions = dict()
     ranges = dict()
     pkeys = []
-    
+
     @classmethod
     def empty_space(cls):
         cls.descriptions = dict()
@@ -58,11 +65,15 @@ class ClassifierParams(param_space):
         # do not give a suggested range.
 
         cls.add(
-            "max_iter", [i for i in range(1, 1001)], "Number of iterations for the algorithm"
+            "max_iter",
+            [i for i in range(1, 1001)],
+            "Number of iterations for the algorithm",
         )
 
         cls.add(
-            "alpha", [float(i) / 1000 for i in range(1, 1000)], "regularization parameter"
+            "alpha",
+            [float(i) / 1000 for i in range(1, 1000)],
+            "regularization parameter",
         )
 
         cls.add("max_depth", [i for i in range(1, 10)], "Maximum depth of tree")
@@ -71,9 +82,7 @@ class ClassifierParams(param_space):
             "n_estimators", [i for i in range(1, 100)], "Number of trees in the forest"
         )
 
-        cls.add(
-            "n_neighbors", [i for i in range(1, 10)], "Number of neighbors to use"
-        )
+        cls.add("n_neighbors", [i for i in range(1, 10)], "Number of neighbors to use")
 
         cls.add(
             "length_scale",
@@ -85,21 +94,24 @@ class ClassifierParams(param_space):
             "learning_rate", [float(i) / 10 for i in range(1, 10)], "The learning rate"
         )
 
-        cls.add(
-            "kernel", ["linear", "poly", "rbf", "sigmoid"], "The kernel for SVC"
-        )
-        
+        cls.add("kernel", ["linear", "poly", "rbf", "sigmoid"], "The kernel for SVC")
+
         cls.add(
             "C", [float(i) / 10 for i in range(1, 20)], "The regularization parameter"
         )
 
         cls.add(
             "gamma",
-            ["scale", "auto"],  # Todo: this might need to be a mix of strings and floats....
+            [
+                "scale",
+                "auto",
+            ],  # Todo: this might need to be a mix of strings and floats....
             "The kernel coefficient for for ‘rbf’, ‘poly’ and ‘sigmoid’ kernels.",
         )
 
+
 ClassifierParams.use_default_space()
+
 
 class Classifier(algorithm):
     """Base class for classifier classes defined below.
@@ -137,7 +149,7 @@ class Classifier(algorithm):
     def evaluate(self, training_set, testing_set):
         """Instance evaluate method. Needs to be overridden by subclasses."""
         self.thisalgo = Classifier.algorithmspace[self.params["algorithm"]](self.params)
-        return self.thisalgo.evaluate(training_set, testing_set)
+        return self.thisalgo.fit_predict(training_set, testing_set)
 
     def pipe(self, data):
         print(data)
@@ -199,237 +211,215 @@ class Classifier(algorithm):
         cls.add_classifier("SVC", SVCContainer)
 
 
-class GaussianNBClassifier(Classifier):
+class HyperparameterContainer(ABC):
+    def __init__(self):
+        super().__init__()
+
+    @abstractmethod
+    def map_param_space_to_hyper_params(self):
+        pass
+
+
+class ClassifierContainer(Classifier, HyperparameterContainer):
+    def __init__(self, clf_class, paramlist=None):
+        super().__init__()
+        self.set_params(paramlist)
+
+        self.clf_class = clf_class
+
+    def create_clf(self):
+        clf = self.clf_class()
+        param_dict = self.map_param_space_to_hyper_params()
+        clf.set_params(**param_dict)
+        return clf
+
+    def fit_predict(self, training_set, testing_set):
+        clf = self.create_clf()
+        clf.fit(training_set.X, training_set.y)
+        return clf.predict(testing_set.X)
+
+    def evaluate(self, training_set, testing_set):
+        return self.fit_predict(training_set, testing_set)
+
+class KNeighborsContainer(ClassifierContainer):
+    def __init__(self, paramlist=None):
+        super().__init__(KNeighborsClassifier, paramlist)
+        self.params["algorithm"] = "K Nearest Neighbors"
+        self.set_params(paramlist)
+
+    def map_param_space_to_hyper_params(self):
+        param_dict = dict()
+        param_dict["n_neighbors"] = self.params["n_neighbors"]
+        return param_dict
+
+
+Classifier.add_classifier("K Nearest Neighbors", KNeighborsContainer)
+
+
+class GaussianNBContainer(ClassifierContainer):
     """Perform Gaussian Naive Bayes classification algorithm."""
 
     def __init__(self, paramlist=None):
         """Gaussian Naive Bayes has no parameters in the example."""
 
-        super(GaussianNBClassifier, self).__init__(paramlist)
+        super().__init__(GaussianNB, paramlist)
 
         self.params["algorithm"] = "Gaussian Naive Bayes"
         self.set_params(paramlist)
+        
+    def map_param_space_to_hyper_params(self):
+        param_dict = dict()
+        return param_dict
 
-    def evaluate(self, training_set, testing_set):
-        """The evaluate function for Gaussian Naive Bayes"""
-        clf = GaussianNB()
-        clf.fit(training_set.X, training_set.y)
-        return clf.predict(testing_set.X)
+Classifier.add_classifier("Gaussian Naive Bayes", GaussianNBContainer)
 
-
-Classifier.add_classifier("Gaussian Naive Bayes", GaussianNBClassifier)
-
-
-class KNeighborsClassifier(Classifier):
-    """Perform K Nearest-Neighbors classification algorithm."""
-
-    def __init__(self, paramlist=None):
-        super().__init__()
-
-        self.params["algorithm"] = "K Nearest Neighbors"
-        self.params["n_neighbors"] = 3
-        self.set_params(paramlist)
-
-    def evaluate(self, training_set, testing_set):
-        """The evaluate function for K Nearest-Nei3ghbors"""
-
-        num_samples = len(training_set.X)
-        # TODO n_neighbors must be <= number of samples
-        # Modulo might not be the best way to do this.
-        neighbors_param = self.params["n_neighbors"]
-        param_in_range = (neighbors_param <= num_samples) and (neighbors_param > 0)
-        clf = kNearestNeighbors(
-            n_neighbors=(
-                neighbors_param
-                if param_in_range
-                else (neighbors_param % num_samples + 1)
-            )
-        )
-        clf.fit(training_set.X, training_set.y)
-        return clf.predict(testing_set.X)
-
-
-Classifier.add_classifier("K Nearest Neighbors", KNeighborsClassifier)
-
-
-class DecisionTreeClassifier(Classifier):
+class DecisionTreeContainer(ClassifierContainer):
     """Perform Decision Tree classification algorithm."""
 
     def __init__(self, paramlist=None):
-        super(DecisionTreeClassifier, self).__init__()
-
+        super().__init__(DecisionTree, paramlist)
         self.params["algorithm"] = "Decision Tree"
         self.params["max_depth"] = 5
         self.set_params(paramlist)
 
-    def evaluate(self, training_set, testing_set):
-        """The evaluate function for Decision Trees."""
 
-        clf = DecisionTree(max_depth=self.params["max_depth"])
-        clf.fit(training_set.X, training_set.y)
-        return clf.predict(testing_set.X)
+    def map_param_space_to_hyper_params(self):
+        param_dict = dict()
+        param_dict["max_depth"] = self.params["max_depth"]
+        return param_dict
 
+Classifier.add_classifier("Decision Tree", DecisionTreeContainer)
 
-Classifier.add_classifier("Decision Tree", DecisionTreeClassifier)
-
-
-class RandomForestContainer(Classifier):
+class RandomForestContainer(ClassifierContainer):
     """Perform Random Forest classification algorithm."""
 
     def __init__(self, paramlist=None):
-        super(RandomForestContainer, self).__init__()
+        super().__init__(RandomForestClassifier, paramlist)
 
         self.params["algorithm"] = "Random Forest"
         self.params["max_depth"] = 5
         self.params["n_estimators"] = 10
         self.set_params(paramlist)
 
-    def evaluate(self, training_set, testing_set):
-        """The evaluate function for Decision Trees."""
+    def map_param_space_to_hyper_params(self):
+        param_dict = dict()
+        param_dict["max_depth"] = self.params["max_depth"]
+        param_dict["n_estimators"] = self.params["n_estimators"]
 
-        clf = RandomForestClassifier(
-            max_depth=self.params["max_depth"], n_estimators=self.params["n_estimators"]
-        )
-
-        clf.fit(training_set.X, training_set.y)
-        return clf.predict(testing_set.X)
+        return param_dict
 
 
 Classifier.add_classifier("Random Forest", RandomForestContainer)
 
-
-class MLPContainer(Classifier):
+class MLPContainer(ClassifierContainer):
     """Perform MLP Neural Network classification algorithm."""
 
     def __init__(self, paramlist=None):
-        super(MLPContainer, self).__init__()
-
+        super().__init__(MLPClassifier, paramlist)
         self.params["algorithm"] = "MLP Neural Network"
-        self.params["max_iter"] = 1000
         self.params["alpha"] = 1
+        self.params["max_iter"] = 1000
         self.set_params(paramlist)
 
-    def evaluate(self, training_set, testing_set):
-        """The evaluate function for MLP."""
+    def map_param_space_to_hyper_params(self):
+        param_dict = dict()
+        param_dict["alpha"] = self.params["alpha"]
+        param_dict["max_iter"] = self.params["max_iter"]
 
-        clf = MLPClassifier(alpha=1, max_iter=1000)
-
-        clf.fit(training_set.X, training_set.y)
-
-        return clf.predict(testing_set.X)
-
+        return param_dict
 
 Classifier.add_classifier("MLP Neural Network", MLPContainer)
 
-
-class GaussianProcessContainer(Classifier):
+class GaussianProcessContainer(ClassifierContainer):
     """Perform Guassian Process classification algorithm."""
 
     def __init__(self, paramlist=None):
-        super(GaussianProcessContainer, self).__init__()
-
+        super().__init__(GaussianProcessClassifier, paramlist)
         self.params["algorithm"] = "Gaussian Process"
         self.params["length_scale"] = 1.0
         self.set_params(paramlist)
 
-    def evaluate(self, training_set, testing_set):
-        """The evaluate function for Gaussian Process."""
+    def map_param_space_to_hyper_params(self):
+        param_dict = dict()
+        param_dict["kernel"] = 1.0 * RBF(self.params["length_scale"])
 
-        clf = GaussianProcessClassifier(1.0 * RBF(self.params["length_scale"]))
-
-        clf.fit(training_set.X, training_set.y)
-
-        return clf.predict(testing_set.X)
+        return param_dict
 
 
 Classifier.add_classifier("Gaussian Process", GaussianProcessContainer)
 
 
-class ExtraTreesContainer(Classifier):
+class ExtraTreesContainer(ClassifierContainer):
     """Perform Guassian Process classification algorithm."""
 
     def __init__(self, paramlist=None):
-        super(ExtraTreesContainer, self).__init__()
+        super().__init__(ExtraTreesClassifier, paramlist)
 
         self.params["algorithm"] = "Extra Trees"
         self.params["n_estimators"] = 100
         self.params["max_depth"] = 5
         self.set_params(paramlist)
 
-    def evaluate(self, training_set, testing_set):
-        """The evaluate function for Extra Trees."""
+    def map_param_space_to_hyper_params(self):
+        param_dict = dict()
+        param_dict["n_estimators"] = self.params["n_estimators"]
+        param_dict["max_depth"] = self.params["max_depth"]
 
-        clf = ExtraTreesClassifier(
-            n_estimators=self.params["n_estimators"], max_depth=self.params["max_depth"]
-        )
-
-        clf.fit(training_set.X, training_set.y)
-
-        return clf.predict(testing_set.X)
+        return param_dict
 
 
 Classifier.add_classifier("Extra Trees", ExtraTreesContainer)
 
 
-class GradientBoostingContainer(Classifier):
+class GradientBoostingContainer(ClassifierContainer):
     """Perform Gradient Boosting classification algorithm."""
 
     def __init__(self, paramlist=None):
-        super(GradientBoostingContainer, self).__init__()
+        super().__init__(GradientBoostingClassifier, paramlist)
 
         self.params["algorithm"] = "Gradient Boosting"
         self.params["n_estimators"] = 100
         self.params["learning_rate"] = 0.1
         self.set_params(paramlist)
 
-    def evaluate(self, training_set, testing_set):
-        """The evaluate function for Gradient Boosting."""
+    def map_param_space_to_hyper_params(self):
+        param_dict = dict()
+        param_dict["n_estimators"] = self.params["n_estimators"]
+        param_dict["learning_rate"] = self.params["learning_rate"]
 
-        clf = GradientBoostingClassifier(
-            n_estimators=self.params["n_estimators"],
-            learning_rate=self.params["learning_rate"],
-        )
-
-        clf.fit(training_set.X, training_set.y)
-
-        return clf.predict(testing_set.X)
+        return param_dict
 
 
 Classifier.add_classifier("Gradient Boosting", GradientBoostingContainer)
 
 
-class AdaBoostContainer(Classifier):
+class AdaBoostContainer(ClassifierContainer):
     """Perform Ada Boost classification algorithm."""
 
     def __init__(self, paramlist=None):
-        super(AdaBoostContainer, self).__init__()
+        super().__init__(AdaBoostClassifier,paramlist)
 
         self.params["algorithm"] = "Ada Boost"
         self.params["n_estimators"] = 50
         self.params["learning_rate"] = 1
         self.set_params(paramlist)
 
-    def evaluate(self, training_set, testing_set):
-        """The evaluate function for Ada Boost."""
+    def map_param_space_to_hyper_params(self):
+        param_dict = dict()
+        param_dict["n_estimators"] = self.params["n_estimators"]
+        param_dict["learning_rate"] = self.params["learning_rate"]
 
-        clf = AdaBoostClassifier(
-            n_estimators=self.params["n_estimators"],
-            learning_rate=self.params["learning_rate"],
-        )
-
-        clf.fit(training_set.X, training_set.y)
-
-        return clf.predict(testing_set.X)
+        return param_dict
 
 
 Classifier.add_classifier("Ada Boost", AdaBoostContainer)
 
 
-class SVCContainer(Classifier):
+class SVCContainer(ClassifierContainer):
     """Perform SVC classification algorithm."""
 
     def __init__(self, paramlist=None):
-        super(SVCContainer, self).__init__()
+        super().__init__(SVC, paramlist)
 
         self.params["algorithm"] = "SVC"
         self.params["kernel"] = "rbf"
@@ -438,84 +428,74 @@ class SVCContainer(Classifier):
 
         self.set_params(paramlist)
 
-    def evaluate(self, training_set, testing_set):
-        """The evaluate function for SVC Boost."""
-        clf = SVC(
-            kernel=self.params["kernel"], C=self.params["C"], gamma=self.params["gamma"]
-        )
+    def map_param_space_to_hyper_params(self):
+        param_dict = dict()
+        param_dict["kernel"] = self.params["kernel"]
+        param_dict["C"] = self.params["C"]
+        param_dict["gamma"] = self.params["gamma"]
 
-        clf.fit(training_set.X, training_set.y)
-
-        return clf.predict(testing_set.X)
+        return param_dict
 
 
 Classifier.add_classifier("SVC", SVCContainer)
 
 
-class QDAContainer(Classifier):
+class QDAContainer(ClassifierContainer):
     """Perform QDA classification algorithm."""
 
     def __init__(self, paramlist=None):
-        super(QDAContainer, self).__init__()
+        super().__init__(QuadraticDiscriminantAnalysis, paramlist)
 
         self.params["algorithm"] = "Quadratic Discriminant Analysis"
 
         self.set_params(paramlist)
 
-    def evaluate(self, training_set, testing_set):
-        """The evaluate function for Quadratic Discriminant Analysis."""
+    def map_param_space_to_hyper_params(self):
+        param_dict = dict()
 
-        clf = QuadraticDiscriminantAnalysis()
-
-        clf.fit(training_set.X, training_set.y)
-
-        return clf.predict(testing_set.X)
+        return param_dict
 
 
 Classifier.add_classifier("Quadratic Discriminant Analysis", QDAContainer)
 
-class LDAContainer(Classifier):
+
+class LDAContainer(ClassifierContainer):
     """Perform LDA classification algorithm."""
 
     def __init__(self, paramlist=None):
-        super(LDAContainer, self).__init__()
+        super().__init__(LinearDiscriminantAnalysis)
 
         self.params["algorithm"] = "Linear Discriminant Analysis"
 
         self.set_params(paramlist)
 
-    def evaluate(self, training_set, testing_set):
-        """The evaluate function for Linear Discriminant Analysis."""
+    def map_param_space_to_hyper_params(self):
+        param_dict = dict()
 
-        clf = LinearDiscriminantAnalysis()
-
-        clf.fit(training_set.X, training_set.y)
-
-        return clf.predict(testing_set.X)
+        return param_dict
 
 
 Classifier.add_classifier("Linear Discriminant Analysis", LDAContainer)
 
-class LogisticRegressionContainer(Classifier):
+
+class LogisticRegressionContainer(ClassifierContainer):
     """Perform Logistic Regression classification algorithm."""
 
     def __init__(self, paramlist=None):
-        super(LogisticRegressionContainer, self).__init__()
+        super().__init__(LogisticRegression, paramlist)
 
         self.params["algorithm"] = "Logistic Regression"
         self.params["C"] = 1
         self.params["max_iter"] = 100
-        
+
         self.set_params(paramlist)
 
-    def evaluate(self, training_set, testing_set):
-        """The evaluate function for Logistic Regression."""
-
-        clf = LogisticRegression(C=self.params["C"], max_iter=self.params["max_iter"])
-
-        clf.fit(training_set.X, training_set.y)
-
-        return clf.predict(testing_set.X)
+    def map_param_space_to_hyper_params(self):
+        param_dict = dict()
+        param_dict["C"] = self.params["C"]
+        param_dict["max_iter"] = self.params["max_iter"]
+        
+        return param_dict
 
 
 Classifier.add_classifier("Logistic Regression", LogisticRegressionContainer)
