@@ -12,7 +12,6 @@ from sklearn.tree import DecisionTreeClassifier as DecisionTree
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.preprocessing import StandardScaler
 from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import (
     RandomForestClassifier,
@@ -180,10 +179,10 @@ class Classifier(algorithm):
         ClassifierParams.use_tutorial_space()
         cls.algorithmspace = dict()
         cls.add_classifier("Ada Boost", AdaBoostContainer)
-        cls.add_classifier("Decision Tree", DecisionTreeClassifier)
-        cls.add_classifier("Gaussian Naive Bayes", GaussianNBClassifier)
+        cls.add_classifier("Decision Tree", DecisionTreeContainer)
+        cls.add_classifier("Gaussian Naive Bayes", GaussianNBContainer)
         cls.add_classifier("Gaussian Process", GaussianProcessContainer)
-        cls.add_classifier("K Nearest Neighbors", KNeighborsClassifier)
+        cls.add_classifier("K Nearest Neighbors", KNeighborsContainer)
         cls.add_classifier("MLP Neural Network", MLPContainer)
         cls.add_classifier("Quadratic Discriminant Analysis", QDAContainer)
         cls.add_classifier("Random Forest", RandomForestContainer)
@@ -200,13 +199,13 @@ class Classifier(algorithm):
         ClassifierParams.use_default_space()
         cls.algorithmspace = dict()
         cls.add_classifier("Ada Boost", AdaBoostContainer)
-        cls.add_classifier("Decision Tree", DecisionTreeClassifier)
+        cls.add_classifier("Decision Tree", DecisionTreeContainer)
         cls.add_classifier("Extra Trees", ExtraTreesContainer)
-        cls.add_classifier("Gaussian Naive Bayes", GaussianNBClassifier)
+        cls.add_classifier("Gaussian Naive Bayes", GaussianNBContainer)
         cls.add_classifier("Gradient Boosting", GradientBoostingContainer)
         cls.add_classifier("Linear Discriminant Analysis", LDAContainer)
         cls.add_classifier("Logistic Regression", LogisticRegressionContainer)
-        cls.add_classifier("K Nearest Neighbors", KNeighborsClassifier)
+        cls.add_classifier("K Nearest Neighbors", KNeighborsContainer)
         cls.add_classifier("Random Forest", RandomForestContainer)
         cls.add_classifier("SVC", SVCContainer)
 
@@ -241,6 +240,7 @@ class ClassifierContainer(Classifier, HyperparameterContainer):
     def evaluate(self, training_set, testing_set):
         return self.fit_predict(training_set, testing_set)
 
+
 class KNeighborsContainer(ClassifierContainer):
     def __init__(self, paramlist=None):
         super().__init__(KNeighborsClassifier, paramlist)
@@ -266,12 +266,14 @@ class GaussianNBContainer(ClassifierContainer):
 
         self.params["algorithm"] = "Gaussian Naive Bayes"
         self.set_params(paramlist)
-        
+
     def map_param_space_to_hyper_params(self):
         param_dict = dict()
         return param_dict
 
+
 Classifier.add_classifier("Gaussian Naive Bayes", GaussianNBContainer)
+
 
 class DecisionTreeContainer(ClassifierContainer):
     """Perform Decision Tree classification algorithm."""
@@ -282,13 +284,14 @@ class DecisionTreeContainer(ClassifierContainer):
         self.params["max_depth"] = 5
         self.set_params(paramlist)
 
-
     def map_param_space_to_hyper_params(self):
         param_dict = dict()
         param_dict["max_depth"] = self.params["max_depth"]
         return param_dict
 
+
 Classifier.add_classifier("Decision Tree", DecisionTreeContainer)
+
 
 class RandomForestContainer(ClassifierContainer):
     """Perform Random Forest classification algorithm."""
@@ -311,6 +314,7 @@ class RandomForestContainer(ClassifierContainer):
 
 Classifier.add_classifier("Random Forest", RandomForestContainer)
 
+
 class MLPContainer(ClassifierContainer):
     """Perform MLP Neural Network classification algorithm."""
 
@@ -328,7 +332,9 @@ class MLPContainer(ClassifierContainer):
 
         return param_dict
 
+
 Classifier.add_classifier("MLP Neural Network", MLPContainer)
+
 
 class GaussianProcessContainer(ClassifierContainer):
     """Perform Guassian Process classification algorithm."""
@@ -397,7 +403,7 @@ class AdaBoostContainer(ClassifierContainer):
     """Perform Ada Boost classification algorithm."""
 
     def __init__(self, paramlist=None):
-        super().__init__(AdaBoostClassifier,paramlist)
+        super().__init__(AdaBoostClassifier, paramlist)
 
         self.params["algorithm"] = "Ada Boost"
         self.params["n_estimators"] = 50
@@ -494,7 +500,7 @@ class LogisticRegressionContainer(ClassifierContainer):
         param_dict = dict()
         param_dict["C"] = self.params["C"]
         param_dict["max_iter"] = self.params["max_iter"]
-        
+
         return param_dict
 
 
