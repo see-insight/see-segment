@@ -377,7 +377,7 @@ class Evolver(object):
         for child1, child2 in zip(offspring[::2], offspring[1::2]):
             # Do we crossover?
             if random.random() < self.cxpb:
-                self.tool.mate(child1, child2)
+                child1, child2 = self.tool.mate(child1, child2)
                 # The parents may be okay values so we should keep them
                 # in the set
                 del child1.fitness.values
@@ -386,7 +386,7 @@ class Evolver(object):
         # mutation
         for mutant in offspring:
             if random.random() < self.mutpb:
-                self.tool.mutate(self.algo_constructor, mutant, self.flip_prob)
+                mutant = self.tool.mutate(self.algo_constructor, mutant, self.flip_prob)
                 del mutant.fitness.values
 
         # new
