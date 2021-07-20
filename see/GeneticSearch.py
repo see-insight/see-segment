@@ -380,14 +380,14 @@ class Evolver(object):
                 child1, child2 = self.tool.mate(child1, child2)
                 # The parents may be okay values so we should keep them
                 # in the set
-                del child1.fitness.values
-                del child2.fitness.values
+                #del child1.fitness.values
+                #del child2.fitness.values
 
         # mutation
         for mutant in offspring:
             if random.random() < self.mutpb:
                 mutant = self.tool.mutate(self.algo_constructor, mutant, self.flip_prob)
-                del mutant.fitness.values
+                #del mutant.fitness.values
 
         # new
         #population = self.newpopulation()
