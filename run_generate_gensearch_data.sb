@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --array=0-2
-#SBATCH --time=05:30:00
+#SBATCH --time=15:30:00
 #SBATCH --mem=4gb
 
 # Load module and initalize environment
@@ -51,8 +51,6 @@ case $mode in
 	exit 1
     ;;
 esac
-
-echo "Using increased max_iter range to 1000"
 
 # extract hof data
 grep "# GEN HOF_index" $SLURM_JOB_ID.txt | cut -d '|' -f2 > "${ds_name}_hof_${num_gen}_${pop_size}_${SLURM_JOB_ID}.csv"
