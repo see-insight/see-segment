@@ -53,7 +53,9 @@ args = parser.parse_args()
 ## WAIT MESSAGE...
 
 # Initialize Algorithm Space and Workflow
+Classifier.use_dhahri_space()
 algorithm_space = Classifier.algorithmspace
+print(algorithm_space)
 
 workflow.addalgos([Classifier, ClassifierFitness])
 wf = workflow()
@@ -104,8 +106,8 @@ X_features = combined_features.fit(X, y).transform(X)
 # A train-test-valid split of 60-20-20
 temp = helpers.generate_train_test_set(X_features, y, test_size=0.2)
 validation_set = temp.testing_set
-pipeline_dataset = helpers.generate_train_test_set(temp.training_set.X, temp.training_set.y, test_size=0.25, random_state=900)
-print('Pipeline random_state = 900')
+pipeline_dataset = helpers.generate_train_test_set(temp.training_set.X, temp.training_set.y, test_size=0.25, random_state=42)
+print('Pipeline random_state = 42')
 
 NUM_GENERATIONS = args.num_gen
 NUM_TRIALS = args.num_trials
