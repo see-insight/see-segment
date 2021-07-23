@@ -231,9 +231,11 @@ class Classifier(algorithm):
         self.thisalgo = Classifier.algorithmspace[self.params["algorithm"]](self.params)
         is_data_k_folds = data.k_folds
         if is_data_k_folds:
-            training_folds = data.training_folds
-            testing_folds = data.testing_folds
-            data.predictions = list(map(self.evaluate, training_folds, testing_folds))
+            #training_folds = data.training_folds
+            #testing_folds = data.testing_folds
+            #data.predictions = list(map(self.evaluate, training_folds, testing_folds))
+            print('Attaching clf')
+            data.clf = self.thisalgo.create_clf()
         else:
             data.predictions = self.evaluate(data.training_set, data.testing_set)
         return data
