@@ -84,30 +84,16 @@ y = np.vectorize(diagnosis_to_category)(data[1].to_numpy())
 # Preprocess data
 X = StandardScaler().fit_transform(X)
 
-# Feature Selection
-# src: https://scikit-learn.org/stable/auto_examples/compose/plot_feature_union.html
-from sklearn.pipeline import FeatureUnion
-from sklearn.decomposition import PCA
-
-# Table 1 suggests using 12 components for GAs
-#pca = PCA(n_components=12, svd_solver='randomized')
-pca = PCA(n_components=12)
-#print("Using auto svd_solver in PCA")
-
-# Use feature union in case we want to combine multiple feature selections later
-combined_features = FeatureUnion([("pca", pca)])
-
-# Use combined features to transform dataset:
-X_features = combined_features.fit(X, y).transform(X)
-#X_features = X
-
 # Split data into training and testing sets and
 # create a dataset object that can be fed into the pipeline
 # A train-test-valid split of 60-20-20
-temp = helpers.generate_train_test_set(X_features, y, test_size=0.2)
+temp = helpers.generate_train_test_set(X, y, test_size=0.2)
 validation_set = temp.testing_set
-pipeline_dataset = helpers.generate_train_test_set(temp.training_set.X, temp.training_set.y, test_size=0.25, random_state=42)
+pipeline_dataset = temp.training_set
+#pipeline_dataset = helpers.generate_train_test_set(temp.training_set.X, temp.training_set.y, test_size=0.25, random_state=42)
 print('Pipeline random_state = 42')
+pipeline_dataset.k_folds = True
+print('KFOLDS')
 
 NUM_GENERATIONS = args.num_gen
 NUM_TRIALS = args.num_trials
@@ -117,8 +103,9 @@ POP_SIZE = args.pop_size
 print("Running {} Dataset".format("Dhahri 2019"))
 print("GA running for {} generations with population size of {}".format(NUM_GENERATIONS, POP_SIZE))
 print("Size of dataset: {}".format(len(X)))
-print("Size of training set: {}".format(len(pipeline_dataset.training_set.X)))
-print("Size of testing set: {}".format(len(pipeline_dataset.testing_set.X)))
+#print("Size of training set: {}".format(len(pipeline_dataset.training_set.X)))
+#print("Size of testing set: {}".format(len(pipeline_dataset.testing_set.X)))
+print("Size of GA set: {}".format(len(pipeline_dataset.X)))
 print("Size of validation set: {}".format(len(validation_set.X)))
 
 for i in range(NUM_TRIALS):
