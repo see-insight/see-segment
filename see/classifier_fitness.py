@@ -28,7 +28,7 @@ class ClassifierFitness(algorithm):
             print('Sanity check...')
             print('Clf: ', data.clf)
             print('Length of data: ', len(data.X))
-            cv_fitness = cross_val_score(data.clf, data.X, data.y, cv=10).mean()
+            cv_fitness = 1 - cross_val_score(data.clf, data.X, data.y, cv=10).mean()
             data.fitness = cv_fitness
         else:
             data.fitness = self.evaluate(data.predictions, data.testing_set.y)
