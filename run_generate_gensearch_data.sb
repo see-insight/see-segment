@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH --array=0-2
-#SBATCH --time=15:30:00
+#SBATCH --time=50:30:00
 #SBATCH --mem=4gb
 
 # Load module and initalize environment
+# TODO PATCH IGNORE: SBATCH --array=0-2
 module load conda
 conda activate ./envs
 
@@ -42,7 +42,7 @@ case $mode in
     "dhahri")
 	ds_name="dhahri_2019"
 	echo "Running ${ds_name} dataset"
-	python run_see_classify_dhahri.py --pop-size=${pop_size} --num-gen=${num_gen} > $SLURM_JOB_ID.txt
+	python run_see_classify_dhahri.py --pop-size=${pop_size} --num-gen=${num_gen} --num-trials=10 > $SLURM_JOB_ID.txt
     ;;
     *)
 	echo "Unknown mode"
