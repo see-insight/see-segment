@@ -298,11 +298,14 @@ class HyperparameterContainer(ABC):
 
 
 class ClassifierContainer(Classifier, HyperparameterContainer):
-    def __init__(self, clf_class, paramlist=None):
+    def __init__(self, clf_class, paramlist=None, *, paramindexes):
         super().__init__()
         self.set_params(paramlist)
 
         self.clf_class = clf_class
+        
+        # Quick hack to inject the paramindexes field into the class
+        self.paramindexes = paramindexes
 
     def create_clf(self):
         clf = self.clf_class()
@@ -323,7 +326,7 @@ class AdaBoostContainer(ClassifierContainer):
     """Perform Ada Boost classification algorithm."""
 
     def __init__(self, paramlist=None):
-        super().__init__(AdaBoostClassifier, paramlist)
+        super().__init__(AdaBoostClassifier, paramlist=paramlist, paramindexes=["learning_rate", "n_estimators"])
 
         self.params["algorithm"] = "Ada Boost"
         self.params["learning_rate"] = 1
@@ -345,7 +348,7 @@ class DecisionTreeContainer(ClassifierContainer):
     """Perform Decision Tree classification algorithm."""
 
     def __init__(self, paramlist=None):
-        super().__init__(DecisionTree, paramlist)
+        super().__init__(DecisionTree, paramlist, paramindexes=["max_depth"])
         self.params["algorithm"] = "Decision Tree"
         self.params["max_depth"] = None
         self.set_params(paramlist)
@@ -363,17 +366,17 @@ class ExtraTreesContainer(ClassifierContainer):
     """Perform Guassian Process classification algorithm."""
 
     def __init__(self, paramlist=None):
-        super().__init__(ExtraTreesClassifier, paramlist)
+        super().__init__(ExtraTreesClassifier, paramlist, paramindexes=["max_depth", "n_estimators"])
 
         self.params["algorithm"] = "Extra Trees"
-        self.params["n_estimators"] = 100
         self.params["max_depth"] = None
+        self.params["n_estimators"] = 100
         self.set_params(paramlist)
 
     def map_param_space_to_hyper_params(self):
         param_dict = dict()
-        param_dict["n_estimators"] = self.params["n_estimators"]
         param_dict["max_depth"] = self.params["max_depth"]
+        param_dict["n_estimators"] = self.params["n_estimators"]
 
         return param_dict
 
@@ -387,7 +390,7 @@ class GaussianNBContainer(ClassifierContainer):
     def __init__(self, paramlist=None):
         """Gaussian Naive Bayes has no parameters in the example."""
 
-        super().__init__(GaussianNB, paramlist)
+        super().__init__(GaussianNB, paramlist, paramindexes=["var_smoothing"])
 
         self.params["algorithm"] = "Gaussian Naive Bayes"
         self.params["var_smoothing"] = 1e-9
@@ -407,7 +410,7 @@ class GaussianProcessContainer(ClassifierContainer):
     """Perform Guassian Process classification algorithm."""
 
     def __init__(self, paramlist=None):
-        super().__init__(GaussianProcessClassifier, paramlist)
+        super().__init__(GaussianProcessClassifier, paramlist, paramindexes=[])
         self.params["algorithm"] = "Gaussian Process"
         self.set_params(paramlist)
 
@@ -424,17 +427,17 @@ class GradientBoostingContainer(ClassifierContainer):
     """Perform Gradient Boosting classification algorithm."""
 
     def __init__(self, paramlist=None):
-        super().__init__(GradientBoostingClassifier, paramlist)
+        super().__init__(GradientBoostingClassifier, paramlist, paramindexes=["learning_rate", "n_estimators"])
 
         self.params["algorithm"] = "Gradient Boosting"
-        self.params["n_estimators"] = 100
         self.params["learning_rate"] = 0.1
+        self.params["n_estimators"] = 100
         self.set_params(paramlist)
 
     def map_param_space_to_hyper_params(self):
         param_dict = dict()
-        param_dict["n_estimators"] = self.params["n_estimators"]
         param_dict["learning_rate"] = self.params["learning_rate"]
+        param_dict["n_estimators"] = self.params["n_estimators"]
 
         return param_dict
 
@@ -444,7 +447,7 @@ Classifier.add_classifier("Gradient Boosting", GradientBoostingContainer)
 
 class KNeighborsContainer(ClassifierContainer):
     def __init__(self, paramlist=None):
-        super().__init__(KNeighborsClassifier, paramlist)
+        super().__init__(KNeighborsClassifier, paramlist, paramindexes=["n_neighbors"])
         self.params["algorithm"] = "K Nearest Neighbors"
         self.params["n_neighbors"] = 5
         self.set_params(paramlist)
@@ -462,7 +465,7 @@ class LDAContainer(ClassifierContainer):
     """Perform LDA classification algorithm."""
 
     def __init__(self, paramlist=None):
-        super().__init__(LinearDiscriminantAnalysis)
+        super().__init__(LinearDiscriminantAnalysis, paramlist, paramindexes=[])
 
         self.params["algorithm"] = "Linear Discriminant Analysis"
 
@@ -481,7 +484,7 @@ class LogisticRegressionContainer(ClassifierContainer):
     """Perform Logistic Regression classification algorithm."""
 
     def __init__(self, paramlist=None):
-        super().__init__(LogisticRegression, paramlist)
+        super().__init__(LogisticRegression, paramlist, paramindexes=["C", "max_iter"])
 
         self.params["algorithm"] = "Logistic Regression"
         self.params["C"] = 1
@@ -504,7 +507,7 @@ class MLPContainer(ClassifierContainer):
     """Perform MLP Neural Network classification algorithm."""
 
     def __init__(self, paramlist=None):
-        super().__init__(MLPClassifier, paramlist)
+        super().__init__(MLPClassifier, paramlist, paramindexes=["activation", "alpha", "max_iter", "solver"])
         self.params["algorithm"] = "MLP Neural Network"
         self.params["activation"] = "relu"
         self.params["alpha"] = 1
@@ -530,7 +533,7 @@ class QDAContainer(ClassifierContainer):
     """Perform QDA classification algorithm."""
 
     def __init__(self, paramlist=None):
-        super().__init__(QuadraticDiscriminantAnalysis, paramlist)
+        super().__init__(QuadraticDiscriminantAnalysis, paramlist, paramindexes=[])
 
         self.params["algorithm"] = "Quadratic Discriminant Analysis"
 
@@ -549,7 +552,7 @@ class RandomForestContainer(ClassifierContainer):
     """Perform Random Forest classification algorithm."""
 
     def __init__(self, paramlist=None):
-        super().__init__(RandomForestClassifier, paramlist)
+        super().__init__(RandomForestClassifier, paramlist, paramindexes=["max_depth", "n_estimators"])
 
         self.params["algorithm"] = "Random Forest"
         self.params["max_depth"] = None
@@ -571,12 +574,12 @@ class SVCContainer(ClassifierContainer):
     """Perform SVC classification algorithm."""
 
     def __init__(self, paramlist=None):
-        super().__init__(SVC, paramlist)
+        super().__init__(SVC, paramlist, paramindexes=["C", "gamma", "kernel"])
 
         self.params["algorithm"] = "SVC"
-        self.params["kernel"] = "rbf"
         self.params["C"] = 1
         self.params["gamma"] = "scale"
+        self.params["kernel"] = "rbf"
 
         self.set_params(paramlist)
 
