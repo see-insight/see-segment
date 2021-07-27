@@ -1,0 +1,52 @@
+#!/bin/bash
+#SBATCH --array=0-14
+#SBATCH --time=15:30:00
+#SBATCH --mem=4gb
+
+# Load module and initalize environment
+# TODO PATCH IGNORE: SBATCH --array=0-2
+module load conda
+conda activate ./envs
+
+num_gen=100
+num_trials=30
+pop_size=10
+
+# TODO http://mywiki.wooledge.org/BashFAQ/035
+# Provide long commandline arguments
+while getopts ":n:p:t:" flag;
+do
+    case "${flag}" in
+        n) num_gen=${OPTARG};;
+        p) pop_size=${OPTARG};;
+        t) num_trials=${OPTARG};;
+    esac
+done
+
+echo "TIME START"
+date
+
+echo "Job $SLURM_JOB_ID"
+echo "Number $SLURM_ARRAY_TASK_ID"
+
+
+echo "mode=${mode}"
+echo "Running GA for ${num_gen} generations with a population size of ${pop_size}"
+
+# Run script
+ds_name="dhahri_2019"
+echo "Running ${ds_name} dataset"
+python run_see_classify_dhahri.py --pop-size=${pop_size} --num-gen=${num_gen} --num-trials=${num_trials}
+# quick change to not redirect to file
+# python run_see_classify_dhahri.py --pop-size=${pop_size} --num-gen=${num_gen} --num-trials=${num_trials} > $SLURM_JOB_ID.txt
+
+# extract hof data
+# grep "# GEN HOF_index" $SLURM_JOB_ID.txt | cut -d '|' -f2 > "${ds_name}_hof_${num_gen}_${pop_size}_${SLURM_JOB_ID}.csv"
+
+# extract population data
+# grep "# GEN population_index" $SLURM_JOB_ID.txt | cut -d '|' -f2 > "${ds_name}_population_${num_gen}_${pop_size}_${SLURM_JOB_ID}.csv"
+
+echo "TIME END"
+date
+
+echo "FINNISHED RUNNING SCRIPT"
