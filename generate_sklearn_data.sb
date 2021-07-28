@@ -20,6 +20,9 @@ do
         n) num_gen=${OPTARG};;
         p) pop_size=${OPTARG};;
         t) num_trials=${OPTARG};;
+	*) 
+	   echo 'Exiting due to unknown flag and value: ' ${*}
+	   exit 1;;
     esac
 done
 
