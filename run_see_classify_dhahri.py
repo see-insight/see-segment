@@ -46,6 +46,14 @@ parser.add_argument(
     help="number of trials to run genetic search (default: 100)",
 )
 
+parser.add_argument(
+    "--fitness-func",
+    default='simple',
+    choices=['simple', 'cv10'],
+    type=str,
+    help="the fitness function for the GA (default: simple). This can be either simple or cv10.",
+)
+
 args = parser.parse_args()
 
 ## PRINT MESSAGE
@@ -87,15 +95,30 @@ X = StandardScaler().fit_transform(X)
 # Split data into training and testing sets and
 # create a dataset object that can be fed into the pipeline
 # A train-test-valid split of 60-20-20
-temp = helpers.generate_train_test_set(X, y, test_size=0.2)
+
+random_state = 42
+print("Size of dataset: {}".format(len(X)))
+print(f'Data split random_state = {random_state}')
+
+temp = helpers.generate_train_test_set(X, y, test_size=0.2, random_state=random_state)
 validation_set = temp.testing_set
-pipeline_dataset = temp.training_set
-#pipeline_dataset = helpers.generate_train_test_set(temp.training_set.X, temp.training_set.y, test_size=0.25, random_state=42)
-print('Pipeline random_state = 42')
-#pipeline_dataset.k_folds = False
-pipeline_dataset.k_folds = True
-print('KFOLDS')
-#print('Simple Accuracy')
+print("Size of validation set: {}".format(len(validation_set.X)))
+
+if args.fitness_func == 'simple':
+    pipeline_dataset = helpers.generate_train_test_set(temp.training_set.X, temp.training_set.y, test_size=0.25, random_state=random_state)
+    pipeline_dataset.k_folds = False # Switch to indicate the fitness function
+    print("Size of training set: {}".format(len(pipeline_dataset.training_set.X)))
+    print("Size of testing set: {}".format(len(pipeline_dataset.testing_set.X)))
+    print("Fitness Function: Simple Accuracy")
+elif args.fitness_func == 'cv10':
+    pipeline_dataset = temp.training_set
+    pipeline_dataset.k_folds = True 
+    print("Size of GA set: {}".format(len(pipeline_dataset.X)))
+    print("Fitness Function: KFOLDS")
+else:
+    # We do not expect to reach this case
+    # This should be handled by arg-parser.
+    print("Unexpected case for fitness function")
 
 NUM_GENERATIONS = args.num_gen
 NUM_TRIALS = args.num_trials
@@ -104,11 +127,6 @@ POP_SIZE = args.pop_size
 # TODO...use cross-validation...because the paper uses cross-validation...
 print("Running {} Dataset".format("Dhahri 2019"))
 print("GA running for {} generations with population size of {}".format(NUM_GENERATIONS, POP_SIZE))
-print("Size of dataset: {}".format(len(X)))
-#print("Size of training set: {}".format(len(pipeline_dataset.training_set.X)))
-#print("Size of testing set: {}".format(len(pipeline_dataset.testing_set.X)))
-print("Size of GA set: {}".format(len(pipeline_dataset.X)))
-print("Size of validation set: {}".format(len(validation_set.X)))
 
 for i in range(NUM_TRIALS):
     print("Running trial number {}".format(i))
