@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --array=0-2
-#SBATCH --time=10:30:00
+#SBATCH --time=5:30:00
 #SBATCH --mem=4gb
 
 # Load module and initalize environment
@@ -30,7 +30,6 @@ echo "Job $SLURM_JOB_ID"
 echo "Number $SLURM_ARRAY_TASK_ID"
 
 
-echo "mode=${mode}"
 echo "Running GA for ${num_gen} generations with a population size of ${pop_size}"
 
 # Run script
@@ -38,7 +37,6 @@ ds_names=("moons" "circles" "linearly_separable")
 ds_name="${ds_names[$SLURM_ARRAY_TASK_ID]}"
 echo "Running ${ds_name} dataset"
 python run_see_classify_sklearn_toy.py --dataset-name=${ds_name} --pop-size=${pop_size} --num-gen=${num_gen} --num-trials=${num_trials}
-# python run_see_classify_sklearn_toy.py --dataset-name=${ds_name} --pop-size=${pop_size} --num-gen=${num_gen} --num-trials=${num_trials} > $SLURM_JOB_ID.txt
 
 # extract hof data
 # grep "# GEN HOF_index" $SLURM_JOB_ID.txt | cut -d '|' -f2 > "${ds_name}_hof_${num_gen}_${pop_size}_${SLURM_JOB_ID}.csv"
