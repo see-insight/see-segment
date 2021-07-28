@@ -112,6 +112,7 @@ X = StandardScaler().fit_transform(X)
 # Split data into training and testing sets and
 # create a dataset object that can be fed into the pipeline
 pipeline_dataset = helpers.generate_train_test_set(X, y)
+pipeline_dataset.k_folds = False
 
 NUM_GENERATIONS = args.num_gen
 NUM_TRIALS = args.num_trials
