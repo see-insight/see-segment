@@ -30,6 +30,18 @@ grep "# GEN HOF_index" slurm_[id].out | cut -d '|' -f2 > "filename_1.csv"
     ```bash
 grep "# GEN population_index" slurm_[id].out | cut -d '|' -f2 > "filename_2.csv"
     ```
+    
+If one has multiple output files that contain different trials of the same
+type of GA run, one could try the moving all the relevant files into 
+one directory, changing to that directory, and running the following commands instead:
+- for the top 10 individuals:
+    ```bash
+grep "# GEN HOF_index" *.out | cut -d '|' -f2 > "filename_1.csv"
+    ```
+- for the population:
+    ```bash
+grep "# GEN population_index" *.out | cut -d '|' -f2 > "filename_2.csv"
+    ```
 """
 
 def show_data_instructions():
