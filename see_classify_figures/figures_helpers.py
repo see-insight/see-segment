@@ -210,9 +210,7 @@ def plot_generation_fitness(
 
     axs.legend(loc="best")
 
-    plt.xlim(0, 20)
-
-    plt.tick_params(which="both", direction="in", labelsize=14)
+    plt.xlim(0, num_gen)
 
     axs.set_title("Breast Cancer Dataset", fontdict={"fontsize": 24})
     axs.set_xlabel("Iteration Number", fontdict={"fontsize": 20})
