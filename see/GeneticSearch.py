@@ -493,6 +493,14 @@ class Evolver(object):
                     # Hence we do use ';', rather than ',' and ' ' as official delimiters that will be
                     # used in post-processing.
                     
+                    # WARNING: The purpose of this switch is so that we can later extract this data. If the
+                    # formatting of these print statements are changed, then the function extract_hof_population in 
+                    # see_classify_figures/figures_helpers.py will have to be modified accordingly.
+                    # Similarly instructions on how to extract this data via grep found 
+                    # in the variable data_creation_instructions in the 
+                    # see_classify_figures/figures_markdown_snippets.py file 
+                    # will also have to be modified.
+                    
                     for idx, ind in enumerate(self.hof):
                         print(
                             f"# GEN HOF_index fitness ind|{cur_g};{idx};{ind.fitness.values[0]};{ind}"
