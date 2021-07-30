@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --array=0-14
-#SBATCH --time=10:30:00
+#SBATCH --array=0-24
+#SBATCH --time=30:30:00
 #SBATCH --mem=4gb
 
 # Load module and initalize environment
@@ -32,9 +32,8 @@ date
 echo "Job $SLURM_JOB_ID"
 echo "Number $SLURM_ARRAY_TASK_ID"
 
-
-echo "mode=${mode}"
 echo "Running GA for ${num_gen} generations with a population size of ${pop_size}"
+echo "Running GA for ${num_trials} trials"
 
 # Run script
 ds_name="dhahri_2019"
