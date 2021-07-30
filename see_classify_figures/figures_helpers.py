@@ -215,5 +215,3 @@ def plot_generation_fitness(
     axs.set_title("Breast Cancer Dataset", fontdict={"fontsize": 24})
     axs.set_xlabel("Iteration Number", fontdict={"fontsize": 20})
     axs.set_ylabel("Fitness Value", fontdict={"fontsize": 20})
-
-    axs.set_xticks(list(range(21)))
