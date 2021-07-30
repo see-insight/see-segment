@@ -606,6 +606,10 @@ class SVCContainer(ClassifierContainer):
         param_dict["kernel"] = self.params["kernel"]
         param_dict["C"] = self.params["C"]
         param_dict["gamma"] = self.params["gamma"]
+        if param_dict["kernel"] == "poly":
+            # The poly kernel can take a very long time to run.
+            # A max iteration will help force it to terminate.
+            param_dict["max_iter"] = self.params["max_iter"] * 1e5
 
         return param_dict
 
