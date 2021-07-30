@@ -35,23 +35,33 @@ from see.base_classes import param_space, algorithm, pipedata
 class ClassifierParams(param_space):
     """Parameter space for classifiers"""
 
-    descriptions = dict()
-    ranges = dict()
-    pkeys = []
-
+    descriptions = {"algorithm": "string code for the algorithm"}
+    ranges = {"algorithm": []}
+    pkeys = ["algorithm"]
+        
     @classmethod
     def empty_space(cls):
         cls.descriptions = dict()
         cls.ranges = dict()
         cls.pkeys = []
+        cls.add("algorithm", [], "string code for the algorithm")
+
+        
+    @classmethod
+    def get_param(cls, param_name):
+        """
+        param_name: name of parameter
+
+        returns the ranges, description
+        """
+        return cls.ranges[param_name], cls.descriptions[param_name]
+
 
     @classmethod
     def use_tutorial_space(cls):
         """Sets parameter space to
         use the tutorial space"""
         cls.empty_space()
-
-        cls.add("algorithm", [], "string code for the algorithm")
 
         cls.add(
             "activation",
@@ -114,8 +124,6 @@ class ClassifierParams(param_space):
     @classmethod
     def use_default_space(cls):
         cls.empty_space()
-
-        cls.add("algorithm", [], "string code for the algorithm")
 
         # TODO: Many of these parameters' ranges were set arbitrarily.
         # The max_param were especially arbitrary as some of the documentation
@@ -202,19 +210,8 @@ class Classifier(algorithm):
         """Generate algorithm params from parameter list."""
         super().__init__()
         self.params = ClassifierParams()
-        self.params["algorithm"] = "MLP Neural Network"
-        self.params["activation"] = "relu"
-        self.params["alpha"] = 0.0001
-        self.params["C"] = 1
-        self.params["gamma"] = "scale"
-        self.params["kernel"] = "rbf"
-        self.params["learning_rate"] = 0.1
-        self.params["max_depth"] = None
-        self.params["max_iter"] = 200
-        self.params["n_estimators"] = 100
-        self.params["n_neighbors"] = 5
-        self.params["solver"] = "adam"
-        self.params["var_smoothing"] = 1e-9
+        for param_name in ClassifierParams.pkeys:
+            self.params[param_name] = ClassifierParams.ranges[param_name][0]
 
         self.paramindexes = paramindexes
         self.set_params(paramlist)
@@ -246,6 +243,31 @@ class Classifier(algorithm):
         ClassifierParams.ranges["algorithm"].append(key)
         cls.algorithmspace[key] = classifier
 
+    @classmethod
+    def set_search_space(cls, algorithm_space, parameter_space):    
+        """
+        parameter_space: a dictionary where the keys will be used
+        as the parameter names and the values are tuples
+        (ranges, description), where ranges is an array of all
+        possible values and description is a string that describes
+        the parameters purpose.
+        algorithm_space: a dictionary where the keys will be
+        the names of the algorithms and the value is a ClassifierContainer
+        """
+        # TODO: Consistency check
+        # TODO: Print warnings for unused parameters
+
+        ClassifierParams.empty_space()
+        ClassifierParams.add("algorithm", [], "string code for the algorithm")
+
+        for param_name in parameter_space:
+            ranges, description = parameter_space[param_name]
+            ClassifierParams.add(param_name, ranges, description)
+        cls.algorithmspace = dict()
+        for algo_name in algorithm_space:
+            container = algorithm_space[algo_name]
+            cls.add_classifier(algo_name, container)
+        
     @classmethod
     def use_tutorial_space(cls):
         """Sets algorithm and parameter space to
