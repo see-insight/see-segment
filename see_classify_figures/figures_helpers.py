@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 
 
-def extract_hof_population(
+def extract_hof_and_pop(
     population_filepath,
     hof_filepath,
     num_gen=100,
@@ -20,12 +20,8 @@ def extract_hof_population(
     return population_df, hof_df
 
 
-def extract_hof_population(
-    hof_filepath,
-    num_gen=100,
-    pop_size=100,
-    num_trials=30,
-    hof_size=10,
+def extract_hof(
+    hof_filepath, num_gen=100, pop_size=100, num_trials=30, hof_size=10,
 ):
     import pandas as pd
 
@@ -36,13 +32,12 @@ def extract_hof_population(
 def create_hof_at_gen(hof_filepath, num_gen, pop_size, num_trials, hof_size, at_gen=0):
     import ast
 
-    hof_df = extract_hof_population(
-        hof_filepath, num_gen, pop_size, num_trials, hof_size
-    )
+    hof_df = extract_hof(hof_filepath, num_gen, pop_size, num_trials, hof_size)
 
     hof_list = hof_df[hof_df[0] == at_gen].to_numpy()
     hof_containers = list(map(ast.literal_eval, hof_list[:, 3]))
     return hof_containers, hof_list
+
 
 def create_learning_curve(training_set, validation_set, containers):
     # learning curve
@@ -74,6 +69,7 @@ def create_learning_curve(training_set, validation_set, containers):
         train_matrix[index, :] = train_scores
         print("Done with individual: ", index)
     return train_sizes, train_matrix, validation_matrix
+
 
 def plot_learning_curve(train_sizes, train_matrix, validation_matrix, axs=None):
     import matplotlib.pyplot as plt
@@ -135,6 +131,7 @@ def plot_learning_curve(train_sizes, train_matrix, validation_matrix, axs=None):
     plt.tight_layout()
 
     return axs
+
 
 def extract_stats(population_df, hof_df, num_gen, pop_size, num_trials, hof_size):
     # slice_gen allows us to plot the range between 0 and a specific generation number
@@ -221,15 +218,10 @@ def extract_stats(population_df, hof_df, num_gen, pop_size, num_trials, hof_size
 
 
 def benchmark_generation_fitness(
-    population_filepath,
-    hof_filepath,
-    num_gen,
-    pop_size,
-    num_trials,
-    hof_size,
+    population_filepath, hof_filepath, num_gen, pop_size, num_trials, hof_size,
 ):
 
-    population_df, hof_df = extract_hof_population(
+    population_df, hof_df = extract_hof_and_pop(
         population_filepath, hof_filepath, num_gen, pop_size, num_trials, hof_size
     )
 
@@ -241,7 +233,7 @@ def benchmark_generation_fitness(
         hof_means_of_mins,
         hof_std_of_mins,
     ) = extract_stats(population_df, hof_df, num_gen, pop_size, num_trials, hof_size)
-    
+
     return (
         means_of_means,
         std_sample_means,
@@ -251,16 +243,11 @@ def benchmark_generation_fitness(
         hof_std_of_mins,
     )
 
+
 def plot_generation_fitness(
-    population_filepath,
-    hof_filepath,
-    num_gen,
-    pop_size,
-    num_trials,
-    hof_size,
-    axs=None
+    population_filepath, hof_filepath, num_gen, pop_size, num_trials, hof_size, axs=None
 ):
-    # Extract data
+
     (
         means_of_means,
         std_sample_means,
@@ -269,20 +256,15 @@ def plot_generation_fitness(
         hof_means_of_mins,
         hof_std_of_mins,
     ) = benchmark_generation_fitness(
-        population_filepath,
-        hof_filepath,
-        num_gen,
-        pop_size,
-        num_trials,
-        hof_size,
+        population_filepath, hof_filepath, num_gen, pop_size, num_trials, hof_size
     )
+
     # Plot data
     import matplotlib.pyplot as plt
 
     if axs == None:
-
         fig, axs = plt.subplots(1, sharex=True, figsize=(10, 5))
-    
+
     generations = list(range(0, num_gen + 1))
 
     alpha = 0.3
@@ -291,7 +273,9 @@ def plot_generation_fitness(
     red = "#e41a1c"
     gray = "#999999"
 
-    axs.plot(generations, means_of_means, "x-", color=red, label="Average Population Means")
+    axs.plot(
+        generations, means_of_means, "x-", color=red, label="Average Population Means"
+    )
     axs.fill_between(
         generations,
         means_of_means - 2 * std_sample_means,
@@ -305,7 +289,7 @@ def plot_generation_fitness(
         hof_means_of_means,
         "o-",
         color=blue,
-        label="Average mean of top 10 Best So Far",
+        label="Average Mean of 10 Best So Far",
     )
     axs.fill_between(
         generations,
@@ -315,7 +299,9 @@ def plot_generation_fitness(
         color=blue,
     )
 
-    axs.plot(generations, hof_means_of_mins, "*-", color=gray, label="Average Best So Far")
+    axs.plot(
+        generations, hof_means_of_mins, "*-", color=gray, label="Average Best So Far"
+    )
     axs.fill_between(
         generations,
         hof_means_of_mins - 2 * hof_std_of_mins,
@@ -326,8 +312,8 @@ def plot_generation_fitness(
 
     axs.legend(loc="best")
 
-    plt.xlim(0, num_gen)
-
     axs.set_title("Breast Cancer Dataset", fontdict={"fontsize": 24})
     axs.set_xlabel("Iteration Number", fontdict={"fontsize": 20})
     axs.set_ylabel("Fitness Value", fontdict={"fontsize": 20})
+
+    return axs
