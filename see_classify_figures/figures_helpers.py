@@ -313,7 +313,7 @@ def plot_generation_fitness(
     axs.legend(loc="best")
 
     axs.set_title("Breast Cancer Dataset", fontdict={"fontsize": 24})
-    axs.set_xlabel("Iteration Number", fontdict={"fontsize": 20})
+    axs.set_xlabel("Generation Number", fontdict={"fontsize": 20})
     axs.set_ylabel("Fitness Value", fontdict={"fontsize": 20})
 
     return axs
