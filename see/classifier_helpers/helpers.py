@@ -3,6 +3,11 @@ from see.base_classes import pipedata
 from sklearn.model_selection import train_test_split, KFold
 from sklearn.preprocessing import StandardScaler
 
+def generate_pipeline_dataset(X, y):
+    dataset = pipedata()
+    dataset.X = X
+    dataset.y = y
+    return dataset
 
 def generate_train_test_set(X, y, random_state=42, test_size=.4):
     """
