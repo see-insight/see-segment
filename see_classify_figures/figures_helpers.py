@@ -127,7 +127,8 @@ def plot_learning_curve(train_sizes, train_matrix, validation_matrix, axs=None):
     axs.set_xlabel("Training Sizes", fontdict={"fontsize": 20})
     axs.set_ylabel("Fitness Scores", fontdict={"fontsize": 20})
 
-    fig.text(0, -0.03, "* Shaded regions are 2 STD\n from means")
+    axs.text(0, -0.03, "* Shaded regions are 2 STD\n from means")
+
     plt.tight_layout()
 
     return axs
