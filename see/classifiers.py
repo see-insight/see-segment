@@ -202,9 +202,6 @@ class Classifier(algorithm):
     """
 
     algorithmspace = dict()
-    # add flag to switch between tutorial and dhahri space...
-    # TODO: All Classifiers need the paramindexes field; cannot default to []
-    # in order to print properly
 
     def __init__(self, paramlist=None, paramindexes=[]):
         """Generate algorithm params from parameter list."""
@@ -216,25 +213,14 @@ class Classifier(algorithm):
         self.paramindexes = paramindexes
         self.set_params(paramlist)
 
-    # Input: labelled dataset
-    # Output: Tuple with prediction probabilities, score
     def evaluate(self, training_set, testing_set):
         """Instance evaluate method. Needs to be overridden by subclasses."""
         self.thisalgo = Classifier.algorithmspace[self.params["algorithm"]](self.params)
         return self.thisalgo.fit_predict(training_set, testing_set)
 
     def pipe(self, data):
-        print(data)
         self.thisalgo = Classifier.algorithmspace[self.params["algorithm"]](self.params)
-        is_data_k_folds = data.k_folds
-        if is_data_k_folds:
-            # training_folds = data.training_folds
-            # testing_folds = data.testing_folds
-            # data.predictions = list(map(self.evaluate, training_folds, testing_folds))
-            print("Attaching clf")
-            data.clf = self.thisalgo.create_clf()
-        else:
-            data.predictions = self.evaluate(data.training_set, data.testing_set)
+        data.clf = self.thisalgo.create_clf()
         return data
 
     @classmethod
@@ -310,16 +296,7 @@ class Classifier(algorithm):
         cls.add_classifier("SVC", SVCContainer)
 
 
-class HyperparameterContainer(ABC):
-    def __init__(self):
-        super().__init__()
-
-    @abstractmethod
-    def map_param_space_to_hyper_params(self):
-        pass
-
-
-class ClassifierContainer(Classifier, HyperparameterContainer):
+class ClassifierContainer(Classifier, ABC):
     def __init__(self, clf_class, paramlist=None, *, paramindexes):
         super().__init__()
         self.set_params(paramlist)
@@ -343,6 +320,9 @@ class ClassifierContainer(Classifier, HyperparameterContainer):
     def evaluate(self, training_set, testing_set):
         return self.fit_predict(training_set, testing_set)
 
+    @abstractmethod
+    def map_param_space_to_hyper_params(self):
+        pass
 
 class AdaBoostContainer(ClassifierContainer):
     """Perform Ada Boost classification algorithm."""

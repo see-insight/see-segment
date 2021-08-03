@@ -15,12 +15,11 @@ Number of Trials (--num-trials) = 100
 import argparse
 import numpy as np
 from sklearn.preprocessing import StandardScaler
-from sklearn.datasets import make_moons, make_circles, make_classification
 from see import GeneticSearch
-from see.base_classes import pipedata
 from see.classifiers import Classifier
 from see.classifier_fitness import ClassifierFitness
 from see.classifier_helpers import helpers
+from see.classifier_helpers.fetch_data import generate_tutorial_data
 from see.Workflow import workflow
 
 possible_dataset_names = ["moons", "circles", "linearly_separable"]
@@ -55,64 +54,17 @@ parser.add_argument(
     help="number of trials to run genetic search (default: 100)",
 )
 
-parser.add_argument(
-    "--num-samples",
-    default=100,
-    type=int,
-    help="number of samples to generate in datasets (default: 100)",
-)
-
 args = parser.parse_args()
 
-## PRINT MESSAGE
-
-## WAIT MESSAGE...
-
-# Initialize Algorithm Space and Workflow
-Classifier.use_tutorial_space()
-
-algorithm_space = Classifier.algorithmspace
-print(algorithm_space)  # Check algorithm space
-
-workflow.addalgos([Classifier, ClassifierFitness])
-wf = workflow()
-
-
 # Create Data: Sklearn tutorial toy datasets
-X = None
-y = None
-
 ds_name = args.dataset_name
-n_samples = args.num_samples
 
-if ds_name == "moons":
-    X, y = make_moons(n_samples=n_samples, noise=0.3, random_state=0)
-elif ds_name == "circles":
-    X, y = make_circles(n_samples=n_samples, noise=0.2, factor=0.5, random_state=1)
-elif ds_name == "linearly_separable":
-    X, y = make_classification(
-        n_samples=n_samples,
-        n_features=2,
-        n_redundant=0,
-        n_informative=2,
-        random_state=1,
-        n_clusters_per_class=1,
-    )
-    rng = np.random.RandomState(2)
-    X += 2 * rng.uniform(size=X.shape)
-else:
-    # We do not expect to reach this case. arg_parser should protect us from ever reaching
-    # this case. However, for the sake of consistency, we add the default case.
-    print("WARNING: Unexpected dataset name {}".format(ds_name))
-    raise ValueError("Dataset name must be one of {}".format(possible_dataset_names))
-
-# Preprocess data
-X = StandardScaler().fit_transform(X)
+datasets = generate_tutorial_data()
+X, y = datasets[ds_name]
 
 # Split data into training and testing sets and
 # create a dataset object that can be fed into the pipeline
 pipeline_dataset = helpers.generate_train_test_set(X, y)
-pipeline_dataset.k_folds = False
 
 NUM_GENERATIONS = args.num_gen
 NUM_TRIALS = args.num_trials
@@ -123,6 +75,19 @@ print("GA running for {} generations with population size of {}".format(NUM_GENE
 print("Size of dataset: {}".format(len(X)))
 print("Size of training set: {}".format(len(pipeline_dataset.training_set.y)))
 print("Size of testing set: {}".format(len(pipeline_dataset.testing_set.y)))
+print("\n")
+
+# Initialize Algorithm Space and Workflow
+Classifier.use_tutorial_space()
+
+# Check algorithm space
+algorithm_space = Classifier.algorithmspace
+print("Algorithm Space: ")
+print(list(algorithm_space.keys()))
+print("\n")
+
+workflow.addalgos([Classifier, ClassifierFitness])
+wf = workflow()
 
 for i in range(NUM_TRIALS):
     print("Running trial number {}".format(i))

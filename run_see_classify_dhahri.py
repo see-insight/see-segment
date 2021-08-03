@@ -15,12 +15,12 @@ import argparse
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
-from sklearn.datasets import make_moons, make_circles, make_classification
 from see import GeneticSearch
 from see.base_classes import pipedata
 from see.classifiers import Classifier
-from see.classifier_fitness import ClassifierFitness
+from see.classifier_fitness import ClassifierFitness, CVFitness
 from see.classifier_helpers import helpers
+from see.classifier_helpers.fetch_data import fetch_wisconsin_data
 from see.Workflow import workflow
 
 parser = argparse.ArgumentParser(description="Create some csv data files.")
@@ -56,49 +56,20 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-## PRINT MESSAGE
+# Fetch Data: Breast Cancer Data
 
-## WAIT MESSAGE...
-
-# Initialize Algorithm Space and Workflow
-Classifier.use_dhahri_space()
-algorithm_space = Classifier.algorithmspace
-print(algorithm_space)
-
-workflow.addalgos([Classifier, ClassifierFitness])
-wf = workflow()
-
-# Create Data:
-
-## Read Breast Cancer Data
-url = "https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/wdbc.data"
-data = pd.read_csv(url, header=None)
-
-X = data.iloc[:, 2:].to_numpy()
-
-
-def diagnosis_to_category(d):
-    if d == "M":
-        return 0
-    elif d == "B":
-        return 1
-    else:
-        print("WARNING: UNKNOWN Category")
-
-
-# Turn classifications Malignant(M)/Benign(B) into binary (0/1) assignments
-y = np.vectorize(diagnosis_to_category)(data[1].to_numpy())
+X, y = fetch_wisconsin_data()
 
 # Preprocess data
 X = StandardScaler().fit_transform(X)
 
-# Split data into training and testing sets and
-# create a dataset object that can be fed into the pipeline
-# A train-test-valid split of 60-20-20
 
 random_state = 42
 print("Size of dataset: {}".format(len(X)))
 print(f'Data split random_state = {random_state}')
+
+# Split data into training, testing, and validation sets 
+# A train-test-validation split of 60-20-20
 
 temp = helpers.generate_train_test_set(X, y, test_size=0.2, random_state=random_state)
 validation_set = temp.testing_set
@@ -106,20 +77,35 @@ print("Size of validation set: {}".format(len(validation_set.X)))
 
 if args.fitness_func == 'simple':
     pipeline_dataset = helpers.generate_train_test_set(temp.training_set.X, temp.training_set.y, test_size=0.25, random_state=random_state)
-    pipeline_dataset.k_folds = False # Switch to indicate the fitness function
+    fitness_func = ClassifierFitness
     print("Size of training set: {}".format(len(pipeline_dataset.training_set.X)))
     print("Size of testing set: {}".format(len(pipeline_dataset.testing_set.X)))
     print("Fitness Function: Simple Accuracy")
 elif args.fitness_func == 'cv10':
-    pipeline_dataset = temp.training_set
-    pipeline_dataset.k_folds = True 
-    print("Size of GA set: {}".format(len(pipeline_dataset.X)))
+    pipeline_dataset = temp
+    CVFitness.set_cv(10)
+    fitness_func = CVFitness
+    print("Size of GA set: {}".format(len(pipeline_dataset.training_set.X)))
     print("Fitness Function: KFOLDS")
 else:
     # We do not expect to reach this case
     # This should be handled by arg-parser.
     print("Unexpected case for fitness function")
 
+print("\n")
+
+# Initialize Algorithm Space and Workflow
+Classifier.use_dhahri_space()
+
+# Check algorithm space
+algorithm_space = Classifier.algorithmspace
+print("Algorithm Space: ")
+print(list(algorithm_space.keys()))
+print("\n")
+
+
+workflow.addalgos([Classifier, fitness_func])
+wf = workflow()
 NUM_GENERATIONS = args.num_gen
 NUM_TRIALS = args.num_trials
 POP_SIZE = args.pop_size
