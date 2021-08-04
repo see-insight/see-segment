@@ -317,7 +317,10 @@ class ClassifierContainer(Classifier, ABC):
         clf.fit(training_set.X, training_set.y)
         return clf.predict(testing_set.X)
 
-    def evaluate(self, training_set, testing_set):
+    def evaluate(self, training_set, testing_set=None):
+        if testing_set is None:
+            return self.fit_predict(training_set, training_set)
+
         return self.fit_predict(training_set, testing_set)
 
     @abstractmethod
