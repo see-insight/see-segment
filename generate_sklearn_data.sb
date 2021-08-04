@@ -14,10 +14,10 @@ pop_size=10
 
 # TODO http://mywiki.wooledge.org/BashFAQ/035
 # Provide long commandline arguments
-while getopts ":n:p:t:" flag;
+while getopts ":g:p:t:" flag;
 do
     case "${flag}" in
-        n) num_gen=${OPTARG};;
+        g) num_gen=${OPTARG};;
         p) pop_size=${OPTARG};;
         t) num_trials=${OPTARG};;
 	*) 
