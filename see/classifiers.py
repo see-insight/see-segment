@@ -203,7 +203,7 @@ class Classifier(algorithm):
 
     algorithmspace = dict()
 
-    def __init__(self, paramlist=None, paramindexes=[]):
+    def __init__(self, paramlist=None, paramindexes=[], random_state=None):
         """Generate algorithm params from parameter list."""
         super().__init__()
         self.params = ClassifierParams()
@@ -218,8 +218,18 @@ class Classifier(algorithm):
         self.thisalgo = Classifier.algorithmspace[self.params["algorithm"]](self.params)
         return self.thisalgo.fit_predict(training_set, testing_set)
 
-    def pipe(self, data):
-        self.thisalgo = Classifier.algorithmspace[self.params["algorithm"]](self.params)
+    def pipe(self, data, random_state=None):
+        # TODO: We pass random_state again
+        # even though it should already be 
+        # found in the object parameters.
+        # This seems like a repetitive
+        # step; however, we are not sure
+        # how to remove it yet.
+        if random_state is not None:
+            self.thisalgo = Classifier.algorithmspace[self.params["algorithm"]](paramlist=self.params, random_state=random_state)
+        else:
+            self.thisalgo = Classifier.algorithmspace[self.params["algorithm"]](paramlist=self.params)
+        
         data.clf = self.thisalgo.create_clf()
         return data
 
@@ -297,11 +307,12 @@ class Classifier(algorithm):
 
 
 class ClassifierContainer(Classifier, ABC):
-    def __init__(self, clf_class, paramlist=None, *, paramindexes):
+    def __init__(self, clf_class, paramlist=None, random_state=None, *, paramindexes):
         super().__init__()
         self.set_params(paramlist)
 
         self.clf_class = clf_class
+        self.random_state = random_state
 
         # Quick hack to inject the paramindexes field into the class
         self.paramindexes = paramindexes
@@ -356,8 +367,8 @@ Classifier.add_classifier("Ada Boost", AdaBoostContainer)
 class DecisionTreeContainer(ClassifierContainer):
     """Perform Decision Tree classification algorithm."""
 
-    def __init__(self, paramlist=None):
-        super().__init__(DecisionTree, paramlist, paramindexes=["max_depth"])
+    def __init__(self, paramlist=None, random_state=None):
+        super().__init__(DecisionTree, paramlist, random_state=random_state, paramindexes=["max_depth"])
         self.params["algorithm"] = "Decision Tree"
         self.params["max_depth"] = None
         self.set_params(paramlist)
@@ -365,6 +376,9 @@ class DecisionTreeContainer(ClassifierContainer):
     def map_param_space_to_hyper_params(self):
         param_dict = dict()
         param_dict["max_depth"] = self.params["max_depth"]
+        if self.random_state is not None:
+            param_dict["random_state"] = self.random_state
+
         return param_dict
 
 

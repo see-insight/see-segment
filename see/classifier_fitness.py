@@ -2,6 +2,7 @@ import numpy as np
 
 from see.base_classes import algorithm
 from sklearn.model_selection import cross_val_score
+from sklearn.metrics import accuracy_score
 
 
 class ClassifierFitness(algorithm):
@@ -49,8 +50,7 @@ class ClassifierFitness(algorithm):
         The error/fitness rate of predictions.
         """
 
-        length = len(predictions)
-        return float(length - np.sum(predictions == targets)) / length
+        return 1 - accuracy_score(targets, predictions)
 
     def pipe_evaluate(self, data):
         """
