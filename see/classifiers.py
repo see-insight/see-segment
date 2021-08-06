@@ -1,8 +1,9 @@
-"""Classifer algorithm library designed to classify images with a searchable parameter space.
- This libary actually does not incode the search code itself, instead it just defines
-  the search parameters and the evaluation funtions. In other words, the following classes
-  are wrappers of the scikit-learn classifiers that whose parameters can be used in the
-  Genetic Search algorithm."""
+"""
+Classifer algorithm library designed to classify images with a searchable parameter space.
+This libary actually does not incode the search code itself, instead it just defines
+the search parameters and the evaluation funtions. In other words, the following classes
+are wrappers of the scikit-learn classifiers that whose parameters can be used in the
+Genetic Search algorithm."""
 
 import numpy as np
 
@@ -33,34 +34,96 @@ from see.base_classes import param_space, algorithm, pipedata
 
 
 class ClassifierParams(param_space):
-    """Parameter space for classifiers"""
+    """
+    A class that represents the parameter space
+    of a Classifier.
+
+
+    Class Attributes
+    ----------------
+
+    descriptions : dict of str : str
+        A description of all of the parameters. Keys
+        are the names of the parameters. Values describe
+        the parameters.
+
+    ranges : dict of str : array
+        The possible ranges of a parameter. Keys
+        are the names of the parameters. Values are
+        arrays of all possible values for the corresponding
+        parameter. These arrays may be a mix of different
+        types.
+
+    pkeys : array of str
+        The names of all possible parameters.
+
+    Class Methods
+    -------------
+    empty_space():
+        Empties the parameter space. The only parameter that remains is
+        "algorithm".
+
+    get_param(param_name):
+        Returns the range and description of a given parameter.
+
+    use_tutorial_space():
+        Sets the parameter space to be for the sklearn tutorial benchmarking.
+
+    use_default_space():
+        Sets the parameter space to the default space.
+    """
 
     descriptions = {"algorithm": "string code for the algorithm"}
     ranges = {"algorithm": []}
     pkeys = ["algorithm"]
-        
+
     @classmethod
     def empty_space(cls):
+        """
+        Empties the parameter space. The only parameter that remains is
+        "algorithm".
+
+        Side Effects
+        ------------
+        The only parameter in the space will be algorithm and its 
+        corresponding range of values will also be an empty list.
+
+        Returns
+        -------
+        None
+        """
         cls.descriptions = dict()
         cls.ranges = dict()
         cls.pkeys = []
         cls.add("algorithm", [], "string code for the algorithm")
 
-        
     @classmethod
     def get_param(cls, param_name):
         """
-        param_name: name of parameter
+        Returns the range and description of a given parameter.
 
-        returns the ranges, description
+        Parameters
+        ----------
+        param_name : str
+            The name of the parameter
+
+        Returns
+        -------
+        range : array
+            The array of all possible values for the parameter.
+
+        description : str
+            The description of the parameter.
         """
-        return cls.ranges[param_name], cls.descriptions[param_name]
 
+        return cls.ranges[param_name], cls.descriptions[param_name]
 
     @classmethod
     def use_tutorial_space(cls):
-        """Sets parameter space to
-        use the tutorial space"""
+        """
+        Sets the parameter space to be for the sklearn tutorial benchmarking.
+        """
+
         cls.empty_space()
 
         cls.add(
@@ -123,6 +186,10 @@ class ClassifierParams(param_space):
 
     @classmethod
     def use_default_space(cls):
+        """
+        Sets the parameter space to the default space.
+        """
+
         cls.empty_space()
 
         # TODO: Many of these parameters' ranges were set arbitrarily.
@@ -194,16 +261,52 @@ ClassifierParams.use_default_space()
 
 
 class Classifier(algorithm):
-    """Base class for classifier classes defined below.
+    """
+    A class that represents a Classifier object and
+    controls an algorithm space that can be searched
+    by GeneticSearch.
 
-    Functions:
-    evaluate -- Run classifier algorithm to classify dataset.
+    Class Attributes
+    ----------------
+    algorithmspace : dict of str : ClassifierContainer
 
+    Instance Attributes
+    -------------------
+    params : ClassifierParams
+
+    paramindexes : array of str, default an empty array
+
+    Class Methods
+    -------------
+    add_classifier(key, classifier):
+        Adds the classifier to the algorithm space.
+
+    set_search_space(algorithm_space, parameter_space):
+        Sets the Classifier search space to the provided
+        algorithm and parameter spaces.
+
+    use_tutorial_space():
+        Sets algorithm and parameter space to
+        use the tutorial space.
+
+    use_dhahri_space():
+        Sets algorithm and parameter space to
+        use the Dhahri 2019 space.
+
+    Instance Methods
+    -------
+    evaluate(training_set, testing_set):
+        Run classifier algorithm to classify dataset.
+        Needs to be overriden by subclasses.
+
+    pipe(data, random_state=None):
+        Pipes the data along the pipeline. Adds
+        a classifier to data.
     """
 
     algorithmspace = dict()
 
-    def __init__(self, paramlist=None, paramindexes=[], random_state=None):
+    def __init__(self, paramlist=None, paramindexes=[]):
         """Generate algorithm params from parameter list."""
         super().__init__()
         self.params = ClassifierParams()
@@ -216,20 +319,46 @@ class Classifier(algorithm):
     def evaluate(self, training_set, testing_set):
         """Instance evaluate method. Needs to be overridden by subclasses."""
         self.thisalgo = Classifier.algorithmspace[self.params["algorithm"]](self.params)
-        return self.thisalgo.fit_predict(training_set, testing_set)
+        return self.thisalgo.evaluate(training_set, testing_set)
 
     def pipe(self, data, random_state=None):
+        """
+        Pipeline stage for classifiers. 
+        Attaches a classifier to the data pipeline
+        object.
+
+        Parameters
+        ----------
+        data : PipelineClassifyDataset
+
+        random_state : float, int, or None. Default is None.
+            Controls the randomness of the algorithm
+            for reproducibility.
+
+        Side Effects
+        ------------
+            data.clf is set to the classifier of the container.
+
+        Returns
+        -------
+        data : PipelineClassifyDataset
+            data.clf is set to a classifier of the container.
+        """
         # TODO: We pass random_state again
-        # even though it should already be 
+        # even though it should already be
         # found in the object parameters.
         # This seems like a repetitive
         # step; however, we are not sure
         # how to remove it yet.
         if random_state is not None:
-            self.thisalgo = Classifier.algorithmspace[self.params["algorithm"]](paramlist=self.params, random_state=random_state)
+            self.thisalgo = Classifier.algorithmspace[self.params["algorithm"]](
+                paramlist=self.params, random_state=random_state
+            )
         else:
-            self.thisalgo = Classifier.algorithmspace[self.params["algorithm"]](paramlist=self.params)
-        
+            self.thisalgo = Classifier.algorithmspace[self.params["algorithm"]](
+                paramlist=self.params
+            )
+
         data.clf = self.thisalgo.create_clf()
         return data
 
@@ -240,7 +369,7 @@ class Classifier(algorithm):
         cls.algorithmspace[key] = classifier
 
     @classmethod
-    def set_search_space(cls, algorithm_space, parameter_space):    
+    def set_search_space(cls, algorithm_space, parameter_space):
         """
         parameter_space: a dictionary where the keys will be used
         as the parameter names and the values are tuples
@@ -263,11 +392,13 @@ class Classifier(algorithm):
         for algo_name in algorithm_space:
             container = algorithm_space[algo_name]
             cls.add_classifier(algo_name, container)
-        
+
     @classmethod
     def use_tutorial_space(cls):
-        """Sets algorithm and parameter space to
-        use the tutorial space"""
+        """
+        Sets algorithm and parameter space to
+        use the tutorial space.
+        """
         # maybe.....this is fine as long as the parameter space tightens???
         # TODO: does nothing
         # TODO: might need to shrink parameterspace to match those
@@ -286,12 +417,11 @@ class Classifier(algorithm):
 
     @classmethod
     def use_dhahri_space(cls):
-        """Sets algorithm and parameter space to
-        match the search space use in Dhahri 2019"""
-        # maybe.....this is fine as long as the parameter space tightens???
-        # TODO: does nothing
-        # TODO: might need to shrink parameterspace to match those
-        # needed for the tutorial space...
+        """
+        Sets algorithm and parameter space to
+        match the search space use in Dhahri 2019.
+        """
+
         ClassifierParams.use_default_space()
         cls.algorithmspace = dict()
         cls.add_classifier("Ada Boost", AdaBoostContainer)
@@ -307,7 +437,66 @@ class Classifier(algorithm):
 
 
 class ClassifierContainer(Classifier, ABC):
+    """
+    A class that represents a container for the hyperparameters
+    of a classifier algorithm.
+
+    Attributes
+    ----------
+    clf_class : Class
+        The class of the classifier algorithm.
+
+    random_state : int or float
+        Controls the random state of the algorithm
+        if necessary. This is helpful for reproducibility
+        of algorithms that have some randomness.
+
+    params : dict of string : any
+        Inherited from Classifier super class. 
+        Dictionary of parameters to values. This
+        is used to create the Classifier object
+        in conjunction with the
+        map_param_space_to_hyper_params method.
+
+    Methods
+    -------
+    create_clf():
+        Creates a classifier object with specified hyperparameters.
+
+    fit_predict(training_set, testing_set):
+       Returns predictions of the classifier after trained
+       on the training set and predicting on the testing set.
+
+    evaluate():
+       Returns predictions of the classifier after trained
+       on the trianing set and predicting on the testing set.
+        
+    map_param_space_to_hyper_params():
+        Abstract method. Maps the container's parameter space
+        to a hyperparameter dictionary based on what is used
+        or needed for the algorithm's hyperparameters.
+
+    Notes
+    -----
+    This container class uses the parameter space to create
+    an object with selected hyperparameters.
+    """
+
     def __init__(self, clf_class, paramlist=None, random_state=None, *, paramindexes):
+        """
+        paramlist : array of any
+            List of parameters and their values.
+
+        random_state : float, int, or None. Default is None.
+            Controls the randomness of an algorithm
+            with a randomness component for 
+            reproducibility.
+
+        paramindexes : array of str
+            The list of parameters that are used
+            for this container.
+        """
+
         super().__init__()
         self.set_params(paramlist)
 
@@ -318,17 +507,69 @@ class ClassifierContainer(Classifier, ABC):
         self.paramindexes = paramindexes
 
     def create_clf(self):
+        """
+        Creates a classifier object with specified hyperparameters.
+
+        Returns
+        -------
+        clf : Classifier Object
+            A classifier object with specified hyperparameters.
+        """
+
         clf = self.clf_class()
         param_dict = self.map_param_space_to_hyper_params()
         clf.set_params(**param_dict)
         return clf
 
     def fit_predict(self, training_set, testing_set):
+        """
+        Returns predictions of the classifier after trained
+        on the training set and predicting on the testing set.
+
+        Parameters
+        ----------
+        training_set : ClassifyDataset
+            Used to train the classifier.
+
+        testing_set : ClassifyDataset
+            Used to test the classifier.
+
+        Returns
+        -------
+        predictions : array-like with shape (n_samples,)
+            The predicted labels of the samples
+            in the testing_set.
+        """
         clf = self.create_clf()
         clf.fit(training_set.X, training_set.y)
         return clf.predict(testing_set.X)
 
     def evaluate(self, training_set, testing_set=None):
+        """
+        Returns predictions of the classifier after trained
+        on the training set and predicting on the testing set.
+        If testing_set is None, then returns the predictions
+        on the training set itself. This can be used to 
+        determine training fitness.
+
+        Parameters
+        ----------
+        training_set : ClassifyDataset
+            Used to train the classifier.
+
+        testing_set : ClassifyDataset or None. Default is None.
+            Used to test the classifier.
+
+        Returns
+        -------
+        predictions : array-like with shape (n_samples,)
+            The predicted labels of the samples
+            in the testing_set.
+
+        Notes
+        -----
+        This overrides the Classifier#evaluate super class method.
+        """
         if testing_set is None:
             return self.fit_predict(training_set, training_set)
 
@@ -336,7 +577,18 @@ class ClassifierContainer(Classifier, ABC):
 
     @abstractmethod
     def map_param_space_to_hyper_params(self):
+        """
+        Abstract method. Maps the container's parameter space
+        to a hyperparameter dictionary based on what is used
+        or needed for the algorithm's hyperparameters.
+
+        Returns
+        -------
+        Dictionary of parameters that can be used as the
+        hyperparameters of self.clf_class.
+        """
         pass
+
 
 class AdaBoostContainer(ClassifierContainer):
     """Perform Ada Boost classification algorithm."""
@@ -368,7 +620,12 @@ class DecisionTreeContainer(ClassifierContainer):
     """Perform Decision Tree classification algorithm."""
 
     def __init__(self, paramlist=None, random_state=None):
-        super().__init__(DecisionTree, paramlist, random_state=random_state, paramindexes=["max_depth"])
+        super().__init__(
+            DecisionTree,
+            paramlist,
+            random_state=random_state,
+            paramindexes=["max_depth"],
+        )
         self.params["algorithm"] = "Decision Tree"
         self.params["max_depth"] = None
         self.set_params(paramlist)
