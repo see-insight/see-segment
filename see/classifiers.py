@@ -85,7 +85,7 @@ class ClassifierParams(param_space):
 
         Side Effects
         ------------
-        The only parameter in the space will be algorithm and its 
+        The only parameter in the space will be algorithm and its
         corresponding range of values will also be an empty list.
 
         Returns
@@ -117,6 +117,22 @@ class ClassifierParams(param_space):
         """
 
         return cls.ranges[param_name], cls.descriptions[param_name]
+
+    @classmethod
+    def set_param_description(cls, param_name, new_desc):
+        if param_name not in cls.pkeys:
+            raise ValueError(
+                f'Parameter "{param_name}" is not in the search space. Manually add via #add method instead'
+            )
+        cls.descriptions[param_name] = new_desc
+
+    @classmethod
+    def set_param_ranges(cls, param_name, new_range):
+        if param_name not in cls.pkeys:
+            raise ValueError(
+                f'Parameter "{param_name}" is not in the search space. Manually add via #add method instead'
+            )
+        cls.ranges[param_name] = new_range
 
     @classmethod
     def use_tutorial_space(cls):
@@ -323,7 +339,7 @@ class Classifier(algorithm):
 
     def pipe(self, data, random_state=None):
         """
-        Pipeline stage for classifiers. 
+        Pipeline stage for classifiers.
         Attaches a classifier to the data pipeline
         object.
 
@@ -452,7 +468,7 @@ class ClassifierContainer(Classifier, ABC):
         of algorithms that have some randomness.
 
     params : dict of string : any
-        Inherited from Classifier super class. 
+        Inherited from Classifier super class.
         Dictionary of parameters to values. This
         is used to create the Classifier object
         in conjunction with the
@@ -470,7 +486,7 @@ class ClassifierContainer(Classifier, ABC):
     evaluate():
        Returns predictions of the classifier after trained
        on the trianing set and predicting on the testing set.
-        
+
     map_param_space_to_hyper_params():
         Abstract method. Maps the container's parameter space
         to a hyperparameter dictionary based on what is used
@@ -489,7 +505,7 @@ class ClassifierContainer(Classifier, ABC):
 
         random_state : float, int, or None. Default is None.
             Controls the randomness of an algorithm
-            with a randomness component for 
+            with a randomness component for
             reproducibility.
 
         paramindexes : array of str
@@ -549,7 +565,7 @@ class ClassifierContainer(Classifier, ABC):
         Returns predictions of the classifier after trained
         on the training set and predicting on the testing set.
         If testing_set is None, then returns the predictions
-        on the training set itself. This can be used to 
+        on the training set itself. This can be used to
         determine training fitness.
 
         Parameters
