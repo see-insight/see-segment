@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --array=0-2
+#SBATCH --array=0-74
 #SBATCH --time=24:30:00
 #SBATCH --mem=4gb
 
@@ -37,7 +37,9 @@ echo "Running GA for ${num_gen} generations with a population size of ${pop_size
 
 # Run script
 ds_names=("moons" "circles" "linearly_separable")
-ds_name="${ds_names[$SLURM_ARRAY_TASK_ID]}"
+
+ds_index=$((i%3))
+ds_name="${ds_names[$ds_index]}"
 echo "Running ${ds_name} dataset"
 python run_see_classify_sklearn_toy.py --dataset-name=${ds_name} --pop-size=${pop_size} --num-gen=${num_gen} --num-trials=${num_trials}
 
