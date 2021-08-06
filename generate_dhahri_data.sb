@@ -1,10 +1,9 @@
 #!/bin/bash
-#SBATCH --array=0-24
+#SBATCH --array=0
 #SBATCH --time=30:30:00
 #SBATCH --mem=4gb
 
 # Load module and initalize environment
-# TODO PATCH IGNORE: SBATCH --array=0-2
 module load conda
 conda activate ./envs
 
