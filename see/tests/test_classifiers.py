@@ -76,16 +76,17 @@ def test_nearest_neighbor_defaults():
         assert len(actual_predictions) == len(expected_predictions[i])
         assert (actual_predictions == expected_predictions[i]).all()
 
-def test_decision_tree():
+def test_decision_tree_defaults():
     """Unit test for Decision Tree classifier algorithm.
     Check if classifier container with default parameters 
     performs the same as running the corresponding sklearn algorithm
     with their default parameters."""
-
+    
     # Generate dataset
     datasets = generate_tutorial_data()
 
-    clf = DecisionTree()
+    random_state = 21
+    clf = DecisionTree(random_state=random_state)
 
     # manual sklearn categorizations
     expected_predictions = []
@@ -94,7 +95,7 @@ def test_decision_tree():
         clf.fit(X, y)  # Train classifier
         expected_predictions.append(clf.predict(X))
 
-    clf_container = classifiers.DecisionTreeContainer()
+    clf_container = classifiers.DecisionTreeContainer(random_state=random_state)
     
     # Check that default params are equal
     assert (clf_container.create_clf().get_params() == clf.get_params())
