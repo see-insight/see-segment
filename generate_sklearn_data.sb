@@ -1,0 +1,55 @@
+#!/bin/bash
+#SBATCH --array=0-74
+#SBATCH --time=24:30:00
+#SBATCH --mem=4gb
+
+# Load module and initalize environment
+# TODO PATCH IGNORE: SBATCH --array=0-2
+module load conda
+conda activate ./envs
+
+num_gen=100
+num_trials=30
+pop_size=10
+
+# TODO http://mywiki.wooledge.org/BashFAQ/035
+# Provide long commandline arguments
+while getopts ":g:p:t:" flag;
+do
+    case "${flag}" in
+        g) num_gen=${OPTARG};;
+        p) pop_size=${OPTARG};;
+        t) num_trials=${OPTARG};;
+	*) 
+	   echo 'Exiting due to unknown flag and value: ' ${*}
+	   exit 1;;
+    esac
+done
+
+echo "TIME START"
+date
+
+echo "Job $SLURM_JOB_ID"
+echo "Number $SLURM_ARRAY_TASK_ID"
+
+
+echo "Running GA for ${num_gen} generations with a population size of ${pop_size}"
+
+# Run script
+ds_names=("moons" "circles" "linearly_separable")
+
+ds_index=$((i%3))
+ds_name="${ds_names[$ds_index]}"
+echo "Running ${ds_name} dataset"
+python run_see_classify_sklearn_toy.py --dataset-name=${ds_name} --pop-size=${pop_size} --num-gen=${num_gen} --num-trials=${num_trials}
+
+# extract hof data
+# grep "# GEN HOF_index" $SLURM_JOB_ID.txt | cut -d '|' -f2 > "${ds_name}_hof_${num_gen}_${pop_size}_${SLURM_JOB_ID}.csv"
+
+# extract population data
+# grep "# GEN population_index" $SLURM_JOB_ID.txt | cut -d '|' -f2 > "${ds_name}_population_${num_gen}_${pop_size}_${SLURM_JOB_ID}.csv"
+
+echo "TIME END"
+date
+
+echo "FINNISHED RUNNING SCRIPT"
