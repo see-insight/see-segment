@@ -27,8 +27,10 @@ from see import base_classes
 
 def twoPointCopy(np1, np2, seed=False):
     """Execute a crossover between two numpy arrays of the same length."""
+
 #     if seed:
 #         random.seed(0)
+
     assert len(np1) == len(np2)
     size = len(np1)
     point1 = random.randint(1, size)
@@ -50,8 +52,10 @@ def skimageCrossRandom(np1, np2, seed=False):
     Between two arrays (np1 and np2) picking a random
     amount of indexes to change between the two.
     """
+
 #     if seed == True:
 #         random.seed(0)
+
     # DO: Only change values associated with algorithm
     assert len(np1) == len(np2)
     # The number of places that we'll cross
@@ -387,17 +391,17 @@ class Evolver(object):
         for child1, child2 in zip(offspring[::2], offspring[1::2]):
             # Do we crossover?
             if random.random() < self.cxpb:
-                self.tool.mate(child1, child2)
+                child1, child2 = self.tool.mate(child1, child2)
                 # The parents may be okay values so we should keep them
                 # in the set
-                del child1.fitness.values
-                del child2.fitness.values
+                #del child1.fitness.values
+                #del child2.fitness.values
 
         # mutation
         for mutant in offspring:
             if random.random() < self.mutpb:
-                self.tool.mutate(self.algo_constructor, mutant, self.flip_prob)
-                del mutant.fitness.values
+                mutant = self.tool.mutate(self.algo_constructor, mutant, self.flip_prob)
+                #del mutant.fitness.values
 
         # new
         # population = self.newpopulation()

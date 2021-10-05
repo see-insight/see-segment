@@ -8,19 +8,19 @@ conda activate ./envs
 
 echo "Number $SLURM_ARRAY_TASK_ID"
 
-touch ${SLURM_JOB_ID}.txt
+touch ${SLURM_JOBID}.txt
 
 for GT in ./Image_data/Examples/*GT*
 do
 	ROOTNAME=`echo $GT | sed -e "s/_GT.*$//"`
-	echo `echo ${ROOTNAME}.*` $GT >> ${SLURM_JOB_ID}.txt
+	echo `echo ${ROOTNAME}.*` $GT >> ${SLURM_JOBID}.txt
 done
 
-MINE=`head -n $SLURM_ARRAY_TASK_ID ${SLURM_JOB_ID}.txt | tail -n 1`
+MINE=`head -n $SLURM_ARRAY_TASK_ID ${SLURM_JOBID}.txt | tail -n 1`
 
-echo seesearch seed=${SLURM_JOB_ID} $MINE
+echo seesearch --seed=${SLURM_JOBID} $MINE
 rm ${SLURM_JOB_ID}.txt
-seesearch --seed ${SLURM_JOB_ID} $MINE &
+seesearch --seed ${SLURM_JOBID} $MINE &
 export PID=$!
 
 sleep 85800 

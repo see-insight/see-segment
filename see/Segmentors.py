@@ -498,7 +498,7 @@ class QuickShift(segmentor):
             kernel_size=kernel_size,
             max_dist=max_dist,
             sigma=0,  # TODO this should be handeled in the preprocessing step
-            random_seed=1,
+            #random_seed=1,
             convert2lab=False
         )
         return output
