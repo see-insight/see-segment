@@ -494,18 +494,6 @@ class QuickShift(segmentor):
         kernel_size = mindim / 10 * self.params["beta1"] + 1
         
         max_dist = mindim * self.params["beta2"] + 1
-        #debug****delete
-
-        print("img.shape : ", img.shape)
-        print("mindim : ", mindim)
-        print("ratio : ", ratio )
-        # a fixed kernel_size, made it a lot faster, much smaller than what it had 
-#         ratio = 0.5
-#         kernel_size = 3
-#         max_dist = 6
-        print("kernel_size : ", kernel_size )
-        print("max_dist : ", max_dist)
-        #debug****delete
         output = skimage.segmentation.quickshift(
             img,
             ratio=ratio,
