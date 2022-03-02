@@ -18,7 +18,7 @@ from skimage import color
 # TODO, to study the base_classes
 from see.base_classes import param_space, algorithm
 
-class pre_params(pre_param_space):
+class pre_params(param_space):
     """Create and add parameters to data structures. (for pre_pro)"""
     
     descriptions = dict()
@@ -46,7 +46,7 @@ pre_params.add('alpha2',
 #...
 
 
-class preprocessor(pre_algorithm):
+class preprocessor(algorithm):
     """Base class for prepreocessor classes defined below.
 
     Functions:
