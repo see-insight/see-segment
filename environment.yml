@@ -10,9 +10,9 @@ dependencies:
   - numpy
   - matplotlib
   - pandas
-  - scikit-image
   - scikit-learn
   - pip:
+    - scikit-image
     - argparse
     - deap
     - opencv-python

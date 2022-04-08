@@ -42,20 +42,7 @@ pre_params.add('mask',
                "Array of same shape as image, mask==True are used for equalization"
                )
 
-###################
-# pre_params.add('nbins',
-#                [float(i) / 256 for i in range(0, 256)],#What does this do? what should I change?
-#                "Number of bins for image histogram"
-#                )
-
-# pre_params.add('mask',
-#                [float(i) / 256 for i in range(0, 256)], #those values are based on the range of the array, what should I do?
-#                "Array of same shape as image, mask==True are used for equalization"
-#                )
-###################
-#TODO need to add more    
-#...
-
+#TODO need to add more
 
 class preprocessor(algorithm):
     """Base class for prepreocessor classes defined below.
@@ -75,7 +62,7 @@ class preprocessor(algorithm):
         #self.params[...] = ...
         #add more param based on the 
         #...suchas
-        self.params['nbins'] = 25
+        self.params['nbins'] = 256
         self.params['mask'] = None
         self.params["in_range"] = 'image'
         self.params["out_range"] = 'dtype'
@@ -147,7 +134,7 @@ class HistEqual(preprocessor):
     """
 
     def __init__(self, paramlist=None):
-        """Get parameters from parameter list that are used in segmentation algorithm.
+        """Get parameters from parameter list that are used in preprocess algorithm.
 
         Assign default values to these parameters.
         """
@@ -218,7 +205,7 @@ class Rescale_intensity(preprocessor):
     """
 
     def __init__(self, paramlist=None):
-        """Get parameters from parameter list that are used in segmentation algorithm.
+        """Get parameters from parameter list that are used in preprocess algorithm.
 
         Assign default values to these parameters.
         """
@@ -257,64 +244,7 @@ class Rescale_intensity(preprocessor):
         return output
 
 
-class QuickShift(segmentor):
-    """Perform the Quick Shift segmentation algorithm.
-    
-    Segments images with quickshift
-    clustering in Color (x,y) space. Returns ndarray segmentation mask of the labels.
-    Parameters:
-    image -- ndarray, input image
-    ratio -- float, balances color-space proximity & image-space
-        proximity. Higher vals give more weight to color-space
-    kernel_size: float, Width of Guassian kernel using smoothing.
-        Higher means fewer clusters
-    max_dist -- float, Cut-off point for data distances. Higher means fewer clusters
-    sigma -- float, Width of Guassian smoothing as preprocessing.
-        Zero means no smoothing
-    random_seed -- int, Random seed used for breacking ties.
-    https://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.quickshift
-    """
 
-    def __init__(self, paramlist=None):
-        """Get parameters from parameter list that are used in segmentation algorithm.
-        
-        Assign default values to these parameters.
-        """
-        super(QuickShift, self).__init__(paramlist)
-        self.params["algorithm"] = "QuickShift"
-        self.params["alpha1"] = 0.5
-        self.params["beta1"] = 0.5
-        self.params["beta2"] = 0.5
-        self.paramindexes = ["alpha1", "beta1", "beta2"]
-        self.set_params(paramlist)
-
-    def evaluate(self, img):
-        """Evaluate segmentation algorithm on training image.
-
-        Keyword arguments:
-        img -- Original training image.
-
-        Output:
-        output -- resulting segmentation mask from algorithm.
-        """
-        mindim = min(img.shape)
-        mindim = min([mindim,100])
-        ratio = self.params["alpha1"]
-        kernel_size = mindim / 10 * self.params["beta1"] + 1
-        
-        max_dist = mindim * self.params["beta2"] + 1
-        output = skimage.segmentation.quickshift(
-            img,
-            ratio=ratio,
-            kernel_size=kernel_size,
-            max_dist=max_dist,
-            sigma=0,  # TODO this should be handeled in the preprocessing step
-            #random_seed=1,
-            convert2lab=False
-        )
-        return output
-
-
-#segmentor.addsegmentor('QuickShift', QuickShift)
 
 preprocessor.addsegmentor("Histogram Equalization", HistEqual)
+preprocessor.addsegmentor("Rescale_intensity", Rescale_intensity)
