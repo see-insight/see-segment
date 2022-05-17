@@ -185,7 +185,7 @@ class algorithm(object):
         Based on an
         individual's genetic representation vector.
         """
-        original_function = inspect.getsource(self.evaluate)
+        original_function = inspect.getsource(self.runAlgo)
 
         return original_function
 

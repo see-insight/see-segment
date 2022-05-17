@@ -42,3 +42,10 @@ class workflow(algorithm):
             algo.params.addall(self.params)
             data = algo.pipe(data)
         return data
+    
+    def algorithm_code(self):
+        output = "# Run a workflow\n"
+        for algo in workflow.worklist:
+            thisalgo = algo()
+            output += thisalgo.algorithm_code()
+        return output
