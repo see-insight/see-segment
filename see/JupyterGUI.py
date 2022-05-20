@@ -140,6 +140,7 @@ def picksegment(algorithms, alt_space=None):
 """https://matplotlib.org/stable/tutorials/colors/colormaps.html"""
 
 
+
 def showimage(img, ax=None, color="RGB", multichannel=True, channel=2):
     """Display image as part of GUI."""
     if not ax:
@@ -149,6 +150,7 @@ def showimage(img, ax=None, color="RGB", multichannel=True, channel=2):
     if len(img.shape) == 2:
         multichannel = False
 
+    #TODO: PlaceHolder for different viewing
     if multichannel:
         if color == "RGB":
             ax.imshow(img)
@@ -456,3 +458,18 @@ def classify_widget(training_set, testing_set, params=None, alg=None):
     out = widgets.interactive_output(func, widg)
     display(u_i, out)
     return clf_container.params
+
+
+
+def workflowwidget(workflow=None):
+    work = workflow()
+    print(f"work.params = {work.params}")
+    
+    widg = dict()
+    widglist = []
+
+    data = pickimage(folder="Image_data/Examples/")
+    data = colorwidget(data.img)
+    data = picksegment(list(segmentor.algorithmspace.keys()))
+    
+    
