@@ -109,3 +109,15 @@ class colorspace(algorithm):
         data.inputimage = data.img
         data.img = self.evaluate(data.img)
         return data
+    
+    def algorithm_code(self):
+        """Print usable code to run segmentation algorithm.
+        
+        Based on an
+        individual's genetic representation vector.
+        """
+        original_function = inspect.getsource(self.getchannel)
+        
+        original_function += inspect.getsource(self.evaluate)
+
+        return original_function
