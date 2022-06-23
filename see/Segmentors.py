@@ -489,9 +489,11 @@ class QuickShift(segmentor):
         output -- resulting segmentation mask from algorithm.
         """
         mindim = min(img.shape)
+        mindim = min([mindim,100])
         ratio = self.params["alpha1"]
         kernel_size = mindim / 10 * self.params["beta1"] + 1
-        max_dist = mindim * self.params["beta2"]
+        
+        max_dist = mindim * self.params["beta2"] + 1
         output = skimage.segmentation.quickshift(
             img,
             ratio=ratio,
