@@ -710,9 +710,8 @@ class Morphological_Chan_Vese(segmentor):
         lambda1 = self.params["beta1"]
         lambda2 = self.params["beta2"]
         max_iter = self.params["max_iter"]
-        level_set_shapes = ['checkerboard', 'circle']
+        level_set_shapes = ['checkerboard', 'disk']
         init_level_set = level_set_shapes[self.params['n_segments'] % 2]
-
         if len(img.shape) > 2:
             if "channel" in self.params:
                 channel = self.params['channel']
@@ -722,7 +721,7 @@ class Morphological_Chan_Vese(segmentor):
 
         output = skimage.segmentation.morphological_chan_vese(
             img,
-            iterations=max_iter,
+            num_iter=max_iter,
             init_level_set=init_level_set,
             smoothing=smoothing,
             lambda1=lambda1,
@@ -805,7 +804,7 @@ class MorphGeodesicActiveContour(segmentor):
         smoothing = int(self.params["alpha1"] * 4)
         balloon = (self.params["alpha2"] * 100) - 50
         max_iter = self.params["max_iter"]
-        level_set_shapes = ['checkerboard', 'circle']
+        level_set_shapes = ['checkerboard', 'disk']
         init_level_set = level_set_shapes[self.params['n_segments'] % 2]
 
         if len(img.shape) > 2:
