@@ -136,7 +136,7 @@ def geneticsearch_commandline():
     print(f"Setting SEED to {args.seed}")
     random.seed(args.seed)
     
-    continuous_search(args.input_file, args.input_mask,pop_size=args.pop_size,num_iter=args.num_iter);
+    continuous_search(args.input_file, args.input_mask,pop_size=args.pop_size,num_iter=args.num_iter,best_mask_file=f"temp_{args.seed}.png");
 
 if __name__ == "__main__":
     geneticsearch_commandline()
