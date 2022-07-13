@@ -54,6 +54,7 @@ def continuous_search(input_file,
                       startfile=None,
                       checkpoint='checkpoint.txt',
                       best_mask_file="temp_mask.png",
+                      num_iter=10000,
                       pop_size=10):
     """Run genetic search continuously.
     
@@ -92,7 +93,7 @@ def continuous_search(input_file,
 
     iteration = 0
 
-    while best_fitness > 0.0:
+    while best_fitness > 0.0 and iteration < num_iter:
         print(f"running {iteration} iteration")
         population = my_evolver.run(ngen=1,population=population)
             
@@ -121,6 +122,8 @@ def geneticsearch_commandline():
     parser.add_argument('input_file', help=' input image')
     parser.add_argument('input_mask', help=' input Ground Truthe Mask')
     parser.add_argument('--seed', type=int,default=1, help='Input seed (integer)') 
+    parser.add_argument('--pop_size', type=int,default=10, help='Population Size (integer)') 
+    parser.add_argument('--num_iter', type=int,default=10, help='Maximum Iterations (integer)') 
     args = parser.parse_args()
 
     print('\n\n')
@@ -133,7 +136,7 @@ def geneticsearch_commandline():
     print(f"Setting SEED to {args.seed}")
     random.seed(args.seed)
     
-    continuous_search(args.input_file, args.input_mask);
+    continuous_search(args.input_file, args.input_mask,pop_size=args.pop_size,num_iter=args.num_iter);
 
 if __name__ == "__main__":
     geneticsearch_commandline()
