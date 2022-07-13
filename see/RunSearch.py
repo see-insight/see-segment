@@ -107,7 +107,7 @@ def continuous_search(input_file,
             #Generate mask of best so far.
             seg = workflow(paramlist=best_so_far)
             mydata = seg.pipe(mydata)
-            imageio.imwrite(mask_file,mydata.mask);
+            imageio.imwrite(mask_file,skimage.img_as_uint(mydata.mask));
             write_vector(f"{outfile}", f"[{iteration}, {fitness}, {best_so_far}]") 
         iteration += 1
 
@@ -136,7 +136,8 @@ def geneticsearch_commandline():
     print(f"Setting SEED to {args.seed}")
     random.seed(args.seed)
     
-    continuous_search(args.input_file, args.input_mask,pop_size=args.pop_size,num_iter=args.num_iter,best_mask_file=f"temp_{args.seed}.png");
+    #continuous_search(args.input_file, args.input_mask,pop_size=args.pop_size,num_iter=args.num_iter,best_mask_file=f"temp_{args.seed}.png");
+    continuous_search(args.input_file, args.input_mask,pop_size=args.pop_size,num_iter=args.num_iter);
 
 if __name__ == "__main__":
     geneticsearch_commandline()
