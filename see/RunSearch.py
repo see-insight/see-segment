@@ -6,6 +6,7 @@ import sys
 import random
 import matplotlib.pylab as plt
 import imageio
+import skimage
 from see import GeneticSearch, Segmentors
 import random
 from pathlib import Path
