@@ -453,11 +453,11 @@ class QuickShift(segmentor):
     clustering in Color (x,y) space. Returns ndarray segmentation mask of the labels.
     Parameters:
     image -- ndarray, input image
-    ratio -- float, balances color-space proximity & image-space
+    ratio (alpha) -- float, balances color-space proximity & image-space
         proximity. Higher vals give more weight to color-space
-    kernel_size: float, Width of Guassian kernel using smoothing.
+    kernel_size (beta1): float, Width of Guassian kernel using smoothing.
         Higher means fewer clusters
-    max_dist -- float, Cut-off point for data distances. Higher means fewer clusters
+    max_dist (beta2) -- float, Cut-off point for data distances. Higher means fewer clusters
     sigma -- float, Width of Guassian smoothing as preprocessing.
         Zero means no smoothing
     random_seed -- int, Random seed used for breacking ties.
