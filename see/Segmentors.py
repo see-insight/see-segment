@@ -62,7 +62,7 @@ seg_params.add('n_segments',
                "General Purpos Upper bound threshold"
                )
 
-seg_params.add('max_iter',
+seg_params.add('max_num_iter',
                [i for i in range(1, 20)],
                "General Purpos Upper bound threshold"
                )
@@ -91,7 +91,7 @@ class segmentor(algorithm):
         self.params['gamma1'] = 0.3
         self.params['gamma2'] = 0.5
         self.params['n_segments'] = 2
-        self.params['max_iter'] = 10
+        self.params['max_num_iter'] = 10
         self.set_params(paramlist)
 
     # TODO use name to build a dictionary to use as a chache
@@ -274,7 +274,7 @@ class Felzenszwalb(segmentor):
                 scale,
                 sigma,
                 min_size,
-                multichannel=True
+                channel_axis=2
             )
         else:
             output = skimage.segmentation.felzenszwalb(
@@ -282,7 +282,6 @@ class Felzenszwalb(segmentor):
                 scale,
                 sigma,
                 min_size,
-                multichannel=False
             )
 
         return output
@@ -329,7 +328,7 @@ class Slic(segmentor):
         Higher values mean more weight to space proximity (superpixels
         become more square/cubic) Recommended log scale values (0.01,
         0.1, 1, 10, 100, etc)
-    max_iter -- int, max number of iterations of k-means
+    max_num_iter -- int, max number of iterations of k-means
     sigma -- float or (3,) shape array of floats, width of Guassian
         smoothing kernel. For pre-processing for each dimesion of the
         image. Zero means no smoothing.
@@ -353,9 +352,9 @@ class Slic(segmentor):
         self.params["algorithm"] = "Slic"
         self.params["n_segments"] = 5
         self.params["beta1"] = 2
-        self.params["max_iter"] = 10
+        self.params["max_num_iter"] = 10
         self.params["alpha1"] = 0.5
-        self.paramindexes = ["n_segments", "alpha1", "beta1", "max_iter"]
+        self.paramindexes = ["n_segments", "alpha1", "beta1", "max_num_iter"]
         self.slico = False
         self.set_params(paramlist)
 
@@ -370,17 +369,17 @@ class Slic(segmentor):
 
         compactness = 10**(self.params["beta1"]*3-3)
         n_segments = self.params["n_segments"]+1
-        max_iter = self.params["max_iter"]
+        max_num_iter = self.params["max_num_iter"]
         if len(img.shape) > 2:
             output = skimage.segmentation.slic(
                 img,
                 n_segments=n_segments,
                 compactness=compactness,
-                max_iter=max_iter,
+                max_num_iter=max_num_iter,
                 # Gaussian smoothing should happen as a preprocessing step.
                 sigma=0,
+                channel_axis=2,
                 convert2lab=False,
-                multichannel=True,
                 slic_zero=self.slico
             )
         else:
@@ -388,9 +387,8 @@ class Slic(segmentor):
                 img,
                 n_segments=n_segments,
                 compactness=compactness,
-                max_iter=max_iter,
+                max_num_iter=max_num_iter,
                 sigma=self.params["alpha1"],
-                multichannel=False,
                 slic_zero=self.slico
             )
         return output
@@ -415,7 +413,7 @@ class SlicO(Slic):
         Higher values mean more weight to space proximity (superpixels
         become more square/cubic) Recommended log scale values (0.01,
         0.1, 1, 10, 100, etc)
-    max_iter -- int, max number of iterations of k-means
+    max_num_iter -- int, max number of iterations of k-means
     sigma -- float or (3,) shape array of floats, width of Guassian
         smoothing kernel. For pre-processing for each dimesion of the
         image. Zero means no smoothing.
@@ -489,11 +487,9 @@ class QuickShift(segmentor):
         output -- resulting segmentation mask from algorithm.
         """
         mindim = min(img.shape)
-        mindim = min([mindim,100])
         ratio = self.params["alpha1"]
         kernel_size = mindim / 10 * self.params["beta1"] + 1
-        
-        max_dist = mindim * self.params["beta2"] + 1
+        max_dist = mindim * self.params["beta2"]
         output = skimage.segmentation.quickshift(
             img,
             ratio=ratio,
@@ -576,7 +572,7 @@ class Chan_Vese(segmentor):
         have a larger range of values
     tol -- positive float, typically (0-1), very low level set variation
         tolerance between iterations.
-    max_iter -- uint,  max number of iterations before algorithms stops
+    max_num_iter -- uint,  max number of iterations before algorithms stops
     dt -- float, Multiplication factor applied at the calculations step
 
 
@@ -595,13 +591,13 @@ class Chan_Vese(segmentor):
         self.params["alpha1"] = 1
         self.params["beta1"] = 1
         self.params["beta2"] = 1
-        self.params["max_iter"] = 10
+        self.params["max_num_iter"] = 10
         self.params["alpha2"] = 0.10
         self.params["n_segments"] = 0
         # self.params["tolerance"] = 0.001 #TODO Removed, consider adding in
         # later if need be.
         self.paramindexes = ["alpha1", "alpha2",
-                             "beta1", "beta2", "n_segments", "max_iter"]
+                             "beta1", "beta2", "n_segments", "max_num_iter"]
         self.set_params(paramlist)
 
     def evaluate(self, img):
@@ -618,11 +614,11 @@ class Chan_Vese(segmentor):
         # TODO Not sure about the range of these. Previous was (10,20)
         lambda1 = self.params["beta1"]
         lambda2 = self.params["beta2"]
-        max_iter = self.params["max_iter"]
+        max_num_iter = self.params["max_num_iter"]
         dt = self.params["alpha2"]
 
-        level_set_shapes = ['checkerboard', 'disk', 'small disk']
-        init_level_set = level_set_shapes[self.params['n_segments'] % 3]
+        level_set_shapes = ['checkerboard', 'disk']
+        init_level_set = level_set_shapes[self.params['n_segments'] % 2]
 
         if len(img.shape) > 2:
             if "channel" in self.params:
@@ -636,7 +632,7 @@ class Chan_Vese(segmentor):
             mu=mu,
             lambda1=lambda1,
             lambda2=lambda2,
-            max_iter=max_iter,
+            max_num_iter=max_num_iter,
             dt=dt,
             init_level_set=init_level_set
 
@@ -686,12 +682,12 @@ class Morphological_Chan_Vese(segmentor):
             self.params["alpha1"] = 1
             self.params["beta1"] = 1
             self.params["beta2"] = 1
-            self.params["max_iter"] = 10
+            self.params["max_num_iter"] = 10
             self.params["n_segments"] = 0
             # self.params["tolerance"] = 0.001 #TODO Removed, consider adding
             # in later if need be.
         self.paramindexes = ["alpha1", "beta1",
-                             "beta2", "n_segments", "max_iter"]
+                             "beta2", "n_segments", "max_num_iter"]
         self.set_params(paramlist)
 
     def evaluate(self, img):
@@ -709,9 +705,10 @@ class Morphological_Chan_Vese(segmentor):
         # TODO Not sure about the range of these. Previous was (10,20)
         lambda1 = self.params["beta1"]
         lambda2 = self.params["beta2"]
-        max_iter = self.params["max_iter"]
+        max_num_iter = self.params["max_num_iter"]
         level_set_shapes = ['checkerboard', 'disk']
         init_level_set = level_set_shapes[self.params['n_segments'] % 2]
+
         if len(img.shape) > 2:
             if "channel" in self.params:
                 channel = self.params['channel']
@@ -721,7 +718,7 @@ class Morphological_Chan_Vese(segmentor):
 
         output = skimage.segmentation.morphological_chan_vese(
             img,
-            num_iter=max_iter,
+            num_iter=max_num_iter,
             init_level_set=init_level_set,
             smoothing=smoothing,
             lambda1=lambda1,
@@ -780,12 +777,12 @@ class MorphGeodesicActiveContour(segmentor):
             self.params["beta1"] = 0.2
             self.params["beta2"] = 0.3
             self.params["beta2"] = 1
-            self.params["max_iter"] = 10
+            self.params["max_num_iter"] = 10
             self.params["n_segments"] = 0
             # self.params["tolerance"] = 0.001 #TODO Removed, consider adding
             # in later if need be.
         self.paramindexes = ["alpha1", "alpha2",
-                             "beta1", "beta2", "n_segments", "max_iter"]
+                             "beta1", "beta2", "n_segments", "max_num_iter"]
         self.set_params(paramlist)
 
     def evaluate(self, img):
@@ -803,7 +800,7 @@ class MorphGeodesicActiveContour(segmentor):
         # iterations
         smoothing = int(self.params["alpha1"] * 4)
         balloon = (self.params["alpha2"] * 100) - 50
-        max_iter = self.params["max_iter"]
+        max_num_iter = self.params["max_num_iter"]
         level_set_shapes = ['checkerboard', 'disk']
         init_level_set = level_set_shapes[self.params['n_segments'] % 2]
 
@@ -821,7 +818,7 @@ class MorphGeodesicActiveContour(segmentor):
         # zeros = 0
         output = skimage.segmentation.morphological_geodesic_active_contour(
             gimage,
-            max_iter,
+            max_num_iter,
             init_level_set,
             smoothing,
             threshold="auto",
