@@ -718,7 +718,7 @@ class Morphological_Chan_Vese(segmentor):
 
         output = skimage.segmentation.morphological_chan_vese(
             img,
-            max_num_iter=max_num_iter,
+            num_iter=max_num_iter, #Not max_num_iter like rest yet
             init_level_set=init_level_set,
             smoothing=smoothing,
             lambda1=lambda1,
