@@ -22,3 +22,7 @@ def UncertaintyValue(segmenters,data):
     uncertainty=([FitnessFunction(dataCopies[i[0]].mask,dataCopies[i[1]].mask) for i in GeneratePairs(len(dataCopies))])
     
     return np.mean(np.transpose(uncertainty)[0])
+
+def ALSearch(segmenters,dataSet):
+    uncertainties=[UncertaintyValue(segmenters,data) for data in dataSet]
+    return copy.deepcopy(dataSet[np.argmin(uncertainties)])
