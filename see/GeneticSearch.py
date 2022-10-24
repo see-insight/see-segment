@@ -28,8 +28,8 @@ from see import base_classes
 def twoPointCopy(np1, np2, seed=False):
     """Execute a crossover between two numpy arrays of the same length."""
 
-#     if seed:
-#         random.seed(0)
+    if seed:
+        random.seed(0)
 
     assert len(np1) == len(np2)
     size = len(np1)

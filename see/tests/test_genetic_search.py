@@ -13,6 +13,8 @@ def test_two_point_copy():
     np2 = ['CT', 0, 0, 0, 0, 0, 0, 0, 8, 10, 12, 0, 0, 0, 0,
            (1, 2), 0, "checkerboard", "checkerboard", 0, 0, 0, 0, 0, 0]
     new_np1, new_np2 = GeneticSearch.twoPointCopy(np1, np2, True)
+    print(new_np1)
+    print(new_np2)
     assert new_np1 == ['FB', 0, 0, 984, 0.09, 92, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                        (1, 2), 0, 'checkerboard', 'checkerboard', 0, 0, 0, 0, 0, 0]
     assert new_np2 == ['CT', 0, 0, 0, 0, 0, 0, 0, 8, 10, 12, 0, 0, 0, 0,
