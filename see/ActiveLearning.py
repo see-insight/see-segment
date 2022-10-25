@@ -26,3 +26,6 @@ def UncertaintyValue(segmenters,data):
 def ALSearch(segmenters,dataSet):
     uncertainties=[UncertaintyValue(segmenters,data) for data in dataSet]
     return copy.deepcopy(dataSet[np.argmin(uncertainties)])
+
+def ActiveArgs(modelParams):
+    return workflow.worklist[1]().algorithmspace[modelParams[3]]().paramindexes

@@ -28,8 +28,8 @@ from see import base_classes
 def twoPointCopy(np1, np2, seed=False):
     """Execute a crossover between two numpy arrays of the same length."""
 
-    if seed:
-        random.seed(0)
+#     if seed:
+#         random.seed(0)
 
     assert len(np1) == len(np2)
     size = len(np1)
@@ -196,6 +196,14 @@ def read_algo_vector(fpop_file):
         for line in myfile:
             inlist.append(eval(line))
     return inlist
+
+def tournament(tpop):
+    winner=tpop[np.argmin([i.fitness.values[0] for i in tpop])]
+    return winner
+
+def tournament_selection(tpop,tournamentSize=5,tournaments=10):
+    winners=[tournament(random.sample(tpop,tournamentSize)) for i in range(tournaments)]
+    return winners
 
 
 class Evolver(object):
