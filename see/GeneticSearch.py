@@ -205,6 +205,18 @@ def tournament_selection(tpop,tournamentSize=5,tournaments=10):
     winners=[tournament(random.sample(tpop,tournamentSize)) for i in range(tournaments)]
     return winners
 
+def unique_models(tpop):
+    uniqueMods=[]
+    for mod in tpop:
+        test=False
+        for checkedMod in uniqueMods:
+            if mod==checkedMod:
+                test=True
+            
+        if not test:
+            uniqueMods.append(copy.deepcopy(mod))
+    return uniqueMods
+
 
 class Evolver(object):
     """Perform the genetic algorithm by initializing a population and evolving it over a
@@ -244,9 +256,15 @@ class Evolver(object):
         self.best_avgs = []
         self.gen = 0
         self.cxpb, self.mutpb, self.flip_prob = 0.9, 0.9, 0.9
+        self.tourneyFrac=0.04
+        self.fitProgress=[]
 
     # TODO add some checking to make sure lists are the right size and type
     # TODO think about how we want to add in fitness to these?
+    
+    def fitnessTracking(self):
+        return self.fitProgress
+    
     def copy_individual(self, fromlist):
         """Return individual from list of individuals"""
         new_individual = self.tool.individual()
@@ -380,9 +398,10 @@ class Evolver(object):
         my_sz = len(tpop)  # Length of current population
         top = min(10, max(1, round(keep_prob * my_sz)))
         top = min(top, len(self.hof))
-        var = max(1, round(mutate_prob * my_sz))
-        var = min(var, len(self.hof))
-        ran = my_sz - top - var
+        #var = max(1, round(mutate_prob * my_sz))
+        #var = min(var, len(self.hof))
+        #ran = my_sz - top - var
+        ran=my_sz-top
 
         #         print(f"pop[0:{top}:{var}:{ran}]")
         #         print(f"pop[0:{top}:{top+var}:{my_sz}]")
@@ -393,8 +412,8 @@ class Evolver(object):
         # Strange that we are using the best-so-far to generate the next 
         # population. Shouldn't we be using a selection from the current population
         # to generate the next population?
-        offspring = copy.deepcopy(list(self.hof))
-
+        #offspring = copy.deepcopy(list(self.hof))
+        offspring = copy.deepcopy(list(tournament_selection(tpop,tournamentSize=max(2,round(self.tourneyFrac*len(tpop))),tournaments=ran)))
         # crossover
         for child1, child2 in zip(offspring[::2], offspring[1::2]):
             # Do we crossover?
@@ -413,17 +432,19 @@ class Evolver(object):
 
         # new
         # population = self.newpopulation()
-        pop = self.tool.population()
+        #pop = self.tool.population()
 
-        final = pop[0:ran]
+        #final = pop[0:ran]
         # print(f"pop size should be {len(final)}")
-        final += self.hof[0:top]
+        #final += self.hof[0:top]
+        final = self.hof[0:top]
         # print(f"pop size should be {len(final)}")
-        final += offspring[0:var]
+        final += unique_models(offspring)
+        final += self.newpopulation()[0:(my_sz-len(final))]
         # print(f"pop size should be {len(final)}")
 
-        # print(f"pop[0:{top}:{var}:{ran}]")
-        # print(f"pop size should be {len(final)}")
+        print(f"pop[{top}:{len(unique_models(offspring))}:{my_sz-top-len(unique_models(offspring))}]")
+        print(f"pop size should be {len(final)}")
 
         # Replacing the old population
         return final
@@ -485,6 +506,7 @@ class Evolver(object):
             # seg = self.algo_constructor(bestsofar)
             # self.data = seg.pipe(self.data)
             fitness = bestsofar.fitness.values[0]
+            self.fitProgress.append(fitness)
             print(f"#BEST [{fitness},  {bestsofar}]")
 
             if checkpoint and cur_g % cp_freq == 0:
