@@ -6,6 +6,7 @@ the genetic algorithm over that space. Best individuals are stored in the hall o
 import random
 import copy
 
+import time
 import json
 import logging
 from shutil import copyfile
@@ -478,6 +479,7 @@ class Evolver(object):
             # self.data = seg.pipe(self.data)
             fitness = bestsofar.fitness.values[0]
             print(f"#BEST [{fitness},  {bestsofar}]")
+            print(f"#TIME {time.time()}")
 
             if checkpoint and cur_g % cp_freq == 0:
                 print(f"Writing Checkpoint file - {checkpoint}")

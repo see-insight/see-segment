@@ -64,6 +64,8 @@ def continuous_search(input_file,
     pop_size: the size of the population
     Runs indefinitely unless a perfect value (0.0) is reached.
     """
+    
+    print(f"#START {time.time()}")
     mydata = base_classes.pipedata()
     mydata.img = imageio.imread(input_file)
     mydata.gmask = imageio.imread(input_mask)
