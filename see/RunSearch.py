@@ -1,11 +1,12 @@
 
 """File RunSearch.py, runs genetic search continuously."""
 
+import time
 import argparse
 import sys
 import random
 import matplotlib.pylab as plt
-import imageio
+from imageio import v3 as imageio
 import skimage
 from see import GeneticSearch, Segmentors
 import random

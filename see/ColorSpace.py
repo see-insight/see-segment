@@ -72,7 +72,7 @@ def selectcolorspace(img, multichannel=True, colorspace='RGB', channel=2):
             space = color.convert_colorspace(img, 'RGB', colorspace)
 
         channelimg = img[:, :, channel]
-    return space if multichannel else channel
+    return space if multichannel else channelimg
 
 class colorspace(algorithm):
     """colorspace."""
