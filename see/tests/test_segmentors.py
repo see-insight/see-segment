@@ -35,8 +35,8 @@ def test_run_algo():
      Checks to see if the output is what it's supposed to be in this case."""
     individual = Segmentors.segmentor()
     data = pipedata()
-    data.img = TEST_IM_COLOR
-    data.gmask = TEST_IM_COLOR[:, :, 0]
+    data.append(TEST_IM_COLOR)
+    data.gtruth = TEST_IM_COLOR[:, :, 0]
     individual.runAlgo(data)
 
 

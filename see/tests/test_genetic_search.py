@@ -127,8 +127,8 @@ def test_run():
     mask = img[:, :, 0]
 
     data = base_classes.pipedata()
-    data.img = img
-    data.gmask = mask
+    data.append(img)
+    data.gtruth = mask
     data.fitness = 2
     evolv = GeneticSearch.Evolver(Segmentors.segmentor, data, pop_size=10)
     start_pop = evolv.tool.population()

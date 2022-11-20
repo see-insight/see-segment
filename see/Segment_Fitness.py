@@ -540,5 +540,5 @@ class segment_fitness(algorithm):
 
     def pipe(self, data):
         """Run segmentation algorithm to get inferred mask."""
-        data.fitness = self.evaluate(data.mask, data.gmask)[0]
+        data.fitness = self.evaluate(data[-1], data.gtruth)[0]
         return data

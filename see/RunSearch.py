@@ -68,8 +68,8 @@ def continuous_search(input_file,
     
     print(f"#START {time.time()}")
     mydata = base_classes.pipedata()
-    mydata.img = imageio.imread(input_file)
-    mydata.gmask = imageio.imread(input_mask)
+    mydata.append(imageio.imread(input_file))
+    mydata.gtruth= imageio.imread(input_mask)
 
     pname = Path(input_file)
     outfile=pname.parent.joinpath(f"_{pname.stem}.txt")
@@ -111,8 +111,10 @@ def continuous_search(input_file,
             #Generate mask of best so far.
             seg = workflow(paramlist=best_so_far)
             mydata = seg.pipe(mydata)
-            imageio.imwrite(mask_file,skimage.img_as_uint(mydata.mask));
+            imageio.imwrite(mask_file,skimage.img_as_uint(mydata[-1]));
+            assert(mydata.fitness == fitness)
             write_vector(f"{outfile}", f"[{iteration}, {fitness}, {best_so_far}]") 
+        print(f"#TRUE_BST [{fitness},  {best_so_far}]")
         iteration += 1
 
 

@@ -5,7 +5,7 @@ import random
 import inspect
 
 
-class pipedata(object):
+class pipedata(list):
     """
     The pipedata is just an instance of a basic python object.
     
