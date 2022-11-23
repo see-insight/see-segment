@@ -8,8 +8,16 @@ class workflow(algorithm):
     worklist = []
 
     @classmethod
-    def addalgos(cls, algo_list):
+    def setalgos(cls, algo_list):
+        """Resets algorithms to the workflow list."""        
+        workflow.worklist = algo_list
+    
+    @classmethod
+    def addalgos(cls, algo_list, append=False):
         """Add algorithms to the workflow list."""
+        if len(workflow.worklist) > 0 and append == False:
+            raise Exception("ERROR: Workflow already defined. Use append=True to append.")
+            
         if isinstance(algo_list, list):
             for algo in algo_list:
                 workflow.worklist.append(algo)

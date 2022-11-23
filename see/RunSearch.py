@@ -76,7 +76,7 @@ def continuous_search(input_file,
     mask_file = pname.parent.joinpath(f"{pname.stem}_bestsofar.png")
     
     #TODO: Read this file in and set population first
-    workflow.addalgos([colorspace, segmentor, segment_fitness])
+    workflow.setalgos([colorspace, segmentor, segment_fitness])
     wf = workflow()
     
     my_evolver = GeneticSearch.Evolver(workflow, mydata, pop_size=pop_size)
