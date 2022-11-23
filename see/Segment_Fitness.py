@@ -24,7 +24,7 @@ def countMatches(inferred, ground_truth):
     len(n) -- Number of segments in ground truth segmentation mask.
 
     """
-    print(f" {inferred.shape=} {ground_truth.shape=}")
+    #print(f" {inferred.shape=} {ground_truth.shape=}")
     assert inferred.shape == ground_truth.shape
     m = set()
     n = set()
