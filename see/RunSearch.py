@@ -114,7 +114,7 @@ def continuous_search(input_file,
             imageio.imwrite(mask_file,skimage.img_as_uint(mydata[-1]));
             assert(mydata.fitness == fitness)
             write_vector(f"{outfile}", f"[{iteration}, {fitness}, {best_so_far}]") 
-        print(f"#TRUE_BST [{fitness},  {best_so_far}]")
+            print(f"#TRUE_BST [{fitness},  {best_so_far}]")
         iteration += 1
 
 
