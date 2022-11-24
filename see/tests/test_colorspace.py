@@ -8,7 +8,7 @@ def test_load_color_space_library():
 
 def test_loading_image_examples():
     """Unit test for loading images."""
-    import imageio
+    from imageio import v3 as imageio
     img = imageio.imread('Image_data/Examples/AA_Chameleon.jpg')
     gmask = imageio.imread('Image_data/Examples/AA_Chameleon_GT.png')
     return img, gmask
