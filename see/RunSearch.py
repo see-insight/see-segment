@@ -5,6 +5,7 @@ import time
 import argparse
 import sys
 import random
+import copy
 import matplotlib.pylab as plt
 from imageio import v3 as imageio
 import skimage
@@ -83,6 +84,7 @@ def continuous_search(input_file,
     population = my_evolver.newpopulation()
     best_fitness=2.0
     if outfile.exists():
+        print(f"Loading from {outfile}")
         inlist, fitness=read_pop(outfile)
         for fit in fitness:
             if fit < best_fitness:
@@ -99,20 +101,33 @@ def continuous_search(input_file,
 
     while best_fitness > 0.0 and iteration < num_iter:
         print(f"running {iteration} iteration")
+        # print("BEFORE HALL OF FAME:")
+        # for hof in my_evolver.hof:
+        #     print(f"{hof.fitness} {hof}")
+        
         population = my_evolver.run(ngen=1,population=population)
             
         #Get the best algorithm so far
         best_so_far = my_evolver.hof[0]
-        fitness = best_so_far.fitness.values[0]
+        fitness = best_so_far.fitness.values[-1]
+        
+        # print("AFTER HALL OF FAME:")
+        # for hof in my_evolver.hof:
+        #     print(f"{hof.fitness} {hof}")
+        
         if (fitness < best_fitness):
             best_fitness = fitness
             print(f"\n\n\n\nIteration {iteration} Finess Improved to {fitness}")
 
             #Generate mask of best so far.
             seg = workflow(paramlist=best_so_far)
-            mydata = seg.pipe(mydata)
-            imageio.imwrite(mask_file,skimage.img_as_uint(mydata[-1]));
-            assert(mydata.fitness == fitness)
+            tmp_data = copy.deepcopy(mydata)
+            tmp_data = seg.pipe(tmp_data)
+            #print(tmp_data)
+            
+            #TODO: This dosn't always work if you have very large values
+            #imageio.imwrite(mask_file,skimage.img_as_uint(tmp_data[-1]));
+            assert(tmp_data.fitness == fitness)
             write_vector(f"{outfile}", f"[{iteration}, {fitness}, {best_so_far}]") 
             print(f"#TRUE_BST [{fitness},  {best_so_far}]")
         iteration += 1

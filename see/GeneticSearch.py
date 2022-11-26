@@ -317,18 +317,26 @@ class Evolver(object):
         algos = [self.algo_constructor(paramlist=list(ind)) for ind in tpop]
 
         # Map the evaluation command to reference data and then to population
-        # list
         outdata = map(self.tool.evaluate, algos, data_references)
-
+        
         # Loop though outputs and add them to ind.fitness so we have a complete
         # record.
         for ind, data in zip(tpop, outdata):
-            print(f"fitness={data.fitness}\n")
+            print(f"p_fitness={data.fitness}\n")
             ind.fitness.values = [data.fitness]
-        extract_fits = [ind.fitness.values[0] for ind in tpop]
+        extract_fits = [ind.fitness.values[-1] for ind in tpop]
 
+        #print(tpop)
+        beforeupdate = 3
+        
+        #Update the population
+        if (len(self.hof) > 0):
+            beforeupdate = float(self.hof[0].fitness.values[-1])
+ 
         self.hof.update(tpop)
 
+        if (float(self.hof[0].fitness.values[-1]) > float(beforeupdate)):
+            print(f"ERROR: HOF updated with worse value {self.hof[0].fitness.values[-1]=} {beforeupdate=}")
         # Algo = AlgorithmSpace(AlgoParams)
 
         # Evaluating the new population
@@ -477,7 +485,7 @@ class Evolver(object):
             # Create a new instance from the current algorithm
             # seg = self.algo_constructor(bestsofar)
             # self.data = seg.pipe(self.data)
-            fitness = bestsofar.fitness.values[0]
+            fitness = bestsofar.fitness.values[-1]
             print(f"#BEST [{fitness},  {bestsofar}]")
             print(f"#TIME {time.time()}")
 
@@ -510,16 +518,16 @@ class Evolver(object):
 
                 for idx, ind in enumerate(self.hof):
                     print(
-                        f"# GEN HOF_index fitness ind|{cur_g};{idx};{ind.fitness.values[0]};{ind}"
+                        f"# GEN HOF_index fitness ind|{cur_g};{idx};{ind.fitness.values[-1]};{ind}"
                     )
 
                 # Print population data
                 for idx, ind in enumerate(population):
                     print(
-                        f"# GEN population_index fitness ind|{cur_g};{idx};{ind.fitness.values[0]};{ind}"
+                        f"# GEN population_index fitness ind|{cur_g};{idx};{ind.fitness.values[-1]};{ind}"
                     )
 
-            if bestsofar.fitness.values[0] >= 0.95:
+            if bestsofar.fitness.values[-1] >= 0.95:
                 print("Bestsofar not good enough (>=0.95) restarting population")
                 population = self.newpopulation()
             # if the best fitness value is at or above the
