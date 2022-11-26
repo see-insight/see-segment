@@ -120,16 +120,16 @@ def continuous_search(input_file,
             print(f"\n\n\n\nIteration {iteration} Finess Improved to {fitness}")
 
             #Generate mask of best so far.
-            seg = workflow(paramlist=best_so_far)
-            tmp_data = copy.deepcopy(mydata)
-            tmp_data = seg.pipe(tmp_data)
+            #seg = workflow(paramlist=best_so_far)
+            #tmp_data = copy.deepcopy(mydata)
+            #tmp_data = seg.pipe(tmp_data)
             #print(tmp_data)
             
             #TODO: This dosn't always work if you have very large values
             #imageio.imwrite(mask_file,skimage.img_as_uint(tmp_data[-1]));
-            assert(tmp_data.fitness == fitness)
+            #assert(tmp_data.fitness == fitness)
             write_vector(f"{outfile}", f"[{iteration}, {fitness}, {best_so_far}]") 
-            print(f"#TRUE_BST [{fitness},  {best_so_far}]")
+            #print(f"#TRUE_BST [{fitness},  {best_so_far}]")
         iteration += 1
 
 
