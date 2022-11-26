@@ -489,7 +489,8 @@ def FF_ML2DHD_V2(inferred, ground_truth):
     if len(test) == 1:
         # Trivial Solution
         #print(f"trivial solution")
-        error = 1
+        #ERROR - Length of test is only 1
+        error = 1.5
     else:
         error = (p / TP + np.abs(n - m) / (n + m)
                  )**(1 - np.abs(n - m) / (n + m))
