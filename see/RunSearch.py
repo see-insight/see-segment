@@ -6,6 +6,7 @@ import argparse
 import sys
 import random
 import copy
+from skimage import color
 import matplotlib.pylab as plt
 from imageio import v3 as imageio
 import skimage
@@ -31,6 +32,8 @@ def read_pop(filename):
                 x,fit,pop = eval(line)
                 inlist.append(pop)
                 fitness.append(fit)
+                
+    fitness, inlist = zip(*sorted(zip(fitness, inlist)))
     return inlist, fitness
 
 def write_vector(fpop_file, outstring):
@@ -71,6 +74,9 @@ def continuous_search(input_file,
     mydata = base_classes.pipedata()
     mydata.append(imageio.imread(input_file))
     mydata.gtruth= imageio.imread(input_mask)
+    
+    if len(mydata.gtruth.shape) > 2:
+        mydata.gtruth = color.rgb2gray(mydata.gtruth[:,:,0:3])
 
     pname = Path(input_file)
     outfile=pname.parent.joinpath(f"_{pname.stem}.txt")
@@ -91,7 +97,7 @@ def continuous_search(input_file,
                 best_fitness = fit
         previous_pop = my_evolver.copy_pop_list(inlist)
         if len(previous_pop) > len(population):
-            population = previous_pop[:-len(population)]
+            population = previous_pop[:len(population)]
         else:
             for index, ind in enumerate(previous_pop):
                 population[index] = ind
