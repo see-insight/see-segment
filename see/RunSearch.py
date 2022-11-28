@@ -58,7 +58,7 @@ def read_algo_vector(fpop_file):
 def continuous_search(input_file, 
                       input_mask, 
                       startfile=None,
-                      checkpoint='checkpoint.txt',
+                      checkpoint=None,
                       best_mask_file="temp_mask.png",
                       num_iter=10000,
                       pop_size=10):
@@ -89,19 +89,22 @@ def continuous_search(input_file,
     my_evolver = GeneticSearch.Evolver(workflow, mydata, pop_size=pop_size)
     population = my_evolver.newpopulation()
     best_fitness=2.0
-    if outfile.exists():
-        print(f"Loading from {outfile}")
-        inlist, fitness=read_pop(outfile)
-        for fit in fitness:
-            if fit < best_fitness:
-                best_fitness = fit
-        previous_pop = my_evolver.copy_pop_list(inlist)
-        if len(previous_pop) > len(population):
-            population = previous_pop[:len(population)]
-        else:
-            for index, ind in enumerate(previous_pop):
-                population[index] = ind
-        print(f"######### Done importing previous list {best_fitness}")
+    if checkpoint:
+        if outfile.exists():
+            print(f"Loading from {outfile}")
+            inlist, fitness=read_pop(outfile)
+            for fit in fitness:
+                if fit < best_fitness:
+                    best_fitness = fit
+            previous_pop = my_evolver.copy_pop_list(inlist)
+            if len(previous_pop) > len(population):
+                population = previous_pop[:len(population)]
+            else:
+                for index, ind in enumerate(previous_pop):
+                    population[index] = ind
+            print(f"######### Done importing previous list {best_fitness}")
+    else:
+        print("Checkpoint not set. Starting from random population")
 
     iteration = 0
 
