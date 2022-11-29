@@ -502,7 +502,7 @@ class QuickShift(segmentor):
         return output
 
 
-segmentor.addsegmentor('QuickShift', QuickShift)
+#segmentor.addsegmentor('QuickShift', QuickShift)
 
 # TODO Watershed one seems to be broken all we get is a line at the top.
 
