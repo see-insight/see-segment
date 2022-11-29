@@ -35,8 +35,8 @@ def test_run_algo():
      Checks to see if the output is what it's supposed to be in this case."""
     individual = Segmentors.segmentor()
     data = pipedata()
-    data.img = TEST_IM_COLOR
-    data.gmask = TEST_IM_COLOR[:, :, 0]
+    data.append(TEST_IM_COLOR)
+    data.gtruth = TEST_IM_COLOR[:, :, 0]
     individual.runAlgo(data)
 
 
@@ -55,12 +55,12 @@ def test_felzenszwalb():
 
     out1 = fb1.evaluate(TEST_IM_COLOR)
     out2 = segmentation.felzenszwalb(
-        TEST_IM_COLOR, 984, 0.09, 92, multichannel=True)
+        TEST_IM_COLOR, 984, 0.09, 92, channel_axis=True)
     assert out1.all() == out2.all()
 
     out1 = fb1.evaluate(TEST_IM_GRAY)
     out2 = segmentation.felzenszwalb(
-        TEST_IM_GRAY, 984, 0.09, 92, multichannel=True)
+        TEST_IM_GRAY, 984, 0.09, 92, channel_axis=True)
     assert out1.all() == out2.all()
 
 
@@ -69,10 +69,10 @@ def test_slic():
      is the same as manually running the skimage function."""
     sc1 = Segmentors.Slic()
     assert sc1.evaluate(TEST_IM_COLOR).all() == segmentation.slic(
-        TEST_IM_COLOR, n_segments=5, compactness=5, max_iter=3,
+        TEST_IM_COLOR, n_segments=5, compactness=5, max_num_iter=3,
         sigma=5, convert2lab=True, multichannel=True).all()
     assert sc1.evaluate(TEST_IM_GRAY).all() == segmentation.slic(
-        TEST_IM_GRAY, n_segments=5, compactness=5, max_iter=3,
+        TEST_IM_GRAY, n_segments=5, compactness=5, max_num_iter=3,
         sigma=5, convert2lab=True, multichannel=False).all()
 
 # def test_QuickShift():

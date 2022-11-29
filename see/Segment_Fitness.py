@@ -24,6 +24,7 @@ def countMatches(inferred, ground_truth):
     len(n) -- Number of segments in ground truth segmentation mask.
 
     """
+    #print(f" {inferred.shape=} {ground_truth.shape=}")
     assert inferred.shape == ground_truth.shape
     m = set()
     n = set()
@@ -488,7 +489,8 @@ def FF_ML2DHD_V2(inferred, ground_truth):
     if len(test) == 1:
         # Trivial Solution
         #print(f"trivial solution")
-        error = 1
+        #ERROR - Length of test is only 1
+        error = 1.5
     else:
         error = (p / TP + np.abs(n - m) / (n + m)
                  )**(1 - np.abs(n - m) / (n + m))
@@ -540,5 +542,5 @@ class segment_fitness(algorithm):
 
     def pipe(self, data):
         """Run segmentation algorithm to get inferred mask."""
-        data.fitness = self.evaluate(data.mask, data.gmask)[0]
+        data.fitness = self.evaluate(data[-1], data.gtruth)[0]
         return data

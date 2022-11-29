@@ -5,6 +5,8 @@ import time
 import argparse
 import sys
 import random
+import copy
+from skimage import color
 import matplotlib.pylab as plt
 from imageio import v3 as imageio
 import skimage
@@ -30,6 +32,8 @@ def read_pop(filename):
                 x,fit,pop = eval(line)
                 inlist.append(pop)
                 fitness.append(fit)
+                
+    fitness, inlist = zip(*sorted(zip(fitness, inlist)))
     return inlist, fitness
 
 def write_vector(fpop_file, outstring):
@@ -54,7 +58,7 @@ def read_algo_vector(fpop_file):
 def continuous_search(input_file, 
                       input_mask, 
                       startfile=None,
-                      checkpoint='checkpoint.txt',
+                      checkpoint=None,
                       best_mask_file="temp_mask.png",
                       num_iter=10000,
                       pop_size=10):
@@ -68,51 +72,73 @@ def continuous_search(input_file,
     
     print(f"#START {time.time()}")
     mydata = base_classes.pipedata()
-    mydata.img = imageio.imread(input_file)
-    mydata.gmask = imageio.imread(input_mask)
+    mydata.append(imageio.imread(input_file))
+    mydata.gtruth= imageio.imread(input_mask)
+    
+    if len(mydata.gtruth.shape) > 2:
+        mydata.gtruth = color.rgb2gray(mydata.gtruth[:,:,0:3])
 
     pname = Path(input_file)
     outfile=pname.parent.joinpath(f"_{pname.stem}.txt")
     mask_file = pname.parent.joinpath(f"{pname.stem}_bestsofar.png")
     
     #TODO: Read this file in and set population first
-    workflow.addalgos([colorspace, segmentor, segment_fitness])
+    workflow.setalgos([colorspace, segmentor, segment_fitness])
     wf = workflow()
     
     my_evolver = GeneticSearch.Evolver(workflow, mydata, pop_size=pop_size)
     population = my_evolver.newpopulation()
     best_fitness=2.0
-    if outfile.exists():
-        inlist, fitness=read_pop(outfile)
-        for fit in fitness:
-            if fit < best_fitness:
-                best_fitness = fit
-        previous_pop = my_evolver.copy_pop_list(inlist)
-        if len(previous_pop) > len(population):
-            population = previous_pop[:-len(population)]
-        else:
-            for index, ind in enumerate(previous_pop):
-                population[index] = ind
-        print(f"######### Done importing previous list {best_fitness}")
+    if checkpoint:
+        if outfile.exists():
+            print(f"Loading from {outfile}")
+            inlist, fitness=read_pop(outfile)
+            for fit in fitness:
+                if fit < best_fitness:
+                    best_fitness = fit
+            previous_pop = my_evolver.copy_pop_list(inlist)
+            if len(previous_pop) > len(population):
+                population = previous_pop[:len(population)]
+            else:
+                for index, ind in enumerate(previous_pop):
+                    population[index] = ind
+            print(f"######### Done importing previous list {best_fitness}")
+    else:
+        print("Checkpoint not set. Starting from random population")
 
     iteration = 0
 
     while best_fitness > 0.0 and iteration < num_iter:
         print(f"running {iteration} iteration")
+        # print("BEFORE HALL OF FAME:")
+        # for hof in my_evolver.hof:
+        #     print(f"{hof.fitness} {hof}")
+        
         population = my_evolver.run(ngen=1,population=population)
             
         #Get the best algorithm so far
         best_so_far = my_evolver.hof[0]
-        fitness = best_so_far.fitness.values[0]
+        fitness = best_so_far.fitness.values[-1]
+        
+        # print("AFTER HALL OF FAME:")
+        # for hof in my_evolver.hof:
+        #     print(f"{hof.fitness} {hof}")
+        
         if (fitness < best_fitness):
             best_fitness = fitness
             print(f"\n\n\n\nIteration {iteration} Finess Improved to {fitness}")
 
             #Generate mask of best so far.
-            seg = workflow(paramlist=best_so_far)
-            mydata = seg.pipe(mydata)
-            imageio.imwrite(mask_file,skimage.img_as_uint(mydata.mask));
+            #seg = workflow(paramlist=best_so_far)
+            #tmp_data = copy.deepcopy(mydata)
+            #tmp_data = seg.pipe(tmp_data)
+            #print(tmp_data)
+            
+            #TODO: This dosn't always work if you have very large values
+            #imageio.imwrite(mask_file,skimage.img_as_uint(tmp_data[-1]));
+            #assert(tmp_data.fitness == fitness)
             write_vector(f"{outfile}", f"[{iteration}, {fitness}, {best_so_far}]") 
+            #print(f"#TRUE_BST [{fitness},  {best_so_far}]")
         iteration += 1
 
 

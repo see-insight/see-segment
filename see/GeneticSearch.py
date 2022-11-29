@@ -317,18 +317,26 @@ class Evolver(object):
         algos = [self.algo_constructor(paramlist=list(ind)) for ind in tpop]
 
         # Map the evaluation command to reference data and then to population
-        # list
         outdata = map(self.tool.evaluate, algos, data_references)
-
+        
         # Loop though outputs and add them to ind.fitness so we have a complete
         # record.
         for ind, data in zip(tpop, outdata):
-            print(f"fitness={data.fitness}\n")
+            print(f"p_fitness={data.fitness}\n")
             ind.fitness.values = [data.fitness]
-        extract_fits = [ind.fitness.values[0] for ind in tpop]
+        extract_fits = [ind.fitness.values[-1] for ind in tpop]
 
+        #print(tpop)
+        beforeupdate = 3
+        
+        #Update the population
+        if (len(self.hof) > 0):
+            beforeupdate = float(self.hof[0].fitness.values[-1])
+ 
         self.hof.update(tpop)
 
+        if (float(self.hof[0].fitness.values[-1]) > float(beforeupdate)):
+            print(f"ERROR: HOF updated with worse value {self.hof[0].fitness.values[-1]=} {beforeupdate=}")
         # Algo = AlgorithmSpace(AlgoParams)
 
         # Evaluating the new population
@@ -467,7 +475,7 @@ class Evolver(object):
         else:
             print(f"Using existing population")
 
-        for cur_g in range(0, ngen + 1):
+        for cur_g in range(ngen):
             print(f"Generation {cur_g}/{ngen} of population size {len(population)}")
 
             _, population = self.popfitness(population)
@@ -477,7 +485,7 @@ class Evolver(object):
             # Create a new instance from the current algorithm
             # seg = self.algo_constructor(bestsofar)
             # self.data = seg.pipe(self.data)
-            fitness = bestsofar.fitness.values[0]
+            fitness = bestsofar.fitness.values[-1]
             print(f"#BEST [{fitness},  {bestsofar}]")
             print(f"#TIME {time.time()}")
 
@@ -488,53 +496,54 @@ class Evolver(object):
                 for cur_p in range(len(population)):
                     logging.getLogger().info(population[cur_p])
 
-            if cur_g < ngen + 1:
-                if print_raw_data:
-                    # The delimiters used are:
-                    # | to separate column names from values
-                    # ; to separate values from each other
-                    
-                    # We want to print out the algorithm vector so that we can rebuild it
-                    # later from a string. Python lists are printed out as [val_1, val_2,..., val_n].
-                    # Hence we do use ';', rather than ',' and ' ' as official delimiters that will be
-                    # used in post-processing.
-                    
-                    # WARNING: The purpose of this switch is so that we can later extract this data. If the
-                    # formatting of these print statements are changed, then the function extract_hof_population in 
-                    # see_classify_figures/figures_helpers.py will have to be modified accordingly.
-                    # Similarly instructions on how to extract this data via grep found 
-                    # in the variable data_creation_instructions in the 
-                    # see_classify_figures/figures_markdown_snippets.py file 
-                    # will also have to be modified.
-                    
-                    for idx, ind in enumerate(self.hof):
-                        print(
-                            f"# GEN HOF_index fitness ind|{cur_g};{idx};{ind.fitness.values[0]};{ind}"
-                        )
+            
+            #if cur_g < ngen-1:
+            if print_raw_data:
+                # The delimiters used are:
+                # | to separate column names from values
+                # ; to separate values from each other
 
-                    # Print population data
-                    for idx, ind in enumerate(population):
-                        print(
-                            f"# GEN population_index fitness ind|{cur_g};{idx};{ind.fitness.values[0]};{ind}"
-                        )
+                # We want to print out the algorithm vector so that we can rebuild it
+                # later from a string. Python lists are printed out as [val_1, val_2,..., val_n].
+                # Hence we do use ';', rather than ',' and ' ' as official delimiters that will be
+                # used in post-processing.
 
-                if bestsofar.fitness.values[0] >= 0.95:
-                    print("Bestsofar not good enough (>=0.95) restarting population")
-                    population = self.newpopulation()
-                # if the best fitness value is at or above the
-                # threshold of 0.95, discard the entire current
-                # population and randomly select a new population
-                # for the next generation
-                # note: setting keep_prob = 0 and mutate_prob = 1
-                # as mutate arguments
-                # should have same result as self.new_population()
-                else:
-                    print("Mutating Population")
+                # WARNING: The purpose of this switch is so that we can later extract this data. If the
+                # formatting of these print statements are changed, then the function extract_hof_population in 
+                # see_classify_figures/figures_helpers.py will have to be modified accordingly.
+                # Similarly instructions on how to extract this data via grep found 
+                # in the variable data_creation_instructions in the 
+                # see_classify_figures/figures_markdown_snippets.py file 
+                # will also have to be modified.
 
-                    population = self.mutate(population)
-                # if the best fitness value is below this threshold,
-                # proceed as normal, mutating the current population
-                # to get the next generation
+                for idx, ind in enumerate(self.hof):
+                    print(
+                        f"# GEN HOF_index fitness ind|{cur_g};{idx};{ind.fitness.values[-1]};{ind}"
+                    )
+
+                # Print population data
+                for idx, ind in enumerate(population):
+                    print(
+                        f"# GEN population_index fitness ind|{cur_g};{idx};{ind.fitness.values[-1]};{ind}"
+                    )
+
+            if bestsofar.fitness.values[-1] >= 0.95:
+                print("Bestsofar not good enough (>=0.95) restarting population")
+                population = self.newpopulation()
+            # if the best fitness value is at or above the
+            # threshold of 0.95, discard the entire current
+            # population and randomly select a new population
+            # for the next generation
+            # note: setting keep_prob = 0 and mutate_prob = 1
+            # as mutate arguments
+            # should have same result as self.new_population()
+            else:
+                print("Mutating Population")
+
+                population = self.mutate(population)
+            # if the best fitness value is below this threshold,
+            # proceed as normal, mutating the current population
+            # to get the next generation
 
         if checkpoint:
             print(f"Writing Checkpoint file - {checkpoint}")

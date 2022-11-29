@@ -107,7 +107,7 @@ class segmentor(algorithm):
 
     def pipe(self, data):
         """Set data.mask to an evaluated image."""
-        data.mask = self.evaluate(data.img)
+        data.append(self.evaluate(data[-1]))
         return data
 
     @classmethod
@@ -502,7 +502,7 @@ class QuickShift(segmentor):
         return output
 
 
-segmentor.addsegmentor('QuickShift', QuickShift)
+#segmentor.addsegmentor('QuickShift', QuickShift)
 
 # TODO Watershed one seems to be broken all we get is a line at the top.
 

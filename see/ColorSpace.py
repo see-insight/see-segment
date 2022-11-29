@@ -111,8 +111,7 @@ class colorspace(algorithm):
 
     def pipe(self, data):
         """Set inputimage and img to evaluated data images."""
-        data.inputimage = data.img
-        data.img = self.evaluate(data.img)
+        data.append(self.evaluate(data[-1]))
         return data
     
     def algorithm_code(self):
