@@ -107,7 +107,10 @@ class segmentor(algorithm):
 
     def pipe(self, data):
         """Set data.mask to an evaluated image."""
-        data.append(self.evaluate(data[-1]))
+        data.mask = []
+        for i in range(len(data.gtruth)):
+            data.mask.append(0)
+            data.mask[i] = self.evaluate(data[i])
         return data
 
     @classmethod

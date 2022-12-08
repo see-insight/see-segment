@@ -512,10 +512,10 @@ def FitnessFunction(inferred, ground_truth):
     return FF_ML2DHD_V2(inferred, ground_truth)
 
 #data_arr to store inferred and ground_truth as matrices in numpy arrays
-def multi_value_ff(data_arr):
+def multi_value_ff(mask, gtruth):
     fitness_values_arr = np.arange(0)
-    for i in range(len(data_arr)):
-        fitness_value = FitnessFunction(data_arr[i][0], data_arr[i][1])[0]
+    for i in range(len(mask)):
+        fitness_value = FitnessFunction(mask[i], gtruth[i])[0]
         fitness_values_arr = np.append(fitness_values_arr, fitness_value)
     mean_fitness_value = np.mean(fitness_values_arr)
     return mean_fitness_value
@@ -542,5 +542,5 @@ class segment_fitness(algorithm):
 
     def pipe(self, data):
         """Run segmentation algorithm to get inferred mask."""
-        data.fitness = self.evaluate(data[-1], data.gtruth)[0]
+        data.fitness = multi_value_ff(data.mask, data.gtruth)
         return data
