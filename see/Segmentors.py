@@ -493,6 +493,8 @@ class QuickShift(segmentor):
         mindim = min(img.shape)
         ratio = self.params["alpha1"]
         kernel_size = (2 + ratio * 6) * end_ratio # Kernel size between 2 and 8
+        if kernel_size < 1:
+            kernel_size = 1
         max_dist = (6 + ratio * 34) * end_ratio # Maximum distance between 6 and 40
         output = skimage.segmentation.quickshift(
             img,
