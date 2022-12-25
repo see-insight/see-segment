@@ -144,6 +144,52 @@ def downloadCOSKEL(
     print(f"Download and Convert Complete")
 
 
+
+def downloadCrackData(filename = 'CrackDataset.zip', 
+                      folder = './', 
+                      url = 'https://www.irit.fr/~Sylvie.Chambon/CrackDataset.zip',
+                      force=True):
+    """Get Pavement Crack Dataset.
+    """    
+
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+        print("Directory ", folder, " Created ")
+    else:
+        print("Directory ", folder, " already exists")
+
+    zfile = Path(folder + filename)
+    if not zfile.is_file() or force:
+        print(f"Downloading {filename} from {url}")
+        urlretrieve(url, folder + filename)
+
+    print(f"Unzipping {filename}")
+    with zipfile.ZipFile(folder + filename, 'r') as zip_ref:
+        zip_ref.extractall(folder)
+
+    print(f"Download and Convert Complete")
+
+def getCrackFolderLists(outputfolder='', folder=DefaultFolder):
+    """Download the Pavement Cract dataset."""
+    imagefolder = f"{folder}/CrackData/TITS/IMAGES/"
+    maskfolder = f"{folder}/CrackData/TITS/GROUND_TRUTH/"
+
+    imagePATHnames = sorted(Path(f'{imagefolder}').rglob('*.png'))
+    imagenames = []
+    masknames = []
+    outputnames = []
+    for index, file in enumerate(imagePATHnames):
+        imagenames.append(str(file))
+        #print(str(file))
+        filename = str(file).replace(str(imagefolder), '')
+        name = filename.replace('Im_','')
+        #print(f"{name=}")
+        masknames.append(f"{maskfolder}{name}")
+        outputnames.append(f"{outputfolder}{name}")
+        #print(f"{filename}")
+
+    return imagenames, masknames, outputnames
+
 def getSkyFolderLists(outputfolder='', folder=DefaultFolder):
     """Get Sky folder lists.
     
