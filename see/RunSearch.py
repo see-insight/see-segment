@@ -154,6 +154,7 @@ def geneticsearch_commandline():
     parser.add_argument('--seed', type=int,default=1, help='Input seed (integer)') 
     parser.add_argument('--pop_size', type=int,default=10, help='Population Size (integer)') 
     parser.add_argument('--num_iter', type=int,default=10, help='Maximum Iterations (integer)') 
+    parser.add_argument('--checkpoint', type=str,default="", help='Checkpoint flag') 
     args = parser.parse_args()
 
     print('\n\n')
@@ -167,7 +168,7 @@ def geneticsearch_commandline():
     random.seed(args.seed)
     
     #continuous_search(args.input_file, args.input_mask,pop_size=args.pop_size,num_iter=args.num_iter,best_mask_file=f"temp_{args.seed}.png");
-    continuous_search(args.input_file, args.input_mask,pop_size=args.pop_size,num_iter=args.num_iter);
+    continuous_search(args.input_file, args.input_mask,pop_size=args.pop_size,num_iter=args.num_iter,checkpoint=args.checkpoint);
 
 if __name__ == "__main__":
     geneticsearch_commandline()
