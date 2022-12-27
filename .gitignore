@@ -24,3 +24,8 @@ __pycache__
 .coverage
 *.swp
 *.out
+Image_data/CO-SKEL_v1.1
+Image_data/KOMATSUNA
+Image_data/Sky
+Image_data/Examples/_*.txt
+Image_data/Examples/*.png
