@@ -89,7 +89,8 @@ class preprocessor(algorithm):
     #TODO what does this do?
     def pipe(self, data):
         """Set data.mask to an evaluated image."""
-        data.mask = self.evaluate(data.img)
+        for i in range(len(data)):
+            data.mask[i] = self.evaluate(data[i][0])
         return data
     
     #what does this do?

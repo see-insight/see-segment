@@ -63,7 +63,7 @@ def selectcolorspace(img, multichannel=True, colorspace='RGB', channel=2):
         # If image is grater than 3 channels cut it down to three
         if img.shape[2] > 3:
             ###TODO: Fix this hack to make a image with more than 3 channels a 3 channel image
-            img = shape[:,:,0:3]
+            img = img[:,:,0:3]
         if colorspace == 'RGB':
             ### Assume the input 3channel colorspace is RGB and dosn't need changing
             space = img
@@ -111,7 +111,8 @@ class colorspace(algorithm):
 
     def pipe(self, data):
         """Set inputimage and img to evaluated data images."""
-        data.append(self.evaluate(data[-1]))
+        for i in range(len(data)):
+            data[i].append(self.evaluate(data[i][-1]))
         return data
     
     def algorithm_code(self):
