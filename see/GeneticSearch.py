@@ -261,6 +261,10 @@ class Evolver(object):
 
     # TODO add some checking to make sure lists are the right size and type
     # TODO think about how we want to add in fitness to these?
+
+    #Training data update for AL
+    def updateData(self,data):
+        self.data=data
     
     def fitnessTracking(self):
         return self.fitProgress
