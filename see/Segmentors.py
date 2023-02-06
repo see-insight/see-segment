@@ -107,7 +107,8 @@ class segmentor(algorithm):
 
     def pipe(self, data):
         """Set data.mask to an evaluated image."""
-        data.mask = self.evaluate(data.img)
+        for i in range(len(data)):
+            data[i].append(self.evaluate(data[i][-1]))
         return data
 
     @classmethod
@@ -442,9 +443,6 @@ class SlicO(Slic):
 
 segmentor.addsegmentor('SlicO', SlicO)
 
-# TODO Quickshift is very slow, we need to do some benchmarks and see what
-# are resonable running ranges.
-
 
 class QuickShift(segmentor):
     """Perform the Quick Shift segmentation algorithm.
@@ -486,15 +484,19 @@ class QuickShift(segmentor):
         Output:
         output -- resulting segmentation mask from algorithm.
         """
+        w1, h1 = 400, 400
+        ratio_height = img.shape[0] / h1
+        ratio_width = img.shape[1] / w1
+        end_ratio = min(ratio_width, ratio_height) # Scaling according to the size of the image
         mindim = min(img.shape)
         ratio = self.params["alpha1"]
-        kernel_size = mindim / 10 * self.params["beta1"] + 1
-        max_dist = mindim * self.params["beta2"]
+        kernel_size = max(2, (2 + ratio * 6) * end_ratio) # Kernel size between 2 and 8
+        max_dist = max(6, (6 + ratio * 34) * end_ratio) # Maximum distance between 6 and 40
         output = skimage.segmentation.quickshift(
             img,
-            ratio=ratio,
             kernel_size=kernel_size,
             max_dist=max_dist,
+            ratio=ratio,
             sigma=0,  # TODO this should be handeled in the preprocessing step
             #random_seed=1,
             convert2lab=False
@@ -502,7 +504,7 @@ class QuickShift(segmentor):
         return output
 
 
-#segmentor.addsegmentor('QuickShift', QuickShift)
+segmentor.addsegmentor('QuickShift', QuickShift)
 
 # TODO Watershed one seems to be broken all we get is a line at the top.
 

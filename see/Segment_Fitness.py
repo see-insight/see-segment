@@ -488,7 +488,8 @@ def FF_ML2DHD_V2(inferred, ground_truth):
     if len(test) == 1:
         # Trivial Solution
         #print(f"trivial solution")
-        error = 1
+        #ERROR - Length of test is only 1
+        error = 1.5
     else:
         error = (p / TP + np.abs(n - m) / (n + m)
                  )**(1 - np.abs(n - m) / (n + m))
@@ -510,10 +511,10 @@ def FitnessFunction(inferred, ground_truth):
     return FF_ML2DHD_V2(inferred, ground_truth)
 
 #data_arr to store inferred and ground_truth as matrices in numpy arrays
-def multi_value_ff(data_arr):
+def multi_value_ff(data):
     fitness_values_arr = np.arange(0)
-    for i in range(len(data_arr)):
-        fitness_value = FitnessFunction(data_arr[i][0], data_arr[i][1])[0]
+    for i in range(len(data)):
+        fitness_value = FitnessFunction(data[i][-1], data.gtruth[i])[0]
         fitness_values_arr = np.append(fitness_values_arr, fitness_value)
     mean_fitness_value = np.mean(fitness_values_arr)
     return mean_fitness_value
@@ -529,16 +530,16 @@ class segment_fitness(algorithm):
         """Generate algorithm params from parameter list."""
         super(segment_fitness, self).__init__(paramlist)
 
-    def evaluate(self, mask, gmask):
+    def evaluate(self, data):
         """Return result of fitness function with image and its ground truth.
 
         Keyword arguments:
         mask -- the given image
         gmask -- the ground truth mask image
         """
-        return FitnessFunction(mask, gmask)
+        return multi_value_ff(data)
 
     def pipe(self, data):
         """Run segmentation algorithm to get inferred mask."""
-        data.fitness = self.evaluate(data.mask, data.gmask)[0]
+        data.fitness = multi_value_ff(data)
         return data

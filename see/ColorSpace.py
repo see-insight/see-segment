@@ -46,28 +46,37 @@ color_params.add('channel',
                  "A parameter for Picking the Channel 0,1,2"
                  )
 
+def selectcolorspace(img, multichannel=True, colorspace='RGB', channel=2):
+    """Function that takes an image as an input converts it to a new colorspace and
+       returns a channel from that colorspace. Colorspaces include the following: 
+    ['RGB', ‘HSV’, ‘RGB CIE’, ‘XYZ’, ‘YUV’, ‘YIQ’, ‘YPbPr’, ‘YCbCr’, ‘YDbDr’]
+    """
+    import numpy as np
+    from skimage import color
+    if len(img.shape) == 2:
+        channelimg = img.copy()
+        space = np.zeros([channelimg.shape[0], channelimg.shape[1], 3])
+        space[:, :, 0] = channelimg 
+        space[:, :, 1] = channelimg
+        space[:, :, 2] = channelimg
+    else: 
+        # If image is grater than 3 channels cut it down to three
+        if img.shape[2] > 3:
+            ###TODO: Fix this hack to make a image with more than 3 channels a 3 channel image
+            img = img[:,:,0:3]
+        if colorspace == 'RGB':
+            ### Assume the input 3channel colorspace is RGB and dosn't need changing
+            space = img
+        else:
+            ### use the color library convert_colorspace fucntion 
+            space = color.convert_colorspace(img, 'RGB', colorspace)
+
+        channelimg = img[:, :, channel]
+    return space if multichannel else channelimg
 
 class colorspace(algorithm):
     """colorspace."""
         
-    def getchannel(img, colorspace, channel):
-        """Function that returns a single channel from an image.
-        ['RGB', ‘HSV’, ‘RGB CIE’, ‘XYZ’, ‘YUV’, ‘YIQ’, ‘YPbPr’, ‘YCbCr’, ‘YDbDr’]
-        """
-
-        if len(img.shape) == 2:
-            c_img = img.copy()
-            img = np.zeros([c_img.shape[0], c_img.shape[1], 3])
-            img[:, :, 0] = c_img
-            img[:, :, 1] = c_img
-            img[:, :, 2] = c_img
-            return [img, c_img, 1]
-
-        if colorspace == 'RGB':
-            return [img, img[:, :, channel], 3]
-        space = color.convert_colorspace(img, 'RGB', colorspace)
-        return [space, space[:, :, channel], 3]
-
     # TODO Update to allow paramlist to be either a list or the parameters
     # class
     def __init__(self, paramlist=None):
@@ -95,19 +104,15 @@ class colorspace(algorithm):
     def evaluate(self, img, name=None):
         """Run segmentation algorithm to get inferred mask."""
         multichannel = self.params['multichannel']
+        colorspace = self.params['colorspace']
+        channel = self.params['channel']
+        return selectcolorspace(img, multichannel=multichannel, colorspace=colorspace, channel=channel)
 
-        if len(img.shape) > 2:
-            multichannel = False
-
-        [img, channel, _] = colorspace.getchannel(
-            img, self.params['colorspace'], self.params['channel'])
-
-        return img if multichannel else channel
 
     def pipe(self, data):
         """Set inputimage and img to evaluated data images."""
-        data.inputimage = data.img
-        data.img = self.evaluate(data.img)
+        for i in range(len(data)):
+            data[i].append(self.evaluate(data[i][-1]))
         return data
     
     def algorithm_code(self):
