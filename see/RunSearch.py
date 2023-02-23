@@ -72,8 +72,8 @@ def continuous_search(input_file,
     
     print(f"#START {time.time()}")
     mydata = base_classes.pipedata()
-    mydata.append(imageio.imread(input_file))
-    mydata.gtruth= imageio.imread(input_mask)
+    mydata.append([imageio.imread(input_file)])
+    mydata.gtruth.append(imageio.imread(input_mask))
     
     if len(mydata.gtruth.shape) > 2:
         mydata.gtruth = color.rgb2gray(mydata.gtruth[:,:,0:3])

@@ -13,7 +13,8 @@ class pipedata(list):
     store output data from a wide variety of algorithms. Most algorithms in the pipe jsut add
     data to this objet which is passed in as an input argument and returned as an output argument.
     """
-    pass
+    def __init__(self):
+        self.gtruth = []
 
 
 class param_space(dict):
