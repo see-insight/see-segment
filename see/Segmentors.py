@@ -379,7 +379,7 @@ class Slic(segmentor):
                 max_num_iter=max_num_iter,
                 # Gaussian smoothing should happen as a preprocessing step.
                 sigma=0,
-                channel_axis=2,
+                channel_axis=-1,
                 convert2lab=False,
                 slic_zero=self.slico
             )
@@ -389,6 +389,7 @@ class Slic(segmentor):
                 n_segments=n_segments,
                 compactness=compactness,
                 max_num_iter=max_num_iter,
+                channel_axis=None,
                 sigma=self.params["alpha1"],
                 slic_zero=self.slico
             )
