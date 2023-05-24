@@ -35,8 +35,8 @@ def test_run_algo():
      Checks to see if the output is what it's supposed to be in this case."""
     individual = Segmentors.segmentor()
     data = pipedata()
-    data.append(TEST_IM_COLOR)
-    data.gtruth = TEST_IM_COLOR[:, :, 0]
+    data.append([TEST_IM_COLOR])
+    data.gtruth.append(TEST_IM_COLOR[:, :, 0])
     individual.runAlgo(data)
 
 
@@ -70,10 +70,10 @@ def test_slic():
     sc1 = Segmentors.Slic()
     assert sc1.evaluate(TEST_IM_COLOR).all() == segmentation.slic(
         TEST_IM_COLOR, n_segments=5, compactness=5, max_num_iter=3,
-        sigma=5, convert2lab=True, multichannel=True).all()
+        sigma=5, convert2lab=True, ).all()
     assert sc1.evaluate(TEST_IM_GRAY).all() == segmentation.slic(
         TEST_IM_GRAY, n_segments=5, compactness=5, max_num_iter=3,
-        sigma=5, convert2lab=True, multichannel=False).all()
+        sigma=5, convert2lab=True, channel_axis=None).all()
 
 # def test_QuickShift():
 #     """Unit test for QuickShift method. Checks if evaluate function output\
