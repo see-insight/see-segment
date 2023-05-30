@@ -39,6 +39,6 @@ def test_colorspace_pipe():
     img, gmask = test_loading_image_examples()
     data = base_classes.pipedata()
     data.append([img])
-    data.gtruth = gmask
+    data.gtruth.append(gmask)
     cs = ColorSpace.colorspace()
     data = cs.pipe(data)
