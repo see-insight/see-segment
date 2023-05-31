@@ -1,7 +1,7 @@
 """ColorSpace.py file."""
 
 from skimage import color
-from see.base_classes import param_space, algorithm
+from see.base_classes import param_space, algorithm, pipedata
 import copy
 import inspect
 import random
@@ -111,8 +111,11 @@ class colorspace(algorithm):
 
     def pipe(self, data):
         """Set inputimage and img to evaluated data images."""
-        for i in range(len(data)):
-            data[i].append(self.evaluate(data[i][-1]))
+        if type(data) is pipedata:
+            data.append(self.evaluate(data[-1]))
+        else:
+            for dataimage in data:
+                this.pipe(data)
         return data
     
     def algorithm_code(self):

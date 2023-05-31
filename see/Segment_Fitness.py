@@ -4,7 +4,7 @@ import sys
 from skimage import color
 import numpy as np
 
-from see.base_classes import algorithm
+from see.base_classes import algorithm, pipedata
 
 
 def countMatches(inferred, ground_truth):
@@ -512,12 +512,16 @@ def FitnessFunction(inferred, ground_truth):
     return FF_ML2DHD_V2(inferred, ground_truth)
 
 def multi_value_ff(data):
-    fitness_values_arr = np.arange(0)
-    for i in range(len(data)):
-        fitness_value = FitnessFunction(data[i][-1], data.gtruth[i])[0]
-        fitness_values_arr = np.append(fitness_values_arr, fitness_value)
-    mean_fitness_value = np.mean(fitness_values_arr)
-    return mean_fitness_value
+    
+    if type(data) is pipedata:
+        fitness_value = FitnessFunction(data[-1], data.gtruth)[0]
+        return fitness_value
+    else:
+        fitness_values = []
+        for i in range(len(data)):
+            fitness_values.append(this.multi_value_ff(data))
+        mean_fitness_value = np.mean(fitness_values_arr)
+        return mean_fitness_value
 
 
 class segment_fitness(algorithm):
