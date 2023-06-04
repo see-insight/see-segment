@@ -71,12 +71,13 @@ def continuous_search(input_file,
     """
     
     print(f"#START {time.time()}")
+    gtruth = imageio.imread(input_mask)
+    if len(gtruth.shape) > 2:
+        gtruth = color.rgb2gray(gtruth[:,:,0:3])
+    
     mydata = base_classes.pipedata()
     mydata.append([imageio.imread(input_file)])
-    mydata.gtruth.append(imageio.imread(input_mask))
-    
-    if len(mydata.gtruth.shape) > 2:
-        mydata.gtruth = color.rgb2gray(mydata.gtruth[:,:,0:3])
+    mydata.gtruth.append(gtruth)
 
     pname = Path(input_file)
     outfile=pname.parent.joinpath(f"_{pname.stem}.txt")
