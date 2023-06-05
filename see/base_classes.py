@@ -127,6 +127,9 @@ class algorithm(object):
     def pipe(self, data):
         """Run segmentation algorithm to get inferred mask."""
         print("WARNING: Default Pipe, doing nothing\n")
+        import traceback
+        for line in traceback.format_stack():
+           print(line.strip())
         return data
 
     def __str__(self):

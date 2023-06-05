@@ -71,12 +71,15 @@ def continuous_search(input_file,
     """
     
     print(f"#START {time.time()}")
+
+    gtruth = imageio.imread(input_mask)
+
+    if len(gtruth.shape) > 2:
+        gtruth = color.rgb2gray(gtruth[:,:,0:3])
+
     mydata = base_classes.pipedata()
-    mydata.append([imageio.imread(input_file)])
-    mydata.gtruth.append(imageio.imread(input_mask))
-    
-    if len(mydata.gtruth.shape) > 2:
-        mydata.gtruth = color.rgb2gray(mydata.gtruth[:,:,0:3])
+    mydata.append(imageio.imread(input_file))
+    mydata.gtruth = gtruth
 
     pname = Path(input_file)
     outfile=pname.parent.joinpath(f"_{pname.stem}.txt")
@@ -84,7 +87,6 @@ def continuous_search(input_file,
     
     #TODO: Read this file in and set population first
     workflow.setalgos([colorspace, segmentor, segment_fitness])
-    wf = workflow()
     
     my_evolver = GeneticSearch.Evolver(workflow, mydata, pop_size=pop_size)
     population = my_evolver.newpopulation()
