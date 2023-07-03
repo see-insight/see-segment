@@ -511,6 +511,7 @@ def FitnessFunction(inferred, ground_truth):
     """
     return FF_ML2DHD_V2(inferred, ground_truth)
 
+#data_arr to store inferred and ground_truth as matrices in numpy arrays
 def multi_value_ff(data):
     fitness_values_arr = np.arange(0)
     for i in range(len(data)):

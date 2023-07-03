@@ -77,8 +77,6 @@ def selectcolorspace(img, multichannel=True, colorspace='RGB', channel=2):
 class colorspace(algorithm):
     """colorspace."""
         
-
-
     # TODO Update to allow paramlist to be either a list or the parameters
     # class
     def __init__(self, paramlist=None):
